@@ -73,8 +73,13 @@ uv run mypy src
 1. Confirm Databricks auth works: `DATABRICKS_HOST` is an env var. `DATABRICKS_TOKEN` is either an env var
    or a network secret that the proxy injects. Check with `databricks current-user me` (install the CLI
    first) or the Python SDK. Never print the token.
+   (Session of 2026-10-14: `DATABRICKS_HOST` was not set and there was no `DATABRICKS_TOKEN` env var, so
+   the run did not happen. The owner adds them in the environment settings; a new session picks them up.)
 2. Run `notebooks/00_workspace_smoke_test.py` in the owner's workspace as a one-off serverless run.
    Import it, submit the run, and fetch the output. Save the summary JSON to `runs/m0_smoke_test.json`.
+   The summary comes back as `notebook_output.result` from `get-run-output` (the notebook ends with
+   `dbutils.notebook.exit`). Its API calls were checked against the source of the pinned
+   `databricks-ai-search==0.78` and `sentence-transformers==6.1.0` wheels; that check is not a run.
 3. Using that result, update D-001 to Accepted (or switch to the pgvector fallback) and report to the owner.
 4. Do not start M1 until the owner says so.
 

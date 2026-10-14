@@ -328,6 +328,8 @@ REPORT["verdict"] = {
 }
 REPORT["finished_utc"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 print(json.dumps(REPORT, indent=2, default=str))
+# A submitted (Jobs API) run returns this value from `get-run-output`; printed output is not returned.
+dbutils.notebook.exit(json.dumps(REPORT, default=str))  # noqa: F821
 
 # COMMAND ----------
 
