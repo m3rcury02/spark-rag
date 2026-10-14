@@ -16,6 +16,10 @@ small and finished beats big and half-done.
   credit counts as money: it expires and converts to pay-as-you-go).
 - Git: **never sign or co-sign commits** — no GPG signing (`commit.gpgsign=false`
   is set locally), no `Co-Authored-By:` or other attribution trailers.
+  Commit author: `Gunal Seenivasagan <74795556+m3rcury02@users.noreply.github.com>`. The owner
+  chose the GitHub no-reply address on purpose, to keep their personal email out of the public
+  history. A fresh container defaults to a different identity, so set these with
+  `git config --local` before the first commit (user.name, user.email, commit.gpgsign=false).
 - Challenge weak reasoning, including the owner's. Prefer truth over agreement.
 
 ## Stack
