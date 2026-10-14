@@ -4,6 +4,9 @@ Incremental RAG ingestion pipeline over the Apache Spark docs (`docs/*.md` in
 apache/spark, Apache 2.0), plus a retrieval evaluation harness. Portfolio project:
 small and finished beats big and half-done.
 
+Full requirements: `docs/BRIEF.md`. Design decisions and evidence: `DECISIONS.md`.
+Read both before starting any milestone.
+
 ## Working agreement (from the project owner)
 
 - Work milestone by milestone. After each one: how to run it, what to measure,
@@ -73,8 +76,7 @@ uv run mypy src
 2. Run `notebooks/00_workspace_smoke_test.py` in the owner's workspace as a one-off serverless run.
    Import it, submit the run, and fetch the output. Save the summary JSON to `runs/m0_smoke_test.json`.
 3. Using that result, update D-001 to Accepted (or switch to the pgvector fallback) and report to the owner.
-4. Still pending from the owner: confirm the D-002 tag sequence (v3.5.0 → v4.0.0 → re-run → v4.0.1).
-5. Do not start M1 until the owner says so.
+4. Do not start M1 until the owner says so.
 
 ## Milestones (status)
 

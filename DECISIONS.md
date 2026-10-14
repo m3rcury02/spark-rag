@@ -65,7 +65,7 @@ fetch the corpus in CI and upload it to a Volume, and upload the model weights t
 
 ## D-002 — Corpus versions for the incremental demo
 
-- **Date:** 2026-10-14 · **Status:** Proposed (owner to confirm)
+- **Date:** 2026-10-14 · **Status:** Accepted (owner confirmed 2026-10-14)
 
 **Context.** We need a first tag and a later tag. To exercise every code path, the pair must include
 added, modified **and deleted** docs.
@@ -86,7 +86,7 @@ No 4.x transition deletes any files. 50 of the 51 deletions in 3.5 → 4.0 are g
 **Options.** (a) a 4.x pair: realistic, but it never exercises delete. (b) v3.5.0 → v4.0.0:
 exercises all three paths, but it touches most of the corpus. (c) a three-run sequence.
 
-**Proposed decision.** (c): **v3.5.0 → v4.0.0 → v4.0.0 again (idempotency) → v4.0.1.**
+**Decision.** (c): **v3.5.0 → v4.0.0 → v4.0.0 again (idempotency) → v4.0.1.**
 The 3.5 → 4.0 run proves add/change/delete. The re-run must log 0/0/0. The 4.0.1 patch shows the
 common case, where 5 of 213 docs change.
 
