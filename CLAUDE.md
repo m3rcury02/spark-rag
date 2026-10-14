@@ -61,6 +61,17 @@ uv run ruff check . && uv run ruff format --check .
 uv run mypy src
 ```
 
+## Next session: pick up here
+
+1. Confirm Databricks auth works: `DATABRICKS_HOST` is an env var. `DATABRICKS_TOKEN` is either an env var
+   or a network secret that the proxy injects. Check with `databricks current-user me` (install the CLI
+   first) or the Python SDK. Never print the token.
+2. Run `notebooks/00_workspace_smoke_test.py` in the owner's workspace as a one-off serverless run.
+   Import it, submit the run, and fetch the output. Save the summary JSON to `runs/m0_smoke_test.json`.
+3. Using that result, update D-001 to Accepted (or switch to the pgvector fallback) and report to the owner.
+4. Still pending from the owner: confirm the D-002 tag sequence (v3.5.0 → v4.0.0 → re-run → v4.0.1).
+5. Do not start M1 until the owner says so.
+
 ## Milestones (status)
 
 - [x] M0 — Platform research, scaffold, workspace smoke test (awaiting owner's run)
