@@ -1,0 +1,35 @@
+[project]
+name = "docs-rag"
+version = "0.1.0"
+description = "Incremental RAG ingestion pipeline over the Apache Spark docs, with a retrieval eval harness"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = []
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.11"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/docs_rag"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "BLE", "SIM"]
+
+[tool.ruff.lint.per-file-ignores]
+"notebooks/*" = ["E501", "F821", "E402", "I001"]
+
+[tool.mypy]
+strict = true
+files = ["src"]
