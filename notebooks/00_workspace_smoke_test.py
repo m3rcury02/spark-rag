@@ -38,6 +38,7 @@ dbutils.library.restartPython()  # noqa: F821  (dbutils is injected by Databrick
 import json
 import os
 import platform
+import random
 import socket
 import sys
 import time
@@ -228,10 +229,23 @@ idx_report: dict = {}
 REPORT["delta_sync"] = idx_report
 
 
+SYNTHETIC_DIM = 384
+idx_report["vectors"] = "model" if EMBEDDER is not None else "synthetic (no model loaded)"
+
+
 def embed(texts: list[str]) -> list[list[float]]:
+    """Real embeddings if a model loaded in section 2. Otherwise deterministic unit vectors seeded by the
+    text, so this test still answers D-001 when huggingface.co is blocked: whether an UPDATE or DELETE
+    reaches the index does not depend on embedding quality. Only the top-1 query check needs a model."""
     if EMBEDDER is not None:
         return [[float(x) for x in v] for v in EMBEDDER.encode(texts, normalize_embeddings=True)]
-    raise RuntimeError("no embedding model loaded; see section 2")
+    out = []
+    for t in texts:
+        rng = random.Random(t)
+        v = [rng.gauss(0.0, 1.0) for _ in range(SYNTHETIC_DIM)]
+        norm = sum(x * x for x in v) ** 0.5
+        out.append([x / norm for x in v])
+    return out
 
 
 def ids_in_index(index, dim: int) -> dict[str, str]:
@@ -275,12 +289,13 @@ try:
     idx_report["detailed_state"] = desc.get("status", {}).get("detailed_state")
     idx_report["indexed_row_count_initial"] = desc.get("status", {}).get("indexed_row_count")
 
-    q = embed(["Where does streaming keep its progress?"])[0]
-    top = index.similarity_search(query_vector=q, columns=["id", "text"], num_results=1)["result"][
-        "data_array"
-    ]
-    idx_report["query_top1_id"] = top[0][0] if top else None
-    idx_report["query_top1_expected"] = "c2"
+    if EMBEDDER is not None:  # a synthetic query vector would make top-1 meaningless
+        q = embed(["Where does streaming keep its progress?"])[0]
+        top = index.similarity_search(query_vector=q, columns=["id", "text"], num_results=1)["result"][
+            "data_array"
+        ]
+        idx_report["query_top1_id"] = top[0][0] if top else None
+        idx_report["query_top1_expected"] = "c2"
 
     # Mutate the source: delete c3, update c4 (new text + new vector), then trigger a sync.
     spark.sql(f"DELETE FROM {SRC} WHERE id = 'c3'")  # noqa: F821
@@ -325,6 +340,7 @@ REPORT["verdict"] = {
     "endpoint_online": REPORT.get("endpoint", {}).get("state") == "ONLINE",
     "delta_sync_delete_propagates": idx_report.get("delete_propagated"),
     "delta_sync_update_propagates": idx_report.get("update_propagated"),
+    "delta_sync_vectors": idx_report.get("vectors"),
 }
 REPORT["finished_utc"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 print(json.dumps(REPORT, indent=2, default=str))
