@@ -12,8 +12,6 @@
   chunk, when they fit. Pieces of a split unit are sized to leave room for that tail. There is no overlap
   out of a whole code block or across the fence of a split one. Every chunk's `n_tokens` is a recount of its
   final embed text, never a sum.
-- A one-line lead-in ending in a colon ("For example:", a "python:" tab label) is never the last line of a
-  chunk that has more: it moves to the next chunk, with what it introduces.
 - `chunk_id` hashes the doc path, section path, exact embed text and an occurrence counter (for identical
   texts in the same section). Nothing tag- or position-specific, so an unchanged section keeps its IDs in
   every tag, and any change to the embedded text (including the breadcrumb) gives new IDs.
@@ -233,12 +231,6 @@ def _tail_start(body: str, last: _Piece, chunk_start: int, overlap: int) -> int 
     return None
 
 
-def _is_lead_in(body: str, piece: _Piece) -> bool:
-    """A one-line paragraph that ends with a colon, introducing what follows."""
-    text = body[piece.start : piece.end]
-    return not piece.code and "\n" not in text and text.rstrip().endswith(":")
-
-
 def chunk_section(
     path: str, section_path: tuple[str, ...], body: str, config: ChunkConfig
 ) -> list[tuple[str, str]]:
@@ -256,27 +248,21 @@ def chunk_section(
 
     chunks: list[tuple[int, int, tuple[str, str] | None]] = []
     start = 0
-    current: list[_Piece] = []  # pieces of the chunk being built; it starts at `start`
+    last: _Piece | None = None  # last piece of the chunk being built; the chunk starts at `start`
     for piece in _pieces(body, budget, config.overlap_tokens):
-        if current:
-            last = current[-1]
+        if last is not None:
             same_group = piece.fence == last.fence and piece.block == last.block
             if same_group and fits(start, piece):
-                current.append(piece)
-                continue
-            if same_group and len(current) > 1 and _is_lead_in(body, last) and fits(last.start, piece):
-                # "For example:" or a "python:" tab label goes with what it introduces, not what precedes it
-                chunks.append((start, current[-2].end, current[-2].fence))
-                start, current = last.start, [last, piece]
+                last = piece
                 continue
             chunks.append((start, last.end, last.fence))
             tail = _tail_start(body, last, start, config.overlap_tokens) if same_group else None
             if tail is not None and fits(tail, piece):
-                start, current = tail, [piece]
+                start, last = tail, piece
                 continue
-        start, current = piece.start, [piece]
-    if current:
-        chunks.append((start, current[-1].end, current[-1].fence))
+        start, last = piece.start, piece
+    if last is not None:
+        chunks.append((start, last.end, last.fence))
     bodies = [_render(body, s, e, fence).strip() for s, e, fence in chunks]
     return [(b, f"{crumb}\n\n{b}") for b in bodies]
 

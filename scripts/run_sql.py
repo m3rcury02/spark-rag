@@ -10,23 +10,42 @@ import argparse
 import pathlib
 import subprocess
 import sys
+import time
 from typing import Any
 
 from databricks.sdk import WorkspaceClient
+from databricks.sdk.service.sql import StatementParameterListItem
 from redact import Redactor
 
 REPO = pathlib.Path(__file__).resolve().parents[1]
 
 
-def run_statement(w: WorkspaceClient, warehouse_id: str, sql: str) -> dict[str, Any]:
-    r = w.statement_execution.execute_statement(statement=sql, warehouse_id=warehouse_id, wait_timeout="50s")
+def run_statement(
+    w: WorkspaceClient, warehouse_id: str, sql: str, params: dict[str, str] | None = None
+) -> dict[str, Any]:
+    """Run one statement (with named :parameters) and return all its rows, reading every result chunk."""
+    r = w.statement_execution.execute_statement(
+        statement=sql,
+        warehouse_id=warehouse_id,
+        wait_timeout="50s",
+        parameters=[StatementParameterListItem(name=k, value=v) for k, v in (params or {}).items()],
+    )
+    while r.status and r.status.state and r.status.state.value in ("PENDING", "RUNNING"):
+        time.sleep(5)
+        r = w.statement_execution.get_statement(r.statement_id or "")
     state = r.status.state.value if r.status and r.status.state else None
     if state != "SUCCEEDED":
         message = r.status.error.message if r.status and r.status.error else None
         raise SystemExit(f"statement {state}: {message}\n{sql}")
     cols = [c.name for c in r.manifest.schema.columns] if r.manifest and r.manifest.schema else []
-    rows = (r.result.data_array if r.result else None) or []
-    return {"sql": sql, "columns": cols, "rows": rows}
+    rows = list((r.result.data_array if r.result else None) or [])
+    chunks = (r.manifest.total_chunk_count if r.manifest else None) or 1
+    for n in range(1, chunks):
+        part = w.statement_execution.get_statement_result_chunk_n(r.statement_id or "", n)
+        rows += part.data_array or []
+    if r.manifest and r.manifest.total_row_count is not None and len(rows) != r.manifest.total_row_count:
+        raise SystemExit(f"read {len(rows)} rows, the result has {r.manifest.total_row_count}")
+    return {"sql": sql, "params": params or {}, "columns": cols, "rows": rows}
 
 
 def main() -> None:
