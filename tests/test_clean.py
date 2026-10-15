@@ -135,6 +135,11 @@ def test_links_keep_their_text() -> None:
     assert clean(text) == "guide, [SPARK-1], ref link, wrapped\ntext"
 
 
+def test_link_urls_may_contain_parentheses() -> None:
+    text = "[Lasso](http://en.wikipedia.org/wiki/Lasso_(statistics)) and [f](api/D.html#f():D[T]) end"
+    assert clean(text) == "Lasso and f end"
+
+
 def test_images_and_html_comments_are_removed() -> None:
     assert clean("A ![diagram](img/x.png) B <!-- note -->C") == "A  B C"
 

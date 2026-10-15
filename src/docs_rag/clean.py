@@ -212,11 +212,13 @@ def _markdown(text: str) -> str:
     text = re.sub(r"^.*\n(?=\{:toc\}\s*$)", "", text, flags=re.M)  # the bullet line before {:toc}
     text = re.sub(r"^\s*\{:[^}\n]*\}\s*$", "", text, flags=re.M)
     text = re.sub(r"^ {0,3}\[[^\]\n]+\]:[ \t]+\S+.*$", "", text, flags=re.M)  # reference-link definitions
-    text = re.sub(r"!\[[^\]\n]*\]\([^)\n]*\)", "", text)  # images
+    # A URL may hold one level of parentheses: wiki/Lasso_(statistics), Dataset.html#f():Dataset[T]
+    url = r"\((?:[^()\n]|\([^()\n]*\))*\)"
+    text = re.sub(rf"!\[[^\]\n]*\]{url}", "", text)  # images
     # Link text may hold one level of brackets ("[[SPARK-1]](url)") and wrap onto the next line, but not
     # cross a blank line.
     link_text = r"((?:\[[^\]\n]*\]|[^\[\]\n]|\n(?!\s*\n))+)"
-    text = re.sub(rf"\[{link_text}\]\([^)\n]*\)", r"\1", text)  # [text](url) -> text
+    text = re.sub(rf"\[{link_text}\]{url}", r"\1", text)  # [text](url) -> text
     text = re.sub(rf"\[{link_text}\]\[[^\]\n]*\]", r"\1", text)  # [text][ref] -> text
     return text
 
