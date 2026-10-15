@@ -32,7 +32,7 @@ Read both before starting any milestone.
   Delta Sync index with self-managed embeddings, on the single endpoint `docs_rag_endpoint`.
   **Status: accepted 2026-10-15** after the workspace smoke test (D-001, evidence in `runs/m0_*`).
 - Python 3.12 (matches serverless environment versions 3–6). Managed with `uv`. A job submitted
-  with no environment spec ran on env 2 / **Python 3.11**, so pin the environment version (D-005).
+  with no environment spec ran on env 2 / **Python 3.11**, so pin the environment version from M1 (D-005).
 - Embeddings: open-source sentence-transformers models, computed by us.
 - Deployment: Databricks Asset Bundles (dev/prod targets). CI: GitHub Actions.
 
@@ -79,10 +79,13 @@ uv run --with databricks-sdk==0.152.0 --with databricks-ai-search==0.78 \
 M0 is complete: the smoke test passed and D-001 is Accepted (see `runs/m0_*`). **Wait for the owner to
 say "start M1" before doing any M1 work.** Open items from M0:
 - The owner decides whether to drop the smoke-test index, table and schema (`workspace.docs_rag_smoke`,
-  notebook cell 6). Keep `docs_rag_endpoint`: Free Edition allows only one endpoint.
-- Carry into M5: create the real index only after the full gold backfill, because capacity is fixed at
-  creation. Sync right after each MERGE. Take change counts from our MERGE metrics, not the sync pipeline.
-- Carry into M7: pin the serverless environment version (D-005).
+  the notebook's section 6 "Cleanup"). Keep `docs_rag_endpoint`: Free Edition allows only one endpoint.
+- Carry into M1: pin the serverless environment version (3 or later, Python 3.12) in every job, and
+  verify it with a run. The default was env 2 / Python 3.11, where our package does not install (D-005).
+- Carry into M5: create the real index only after the full gold backfill, because capacity is sized from the
+  source table at creation and a small start limits growth. Re-test insert, update and delete with the real
+  MERGE. Sync right after each MERGE and wait for the update to complete ("ready" is not "synced"). Take
+  change counts from our MERGE metrics, not the sync pipeline (D-001).
 
 ## Milestones (status)
 

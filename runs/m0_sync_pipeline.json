@@ -22,7 +22,7 @@
       "timestamp": "2026-10-14T22:58:09.512Z",
       "update_id": null,
       "event_type": "user_action",
-      "message": "User <owner> created pipeline.",
+      "message": "User <principal> created pipeline.",
       "flow_metrics": null
     },
     {

@@ -1,5 +1,5 @@
 {
-  "checked_utc": "2026-10-15T00:32:47Z",
+  "checked_utc": "2026-10-15T00:49:16Z",
   "method": "AISearchIndex.scan(): pages through every row by primary key, so unlike ANN search it cannot miss a row that is still in the index",
   "endpoint": {
     "name": "docs_rag_endpoint",
@@ -16,25 +16,25 @@
   },
   "rows": [
     {
-      "_change_type": "NULL_VALUE",
+      "_change_type": null,
       "id": "c1",
       "text": "Spark SQL can run in ANSI mode for stricter type checking.",
       "embedding_vector": "<vector len=384>"
     },
     {
-      "_change_type": "NULL_VALUE",
+      "_change_type": null,
       "id": "c2",
       "text": "Structured Streaming stores progress in a checkpoint location.",
       "embedding_vector": "<vector len=384>"
     },
     {
-      "_change_type": "NULL_VALUE",
+      "_change_type": null,
       "id": "c4",
       "text": "Adaptive Query Execution re-optimizes plans at runtime using shuffle statistics.",
       "embedding_vector": "<vector len=384>"
     },
     {
-      "_change_type": "NULL_VALUE",
+      "_change_type": null,
       "id": "c5",
       "text": "Spark can run on Kubernetes using the native scheduler.",
       "embedding_vector": "<vector len=384>"

@@ -5,6 +5,9 @@ Run with:
     uv run --with databricks-sdk==0.152.0 --with databricks-ai-search==0.78 \
         python scripts/m0_collect_evidence.py --run-id <parent run id>
 
+Needs personal-access-token auth (DATABRICKS_HOST and DATABRICKS_TOKEN), because the AI Search client's
+scan() takes a PAT. Every file is gathered in memory and checked for identifiers before any is written.
+
 Writes:
 - runs/m0_smoke_test.json        the notebook's summary JSON, verbatim (last code cell's output)
 - runs/m0_smoke_test_cells.txt   every cell's text output, ANSI codes stripped
@@ -18,7 +21,6 @@ import argparse
 import base64
 import datetime as dt
 import json
-import os
 import pathlib
 import re
 import subprocess
@@ -34,7 +36,7 @@ RUNS = REPO / "runs"
 ENDPOINT = "docs_rag_endpoint"
 INDEX = "workspace.docs_rag_smoke.smoke_idx"
 ANSI = re.compile(r"\x1b\[[0-9;]*m")
-UUID = re.compile(r"\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b")
+PRINCIPAL = re.compile(r"((?:User|Principal) '?)[^\s']+")
 
 
 class Redactor:
@@ -52,8 +54,15 @@ class Redactor:
         for old, new in self.pairs:
             if old:
                 s = s.replace(old, new)
-        s = re.sub(r"s3://[^\s\"'\]]+", "<storage-path>", s)
+        s = re.sub(r"\b(?:s3[an]?|abfss?|wasbs?|gs|r2|dbfs):/{1,2}[^\s\"'\]]+", "<storage-path>", s)
         return s
+
+    def check(self, serialized: str) -> None:
+        """Last line of defence: refuse to write if any identifier survived redaction."""
+        low = serialized.lower()
+        for old, _ in self.pairs:
+            if old and old.lower() in low:
+                raise RuntimeError("an account identifier survived redaction; nothing written")
 
     def obj(self, o: Any) -> Any:
         if isinstance(o, str):
@@ -73,8 +82,8 @@ def iso(ms: int | None) -> str | None:
     )
 
 
-def write_json(name: str, data: Any) -> None:
-    (RUNS / name).write_text(json.dumps(data, indent=2, default=str) + "\n")
+def as_json(data: Any) -> str:
+    return json.dumps(data, indent=2, default=str) + "\n"
 
 
 def notebook_outputs(w: WorkspaceClient, task_run_id: int) -> tuple[list[tuple[str, str]], dict[str, Any]]:
@@ -104,11 +113,11 @@ def notebook_outputs(w: WorkspaceClient, task_run_id: int) -> tuple[list[tuple[s
     return cells, report
 
 
-def scan_index() -> dict[str, Any]:
+def scan_index(w: WorkspaceClient) -> dict[str, Any]:
+    if not w.config.token:
+        raise RuntimeError("scan() needs personal-access-token auth (set DATABRICKS_TOKEN)")
     client = AISearchClient(
-        workspace_url=os.environ["DATABRICKS_HOST"],
-        personal_access_token=os.environ["DATABRICKS_TOKEN"],
-        disable_notice=True,
+        workspace_url=w.config.host, personal_access_token=w.config.token, disable_notice=True
     )
     ep = client.get_endpoint(ENDPOINT)
     index = client.get_index(endpoint_name=ENDPOINT, index_name=INDEX)
@@ -123,7 +132,10 @@ def scan_index() -> dict[str, Any]:
             fields: dict[str, Any] = {}
             for f in r.get("fields", []):
                 v = f.get("value")
-                v = next(iter(v.values())) if isinstance(v, dict) and len(v) == 1 else v
+                if isinstance(v, dict) and "null_value" in v:
+                    v = None
+                elif isinstance(v, dict) and len(v) == 1:
+                    v = next(iter(v.values()))
                 if isinstance(v, dict) and "values" in v:  # list_value: an embedding vector
                     v = f"<vector len={len(v['values'])}>"
                 fields[f.get("key")] = v
@@ -162,28 +174,41 @@ def scan_index() -> dict[str, Any]:
 
 def sync_pipeline(w: WorkspaceClient) -> dict[str, Any]:
     pid = w.vector_search_indexes.get_index(INDEX).delta_sync_index_spec.pipeline_id  # type: ignore[union-attr]
-    updates = [
-        {
-            "update_id": u.update_id,
-            "cause": u.cause.value if u.cause else None,
-            "state": u.state.value if u.state else None,
-            "full_refresh": u.full_refresh,
-            "created_utc": iso(u.creation_time),
-        }
-        for u in w.pipelines.list_updates(pid).updates or []
-    ]
-    raw = w.api_client.do("GET", f"/api/2.0/pipelines/{pid}/events", query={"max_results": 250})
+    updates: list[dict[str, Any]] = []
+    token = None
+    while True:
+        resp = w.pipelines.list_updates(pid, page_token=token)
+        updates += [
+            {
+                "update_id": u.update_id,
+                "cause": u.cause.value if u.cause else None,
+                "state": u.state.value if u.state else None,
+                "full_refresh": u.full_refresh,
+                "created_utc": iso(u.creation_time),
+            }
+            for u in resp.updates or []
+        ]
+        token = resp.next_page_token
+        if not token:
+            break
+    # Raw REST rather than the SDK iterator, because the SDK's PipelineEvent drops `details` (flow metrics).
+    raw_events: list[dict[str, Any]] = []
+    query: dict[str, Any] = {"max_results": 100}
+    while True:
+        page: Any = w.api_client.do("GET", f"/api/2.0/pipelines/{pid}/events", query=query)
+        raw_events += page.get("events", [])
+        if not page.get("next_page_token"):
+            break
+        query = {"max_results": 100, "page_token": page["next_page_token"]}
     events = [
         {
             "timestamp": e.get("timestamp"),
             "update_id": (e.get("origin") or {}).get("update_id"),
             "event_type": e.get("event_type"),
-            "message": UUID.sub("<principal>", e.get("message") or "")
-            if e.get("event_type") == "user_action"
-            else e.get("message"),
+            "message": PRINCIPAL.sub(r"\1<principal>", e.get("message") or ""),
             "flow_metrics": ((e.get("details") or {}).get("flow_progress") or {}).get("metrics"),
         }
-        for e in raw.get("events", [])  # type: ignore[union-attr]
+        for e in raw_events
     ]
     events.sort(key=lambda e: e["timestamp"] or "")
     return {
@@ -220,7 +245,8 @@ def inventory(w: WorkspaceClient) -> dict[str, Any]:
             "state": r.status.state.value if r.status and r.status.state else None,
             "result": r.result.data_array if r.result else None,
         }
-    # IP access lists are a Premium-tier feature, so this probes the pricing tier without changing anything.
+    # On AWS, IP access lists require the Enterprise tier, so a refusal only shows the workspace is not
+    # Enterprise. It cannot tell Free Edition from Premium. Read-only.
     try:
         w.workspace_conf.get_status(keys="enableIpAccessLists")
         out["tier_probe_enableIpAccessLists"] = "available"
@@ -242,13 +268,16 @@ def main() -> None:
     task = (run.tasks or [])[0]
     cells, report = notebook_outputs(w, task.run_id)  # type: ignore[arg-type]
 
-    write_json("m0_smoke_test.json", red.obj(report))
-    (RUNS / "m0_smoke_test_cells.txt").write_text(
-        red.text("\n".join(f"===== cell {i}: {first}\n{out}" for i, (first, out) in enumerate(cells)))
-    )
-    write_json("m0_index_scan.json", red.obj(scan_index()))
-    write_json("m0_sync_pipeline.json", red.obj(sync_pipeline(w)))
-    write_json("m0_workspace_inventory.json", red.obj(inventory(w)))
+    # Collect everything before writing anything, so a failed API call cannot leave runs/ half updated.
+    files: dict[str, str] = {
+        "m0_smoke_test.json": as_json(red.obj(report)),
+        "m0_smoke_test_cells.txt": red.text(
+            "\n".join(f"===== cell {i}: {first}\n{out}" for i, (first, out) in enumerate(cells))
+        ),
+        "m0_index_scan.json": as_json(red.obj(scan_index(w))),
+        "m0_sync_pipeline.json": as_json(red.obj(sync_pipeline(w))),
+        "m0_workspace_inventory.json": as_json(red.obj(inventory(w))),
+    }
 
     nb_commit = subprocess.run(
         ["git", "log", "-1", "--format=%H", "--", "notebooks/00_workspace_smoke_test.py"],
@@ -267,14 +296,18 @@ def main() -> None:
         "result_state": run.state.result_state.value if run.state and run.state.result_state else None,
         "run_start_utc": iso(run.start_time),
         "run_end_utc": iso(run.end_time),
-        "run_duration_seconds": round((run.run_duration or 0) / 1000, 1),
+        "run_duration_seconds": round(run.run_duration / 1000, 1) if run.run_duration is not None else None,
         "output_retrieval": "Jobs API runs/export (CODE view); cell outputs parsed from the embedded "
         "notebook model by scripts/m0_collect_evidence.py",
         "redactions": "owner email -> <owner>, workspace host -> <workspace-host>, workspace id -> "
         "<workspace-id>, storage paths -> <storage-path>, principal ids in pipeline events -> <principal>",
     }
-    write_json("m0_smoke_test_meta.json", red.obj(meta))
-    print(json.dumps(meta, indent=2))
+    files["m0_smoke_test_meta.json"] = as_json(red.obj(meta))
+    for text in files.values():
+        red.check(text)
+    for name, text in files.items():
+        (RUNS / name).write_text(text)
+    print(files["m0_smoke_test_meta.json"])
 
 
 if __name__ == "__main__":
