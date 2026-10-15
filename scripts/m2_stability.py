@@ -10,8 +10,8 @@ the default chunk config. Writes runs/<label>.json with:
   and for a whole-page baseline (the same cleaner and packer, but the page is one section), how many of a's
   chunk IDs b keeps and how many new IDs b brings (what M5 would embed); for modified docs, what happened to
   each lost ID (its section was edited, renamed or moved, or removed);
-- per tag: the overlap and lead-in behaviour of the chunker, and the same numbers with table-border
-  shortening switched off (an ablation of that cleaning rule).
+- per tag: the overlap and lead-in behaviour of the chunker, and the same numbers with one rule switched off
+  at a time (ablations): table-border shortening (cleaning) and one-chunk-per-row for split tables.
 
 Local only: Databricks is used just to redact account identifiers, as every runs/ writer does.
 """
@@ -33,10 +33,10 @@ from databricks.sdk import WorkspaceClient
 from gitdocs import TagDocs, read_tags
 from redact import Redactor
 
-from docs_rag.chunk import ChunkConfig, DocChunks, chunk_document, chunk_id, chunk_section
+from docs_rag.chunk import Chunk, ChunkConfig, DocChunks, chunk_document, chunk_id, chunk_section
 from docs_rag.clean import clean_page
 from docs_rag.config import Config, validate_tag
-from docs_rag.sections import split_sections
+from docs_rag.sections import Section, split_sections
 from docs_rag.tokens import count_tokens
 
 REPO = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True).stdout.strip()
@@ -56,24 +56,25 @@ def whole_page_ids(path: str, content: str, config: ChunkConfig) -> list[str]:
     page = clean_page(content, fallback_title=stem(path))
     seen: Counter[str] = Counter()
     ids = []
-    for _body, embed_text in chunk_section(path, (page.title,), page.text, config):
-        ids.append(chunk_id(path, (page.title,), embed_text, seen[embed_text]))
-        seen[embed_text] += 1
+    for sc in chunk_section(path, (page.title,), page.text, config):
+        ids.append(chunk_id(path, (page.title,), sc.embed_text, seen[sc.embed_text]))
+        seen[sc.embed_text] += 1
     return ids
 
 
-def sections_of(path: str, content: str) -> Counter[tuple[tuple[str, ...], str]]:
+def sections_of(path: str, content: str) -> tuple[str, list[Section]]:
     page = clean_page(content, fallback_title=stem(path))
-    return Counter((s.path, s.body) for s in split_sections(page.title, page.text) if s.body)
+    return page.text, [s for s in split_sections(page.title, page.text) if s.body]
 
 
-def located(section_path: tuple[str, ...], text: str, sections: Counter[tuple[tuple[str, ...], str]]) -> Any:
-    """The body of the section a chunk comes from: the chunk is a slice of it, or a re-fenced slice of it."""
-    inner = "\n".join(text.split("\n")[1:-1]) if text.startswith(("```", "~~~")) else None
-    for path, body in sections:
-        if path == section_path and (text in body or (inner is not None and inner in body)):
-            return body
-    return None
+def section_at(sections: list[Section], c: Chunk) -> Section:
+    """The section whose body holds the chunk's slice of the cleaned page (by offsets)."""
+    return next(s for s in sections if s.start <= c.char_start and c.char_end <= s.start + len(s.body))
+
+
+def framed(text: str, c: Chunk) -> bool:
+    """A re-fenced code piece or a table row under its header: the body is not the bare slice."""
+    return text[c.char_start : c.char_end] != c.body
 
 
 def transition(a: TagDocs, b: TagDocs, config: ChunkConfig, chunked: dict[str, dict[str, DocChunks]]) -> Any:
@@ -126,30 +127,33 @@ def transition(a: TagDocs, b: TagDocs, config: ChunkConfig, chunked: dict[str, d
     buckets: Counter[str] = Counter()
     sections_unchanged = sections_unchanged_kept = sections_unchanged_chunks = 0
     for p in modified:
-        sa, sb = sections_of(p, a.files[p]), sections_of(p, b.files[p])
-        paths_b = {path for path, _ in sb}
-        bodies_b = {body for _, body in sb}
+        clean_a, sa = sections_of(p, a.files[p])
+        _, sb = sections_of(p, b.files[p])
+        pairs_b = Counter((s.path, s.body) for s in sb)
+        bodies_b = {s.body for s in sb}
         ids_b = Counter(c.chunk_id for c in cb[p].chunks)
         for c in ca[p].chunks:
-            body = located(c.section_path, c.body, sa)
-            if body is None:
-                buckets["chunk not located in its section (check the script)"] += 1
-                continue
+            section = section_at(sa, c)
             in_b = ids_b[c.chunk_id] > 0
-            if (c.section_path, body) in sb:
+            unchanged_section = (section.path, section.body) in pairs_b
+            if unchanged_section:
                 sections_unchanged_chunks += 1
                 sections_unchanged_kept += in_b
             if in_b:
                 continue
-            if (c.section_path, body) in sb:
+            own = clean_a[c.char_start : c.char_end]  # the chunk's own text: no breadcrumb, no frame
+            same_path_bodies = [s.body for s in sb if s.path == c.section_path]
+            if unchanged_section:
                 buckets["section unchanged (should not happen)"] += 1
-            elif c.section_path in paths_b:
-                buckets["section text edited"] += 1
-            elif body in bodies_b:
-                buckets["section renamed or moved, text unchanged"] += 1
+            elif any(own in body for body in same_path_bodies):
+                buckets["boundary shift: own text unchanged, its section edited"] += 1
+            elif same_path_bodies:
+                buckets["new text: own text edited"] += 1
+            elif section.body in bodies_b:
+                buckets["breadcrumb rename: section text unchanged under a new heading path"] += 1
             else:
                 buckets["section removed or rewritten under a new heading"] += 1
-        sections_unchanged += sum((sa & sb).values())
+        sections_unchanged += sum((Counter((s.path, s.body) for s in sa) & pairs_b).values())
     out["section_aware_modified_docs"] = {
         "unchanged_sections": sections_unchanged,
         "chunks_in_unchanged_sections": sections_unchanged_chunks,
@@ -160,13 +164,10 @@ def transition(a: TagDocs, b: TagDocs, config: ChunkConfig, chunked: dict[str, d
 
 
 def chunker_behaviour(tag: TagDocs, config: ChunkConfig, chunked: dict[str, DocChunks]) -> Any:
-    """Overlap at cuts inside a paragraph, and lead-ins left at the end of a chunk."""
+    """What happens where one chunk ends and the next begins in the same section, from the chunk offsets."""
     stats: Counter[str] = Counter()
     for p, doc in chunked.items():
-        page = clean_page(tag.files[p], fallback_title=stem(p))
-        bodies: dict[tuple[str, ...], list[str]] = {}
-        for s in split_sections(page.title, page.text):
-            bodies.setdefault(s.path, []).append(s.body)
+        text = clean_page(tag.files[p], fallback_title=stem(p)).text
         for left, right in zip(doc.chunks, doc.chunks[1:], strict=False):
             if left.section_path != right.section_path:
                 continue
@@ -175,18 +176,13 @@ def chunker_behaviour(tag: TagDocs, config: ChunkConfig, chunked: dict[str, DocC
             if "\n" not in last and last.rstrip().endswith(":"):
                 stats["ending_in_a_one_line_lead_in"] += 1
                 stats["of_which_the_next_chunk_repeats_it"] += right.body.startswith(last)
-            if left.body.endswith("```") or right.body.startswith(("```", "~~~")):
-                stats["at_a_code_block"] += 1
-                continue
-            body = next((b for b in bodies[left.section_path] if left.body in b and right.body in b), None)
-            if body is None:
-                stats["not_located"] += 1
-                continue
-            end = body.find(left.body) + len(left.body)
-            start = body.find(right.body, body.find(left.body) + 1)
-            if start < end:
+            if framed(text, left) or framed(text, right):
+                stats["at_a_split_code_block_or_table_row"] += 1
+            elif left.body.endswith(("```", "~~~")) or right.body.startswith(("```", "~~~")):
+                stats["at_a_whole_code_block"] += 1
+            elif right.char_start < left.char_end:
                 stats["prose_with_overlap"] += 1
-            elif "\n\n" in body[end:start]:
+            elif "\n\n" in text[left.char_end : right.char_start]:
                 stats["prose_no_overlap_at_paragraph_break"] += 1
             else:
                 stats["prose_no_overlap_inside_paragraph"] += 1
@@ -196,17 +192,19 @@ def chunker_behaviour(tag: TagDocs, config: ChunkConfig, chunked: dict[str, DocC
 def corpus_numbers(tag: TagDocs, config: ChunkConfig) -> dict[str, Any]:
     docs = section_ids(tag, config)
     n = [c.n_tokens for d in docs.values() for c in d.chunks]
-    border_tokens = 0
-    total_tokens = 0
+    border_tokens = total_tokens = table_rows = 0
     for p, content in tag.files.items():
         text = clean_page(content, fallback_title=stem(p)).text
         total_tokens += count_tokens(text)
         border_tokens += sum(
             count_tokens(line) for line in text.split("\n") if line.strip() and set(line) <= set("|+:=- \t")
         )
+        table_rows += sum(framed(text, c) and not c.body.startswith(("```", "~~~")) for c in docs[p].chunks)
     return {
         "docs": len(docs),
         "chunks": len(n),
+        "table_row_chunks": table_rows,
+        "embedded_tokens": sum(n),
         "n_tokens_median": statistics.median(n),
         "n_tokens_max": max(n),
         "cleaned_tokens": total_tokens,
@@ -220,6 +218,9 @@ def corpus_numbers(tag: TagDocs, config: ChunkConfig) -> dict[str, Any]:
 def rule_off(name: str) -> Iterator[None]:
     if name == "border_shortening":
         with mock.patch("docs_rag.clean._shorten_borders", lambda line: line):
+            yield
+    elif name == "table_rows":
+        with mock.patch("docs_rag.chunk._table_rows", lambda body, unit: None):
             yield
     else:
         raise ValueError(name)
@@ -253,7 +254,7 @@ def main() -> None:
         "tags": {t: corpus_numbers(source[t], config) for t in tags},
         "ablations": {},
     }
-    for rule in ("border_shortening",):
+    for rule in ("border_shortening", "table_rows"):
         with rule_off(rule):
             out["ablations"][f"{rule}_off"] = {t: corpus_numbers(source[t], config) for t in tags}
     text = Redactor(WorkspaceClient()).dump(out)

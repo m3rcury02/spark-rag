@@ -4,10 +4,11 @@
         --with torch==2.14.1 --index https://download.pytorch.org/whl/cpu --index-strategy unsafe-best-match \
         python scripts/m2_tokenizer_parity.py --label m2_tokenizer_parity --tags v3.5.0 v4.0.0 v4.0.1
 
-Chunks every tag's docs (read from git) with the default chunk config, then passes every distinct embed text
-through each model's own `SentenceTransformer.preprocess`, the call `encode` makes. For every text the number
-of attended positions must be n_tokens + 2 ([CLS] and [SEP]) and at most the model's max_seq_length: a
-smaller number would mean the model truncates the chunk. Package versions and model revisions are recorded.
+Chunks every tag's docs (read from git) with every config of the chunk grid, then passes every distinct
+embed text through each model's own `SentenceTransformer.preprocess`, the call `encode` makes. For every text
+the number of attended positions must be n_tokens + 2 ([CLS] and [SEP]) and at most the model's
+max_seq_length: a smaller number would mean the model truncates the chunk. Package versions and model
+revisions are recorded.
 """
 
 import argparse
@@ -42,13 +43,14 @@ def main() -> None:
     if subprocess.run(dirty, capture_output=True, text=True).stdout:
         sys.exit("uncommitted code changes (runs/ excepted): commit first, so the result can be traced")
     tags = [validate_tag(t) for t in args.tags]
-    config = Config().chunk
+    grid = Config().chunk_grid
     source = read_tags(tags)
     counts: dict[str, int] = {}
-    for tag in tags:
-        for path, content in sorted(source[tag].files.items()):
-            for c in chunk_document(path, content, config).chunks:
-                counts[c.embed_text] = c.n_tokens
+    for config in grid:
+        for tag in tags:
+            for path, content in sorted(source[tag].files.items()):
+                for c in chunk_document(path, content, config).chunks:
+                    counts[c.embed_text] = c.n_tokens
     texts = sorted(counts)
 
     models: dict[str, Any] = {}
@@ -73,7 +75,7 @@ def main() -> None:
     out = {
         "label": args.label,
         "git_commit": subprocess.run(head, capture_output=True, text=True).stdout.strip(),
-        "chunk_config": {**config.__dict__, "config_id": config.config_id},
+        "chunk_configs": [{**c.__dict__, "config_id": c.config_id} for c in grid],
         "source_commits": {t: source[t].commit_sha for t in tags},
         "packages": {
             p: importlib.metadata.version(p)

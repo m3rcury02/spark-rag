@@ -42,9 +42,16 @@ def test_highlight_becomes_a_fenced_block() -> None:
     assert clean("{% highlight scala %}\nval x = 1\n{% endhighlight %}") == "```scala\nval x = 1\n```"
 
 
-def test_include_example_becomes_a_pointer_and_generated_includes_are_dropped() -> None:
+def test_include_example_becomes_a_short_pointer_and_generated_includes_are_dropped() -> None:
     text = clean("A\n\n{% include_example python/ml/tf_idf_example.py %}\n\n{% include_api_gen gen.html %}\n")
-    assert text == "A\n\n[example code: python/ml/tf_idf_example.py]"
+    assert text == "A\n\n[example: tf_idf_example.py]"
+
+
+def test_include_example_keeps_its_snippet_label() -> None:
+    assert (
+        clean("{% include_example csv_dataset python/sql/datasource.py %}")
+        == "[example: datasource.py, csv_dataset]"
+    )
 
 
 def test_raw_keeps_content_and_comment_drops_it() -> None:
@@ -97,6 +104,20 @@ def test_fences_follow_commonmark() -> None:
     assert fenced_blocks(lines) == [(0, 2), (4, 6)]
 
 
+def test_fence_rules_on_real_corpus_lines() -> None:
+    """Lines from structured-streaming-kafka-integration.md and sql-migration-guide.md (v3.5.0-v4.0.1) that
+    start with triple backticks but are inline code; a naive toggle swapped code and prose after them."""
+    lines = [
+        "```kafka.partitioner.class``` option. If not present, Kafka default partitioner",
+        "    ```SELECT col FROM (SELECT a + b AS col FROM t1) t2```",
+        "## Deploying",
+        "```python",
+        "# Write key-value data from a DataFrame to Kafka using a topic specified in the data",
+        "```",
+    ]
+    assert fenced_blocks(lines) == [(3, 5)]
+
+
 def test_unclosed_fence_raises() -> None:
     with pytest.raises(ValueError, match="unclosed code fence"):
         clean("```python\nprint(1)\n")
@@ -105,12 +126,17 @@ def test_unclosed_fence_raises() -> None:
 # --- HTML ---
 
 
-def test_table_becomes_one_line_per_row() -> None:
+def test_table_becomes_a_gfm_table_with_one_line_per_row() -> None:
     table = (
         "<table><thead><tr><th>Property Name</th><th>Default</th></tr></thead>"
         "<tr><td><code>spark.app.name</code></td><td>(none)</td></tr></table>"
     )
-    assert clean(table) == "Property Name | Default\n`spark.app.name` | (none)"
+    assert clean(table) == "Property Name | Default\n--- | ---\n`spark.app.name` | (none)"
+
+
+def test_table_without_a_header_row_gets_no_delimiter() -> None:
+    table = "<table><tr><th>Feature</th><td>yes</td></tr><tr><th>Other</th><td>no</td></tr></table>"
+    assert clean(table) == "Feature | yes\nOther | no"
 
 
 def test_code_block_in_a_table_cell_is_lifted_out_of_the_row() -> None:

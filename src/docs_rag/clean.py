@@ -2,14 +2,16 @@
 
 The order matters and is fixed (D-008):
 1. split off the YAML front matter; the title comes from `displayTitle` (else `title`);
-2. Liquid, from an explicit table: `highlight` blocks become fenced code, `include_example` becomes a one-line
-   pointer, generated includes and control flow are dropped, `raw` markers are dropped with their content
-   kept, `comment` blocks are dropped. An unknown Liquid tag raises: guessing would put junk in chunk text;
+2. Liquid, from an explicit table: `highlight` blocks become fenced code, `include_example` becomes a short
+   pointer (`[example: <file name>]`), generated includes and control flow are dropped, `raw` markers are
+   dropped with their content kept, `comment` blocks are dropped. An unknown Liquid tag raises: guessing would
+   put junk in chunk text;
 3. hidden `<div class="d-none">` blocks are dropped with their content (they only hold markup for viewers);
 4. code (fenced blocks, `<pre>`/`<xmp>` blocks, inline code spans) is masked, so nothing below touches it.
    Code is full of angle brackets that are not HTML (`Dataset<Row>`, XML config, `<driver-node>`);
-5. outside code: HTML tables become one ` | `-joined line per row, language tabs get a `<lang>:` label line,
-   only an allowlist of real HTML tag names is stripped (text kept), then entities are unescaped;
+5. outside code: HTML tables become GFM tables (one ` | `-joined line per row, a `--- | ---` delimiter after a
+   header row), language tabs get a `<lang>:` label line, only an allowlist of real HTML tag names is
+   stripped (text kept), then entities are unescaped;
 6. Markdown links keep their text, images and reference-link definitions go, kramdown `{:...}` lines and the
    table-of-contents bullet before `{:toc}` go, HTML comments go;
 7. code is restored and whitespace normalised;
@@ -26,6 +28,10 @@ page produce different text in every tag and change its chunk IDs (M3, M5).
 import html
 import re
 from dataclasses import dataclass
+
+# Bump when cleaned text changes for the same input; tests/test_clean_golden.py enforces it. Chunk offsets
+# (char_start/char_end) point into the cleaned text, so this version names their coordinate system.
+CLEANER_VERSION = "1"
 
 # --- 1. front matter -----------------------------------------------------------------------------------
 
@@ -49,6 +55,17 @@ def split_front_matter(text: str) -> tuple[dict[str, str], str]:
 
 _LIQUID = re.compile(r"\{%-?\s*(\w+)([^%]*?)-?%\}")
 _DROP_TAGS = {"include_api_gen", "include_relative", "for", "endfor", "if", "elsif", "else", "endif", "break"}
+
+
+def _example_pointer(args: str) -> str:
+    """`{% include_example [label] path %}` -> `[example: <file name>]` or `[example: <file name>, <label>]`.
+
+    The code itself lives under examples/ in the source archive, which bronze does not load (D-008)."""
+    parts = args.split()
+    if not parts:
+        return ""
+    name = parts[-1].rsplit("/", 1)[-1]
+    return f"[example: {name}, {parts[0]}]" if len(parts) > 1 else f"[example: {name}]"
 
 
 def _liquid(text: str) -> str:
@@ -77,7 +94,7 @@ def _liquid(text: str) -> str:
         elif name == "endhighlight":
             out.append("```")
         elif name == "include_example":
-            out.append(f"[example code: {args.split()[-1]}]" if args else "")
+            out.append(_example_pointer(args))
         elif name in _DROP_TAGS:
             pass
         else:
@@ -178,9 +195,11 @@ def _inline_html(fragment: str) -> str:
 
 
 def _table(m: re.Match[str]) -> str:
-    """One line per row; a code block inside a cell is lifted out onto its own lines after the row."""
+    """A GFM table: one ` | `-joined line per row and, when the first row is all `<th>` cells, a delimiter
+    row after it, so the chunker can repeat the header on every row it cuts out (D-009). A code block inside
+    a cell is lifted out onto its own lines after the row."""
     rows = []
-    for row in _ROW.findall(m.group(1)):
+    for n, row in enumerate(_ROW.findall(m.group(1))):
         cells, blocks = [], []
         for cell in _CELL.findall(row):
             blocks += re.findall(r"\x01\d+\x01", cell)
@@ -189,6 +208,8 @@ def _table(m: re.Match[str]) -> str:
             cells.pop()
         if cells:
             rows.append(" | ".join(cells))
+            if n == 0 and re.search(r"<th\b", row, re.I) and not re.search(r"<td\b", row, re.I):
+                rows.append(" | ".join("---" for _ in cells))
         rows += [f"\n{b}\n" for b in blocks]
     return "\n\n" + "\n".join(rows) + "\n\n"
 

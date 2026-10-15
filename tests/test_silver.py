@@ -118,7 +118,16 @@ def test_tampered_stored_rows_are_caught() -> None:
 
 def test_rows_from_another_config_are_caught() -> None:
     problems = stored_violations(stored(records()), ChunkConfig(max_tokens=64, overlap_tokens=0))
-    assert problems and all("another chunker version or config" in p for p in problems)
+    assert problems and all("another cleaner/chunker version or config" in p for p in problems)
+
+
+def test_offsets_that_cannot_fit_the_body_are_caught() -> None:
+    rows = stored(records())
+    bad = [
+        dataclasses.replace(rows[0], char_end=rows[0].char_start),
+        dataclasses.replace(rows[1], char_start=-1),
+    ]
+    assert len([p for p in stored_violations(bad, CONFIG) if "offsets" in p]) == 2
 
 
 def test_snapshot_comparison() -> None:

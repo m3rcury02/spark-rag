@@ -26,6 +26,7 @@ from typing import Any
 from pyspark.sql import SparkSession
 
 from docs_rag.chunk import CHUNKER_VERSION, ChunkConfig
+from docs_rag.clean import CLEANER_VERSION
 from docs_rag.config import Config, validate_tag
 from docs_rag.jobenv import base_parser, check_environment, run_with_summary
 from docs_rag.silver import (
@@ -58,8 +59,9 @@ WHEN NOT MATCHED THEN INSERT *
 """
 
 STORED = """
-SELECT path, commit_sha, doc_content_sha256, chunk_id, occurrence, chunk_index, section_path, body,
-       embed_text, n_tokens, chunker_version, max_tokens, overlap_tokens
+SELECT path, commit_sha, doc_content_sha256, doc_clean_sha256, chunk_id, occurrence, chunk_index,
+       section_path, body, embed_text, n_tokens, char_start, char_end, cleaner_version, chunker_version,
+       max_tokens, overlap_tokens
 FROM IDENTIFIER(:table)
 WHERE config_id = :config_id AND source_repo = :repo AND version_tag = :tag
 """
@@ -102,6 +104,7 @@ def chunk_tag(args: argparse.Namespace, summary: dict[str, Any]) -> None:
     summary["tag"] = tag
     summary["chunk_config"] = {
         "config_id": chunking.config_id,
+        "cleaner_version": CLEANER_VERSION,
         "chunker_version": CHUNKER_VERSION,
         "max_tokens": chunking.max_tokens,
         "overlap_tokens": chunking.overlap_tokens,

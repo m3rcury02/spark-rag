@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 import random
@@ -9,6 +10,7 @@ from pathlib import Path
 import pytest
 
 from docs_rag.chunk import ChunkConfig, chunk_document, chunk_id, chunk_section
+from docs_rag.clean import clean_page
 from docs_rag.tokens import count_tokens
 
 FIXTURE = Path(__file__).parent / "fixtures" / "spark_page.md"
@@ -246,3 +248,55 @@ def test_output_does_not_depend_on_the_hash_seed() -> None:
         for seed in ("0", "1", "12345")
     }
     assert len(outputs) == 1 and len(json.loads(outputs.pop())) > 5
+
+
+# --- tables ---
+
+
+def table(rows: int, long_row: int | None = None) -> str:
+    lines = ["Property Name | Default | Meaning", "--- | --- | ---"]
+    for n in range(rows):
+        meaning = "Sets the number of shuffle partitions. " * (10 if n == long_row else 1)
+        lines.append(f"`spark.option{n}` | {n} | {meaning.strip()}")
+    return "\n".join(lines)
+
+
+def test_a_table_that_fits_stays_whole() -> None:
+    assert bodies(f"# H\n\n{table(2)}\n", ChunkConfig(max_tokens=128)) == [table(2)]
+
+
+def test_a_split_table_gives_one_chunk_per_row_under_the_header() -> None:
+    pieces = bodies(
+        f"# H\n\nIntro text.\n\n{table(6)}\n\nOutro text.\n", ChunkConfig(max_tokens=64, overlap_tokens=8)
+    )
+    rows = [p for p in pieces if p.startswith("Property Name | Default | Meaning\n")]
+    assert [r.split("\n")[1].split(" | ")[0] for r in rows] == [f"`spark.option{n}`" for n in range(6)]
+    assert all(r.count("\n") == 1 for r in rows)  # header + exactly one row: rows are never packed together
+    assert "Intro text." in pieces[0] and "spark.option" not in pieces[0]
+    assert pieces[-1] == "Outro text."  # no overlap out of a row into the prose after the table
+
+
+def test_a_long_row_repeats_the_header_and_its_first_cell() -> None:
+    config = ChunkConfig(max_tokens=64, overlap_tokens=8)
+    pieces = [p for p in bodies(f"# H\n\n{table(4, long_row=2)}\n", config) if "`spark.option2`" in p]
+    assert len(pieces) > 1
+    assert all(p.startswith("Property Name | Default | Meaning\n`spark.option2` | ") for p in pieces)
+
+
+# --- offsets ---
+
+
+@pytest.mark.parametrize("seed", range(30))
+def test_offsets_point_at_each_chunks_verbatim_slice(seed: int) -> None:
+    rng = random.Random(seed)
+    raw = random_doc(rng) + ("\n\n## T\n\n" + table(rng.randint(1, 8), long_row=rng.choice([None, 0])) + "\n")
+    config = ChunkConfig(max_tokens=rng.choice([64, 128, 254]), overlap_tokens=rng.choice([0, 4, 8]))
+    clean_text = clean_page(raw, fallback_title="x").text
+    doc = chunk_document("docs/x.md", raw, config)
+    assert doc.clean_sha256 == hashlib.sha256(clean_text.encode()).hexdigest()
+    for c in doc.chunks:
+        piece = clean_text[c.char_start : c.char_end]
+        assert piece and piece.strip() == piece or piece.startswith(" ")  # code may keep its indentation
+        assert piece in c.body  # the body is the slice, or the slice inside its fences or under its header
+        if not c.body.startswith(("```", "~~~", "Property Name")):
+            assert piece == c.body

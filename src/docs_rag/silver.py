@@ -18,6 +18,7 @@ from dataclasses import dataclass
 from typing import Literal
 
 from docs_rag.chunk import CHUNKER_VERSION, ChunkConfig, DocChunks, breadcrumb, chunk_document, chunk_id
+from docs_rag.clean import CLEANER_VERSION
 from docs_rag.tokens import count_tokens
 
 # Column order here is the table's column order and the field order of SilverRecord (a test enforces both).
@@ -28,6 +29,7 @@ SILVER_COLUMNS: tuple[tuple[str, str], ...] = (
     ("commit_sha", "STRING NOT NULL"),
     ("path", "STRING NOT NULL"),
     ("doc_content_sha256", "STRING NOT NULL"),  # bronze content_sha256 of the doc the chunk came from
+    ("doc_clean_sha256", "STRING NOT NULL"),  # sha256 of the cleaned doc text the offsets point into
     ("chunk_id", "STRING NOT NULL"),
     ("occurrence", "INT NOT NULL"),
     ("chunk_index", "INT NOT NULL"),
@@ -35,6 +37,9 @@ SILVER_COLUMNS: tuple[tuple[str, str], ...] = (
     ("body", "STRING NOT NULL"),
     ("embed_text", "STRING NOT NULL"),
     ("n_tokens", "INT NOT NULL"),
+    ("char_start", "INT NOT NULL"),  # the chunk's verbatim slice of the cleaned doc text
+    ("char_end", "INT NOT NULL"),
+    ("cleaner_version", "STRING NOT NULL"),
     ("chunker_version", "STRING NOT NULL"),
     ("max_tokens", "INT NOT NULL"),
     ("overlap_tokens", "INT NOT NULL"),
@@ -67,6 +72,7 @@ class SilverRecord:
     commit_sha: str
     path: str
     doc_content_sha256: str
+    doc_clean_sha256: str
     chunk_id: str
     occurrence: int
     chunk_index: int
@@ -74,6 +80,9 @@ class SilverRecord:
     body: str
     embed_text: str
     n_tokens: int
+    char_start: int
+    char_end: int
+    cleaner_version: str
     chunker_version: str
     max_tokens: int
     overlap_tokens: int
@@ -131,6 +140,7 @@ def to_records(
             commit_sha=by_path[doc.path].commit_sha,
             path=doc.path,
             doc_content_sha256=by_path[doc.path].content_sha256,
+            doc_clean_sha256=doc.clean_sha256,
             chunk_id=c.chunk_id,
             occurrence=c.occurrence,
             chunk_index=c.chunk_index,
@@ -138,6 +148,9 @@ def to_records(
             body=c.body,
             embed_text=c.embed_text,
             n_tokens=c.n_tokens,
+            char_start=c.char_start,
+            char_end=c.char_end,
+            cleaner_version=CLEANER_VERSION,
             chunker_version=CHUNKER_VERSION,
             max_tokens=config.max_tokens,
             overlap_tokens=config.overlap_tokens,
@@ -184,6 +197,7 @@ class StoredChunk:
     path: str
     commit_sha: str
     doc_content_sha256: str
+    doc_clean_sha256: str
     chunk_id: str
     occurrence: int
     chunk_index: int
@@ -191,6 +205,9 @@ class StoredChunk:
     body: str
     embed_text: str
     n_tokens: int
+    char_start: int
+    char_end: int
+    cleaner_version: str
     chunker_version: str
     max_tokens: int
     overlap_tokens: int
@@ -207,20 +224,32 @@ def stored_violations(rows: Sequence[StoredChunk], config: ChunkConfig) -> list[
             problems.append(f"{where}: embed_text is not breadcrumb + body")
         if count_tokens(r.embed_text) != r.n_tokens or r.n_tokens > config.max_tokens:
             problems.append(f"{where}: n_tokens {r.n_tokens} is wrong or over {config.max_tokens}")
-        if (r.chunker_version, r.max_tokens, r.overlap_tokens) != (
+        if not 0 <= r.char_start < r.char_end or r.char_end - r.char_start > len(r.body):
+            problems.append(f"{where}: offsets {r.char_start}..{r.char_end} do not fit its body")
+        if (r.cleaner_version, r.chunker_version, r.max_tokens, r.overlap_tokens) != (
+            CLEANER_VERSION,
             CHUNKER_VERSION,
             config.max_tokens,
             config.overlap_tokens,
         ):
-            problems.append(f"{where}: stored under another chunker version or config")
+            problems.append(f"{where}: stored under another cleaner/chunker version or config")
     dupes = [k for k, n in Counter(r.chunk_id for r in rows).items() if n > 1]
     if dupes:
         problems.append(f"{len(dupes)} chunk_ids stored more than once, e.g. {dupes[:3]}")
     return _capped(problems)
 
 
-def _identity(path: str, chunk_id: str, chunk_index: int, commit: str, doc_sha: str) -> tuple[str, ...]:
-    return (path, chunk_id, str(chunk_index), commit, doc_sha)
+def _identity(r: "SilverRecord | StoredChunk") -> tuple[object, ...]:
+    return (
+        r.path,
+        r.chunk_id,
+        r.chunk_index,
+        r.char_start,
+        r.char_end,
+        r.commit_sha,
+        r.doc_content_sha256,
+        r.doc_clean_sha256,
+    )
 
 
 @dataclass(frozen=True)
@@ -233,13 +262,9 @@ class StoredCheck:
 
 
 def check_against_stored(records: Sequence[SilverRecord], stored: Sequence[StoredChunk]) -> StoredCheck:
-    """'identical' means the same multiset of (path, chunk_id, chunk_index, commit, doc hash)."""
-    new = Counter(
-        _identity(r.path, r.chunk_id, r.chunk_index, r.commit_sha, r.doc_content_sha256) for r in records
-    )
-    old = Counter(
-        _identity(r.path, r.chunk_id, r.chunk_index, r.commit_sha, r.doc_content_sha256) for r in stored
-    )
+    """'identical' means the same multiset of (path, chunk_id, chunk_index, offsets, commit, doc hashes)."""
+    new = Counter(_identity(r) for r in records)
+    old = Counter(_identity(r) for r in stored)
     if not old:
         status: Literal["new", "identical", "conflict"] = "new"
     else:

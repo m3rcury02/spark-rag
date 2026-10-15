@@ -28,7 +28,10 @@ class Config:
     source_repo: str = "apache/spark"
     docs_dir: str = "docs"
     doc_suffix: str = ".md"
-    chunk: ChunkConfig = ChunkConfig()
+    chunk: ChunkConfig = ChunkConfig()  # what gets embedded and published (M5)
+    # The chunk configs M6 compares (D-009): 254 and 128 tokens, both within MiniLM's 256-token limit, with
+    # the same 12.5% overlap, so the two differ in size only. Silver holds both.
+    chunk_grid: tuple[ChunkConfig, ...] = (ChunkConfig(254, 32), ChunkConfig(128, 16))
     # Docs that legitimately give no chunks: only headings plus generated includes (D-008). Any other doc
     # with no chunks fails the silver run, so a cleaning bug that empties pages cannot pass silently.
     zero_chunk_docs: frozenset[str] = frozenset({"docs/sql-ref-functions-builtin.md"})

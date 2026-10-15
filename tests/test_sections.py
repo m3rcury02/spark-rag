@@ -1,24 +1,30 @@
-from docs_rag.sections import Section, split_sections
+from docs_rag.sections import split_sections
+
+
+def paths_and_bodies(title: str, text: str) -> list[tuple[tuple[str, ...], str]]:
+    sections = split_sections(title, text)
+    for s in sections:  # every body sits at its offset in the page text
+        assert text[s.start : s.start + len(s.body)] == s.body
+    return [(s.path, s.body) for s in sections]
 
 
 def test_heading_paths_follow_the_heading_levels() -> None:
     text = "intro\n# A\na\n## B\nb\n### C\nc\n## D\nd\n# E\ne"
-    assert split_sections("T", text) == [
-        Section(("T",), "intro"),
-        Section(("T", "A"), "a"),
-        Section(("T", "A", "B"), "b"),
-        Section(("T", "A", "B", "C"), "c"),
-        Section(("T", "A", "D"), "d"),
-        Section(("T", "E"), "e"),
+    assert paths_and_bodies("T", text) == [
+        (("T",), "intro"),
+        (("T", "A"), "a"),
+        (("T", "A", "B"), "b"),
+        (("T", "A", "B", "C"), "c"),
+        (("T", "A", "D"), "d"),
+        (("T", "E"), "e"),
     ]
 
 
 def test_a_heading_with_no_body_is_an_empty_section_that_names_its_children() -> None:
-    sections = split_sections("T", "# Parent\n## Child\ntext")
-    assert sections == [
-        Section(("T",), ""),
-        Section(("T", "Parent"), ""),
-        Section(("T", "Parent", "Child"), "text"),
+    assert paths_and_bodies("T", "# Parent\n## Child\n\n  text  \n") == [
+        (("T",), ""),
+        (("T", "Parent"), ""),
+        (("T", "Parent", "Child"), "text"),
     ]
 
 
@@ -37,7 +43,7 @@ def test_heading_text_is_cleaned() -> None:
 
 
 def test_skipped_levels_still_nest() -> None:
-    assert split_sections("T", "# A\n### C\nc\n## B\nb")[-2:] == [
-        Section(("T", "A", "C"), "c"),
-        Section(("T", "A", "B"), "b"),
+    assert paths_and_bodies("T", "# A\n### C\nc\n## B\nb")[-2:] == [
+        (("T", "A", "C"), "c"),
+        (("T", "A", "B"), "b"),
     ]
