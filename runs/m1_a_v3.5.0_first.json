@@ -1,0 +1,110 @@
+{
+  "meta": {
+    "label": "m1_a_v3.5.0_first",
+    "git_commit": "2474cafb4aa8d7fa23bd7c79d966a64f69d2321a",
+    "script": "jobs/bronze_ingest.py",
+    "job_args": [
+      "--tag",
+      "v3.5.0"
+    ],
+    "run_id": "0b54055a-1bbe-4c59-bd7d-91d9bb2b3bd0",
+    "environment_version": "4",
+    "wheel": "docs_rag-0.0.1.dev11+g2474cafb4-py3-none-any.whl",
+    "parent_run_id": 875742412390949,
+    "task_run_id": 115994111666343,
+    "result_state": "SUCCESS",
+    "state_message": "",
+    "run_start_utc": "2026-10-15T11:19:33Z",
+    "run_end_utc": "2026-10-15T11:20:47Z",
+    "run_duration_seconds": 74.0
+  },
+  "summary": {
+    "run_id": "0b54055a-1bbe-4c59-bd7d-91d9bb2b3bd0",
+    "tag": "v3.5.0",
+    "started_utc": "2026-10-15T11:20:07Z",
+    "environment": {
+      "python": "3.12.3",
+      "databricks_runtime_version": "client.4.10",
+      "databricks_connect": "17.3.14",
+      "docs_rag": "0.0.1.dev11+g2474cafb4",
+      "machine": "aarch64",
+      "spark": "4.2.0"
+    },
+    "download": {
+      "url": "https://codeload.github.com/apache/spark/tar.gz/refs/tags/v3.5.0",
+      "bytes": 34565796,
+      "seconds": 4.0
+    },
+    "snapshot": {
+      "commit_sha": "ce5ddad990373636e94071e7cef2f31021add07b",
+      "docs": 244,
+      "nested_docs": 0,
+      "bytes": 2749091,
+      "largest_bytes": 174415,
+      "docs_with_crlf": 0,
+      "docs_with_bom": 0
+    },
+    "check": {
+      "status": "new",
+      "stored": 0,
+      "source": 244
+    },
+    "merge": {
+      "num_affected_rows": 244,
+      "num_updated_rows": 0,
+      "num_deleted_rows": 0,
+      "num_inserted_rows": 244
+    },
+    "table": {
+      "name": "workspace.docs_rag_dev.bronze_docs",
+      "version_before_merge": 0,
+      "version_after_merge": 1,
+      "merge_made_a_commit": true,
+      "commits": [
+        {
+          "version": 1,
+          "operation": "MERGE",
+          "metrics": {
+            "numTargetRowsCopied": "0",
+            "numTargetRowsDeleted": "0",
+            "numTargetBytesRemoved": "0",
+            "numTargetDeletionVectorsAdded": "0",
+            "numTargetRowsMatchedUpdated": "0",
+            "numTargetRowsMatchedDeleted": "0",
+            "numTargetRowsUpdated": "0",
+            "numTargetChangeFilesAdded": "0",
+            "numTargetRowsNotMatchedBySourceDeleted": "0",
+            "rewriteTimeMs": "3134",
+            "numTargetFilesAdded": "1",
+            "numTargetBytesAdded": "679595",
+            "executionTimeMs": "3269",
+            "materializeSourceTimeMs": "31",
+            "numTargetRowsInserted": "244",
+            "numTargetDeletionVectorsUpdated": "0",
+            "scanTimeMs": "0",
+            "numOutputRows": "244",
+            "numTargetDeletionVectorsRemoved": "0",
+            "numTargetRowsNotMatchedBySourceUpdated": "0",
+            "numSourceRows": "244",
+            "numTargetFilesRemoved": "0"
+          }
+        }
+      ]
+    },
+    "tags_after": {
+      "v3.5.0": {
+        "docs": 244,
+        "distinct_paths": 244,
+        "bytes": 2749091,
+        "commits": 1,
+        "commit_sha": "ce5ddad990373636e94071e7cef2f31021add07b",
+        "hash_mismatches": 0,
+        "size_mismatches": 0
+      }
+    },
+    "status": "succeeded",
+    "finished_utc": "2026-10-15T11:20:43Z"
+  },
+  "error": null,
+  "error_trace": null
+}

@@ -6,7 +6,8 @@ Runs as a serverless spark_python_task (see scripts/run_job.py). Steps:
 2. Fetch the tag's source archive and read a complete snapshot of its docs (docs_rag.fetch).
 3. Compare it with what bronze already holds for the tag (docs_rag.bronze.check_against_stored). A tag that
    is already stored must match exactly; any difference stops the run before anything is written (D-006).
-4. Insert-only MERGE on (source_repo, version_tag, path), so re-running a tag inserts nothing.
+4. Insert-only MERGE on (source_repo, version_tag, path). A tag already stored identically skips the MERGE,
+   so a re-run writes no rows, no files and no table version.
 5. Record the MERGE result, the table commit it made (if any) and per-tag invariants, including
    sha2(content) = content_sha256 for every row.
 
@@ -133,10 +134,16 @@ def ingest(args: argparse.Namespace, summary: dict[str, Any]) -> None:
         raise RuntimeError(f"{tag} is already in bronze and differs from the source: {check.describe()}")
 
     version_before = latest_version(spark, table)
-    records = to_records(snap, args.run_id, dt.datetime.now(dt.UTC))
-    incoming = spark.createDataFrame([r.as_row() for r in records], bronze_schema_ddl())
-    incoming.createOrReplaceTempView("bronze_incoming")
-    summary["merge"] = spark.sql(MERGE_BRONZE, args={"table": table}).collect()[0].asDict()
+    if check.status == "identical":
+        # Bronze already holds exactly this snapshot (every path, hash and the commit), so the MERGE would
+        # insert nothing. Skipped because on Databricks a no-op MERGE still writes an empty table version
+        # (runs/m1_b_v3.5.0_rerun.json), and a re-run should leave the table history alone too.
+        summary["merge"] = "skipped: snapshot identical to bronze"
+    else:
+        records = to_records(snap, args.run_id, dt.datetime.now(dt.UTC))
+        incoming = spark.createDataFrame([r.as_row() for r in records], bronze_schema_ddl())
+        incoming.createOrReplaceTempView("bronze_incoming")
+        summary["merge"] = spark.sql(MERGE_BRONZE, args={"table": table}).collect()[0].asDict()
     version_after = latest_version(spark, table)
 
     commits = []
