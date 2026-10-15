@@ -1,0 +1,68 @@
+{
+  "label": "m1_c1_tamper",
+  "git_commit": "77dd68f4f303b544d01fe38d03e1cc7a38a8cf02",
+  "statements": [
+    {
+      "sql": "SELECT path, content_sha256, sha2(content, 256) = content_sha256 AS hash_ok FROM workspace.docs_rag_dev.bronze_docs WHERE source_repo = 'apache/spark' AND version_tag = 'v3.5.0' AND path = 'docs/index.md'",
+      "columns": [
+        "path",
+        "content_sha256",
+        "hash_ok"
+      ],
+      "rows": [
+        [
+          "docs/index.md",
+          "9c91e2ee7a8d36d5b7b4f7f3d1cef448f970ea45e9bd6e5ba542cb0cf57713f6",
+          "true"
+        ]
+      ]
+    },
+    {
+      "sql": "UPDATE workspace.docs_rag_dev.bronze_docs SET content_sha256 = 'tampered-for-m1-test' WHERE source_repo = 'apache/spark' AND version_tag = 'v3.5.0' AND path = 'docs/index.md'",
+      "columns": [
+        "num_affected_rows"
+      ],
+      "rows": [
+        [
+          "1"
+        ]
+      ]
+    },
+    {
+      "sql": "SELECT path, content_sha256, sha2(content, 256) = content_sha256 AS hash_ok FROM workspace.docs_rag_dev.bronze_docs WHERE source_repo = 'apache/spark' AND version_tag = 'v3.5.0' AND path = 'docs/index.md'",
+      "columns": [
+        "path",
+        "content_sha256",
+        "hash_ok"
+      ],
+      "rows": [
+        [
+          "docs/index.md",
+          "tampered-for-m1-test",
+          "false"
+        ]
+      ]
+    },
+    {
+      "sql": "SELECT version, operation FROM (DESCRIBE HISTORY workspace.docs_rag_dev.bronze_docs) ORDER BY version DESC LIMIT 3",
+      "columns": [
+        "version",
+        "operation"
+      ],
+      "rows": [
+        [
+          "3",
+          "UPDATE"
+        ],
+        [
+          "2",
+          "MERGE"
+        ],
+        [
+          "1",
+          "MERGE"
+        ]
+      ]
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "meta": {
+    "label": "m1_c2_v3.5.0_after_tamper",
+    "git_commit": "77dd68f4f303b544d01fe38d03e1cc7a38a8cf02",
+    "script": "jobs/bronze_ingest.py",
+    "job_args": [
+      "--tag",
+      "v3.5.0"
+    ],
+    "run_id": "d425afa7-e160-4c15-b2fc-c23ce0e3936b",
+    "environment_version": "4",
+    "wheel": "docs_rag-0.0.1.dev13+g77dd68f4f-py3-none-any.whl",
+    "parent_run_id": 26408095610329,
+    "task_run_id": 679046240131926,
+    "result_state": "FAILED",
+    "state_message": "Task main failed with message: Workload failed, see run output for details.",
+    "run_start_utc": "2026-10-15T11:23:42Z",
+    "run_end_utc": "2026-10-15T11:25:02Z",
+    "run_duration_seconds": 80.0
+  },
+  "summary": {
+    "run_id": "d425afa7-e160-4c15-b2fc-c23ce0e3936b",
+    "tag": "v3.5.0",
+    "started_utc": "2026-10-15T11:24:50Z",
+    "environment": {
+      "python": "3.12.3",
+      "databricks_runtime_version": "client.4.10",
+      "databricks_connect": "17.3.14",
+      "docs_rag": "0.0.1.dev13+g77dd68f4f",
+      "machine": "aarch64",
+      "spark": "4.2.0"
+    },
+    "download": {
+      "url": "https://codeload.github.com/apache/spark/tar.gz/refs/tags/v3.5.0",
+      "bytes": 34565796,
+      "seconds": 4.5
+    },
+    "snapshot": {
+      "commit_sha": "ce5ddad990373636e94071e7cef2f31021add07b",
+      "docs": 244,
+      "nested_docs": 0,
+      "bytes": 2749091,
+      "largest_bytes": 174415,
+      "docs_with_crlf": 0,
+      "docs_with_bom": 0
+    },
+    "check": {
+      "status": "conflict",
+      "stored": 244,
+      "source": 244,
+      "detail": "bronze holds 244 docs for this tag, the source has 244; content changed: docs/index.md"
+    },
+    "status": "failed",
+    "error": "RuntimeError: v3.5.0 is already in bronze and differs from the source: bronze holds 244 docs for this tag, the source has 244; content changed: docs/index.md",
+    "finished_utc": "2026-10-15T11:24:57Z"
+  },
+  "error": "RuntimeError: v3.5.0 is already in bronze and differs from the source: bronze holds 244 docs for this tag, the source has 244; content changed: docs/index.md",
+  "error_trace": "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m\n\u001b[0;31mRuntimeError\u001b[0m                              Traceback (most recent call last)\nFile \u001b[0;32m~/.ipykernel/20548/command--1-2508486807:14\u001b[0m\n\u001b[1;32m     11\u001b[0m \u001b[38;5;28;01mdel\u001b[39;00m sys\n\u001b[1;32m     13\u001b[0m \u001b[38;5;28;01mwith\u001b[39;00m \u001b[38;5;28mopen\u001b[39m(filename, \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mrb\u001b[39m\u001b[38;5;124m\"\u001b[39m) \u001b[38;5;28;01mas\u001b[39;00m f:\n\u001b[0;32m---> 14\u001b[0m   exec(\u001b[38;5;28mcompile\u001b[39m(f\u001b[38;5;241m.\u001b[39mread(), filename, \u001b[38;5;124m'\u001b[39m\u001b[38;5;124mexec\u001b[39m\u001b[38;5;124m'\u001b[39m))\n\nFile \u001b[0;32m/tmp/tmpmmuvedu3.py:197\u001b[0m\n\u001b[1;32m    193\u001b[0m         \u001b[38;5;28mprint\u001b[39m(json\u001b[38;5;241m.\u001b[39mdumps(summary, indent\u001b[38;5;241m=\u001b[39m\u001b[38;5;241m2\u001b[39m, default\u001b[38;5;241m=\u001b[39m\u001b[38;5;28mstr\u001b[39m))\n\u001b[1;32m    196\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m \u001b[38;5;18m__name__\u001b[39m \u001b[38;5;241m==\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m__main__\u001b[39m\u001b[38;5;124m\"\u001b[39m:\n\u001b[0;32m--> 197\u001b[0m     main()\n\nFile \u001b[0;32m/tmp/tmpmmuvedu3.py:182\u001b[0m, in \u001b[0;36mmain\u001b[0;34m()\u001b[0m\n\u001b[1;32m    180\u001b[0m summary: \u001b[38;5;28mdict\u001b[39m[\u001b[38;5;28mstr\u001b[39m, Any] \u001b[38;5;241m=\u001b[39m {\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mrun_id\u001b[39m\u001b[38;5;124m\"\u001b[39m: args\u001b[38;5;241m.\u001b[39mrun_id, \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mtag\u001b[39m\u001b[38;5;124m\"\u001b[39m: args\u001b[38;5;241m.\u001b[39mtag, \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstarted_utc\u001b[39m\u001b[38;5;124m\"\u001b[39m: utc_now()}\n\u001b[1;32m    181\u001b[0m \u001b[38;5;28;01mtry\u001b[39;00m:\n\u001b[0;32m--> 182\u001b[0m     ingest(args, summary)\n\u001b[1;32m    183\u001b[0m     summary[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstatus\u001b[39m\u001b[38;5;124m\"\u001b[39m] \u001b[38;5;241m=\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124msucceeded\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m    184\u001b[0m \u001b[38;5;28;01mexcept\u001b[39;00m \u001b[38;5;167;01mException\u001b[39;00m \u001b[38;5;28;01mas\u001b[39;00m e:\n\nFile \u001b[0;32m/tmp/tmpmmuvedu3.py:134\u001b[0m, in \u001b[0;36mingest\u001b[0;34m(args, summary)\u001b[0m\n\u001b[1;32m    132\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m check\u001b[38;5;241m.\u001b[39mstatus \u001b[38;5;241m==\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mconflict\u001b[39m\u001b[38;5;124m\"\u001b[39m:\n\u001b[1;32m    133\u001b[0m     summary[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mcheck\u001b[39m\u001b[38;5;124m\"\u001b[39m][\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mdetail\u001b[39m\u001b[38;5;124m\"\u001b[39m] \u001b[38;5;241m=\u001b[39m check\u001b[38;5;241m.\u001b[39mdescribe()\n\u001b[0;32m--> 134\u001b[0m     \u001b[38;5;28;01mraise\u001b[39;00m \u001b[38;5;167;01mRuntimeError\u001b[39;00m(\u001b[38;5;124mf\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;132;01m{\u001b[39;00mtag\u001b[38;5;132;01m}\u001b[39;00m\u001b[38;5;124m is already in bronze and differs from the source: \u001b[39m\u001b[38;5;132;01m{\u001b[39;00mcheck\u001b[38;5;241m.\u001b[39mdescribe()\u001b[38;5;132;01m}\u001b[39;00m\u001b[38;5;124m\"\u001b[39m)\n\u001b[1;32m    136\u001b[0m version_before \u001b[38;5;241m=\u001b[39m latest_version(spark, table)\n\u001b[1;32m    137\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m check\u001b[38;5;241m.\u001b[39mstatus \u001b[38;5;241m==\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124midentical\u001b[39m\u001b[38;5;124m\"\u001b[39m:\n\u001b[1;32m    138\u001b[0m     \u001b[38;5;66;03m# Bronze already holds exactly this snapshot (every path, hash and the commit), so the MERGE would\u001b[39;00m\n\u001b[1;32m    139\u001b[0m     \u001b[38;5;66;03m# insert nothing. Skipped because on Databricks a no-op MERGE still writes an empty table version\u001b[39;00m\n\u001b[1;32m    140\u001b[0m     \u001b[38;5;66;03m# (runs/m1_b_v3.5.0_rerun.json), and a re-run should leave the table history alone too.\u001b[39;00m\n\n\u001b[0;31mRuntimeError\u001b[0m: v3.5.0 is already in bronze and differs from the source: bronze holds 244 docs for this tag, the source has 244; content changed: docs/index.md"
+}

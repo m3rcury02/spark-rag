@@ -1,0 +1,249 @@
+{
+  "label": "m1_f_bronze_vs_git",
+  "git_commit": "77dd68f4f303b544d01fe38d03e1cc7a38a8cf02",
+  "all_pass": true,
+  "checks": [
+    {
+      "tag": "v3.5.0",
+      "check": "docs",
+      "git": 244,
+      "bronze": 244,
+      "pass": true
+    },
+    {
+      "tag": "v3.5.0",
+      "check": "bytes",
+      "git": 2749091,
+      "bronze": 2749091,
+      "pass": true
+    },
+    {
+      "tag": "v3.5.0",
+      "check": "commit_sha",
+      "git": "ce5ddad990373636e94071e7cef2f31021add07b",
+      "bronze": "ce5ddad990373636e94071e7cef2f31021add07b",
+      "pass": true
+    },
+    {
+      "tag": "v3.5.0",
+      "check": "distinct commits",
+      "git": 1,
+      "bronze": 1,
+      "pass": true
+    },
+    {
+      "tag": "v3.5.0",
+      "check": "sha2(content) <> content_sha256",
+      "git": 0,
+      "bronze": 0,
+      "pass": true
+    },
+    {
+      "tag": "v3.5.0",
+      "check": "octet_length(content) <> size_bytes",
+      "git": 0,
+      "bronze": 0,
+      "pass": true
+    },
+    {
+      "tag": "v4.0.0",
+      "check": "docs",
+      "git": 212,
+      "bronze": 212,
+      "pass": true
+    },
+    {
+      "tag": "v4.0.0",
+      "check": "bytes",
+      "git": 2767372,
+      "bronze": 2767372,
+      "pass": true
+    },
+    {
+      "tag": "v4.0.0",
+      "check": "commit_sha",
+      "git": "fa33ea000a0bda9e5a3fa1af98e8e85b8cc5e4d4",
+      "bronze": "fa33ea000a0bda9e5a3fa1af98e8e85b8cc5e4d4",
+      "pass": true
+    },
+    {
+      "tag": "v4.0.0",
+      "check": "distinct commits",
+      "git": 1,
+      "bronze": 1,
+      "pass": true
+    },
+    {
+      "tag": "v4.0.0",
+      "check": "sha2(content) <> content_sha256",
+      "git": 0,
+      "bronze": 0,
+      "pass": true
+    },
+    {
+      "tag": "v4.0.0",
+      "check": "octet_length(content) <> size_bytes",
+      "git": 0,
+      "bronze": 0,
+      "pass": true
+    },
+    {
+      "tag": "v4.0.1",
+      "check": "docs",
+      "git": 213,
+      "bronze": 213,
+      "pass": true
+    },
+    {
+      "tag": "v4.0.1",
+      "check": "bytes",
+      "git": 2777551,
+      "bronze": 2777551,
+      "pass": true
+    },
+    {
+      "tag": "v4.0.1",
+      "check": "commit_sha",
+      "git": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+      "bronze": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+      "pass": true
+    },
+    {
+      "tag": "v4.0.1",
+      "check": "distinct commits",
+      "git": 1,
+      "bronze": 1,
+      "pass": true
+    },
+    {
+      "tag": "v4.0.1",
+      "check": "sha2(content) <> content_sha256",
+      "git": 0,
+      "bronze": 0,
+      "pass": true
+    },
+    {
+      "tag": "v4.0.1",
+      "check": "octet_length(content) <> size_bytes",
+      "git": 0,
+      "bronze": 0,
+      "pass": true
+    },
+    {
+      "tag": "v3.5.0->v4.0.0",
+      "check": "added",
+      "git": 19,
+      "bronze": 19,
+      "pass": true
+    },
+    {
+      "tag": "v3.5.0->v4.0.0",
+      "check": "modified",
+      "git": 96,
+      "bronze": 96,
+      "pass": true
+    },
+    {
+      "tag": "v3.5.0->v4.0.0",
+      "check": "deleted",
+      "git": 51,
+      "bronze": 51,
+      "pass": true
+    },
+    {
+      "tag": "v4.0.0->v4.0.1",
+      "check": "added",
+      "git": 1,
+      "bronze": 1,
+      "pass": true
+    },
+    {
+      "tag": "v4.0.0->v4.0.1",
+      "check": "modified",
+      "git": 4,
+      "bronze": 4,
+      "pass": true
+    },
+    {
+      "tag": "v4.0.0->v4.0.1",
+      "check": "deleted",
+      "git": 0,
+      "bronze": 0,
+      "pass": true
+    }
+  ],
+  "git_oracle": {
+    "tags": {
+      "v3.5.0": {
+        "commit_sha": "ce5ddad990373636e94071e7cef2f31021add07b",
+        "docs": 244,
+        "bytes": 2749091
+      },
+      "v4.0.0": {
+        "commit_sha": "fa33ea000a0bda9e5a3fa1af98e8e85b8cc5e4d4",
+        "docs": 212,
+        "bytes": 2767372
+      },
+      "v4.0.1": {
+        "commit_sha": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+        "docs": 213,
+        "bytes": 2777551
+      }
+    },
+    "diffs": {
+      "v3.5.0->v4.0.0": {
+        "added": 19,
+        "modified": 96,
+        "deleted": 51
+      },
+      "v4.0.0->v4.0.1": {
+        "added": 1,
+        "modified": 4,
+        "deleted": 0
+      }
+    }
+  },
+  "bronze": {
+    "tags": {
+      "v4.0.0": {
+        "version_tag": "v4.0.0",
+        "docs": "212",
+        "bytes": "2767372",
+        "commits": "1",
+        "commit_sha": "fa33ea000a0bda9e5a3fa1af98e8e85b8cc5e4d4",
+        "hash_mismatches": "0",
+        "size_mismatches": "0"
+      },
+      "v3.5.0": {
+        "version_tag": "v3.5.0",
+        "docs": "244",
+        "bytes": "2749091",
+        "commits": "1",
+        "commit_sha": "ce5ddad990373636e94071e7cef2f31021add07b",
+        "hash_mismatches": "0",
+        "size_mismatches": "0"
+      },
+      "v4.0.1": {
+        "version_tag": "v4.0.1",
+        "docs": "213",
+        "bytes": "2777551",
+        "commits": "1",
+        "commit_sha": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+        "hash_mismatches": "0",
+        "size_mismatches": "0"
+      }
+    },
+    "diffs": {
+      "v3.5.0->v4.0.0": {
+        "added": "19",
+        "modified": "96",
+        "deleted": "51"
+      },
+      "v4.0.0->v4.0.1": {
+        "added": "1",
+        "modified": "4",
+        "deleted": "0"
+      }
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "meta": {
+    "label": "m1_c4_v3.5.0_after_restore",
+    "git_commit": "77dd68f4f303b544d01fe38d03e1cc7a38a8cf02",
+    "script": "jobs/bronze_ingest.py",
+    "job_args": [
+      "--tag",
+      "v3.5.0"
+    ],
+    "run_id": "b187dfac-b091-4a0e-8c25-ef9bfd79293d",
+    "environment_version": "4",
+    "wheel": "docs_rag-0.0.1.dev13+g77dd68f4f-py3-none-any.whl",
+    "parent_run_id": 1051134446475725,
+    "task_run_id": 18606685716010,
+    "result_state": "SUCCESS",
+    "state_message": "",
+    "run_start_utc": "2026-10-15T11:25:34Z",
+    "run_end_utc": "2026-10-15T11:26:13Z",
+    "run_duration_seconds": 39.4
+  },
+  "summary": {
+    "run_id": "b187dfac-b091-4a0e-8c25-ef9bfd79293d",
+    "tag": "v3.5.0",
+    "started_utc": "2026-10-15T11:26:02Z",
+    "environment": {
+      "python": "3.12.3",
+      "databricks_runtime_version": "client.4.10",
+      "databricks_connect": "17.3.14",
+      "docs_rag": "0.0.1.dev13+g77dd68f4f",
+      "machine": "aarch64",
+      "spark": "4.2.0"
+    },
+    "download": {
+      "url": "https://codeload.github.com/apache/spark/tar.gz/refs/tags/v3.5.0",
+      "bytes": 34565796,
+      "seconds": 0.5
+    },
+    "snapshot": {
+      "commit_sha": "ce5ddad990373636e94071e7cef2f31021add07b",
+      "docs": 244,
+      "nested_docs": 0,
+      "bytes": 2749091,
+      "largest_bytes": 174415,
+      "docs_with_crlf": 0,
+      "docs_with_bom": 0
+    },
+    "check": {
+      "status": "identical",
+      "stored": 244,
+      "source": 244
+    },
+    "merge": "skipped: snapshot identical to bronze",
+    "table": {
+      "name": "workspace.docs_rag_dev.bronze_docs",
+      "version_before_merge": 4,
+      "version_after_merge": 4,
+      "merge_made_a_commit": false,
+      "commits": []
+    },
+    "tags_after": {
+      "v3.5.0": {
+        "docs": 244,
+        "distinct_paths": 244,
+        "bytes": 2749091,
+        "commits": 1,
+        "commit_sha": "ce5ddad990373636e94071e7cef2f31021add07b",
+        "hash_mismatches": 0,
+        "size_mismatches": 0
+      }
+    },
+    "status": "succeeded",
+    "finished_utc": "2026-10-15T11:26:10Z"
+  },
+  "error": null,
+  "error_trace": null
+}

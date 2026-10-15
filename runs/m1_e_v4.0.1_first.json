@@ -1,0 +1,128 @@
+{
+  "meta": {
+    "label": "m1_e_v4.0.1_first",
+    "git_commit": "77dd68f4f303b544d01fe38d03e1cc7a38a8cf02",
+    "script": "jobs/bronze_ingest.py",
+    "job_args": [
+      "--tag",
+      "v4.0.1"
+    ],
+    "run_id": "dabe709f-198c-484f-b254-b58b9d138683",
+    "environment_version": "4",
+    "wheel": "docs_rag-0.0.1.dev13+g77dd68f4f-py3-none-any.whl",
+    "parent_run_id": 845736426579903,
+    "task_run_id": 217674418727136,
+    "result_state": "SUCCESS",
+    "state_message": "",
+    "run_start_utc": "2026-10-15T11:27:37Z",
+    "run_end_utc": "2026-10-15T11:28:22Z",
+    "run_duration_seconds": 45.5
+  },
+  "summary": {
+    "run_id": "dabe709f-198c-484f-b254-b58b9d138683",
+    "tag": "v4.0.1",
+    "started_utc": "2026-10-15T11:28:03Z",
+    "environment": {
+      "python": "3.12.3",
+      "databricks_runtime_version": "client.4.10",
+      "databricks_connect": "17.3.14",
+      "docs_rag": "0.0.1.dev13+g77dd68f4f",
+      "machine": "aarch64",
+      "spark": "4.2.0"
+    },
+    "download": {
+      "url": "https://codeload.github.com/apache/spark/tar.gz/refs/tags/v4.0.1",
+      "bytes": 48625707,
+      "seconds": 4.9
+    },
+    "snapshot": {
+      "commit_sha": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+      "docs": 213,
+      "nested_docs": 9,
+      "bytes": 2777551,
+      "largest_bytes": 164079,
+      "docs_with_crlf": 0,
+      "docs_with_bom": 0
+    },
+    "check": {
+      "status": "new",
+      "stored": 0,
+      "source": 213
+    },
+    "merge": {
+      "num_affected_rows": 213,
+      "num_updated_rows": 0,
+      "num_deleted_rows": 0,
+      "num_inserted_rows": 213
+    },
+    "table": {
+      "name": "workspace.docs_rag_dev.bronze_docs",
+      "version_before_merge": 5,
+      "version_after_merge": 6,
+      "merge_made_a_commit": true,
+      "commits": [
+        {
+          "version": 6,
+          "operation": "MERGE",
+          "metrics": {
+            "numTargetRowsCopied": "0",
+            "numTargetRowsDeleted": "0",
+            "numTargetBytesRemoved": "0",
+            "numTargetDeletionVectorsAdded": "0",
+            "numTargetRowsMatchedUpdated": "0",
+            "numTargetRowsMatchedDeleted": "0",
+            "numTargetRowsUpdated": "0",
+            "numTargetChangeFilesAdded": "0",
+            "numTargetRowsNotMatchedBySourceDeleted": "0",
+            "rewriteTimeMs": "1697",
+            "numTargetFilesAdded": "1",
+            "numTargetBytesAdded": "690263",
+            "executionTimeMs": "1742",
+            "materializeSourceTimeMs": "11",
+            "numTargetRowsInserted": "213",
+            "numTargetDeletionVectorsUpdated": "0",
+            "scanTimeMs": "0",
+            "numOutputRows": "213",
+            "numTargetDeletionVectorsRemoved": "0",
+            "numTargetRowsNotMatchedBySourceUpdated": "0",
+            "numSourceRows": "213",
+            "numTargetFilesRemoved": "0"
+          }
+        }
+      ]
+    },
+    "tags_after": {
+      "v3.5.0": {
+        "docs": 244,
+        "distinct_paths": 244,
+        "bytes": 2749091,
+        "commits": 1,
+        "commit_sha": "ce5ddad990373636e94071e7cef2f31021add07b",
+        "hash_mismatches": 0,
+        "size_mismatches": 0
+      },
+      "v4.0.0": {
+        "docs": 212,
+        "distinct_paths": 212,
+        "bytes": 2767372,
+        "commits": 1,
+        "commit_sha": "fa33ea000a0bda9e5a3fa1af98e8e85b8cc5e4d4",
+        "hash_mismatches": 0,
+        "size_mismatches": 0
+      },
+      "v4.0.1": {
+        "docs": 213,
+        "distinct_paths": 213,
+        "bytes": 2777551,
+        "commits": 1,
+        "commit_sha": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+        "hash_mismatches": 0,
+        "size_mismatches": 0
+      }
+    },
+    "status": "succeeded",
+    "finished_utc": "2026-10-15T11:28:18Z"
+  },
+  "error": null,
+  "error_trace": null
+}
