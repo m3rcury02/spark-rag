@@ -1,0 +1,97 @@
+{
+  "meta": {
+    "label": "m2_a_bronze_v4.0.1_rerun_after_refactor",
+    "git_commit": "32c4f6a3915f92672feaa3df89ceedf96d9edd7b",
+    "script": "jobs/bronze_ingest.py",
+    "job_args": [
+      "--tag",
+      "v4.0.1"
+    ],
+    "target": "workspace.docs_rag_dev",
+    "run_id": "3424dd70-27b3-45bf-8f7a-2e7a2f8e334a",
+    "environment_version": "4",
+    "wheel": "docs_rag-0.0.1.dev26+g32c4f6a39-py3-none-any.whl",
+    "parent_run_id": 1120582472283878,
+    "task_run_id": 16399716760217,
+    "result_state": "SUCCESS",
+    "state_message": "",
+    "run_start_utc": "2026-10-15T21:25:18Z",
+    "run_end_utc": "2026-10-15T21:26:50Z",
+    "run_duration_seconds": 91.5
+  },
+  "summary": {
+    "run_id": "3424dd70-27b3-45bf-8f7a-2e7a2f8e334a",
+    "started_utc": "2026-10-15T21:26:19Z",
+    "tag": "v4.0.1",
+    "environment": {
+      "python": "3.12.3",
+      "databricks_runtime_version": "client.4.10",
+      "databricks_connect": "17.3.14",
+      "docs_rag": "0.0.1.dev26+g32c4f6a39",
+      "tokenizers": "0.23.3",
+      "machine": "aarch64",
+      "spark": "4.2.0"
+    },
+    "download": {
+      "url": "https://codeload.github.com/apache/spark/tar.gz/refs/tags/v4.0.1",
+      "bytes": 48625707,
+      "seconds": 4.6
+    },
+    "snapshot": {
+      "commit_sha": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+      "docs": 213,
+      "nested_docs": 9,
+      "bytes": 2777551,
+      "largest_bytes": 164079,
+      "docs_with_crlf": 0,
+      "docs_with_bom": 0
+    },
+    "check": {
+      "status": "identical",
+      "stored": 213,
+      "source": 213
+    },
+    "merge": "skipped: snapshot identical to bronze",
+    "table": {
+      "name": "workspace.docs_rag_dev.bronze_docs",
+      "version_before_merge": 10,
+      "version_after_merge": 10,
+      "merge_made_a_commit": false,
+      "commits": []
+    },
+    "tags_after": {
+      "v3.5.0": {
+        "docs": 244,
+        "distinct_paths": 244,
+        "bytes": 2749091,
+        "commits": 1,
+        "commit_sha": "ce5ddad990373636e94071e7cef2f31021add07b",
+        "hash_mismatches": 0,
+        "size_mismatches": 0
+      },
+      "v4.0.0": {
+        "docs": 212,
+        "distinct_paths": 212,
+        "bytes": 2767372,
+        "commits": 1,
+        "commit_sha": "fa33ea000a0bda9e5a3fa1af98e8e85b8cc5e4d4",
+        "hash_mismatches": 0,
+        "size_mismatches": 0
+      },
+      "v4.0.1": {
+        "docs": 213,
+        "distinct_paths": 213,
+        "bytes": 2777551,
+        "commits": 1,
+        "commit_sha": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+        "hash_mismatches": 0,
+        "size_mismatches": 0
+      }
+    },
+    "invariant_violations": [],
+    "status": "succeeded",
+    "finished_utc": "2026-10-15T21:26:46Z"
+  },
+  "error": null,
+  "error_trace": null
+}
