@@ -1,0 +1,43 @@
+{
+  "checked_utc": "2026-10-15T00:32:48Z",
+  "serving_endpoints": [
+    "databricks-bge-large-en",
+    "databricks-deepseek-v4-flash-0731",
+    "databricks-gemma-3-12b",
+    "databricks-gpt-oss-120b",
+    "databricks-gpt-oss-20b",
+    "databricks-gte-large-en",
+    "databricks-llama-4-maverick",
+    "databricks-meta-llama-3-1-8b-instruct",
+    "databricks-meta-llama-3-3-70b-instruct",
+    "databricks-qwen3-embedding-0-6b",
+    "databricks-qwen3-next-80b-a3b-instruct",
+    "databricks-qwen35-122b-a10b"
+  ],
+  "sql_warehouses": [
+    {
+      "name": "Serverless Starter Warehouse",
+      "size": "2X-Small",
+      "serverless": true
+    }
+  ],
+  "clusters": 0,
+  "ai_search_endpoints": [
+    {
+      "name": "docs_rag_endpoint",
+      "type": "STANDARD"
+    }
+  ],
+  "billing_usage_probe": {
+    "query": "SELECT count(*), min(usage_date), max(usage_date) FROM system.billing.usage",
+    "state": "SUCCEEDED",
+    "result": [
+      [
+        "0",
+        null,
+        null
+      ]
+    ]
+  },
+  "tier_probe_enableIpAccessLists": "NotFound: These keys are not available for your pricing tier: [\"enableIpAccessLists\"]"
+}

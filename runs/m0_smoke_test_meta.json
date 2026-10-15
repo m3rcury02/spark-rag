@@ -1,0 +1,13 @@
+{
+  "notebook": "notebooks/00_workspace_smoke_test.py",
+  "notebook_commit": "d36ee94abd0527e9bbaca21050c665f0b659f751",
+  "submitted_by": "scripts/m0_submit_smoke_test.py (Jobs API runs/submit, one notebook task, no compute or environment spec, so serverless with the workspace default environment)",
+  "parent_run_id": 1057608993563169,
+  "task_run_id": 436774858498146,
+  "result_state": "SUCCESS",
+  "run_start_utc": "2026-10-14T22:53:48Z",
+  "run_end_utc": "2026-10-14T23:18:53Z",
+  "run_duration_seconds": 1505.1,
+  "output_retrieval": "Jobs API runs/export (CODE view); cell outputs parsed from the embedded notebook model by scripts/m0_collect_evidence.py",
+  "redactions": "owner email -> <owner>, workspace host -> <workspace-host>, workspace id -> <workspace-id>, storage paths -> <storage-path>, principal ids in pipeline events -> <principal>"
+}

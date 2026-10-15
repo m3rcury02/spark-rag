@@ -1,0 +1,57 @@
+{
+  "checked_utc": "2026-10-15T00:32:47Z",
+  "method": "AISearchIndex.scan(): pages through every row by primary key, so unlike ANN search it cannot miss a row that is still in the index",
+  "endpoint": {
+    "name": "docs_rag_endpoint",
+    "endpoint_type": "STANDARD",
+    "state": "ONLINE",
+    "num_indexes": 1
+  },
+  "index": {
+    "index_type": "DELTA_SYNC",
+    "pipeline_type": "TRIGGERED",
+    "detailed_state": "ONLINE_NO_PENDING_UPDATE",
+    "ready": true,
+    "indexed_row_count": 4
+  },
+  "rows": [
+    {
+      "_change_type": "NULL_VALUE",
+      "id": "c1",
+      "text": "Spark SQL can run in ANSI mode for stricter type checking.",
+      "embedding_vector": "<vector len=384>"
+    },
+    {
+      "_change_type": "NULL_VALUE",
+      "id": "c2",
+      "text": "Structured Streaming stores progress in a checkpoint location.",
+      "embedding_vector": "<vector len=384>"
+    },
+    {
+      "_change_type": "NULL_VALUE",
+      "id": "c4",
+      "text": "Adaptive Query Execution re-optimizes plans at runtime using shuffle statistics.",
+      "embedding_vector": "<vector len=384>"
+    },
+    {
+      "_change_type": "NULL_VALUE",
+      "id": "c5",
+      "text": "Spark can run on Kubernetes using the native scheduler.",
+      "embedding_vector": "<vector len=384>"
+    }
+  ],
+  "ids": [
+    "c1",
+    "c2",
+    "c4",
+    "c5"
+  ],
+  "expected_ids": [
+    "c1",
+    "c2",
+    "c4",
+    "c5"
+  ],
+  "c3_deleted": true,
+  "c4_updated": true
+}

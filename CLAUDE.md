@@ -29,9 +29,10 @@ Read both before starting any milestone.
 
 - Platform: Databricks Free Edition (serverless only), Unity Catalog, Delta.
   Vector index: Databricks **AI Search** (renamed from Vector Search in 2026) —
-  Delta Sync index with self-managed embeddings. **Status: proposed, pending the
-  workspace smoke test** (`notebooks/00_workspace_smoke_test.py`, see D-001).
-- Python 3.12 (matches serverless environment versions 3–6). Managed with `uv`.
+  Delta Sync index with self-managed embeddings, on the single endpoint `docs_rag_endpoint`.
+  **Status: accepted 2026-10-15** after the workspace smoke test (D-001, evidence in `runs/m0_*`).
+- Python 3.12 (matches serverless environment versions 3–6). Managed with `uv`. A job submitted
+  with no environment spec ran on env 2 / **Python 3.11**, so pin the environment version (D-005).
 - Embeddings: open-source sentence-transformers models, computed by us.
 - Deployment: Databricks Asset Bundles (dev/prod targets). CI: GitHub Actions.
 
@@ -66,21 +67,26 @@ uv sync                      # install deps
 uv run pytest                # unit tests
 uv run ruff check . && uv run ruff format --check .
 uv run mypy src
+
+# M0 smoke test (needs DATABRICKS_HOST / DATABRICKS_TOKEN): submit, then collect evidence into runs/
+uv run --with databricks-sdk==0.152.0 python scripts/m0_submit_smoke_test.py
+uv run --with databricks-sdk==0.152.0 --with databricks-ai-search==0.78 \
+    python scripts/m0_collect_evidence.py --run-id <run id>
 ```
 
 ## Next session: pick up here
 
-1. Confirm Databricks auth works: `DATABRICKS_HOST` is an env var. `DATABRICKS_TOKEN` is either an env var
-   or a network secret that the proxy injects. Check with `databricks current-user me` (install the CLI
-   first) or the Python SDK. Never print the token.
-2. Run `notebooks/00_workspace_smoke_test.py` in the owner's workspace as a one-off serverless run.
-   Import it, submit the run, and fetch the output. Save the summary JSON to `runs/m0_smoke_test.json`.
-3. Using that result, update D-001 to Accepted (or switch to the pgvector fallback) and report to the owner.
-4. Do not start M1 until the owner says so.
+M0 is complete: the smoke test passed and D-001 is Accepted (see `runs/m0_*`). **Wait for the owner to
+say "start M1" before doing any M1 work.** Open items from M0:
+- The owner decides whether to drop the smoke-test index, table and schema (`workspace.docs_rag_smoke`,
+  notebook cell 6). Keep `docs_rag_endpoint`: Free Edition allows only one endpoint.
+- Carry into M5: create the real index only after the full gold backfill, because capacity is fixed at
+  creation. Sync right after each MERGE. Take change counts from our MERGE metrics, not the sync pipeline.
+- Carry into M7: pin the serverless environment version (D-005).
 
 ## Milestones (status)
 
-- [x] M0 — Platform research, scaffold, workspace smoke test (awaiting owner's run)
+- [x] M0 — Platform research, scaffold, workspace smoke test (passed 2026-10-14; D-001 accepted)
 - [ ] M1 — Bronze ingestion: fetch tag → `bronze_docs`, content hash, idempotent MERGE, tests, CI
 - [ ] M2 — Silver: Markdown cleaning + section-aware chunking, stable chunk IDs, tests
 - [ ] M3 — Change detection (doc + chunk level) and run log; v1 → v2 → re-run

@@ -1,0 +1,289 @@
+{
+  "pipeline_id": "2dd2b090-2f24-4491-ba9d-782e2823b703",
+  "note": "AI Search runs each triggered sync as a pipeline update. flow_metrics.num_output_rows is 0 for every update, including the initial 5-row sync, so it does not count rows written to the index.",
+  "updates": [
+    {
+      "update_id": "3e1cff04-ec6f-4bc0-b44a-b25bbd20baa9",
+      "cause": "API_CALL",
+      "state": "COMPLETED",
+      "full_refresh": false,
+      "created_utc": "2026-10-14T23:15:58Z"
+    },
+    {
+      "update_id": "bdfc5489-97ec-4aa0-a77e-a168613725c4",
+      "cause": "API_CALL",
+      "state": "COMPLETED",
+      "full_refresh": false,
+      "created_utc": "2026-10-14T23:17:25Z"
+    }
+  ],
+  "events": [
+    {
+      "timestamp": "2026-10-14T22:58:09.512Z",
+      "update_id": null,
+      "event_type": "user_action",
+      "message": "User <owner> created pipeline.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:15:57.884Z",
+      "update_id": null,
+      "event_type": "user_action",
+      "message": "User <principal> edited pipeline settings.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:15:58.728Z",
+      "update_id": "3e1cff04-ec6f-4bc0-b44a-b25bbd20baa9",
+      "event_type": "user_action",
+      "message": "Principal '<principal>' started an update.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:15:58.746Z",
+      "update_id": "3e1cff04-ec6f-4bc0-b44a-b25bbd20baa9",
+      "event_type": "create_update",
+      "message": "Update 3e1cff started by API_CALL.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:16:00.534Z",
+      "update_id": "3e1cff04-ec6f-4bc0-b44a-b25bbd20baa9",
+      "event_type": "update_progress",
+      "message": "Update 3e1cff is WAITING_FOR_RESOURCES.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:16:07.799Z",
+      "update_id": "3e1cff04-ec6f-4bc0-b44a-b25bbd20baa9",
+      "event_type": "runtime_details",
+      "message": "Resolved runtime environment details for update 3e1cff.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:16:32.525Z",
+      "update_id": "3e1cff04-ec6f-4bc0-b44a-b25bbd20baa9",
+      "event_type": "update_progress",
+      "message": "Update 3e1cff is INITIALIZING.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:16:56.228Z",
+      "update_id": "3e1cff04-ec6f-4bc0-b44a-b25bbd20baa9",
+      "event_type": "update_progress",
+      "message": "Update 3e1cff is SETTING_UP_TABLES.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:16:58.405Z",
+      "update_id": "3e1cff04-ec6f-4bc0-b44a-b25bbd20baa9",
+      "event_type": "flow_definition",
+      "message": "Flow `__online_index_view` defined as APPEND.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:16:58.436Z",
+      "update_id": "3e1cff04-ec6f-4bc0-b44a-b25bbd20baa9",
+      "event_type": "dataset_definition",
+      "message": "Dataset `__online_index_view` defined as VIEW.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:16:58.509Z",
+      "update_id": "3e1cff04-ec6f-4bc0-b44a-b25bbd20baa9",
+      "event_type": "graph_created",
+      "message": "Dataflow graph successfully loaded.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:16:58.516Z",
+      "update_id": "3e1cff04-ec6f-4bc0-b44a-b25bbd20baa9",
+      "event_type": "update_progress",
+      "message": "Update 3e1cff is RUNNING.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:16:58.522Z",
+      "update_id": "3e1cff04-ec6f-4bc0-b44a-b25bbd20baa9",
+      "event_type": "flow_progress",
+      "message": "Flow '__online_index_view' is QUEUED.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:16:58.883Z",
+      "update_id": "3e1cff04-ec6f-4bc0-b44a-b25bbd20baa9",
+      "event_type": "flow_progress",
+      "message": "Flow '__online_index_view' is STARTING.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:17:04.675Z",
+      "update_id": "3e1cff04-ec6f-4bc0-b44a-b25bbd20baa9",
+      "event_type": "flow_progress",
+      "message": "Flow '__online_index_view' is RUNNING.",
+      "flow_metrics": {}
+    },
+    {
+      "timestamp": "2026-10-14T23:17:13.638Z",
+      "update_id": "3e1cff04-ec6f-4bc0-b44a-b25bbd20baa9",
+      "event_type": "flow_progress",
+      "message": "Completed a streaming update of '__online_index_view'.",
+      "flow_metrics": {
+        "num_output_rows": 0,
+        "backlog_bytes": 0,
+        "backlog_files": 0,
+        "source_metrics": [
+          {
+            "source_name": "DeltaSource[<storage-path>]",
+            "backlog_bytes": 0,
+            "backlog_files": 0
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-10-14T23:17:13.695Z",
+      "update_id": "3e1cff04-ec6f-4bc0-b44a-b25bbd20baa9",
+      "event_type": "flow_progress",
+      "message": "Flow '__online_index_view' has COMPLETED.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:17:13.758Z",
+      "update_id": "3e1cff04-ec6f-4bc0-b44a-b25bbd20baa9",
+      "event_type": "update_progress",
+      "message": "Update 3e1cff is COMPLETED.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:17:24.446Z",
+      "update_id": null,
+      "event_type": "user_action",
+      "message": "User <principal> edited pipeline settings.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:17:25.006Z",
+      "update_id": "bdfc5489-97ec-4aa0-a77e-a168613725c4",
+      "event_type": "user_action",
+      "message": "Principal '<principal>' started an update.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:17:25.024Z",
+      "update_id": "bdfc5489-97ec-4aa0-a77e-a168613725c4",
+      "event_type": "create_update",
+      "message": "Update bdfc54 started by API_CALL.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:17:26.073Z",
+      "update_id": "bdfc5489-97ec-4aa0-a77e-a168613725c4",
+      "event_type": "update_progress",
+      "message": "Update bdfc54 is WAITING_FOR_RESOURCES.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:17:34.452Z",
+      "update_id": "bdfc5489-97ec-4aa0-a77e-a168613725c4",
+      "event_type": "runtime_details",
+      "message": "Resolved runtime environment details for update bdfc54.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:18:03.540Z",
+      "update_id": "bdfc5489-97ec-4aa0-a77e-a168613725c4",
+      "event_type": "update_progress",
+      "message": "Update bdfc54 is INITIALIZING.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:18:13.581Z",
+      "update_id": "bdfc5489-97ec-4aa0-a77e-a168613725c4",
+      "event_type": "update_progress",
+      "message": "Update bdfc54 is SETTING_UP_TABLES.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:18:13.857Z",
+      "update_id": "bdfc5489-97ec-4aa0-a77e-a168613725c4",
+      "event_type": "flow_definition",
+      "message": "Flow `__online_index_view` defined as APPEND.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:18:13.900Z",
+      "update_id": "bdfc5489-97ec-4aa0-a77e-a168613725c4",
+      "event_type": "dataset_definition",
+      "message": "Dataset `__online_index_view` defined as VIEW.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:18:13.976Z",
+      "update_id": "bdfc5489-97ec-4aa0-a77e-a168613725c4",
+      "event_type": "graph_created",
+      "message": "Dataflow graph successfully loaded.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:18:13.984Z",
+      "update_id": "bdfc5489-97ec-4aa0-a77e-a168613725c4",
+      "event_type": "update_progress",
+      "message": "Update bdfc54 is RUNNING.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:18:13.989Z",
+      "update_id": "bdfc5489-97ec-4aa0-a77e-a168613725c4",
+      "event_type": "flow_progress",
+      "message": "Flow '__online_index_view' is QUEUED.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:18:14.359Z",
+      "update_id": "bdfc5489-97ec-4aa0-a77e-a168613725c4",
+      "event_type": "flow_progress",
+      "message": "Flow '__online_index_view' is STARTING.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:18:19.202Z",
+      "update_id": "bdfc5489-97ec-4aa0-a77e-a168613725c4",
+      "event_type": "flow_progress",
+      "message": "Flow '__online_index_view' is RUNNING.",
+      "flow_metrics": {}
+    },
+    {
+      "timestamp": "2026-10-14T23:18:30.014Z",
+      "update_id": "bdfc5489-97ec-4aa0-a77e-a168613725c4",
+      "event_type": "flow_progress",
+      "message": "Completed a streaming update of '__online_index_view'.",
+      "flow_metrics": {
+        "num_output_rows": 0,
+        "backlog_bytes": 0,
+        "backlog_files": 0,
+        "source_metrics": [
+          {
+            "source_name": "DeltaSource[<storage-path>]",
+            "backlog_bytes": 0,
+            "backlog_files": 0
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-10-14T23:18:30.074Z",
+      "update_id": "bdfc5489-97ec-4aa0-a77e-a168613725c4",
+      "event_type": "flow_progress",
+      "message": "Flow '__online_index_view' has COMPLETED.",
+      "flow_metrics": null
+    },
+    {
+      "timestamp": "2026-10-14T23:18:30.110Z",
+      "update_id": "bdfc5489-97ec-4aa0-a77e-a168613725c4",
+      "event_type": "update_progress",
+      "message": "Update bdfc54 is COMPLETED.",
+      "flow_metrics": null
+    }
+  ]
+}

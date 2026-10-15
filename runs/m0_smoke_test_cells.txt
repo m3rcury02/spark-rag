@@ -1,0 +1,266 @@
+===== cell 0: %md
+
+===== cell 1: # Record the install start time in /tmp, because restartPython() clears Python state.
+{'torch_preinstalled': False, 'install_started': 1792018439.4033298}
+
+===== cell 2: %pip install --quiet databricks-ai-search==0.78 sentence-transformers==6.1.0
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+google-api-core 2.18.0 requires protobuf!=3.20.0,!=3.20.1,!=4.21.0,!=4.21.1,!=4.21.2,!=4.21.3,!=4.21.4,!=4.21.5,<5.0.0.dev0,>=3.19.5, but you have protobuf 5.29.3 which is incompatible.
+Note: you may need to restart the kernel using %restart_python or dbutils.library.restartPython() to use updated packages.
+
+===== cell 3: dbutils.library.restartPython()  # noqa: F821  (dbutils is injected by Databricks)
+Warning: statements after `dbutils.library.restartPython()` will execute before Python is restarted.
+
+===== cell 4: import json
+{
+  "started_utc": "2026-10-14T22:56:06Z",
+  "install": {
+    "torch_preinstalled": false,
+    "install_plus_restart_seconds": 127.1
+  },
+  "compute": {
+    "python": "3.11.10",
+    "platform": "Linux-6.1.188-233.386.amzn2023.aarch64-aarch64-with-glibc2.35",
+    "cpu_count": 4,
+    "mem_total_gb": 15.3,
+    "databricks_runtime_version": "client.2.5",
+    "spark_version": "4.2.0"
+  }
+}
+
+===== cell 5: %md ## 1. Outbound network
+
+===== cell 6: PROBES = {
+pypi.org                     reachable=True  200
+files.pythonhosted.org       reachable=True  404
+github.com                   reachable=True  200
+api.github.com               reachable=True  200
+codeload.github.com          reachable=True  200
+raw.githubusercontent.com    reachable=True  200
+huggingface.co               reachable=True  200
+download.pytorch.org         reachable=True  200
+
+===== cell 7: %md ## 2. Embedding models on serverless CPU
+
+===== cell 8: PARAGRAPH = (
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+{
+  "sentence-transformers/all-MiniLM-L6-v2": {
+    "load_seconds": 2.4,
+    "dim": 384,
+    "max_seq_length": 256,
+    "text_token_len_sample": 189,
+    "encode_seconds_256_texts": 24.2,
+    "texts_per_second": 10.6
+  },
+  "BAAI/bge-small-en-v1.5": {
+    "load_seconds": 2.2,
+    "dim": 384,
+    "max_seq_length": 512,
+    "text_token_len_sample": 189,
+    "encode_seconds_256_texts": 38.6,
+    "texts_per_second": 6.6
+  }
+}
+
+===== cell 9: %md ## 3. AI Search endpoint (Free Edition allows one)
+
+===== cell 10: from databricks.ai_search.client import AISearchClient
+Endpoint docs_rag_endpoint is ONLINE.
+{
+  "existing": [],
+  "action": "created docs_rag_endpoint (STANDARD)",
+  "wait_online_seconds": 0.1,
+  "type": "STANDARD",
+  "state": "ONLINE"
+}
+
+===== cell 11: %md ## 4. Delta Sync index (self-managed embeddings): create → query → UPDATE + DELETE → sync → veri
+
+===== cell 12: SRC = f"{CATALOG}.{SCHEMA}.smoke_src"
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 0s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 31s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 61s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 92s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 123s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 155s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 186s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 217s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 248s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 279s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 309s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 340s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 370s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 401s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 431s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 462s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 493s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 523s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 554s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 584s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 615s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 645s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 676s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 706s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 737s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 768s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 798s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 828s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 859s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 890s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 920s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 951s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 981s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 1012s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_ENDPOINT. Time: 1043s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_PIPELINE_RESOURCES. Time: 1073s.
+Index workspace.docs_rag_smoke.smoke_idx is in state PROVISIONING_INITIAL_SNAPSHOT. Time: 1104s.
+Index workspace.docs_rag_smoke.smoke_idx is in state ONLINE_TRIGGERED_UPDATE.
+[NOTICE] Using a notebook authentication token. Recommended for development only. For improved performance, please use Service Principal based authentication. To disable this message, pass disable_notice=True.
+[NOTICE] Using a notebook authentication token. Recommended for development only. For improved performance, please use Service Principal based authentication. To disable this message, pass disable_notice=True.
+[NOTICE] Using a notebook authentication token. Recommended for development only. For improved performance, please use Service Principal based authentication. To disable this message, pass disable_notice=True.
+[NOTICE] Using a notebook authentication token. Recommended for development only. For improved performance, please use Service Principal based authentication. To disable this message, pass disable_notice=True.
+[NOTICE] Using a notebook authentication token. Recommended for development only. For improved performance, please use Service Principal based authentication. To disable this message, pass disable_notice=True.
+{
+  "create_to_ready_seconds": 1138.3,
+  "detailed_state": "ONLINE_TRIGGERED_UPDATE",
+  "indexed_row_count_initial": 5,
+  "query_top1_id": "c2",
+  "query_top1_expected": "c2",
+  "sync_to_visible_seconds": 83.0,
+  "ids_after_sync": [
+    "c1",
+    "c2",
+    "c4",
+    "c5"
+  ],
+  "delete_propagated": true,
+  "update_propagated": true,
+  "indexed_row_count_after": 4
+}
+
+===== cell 13: %md ## 5. Summary — copy this JSON back to Claude
+
+===== cell 14: net = REPORT.get("network", {})
+{
+  "started_utc": "2026-10-14T22:56:06Z",
+  "install": {
+    "torch_preinstalled": false,
+    "install_plus_restart_seconds": 127.1,
+    "torch_version": "2.14.1+cu130",
+    "torch_threads": 4
+  },
+  "compute": {
+    "python": "3.11.10",
+    "platform": "Linux-6.1.188-233.386.amzn2023.aarch64-aarch64-with-glibc2.35",
+    "cpu_count": 4,
+    "mem_total_gb": 15.3,
+    "databricks_runtime_version": "client.2.5",
+    "spark_version": "4.2.0"
+  },
+  "network": {
+    "pypi.org": {
+      "dns": "ok",
+      "http_status": 200,
+      "reachable": true,
+      "seconds": 0.03
+    },
+    "files.pythonhosted.org": {
+      "dns": "ok",
+      "http_status": 404,
+      "reachable": true,
+      "seconds": 0.04
+    },
+    "github.com": {
+      "dns": "ok",
+      "http_status": 200,
+      "reachable": true,
+      "seconds": 0.44
+    },
+    "api.github.com": {
+      "dns": "ok",
+      "http_status": 200,
+      "reachable": true,
+      "seconds": 0.16
+    },
+    "codeload.github.com": {
+      "dns": "ok",
+      "http_status": 200,
+      "reachable": true,
+      "seconds": 0.09
+    },
+    "raw.githubusercontent.com": {
+      "dns": "ok",
+      "http_status": 200,
+      "reachable": true,
+      "seconds": 0.12
+    },
+    "huggingface.co": {
+      "dns": "ok",
+      "http_status": 200,
+      "reachable": true,
+      "seconds": 0.04
+    },
+    "download.pytorch.org": {
+      "dns": "ok",
+      "http_status": 200,
+      "reachable": true,
+      "seconds": 0.03
+    }
+  },
+  "embeddings": {
+    "sentence-transformers/all-MiniLM-L6-v2": {
+      "load_seconds": 2.4,
+      "dim": 384,
+      "max_seq_length": 256,
+      "text_token_len_sample": 189,
+      "encode_seconds_256_texts": 24.2,
+      "texts_per_second": 10.6
+    },
+    "BAAI/bge-small-en-v1.5": {
+      "load_seconds": 2.2,
+      "dim": 384,
+      "max_seq_length": 512,
+      "text_token_len_sample": 189,
+      "encode_seconds_256_texts": 38.6,
+      "texts_per_second": 6.6
+    }
+  },
+  "endpoint": {
+    "existing": [],
+    "action": "created docs_rag_endpoint (STANDARD)",
+    "wait_online_seconds": 0.1,
+    "type": "STANDARD",
+    "state": "ONLINE"
+  },
+  "delta_sync": {
+    "create_to_ready_seconds": 1138.3,
+    "detailed_state": "ONLINE_TRIGGERED_UPDATE",
+    "indexed_row_count_initial": 5,
+    "query_top1_id": "c2",
+    "query_top1_expected": "c2",
+    "sync_to_visible_seconds": 83.0,
+    "ids_after_sync": [
+      "c1",
+      "c2",
+      "c4",
+      "c5"
+    ],
+    "delete_propagated": true,
+    "update_propagated": true,
+    "indexed_row_count_after": 4
+  },
+  "verdict": {
+    "packages_importable": true,
+    "github_reachable": true,
+    "huggingface_model_loaded": true,
+    "endpoint_online": true,
+    "delta_sync_delete_propagates": true,
+    "delta_sync_update_propagates": true
+  },
+  "finished_utc": "2026-10-14T23:18:46Z"
+}
+
+===== cell 15: %md ## 6. Cleanup (optional): drops the test index, table and schema. **Keeps the endpoint.**
+
+===== cell 16: # Uncomment to clean up after you have copied the JSON above.
