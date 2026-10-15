@@ -18,6 +18,7 @@ import tempfile
 from typing import Any
 
 from databricks.sdk import WorkspaceClient
+from redact import Redactor
 
 from docs_rag.config import validate_tag
 
@@ -119,7 +120,8 @@ def main() -> None:
         )
 
     oracle = git_oracle(args.tags)
-    bronze = bronze_side(WorkspaceClient(), args.tags)
+    w = WorkspaceClient()
+    bronze = bronze_side(w, args.tags)
     checks = []
     for tag in args.tags:
         g, b = oracle["tags"][tag], bronze["tags"].get(tag, {})
@@ -148,7 +150,7 @@ def main() -> None:
         "git_oracle": oracle,
         "bronze": bronze,
     }
-    (REPO / "runs" / f"{args.label}.json").write_text(json.dumps(out, indent=2) + "\n")
+    (REPO / "runs" / f"{args.label}.json").write_text(Redactor(w).dump(out))
     print(json.dumps({"all_pass": out["all_pass"], "checks": checks}, indent=2))
 
 

@@ -28,6 +28,7 @@ from typing import Any
 from databricks.sdk import WorkspaceClient
 from databricks.sdk.errors import NotFound
 from databricks.sdk.service import catalog, compute, jobs
+from redact import Redactor
 
 REPO = pathlib.Path(__file__).resolve().parents[1]
 CATALOG, SCHEMA, VOLUME = "workspace", "docs_rag_dev", "artifacts"
@@ -117,7 +118,10 @@ def main() -> None:
                 task_key="main",
                 environment_key="default",
                 spark_python_task=jobs.SparkPythonTask(
-                    python_file=f"{folder}/{script.name}", parameters=parameters
+                    # A script in a Volume needs the dbfs: URI form; a bare /Volumes/... path is looked up
+                    # in the workspace file tree: "Cannot read the python file" (runs/m1_a0_*.json).
+                    python_file=f"dbfs:{folder}/{script.name}",
+                    parameters=parameters,
                 ),
             )
         ],
@@ -155,8 +159,9 @@ def main() -> None:
         "error": output.error,
         "error_trace": (output.error_trace or "")[-4000:] or None,
     }
-    (REPO / "runs" / f"{args.label}.json").write_text(json.dumps(result, indent=2, default=str) + "\n")
-    print(json.dumps(result, indent=2, default=str))
+    text = Redactor(w).dump(result)
+    (REPO / "runs" / f"{args.label}.json").write_text(text)
+    print(text)
 
 
 if __name__ == "__main__":

@@ -7,13 +7,13 @@ Statements run in order and stop at the first failure. Refuses to run with uncom
 """
 
 import argparse
-import json
 import pathlib
 import subprocess
 import sys
 from typing import Any
 
 from databricks.sdk import WorkspaceClient
+from redact import Redactor
 
 REPO = pathlib.Path(__file__).resolve().parents[1]
 
@@ -55,8 +55,9 @@ def main() -> None:
         ).stdout.strip(),
         "statements": results,
     }
-    (REPO / "runs" / f"{args.label}.json").write_text(json.dumps(out, indent=2) + "\n")
-    print(json.dumps(out, indent=2))
+    text = Redactor(w).dump(out)
+    (REPO / "runs" / f"{args.label}.json").write_text(text)
+    print(text)
 
 
 if __name__ == "__main__":
