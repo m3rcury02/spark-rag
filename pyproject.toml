@@ -4,7 +4,9 @@ dynamic = ["version"]  # from git (hatch-vcs): every commit builds a distinct wh
 description = "Incremental RAG ingestion pipeline over the Apache Spark docs, with a retrieval eval harness"
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
-dependencies = []
+dependencies = [
+    "tokenizers>=0.23.3,<0.24",  # WordPiece counts in the embedding models' units (docs_rag.tokens)
+]
 
 [dependency-groups]
 dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.11"]
