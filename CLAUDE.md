@@ -85,6 +85,20 @@ uv run --with databricks-sdk==0.152.0 python scripts/run_job.py \
 uv run --with databricks-sdk==0.152.0 python scripts/run_sql.py --label <label> --sql "<statement>"
 uv run --with databricks-sdk==0.152.0 python scripts/m1_verify_bronze.py \
     --label <label> --tags v3.5.0 v4.0.0 v4.0.1
+
+# M2 silver (same credentials): chunk one bronze tag; then compare silver with a local chunking of git.
+uv run --with databricks-sdk==0.152.0 python scripts/run_job.py \
+    --script jobs/silver_chunk.py --label <label> -- --tag v3.5.0
+uv run --with databricks-sdk==0.152.0 python scripts/m2_verify_silver.py \
+    --label <label> --tags v3.5.0 v4.0.0 v4.0.1
+# M2 local evidence (git only; Databricks just for redaction): ID stability, corpus numbers, ablation.
+uv run --with databricks-sdk==0.152.0 python scripts/m2_stability.py --label <label> --tags v3.5.0 v4.0.0 v4.0.1
+# Token counts vs the models' own preprocessing (CPU torch from the PyTorch index; ~1 min).
+uv run --with databricks-sdk==0.152.0 --with sentence-transformers==6.1.0 --with transformers==5.19.0 \
+    --with torch==2.14.1 --index https://download.pytorch.org/whl/cpu --index-strategy unsafe-best-match \
+    python scripts/m2_tokenizer_parity.py --label <label> --tags v3.5.0 v4.0.0 v4.0.1
+# After a deliberate chunker change: bump CHUNKER_VERSION in src/docs_rag/chunk.py, then
+UPDATE_GOLDEN=1 uv run pytest tests/test_chunk_golden.py
 ```
 
 ## Next session: pick up here
