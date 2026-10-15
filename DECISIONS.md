@@ -176,7 +176,7 @@ common case, where 5 of 213 docs change.
 **Consequence.** The table above is a ready-made **test oracle**: the pipeline's doc-level change
 counts must equal these git counts. Renames show up as delete + add because we key by path.
 
-**Reproduced 2026-10-15** (`runs/m1_f_bronze_vs_git.json`, `scripts/m1_verify_bronze.py`): git gives 19/96/51
+**Reproduced 2026-10-15** (`runs/m1_h_bronze_vs_git_files.json`, `scripts/m1_verify_bronze.py`): git gives 19/96/51
 for v3.5.0 → v4.0.0 and 1/4/0 for v4.0.0 → v4.0.1, and the same diff computed from bronze rows alone matches
 both exactly. The table's 244/212/213 file counts match bronze's row counts per tag.
 
@@ -245,8 +245,9 @@ The brief lists DQ checks after embeddings and CI with deployment. Two changes:
   until 2028-08-13, well past this project; 5 and 6 add Databricks Connect 18/19, which we do not need
   ([release notes](https://docs.databricks.com/aws/en/release-notes/serverless/environment-version/), updated
   2026-10-12). **Verified by a run:** Python 3.12.3, `DATABRICKS_RUNTIME_VERSION` `client.4.10`, Databricks
-  Connect 17.3.14 (`runs/m1_a_v3.5.0_first.json` → `environment`). The job fails if any of these differ, so a
-  Python check alone (which envs 3–6 would all pass) is not the only guard.
+  Connect 17.3.14 (`runs/m1_a_v3.5.0_first.json` → `environment`). The job fails unless Python is 3.12, the
+  runtime is `client.4.*` and Databricks Connect is 17.x; exact patch versions are recorded in each run, not
+  enforced. So it does not rely on the Python check alone, which envs 3–6 would all pass.
 - **The package version comes from git** (hatch-vcs), e.g. `0.0.1.dev11+g2474cafb4`. "If you change the
   implementation of a custom Python package used in a job on serverless, you must also update its version
   number so that jobs can pick up the latest implementation" (serverless dependencies page). The job asserts
@@ -273,16 +274,19 @@ re-run must never create duplicates (brief item 1). M3 builds change detection o
 
 **Decision.** Option 1, and each tag's snapshot is **immutable**.
 - Loading a tag that bronze already holds must reproduce it exactly: same paths, same content hashes, same
-  commit. Any difference stops the run before anything is written (`docs_rag.bronze.check_against_stored`),
-  because it means the fetch is broken or the tag moved. Re-ingesting a changed tag is a deliberate manual
-  step: delete that tag's rows, then load it.
+  commit, and every stored row intact (its content still hashes to its stored hash) and stored once. Any
+  difference stops the run before anything is written (`docs_rag.bronze.check_against_stored`), because it
+  means the fetch is broken, the tag moved or bronze was altered.
+- Re-ingesting a changed tag (delete that tag's rows, then load it) is a deliberate manual step, and only for
+  a tag that was never published. Bronze is keyed without the commit, so it holds one snapshot per tag; a
+  published tag that moved is an incident that needs a new decision, not a re-ingest.
 - New tags go in with an insert-only MERGE on `(source_repo, version_tag, path)`. A tag that is already stored
   identically skips the MERGE.
 
 **Why.**
 - "Re-running changes nothing" has an obvious definition (same tag in, nothing written) and an obvious check.
 - M3's change detection becomes a diff of two snapshots by path and hash, and deletes show up as paths missing
-  from the newer tag. That diff already reproduces D-002 from bronze alone (`runs/m1_f_bronze_vs_git.json`).
+  from the newer tag. That diff already reproduces D-002 from bronze alone (`runs/m1_h_bronze_vs_git_files.json`).
 - A design review (2026-10-15) rejected the first draft, which had `WHEN MATCHED ... UPDATE` and a tag-scoped
   `WHEN NOT MATCHED BY SOURCE ... DELETE`. Release tags do not move, so those branches had no legitimate trigger,
   and a silently partial fetch would have turned the delete into data loss. Now a partial fetch fails (D-007)
@@ -300,7 +304,12 @@ re-run must never create duplicates (brief item 1). M3 builds change detection o
 | c3 | Restored the hash from `sha2(content, 256)` (version 4); 244 docs, 0 mismatches | `m1_c3_restore.json` |
 | c4 | v3.5.0 again, with the skip in place: check `identical`, MERGE skipped, **table version 4 → 4** | `m1_c4_*.json` |
 | d, e | v4.0.0 (212 docs, 9 in nested folders) and v4.0.1 (213) inserted in one commit each; earlier tags untouched | `m1_d_*.json`, `m1_e_*.json` |
-| f | 24/24 checks against git: per-tag docs, bytes and commit ids, `sha2(content) = content_sha256` and `octet_length(content) = size_bytes` for every row, and the bronze-only diffs equal D-002 | `m1_f_bronze_vs_git.json` |
+| f | First comparison with git, totals only: per-tag docs, bytes and commit ids, and the bronze-only diffs equal D-002 (15 checks), plus 9 bronze self-checks that the file also labels "git". Superseded by h | `m1_f_bronze_vs_git.json` |
+| g1 | Tamper the case the hash column cannot show: appended a space to the **content** of `docs/index.md` (hash untouched) and inserted a duplicate `docs/quick-start.md` row (versions 7, 8). The c1–c4 code would have called this `identical` | `m1_g1_*.json` |
+| g2 | v3.5.0 again: **failed** with "stored content does not match its stored hash: docs/index.md; stored more than once: docs/quick-start.md"; nothing written (latest version still 8) | `m1_g2_*.json`, `m1_g3_restore.json` |
+| g3 | Restored both; 244 rows, 244 paths, 0 hash and 0 size mismatches (versions 9, 10) | `m1_g3_restore.json` |
+| g4 | v3.5.0 again: `identical`, MERGE skipped, version 10 → 10, invariants checked and none violated | `m1_g4_*.json` |
+| h | **Every file compared with git**: for 669 files over three tags, the git blob id computed from bronze content equals git's, with no missing or extra paths; commit ids and D-002 diffs match (24/24 vs git, 9/9 invariants) | `m1_h_bronze_vs_git_files.json` |
 
 Run (b) is why the job skips the MERGE on an identical snapshot: open-source Delta skips empty commits by
 default, but this engine committed one, and a re-run should leave the table history alone too.
@@ -312,7 +321,15 @@ default, but this engine committed one, and a re-run should leave the table hist
 - Bronze snapshots of a tag that was ever published are never deleted.
 - Columns: `source_repo, version_tag, commit_sha, path, content, content_sha256, size_bytes, ingested_at,
   ingest_run_id`, all NOT NULL. `content_sha256` is SHA-256 of the raw file bytes. Content is decoded as strict
-  UTF-8 with no normalisation, so `sha2(content, 256) = content_sha256` must hold, and every run checks it.
+  UTF-8 with no normalisation, so `sha2(content, 256) = content_sha256` must hold. Every run checks it for every
+  tag, together with one row per path, one commit per tag and `octet_length(content) = size_bytes`, and **fails**
+  if any is violated (run g2 shows the snapshot check catching it first).
+- Immutability is enforced by detection, not by the storage layer: a plain `UPDATE` works (runs c1, g1).
+  `delta.appendOnly` would block it; not adopted in M1 because detect-and-fail covers a single-writer pipeline.
+  It is a cheap hardening to consider for prod in M7.
+- Two concurrent first loads of the same tag can both pass the snapshot check, because check-then-MERGE is not
+  atomic. The later run's post-MERGE invariant check would then fail on the duplicate paths (not tested). M7's
+  jobs should set one concurrent run per job.
 
 ---
 
@@ -329,8 +346,9 @@ Volume.
 **Why.** One request is one atomic snapshot of the tag, with the commit id in the archive's pax header (git
 archive writes it there). (b) has ~245 failure points, and the trees call counts against GitHub's 60/hour
 unauthenticated API limit. (c) adds a moving part for no gain while the job can reach GitHub. Measured: the
-archives are 34.6 MB (v3.5.0) and 48.6 MB (v4.0.0, v4.0.1), downloaded in 4.0–4.9 s; the commit ids read from
-them equal git's (`runs/m1_f_bronze_vs_git.json`).
+archives are 34.6 MB (v3.5.0) and 48.6 MB (v4.0.0, v4.0.1). Downloads took 3.9–4.9 s in 7 of 8 runs and 0.5 s
+once (run c4, a repeat download of v3.5.0, probably served from a cache) (`runs/m1_*` → `download`). The
+commit ids read from the archives equal git's (`runs/m1_h_bronze_vs_git_files.json`).
 
 **Completeness.** A snapshot is all or nothing, because D-006 treats it as the whole tag. `read_snapshot`
 decompresses the whole archive (gzip checks CRC and length), requires the tar end-of-archive marker, one
