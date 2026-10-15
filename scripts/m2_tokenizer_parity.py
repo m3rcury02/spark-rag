@@ -5,7 +5,7 @@
         python scripts/m2_tokenizer_parity.py --label m2_tokenizer_parity --tags v3.5.0 v4.0.0 v4.0.1
 
 Chunks every tag's docs (read from git) with the default chunk config, then passes every distinct embed text
-through each model's own `SentenceTransformer.tokenize`, the call `encode` makes. For every text the number
+through each model's own `SentenceTransformer.preprocess`, the call `encode` makes. For every text the number
 of attended positions must be n_tokens + 2 ([CLS] and [SEP]) and at most the model's max_seq_length: a
 smaller number would mean the model truncates the chunk. Package versions and model revisions are recorded.
 """
@@ -21,6 +21,7 @@ from typing import Any
 
 from databricks.sdk import WorkspaceClient
 from gitdocs import read_tags
+from huggingface_hub import snapshot_download
 from redact import Redactor
 from sentence_transformers import SentenceTransformer
 
@@ -56,13 +57,12 @@ def main() -> None:
         limit = model.max_seq_length
         seen: list[int] = []
         for i in range(0, len(texts), BATCH):
-            features = model.tokenize(texts[i : i + BATCH])
+            features = model.preprocess(texts[i : i + BATCH])  # what encode() calls; documents get no prompt
             seen += [int(x) for x in features["attention_mask"].sum(dim=1)]
         mismatches = [(t, counts[t] + 2, s) for t, s in zip(texts, seen, strict=True) if s != counts[t] + 2]
-        snapshot = pathlib.Path(model.tokenizer.name_or_path)
         models[name] = {
             "max_seq_length": limit,
-            "revision": snapshot.name if snapshot.parent.name == "snapshots" else None,
+            "revision": pathlib.Path(snapshot_download(name, local_files_only=True)).name,
             "texts": len(texts),
             "mismatches": len(mismatches),
             "mismatch_examples": [{"expected": e, "model": s, "text": t[:200]} for t, e, s in mismatches[:5]],
