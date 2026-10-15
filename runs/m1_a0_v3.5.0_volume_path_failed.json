@@ -1,0 +1,25 @@
+{
+  "meta": {
+    "label": "m1_a0_v3.5.0_volume_path_failed",
+    "git_commit": "83937ee1b168e3a9e62dadc26deab3a707360deb",
+    "script": "jobs/bronze_ingest.py",
+    "job_args": [
+      "--tag",
+      "v3.5.0"
+    ],
+    "run_id": "cd35974f-c58b-4991-9a05-272da220598d",
+    "environment_version": "4",
+    "wheel": "docs_rag-0.0.1.dev10+g83937ee1b-py3-none-any.whl",
+    "parent_run_id": 1001220834977404,
+    "task_run_id": 1057959206363090,
+    "result_state": "FAILED",
+    "state_message": "Task main failed with message: Cannot read the python file /Volumes/workspace/docs_rag_dev/artifacts/code/83937ee1b168/bronze_ingest.py. Either it does not exist, or the identity used to run this job, <owner>, lacks the required permissions. Please check driver logs for more details.",
+    "run_start_utc": "2026-10-15T11:17:27Z",
+    "run_end_utc": "2026-10-15T11:17:54Z",
+    "run_duration_seconds": 27.2,
+    "note": "first attempt of run (a): python_file given as a bare /Volumes/... path; redacted after the fact"
+  },
+  "summary": null,
+  "error": "Run failed with error message\n Cannot read the python file /Volumes/workspace/docs_rag_dev/artifacts/code/83937ee1b168/bronze_ingest.py. Either it does not exist, or the identity used to run this job, <owner>, lacks the required permissions. Please check driver logs for more details.",
+  "error_trace": null
+}
