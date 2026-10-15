@@ -176,11 +176,15 @@ common case, where 5 of 213 docs change.
 **Consequence.** The table above is a ready-made **test oracle**: the pipeline's doc-level change
 counts must equal these git counts. Renames show up as delete + add because we key by path.
 
+**Reproduced 2026-10-15** (`runs/m1_f_bronze_vs_git.json`, `scripts/m1_verify_bronze.py`): git gives 19/96/51
+for v3.5.0 → v4.0.0 and 1/4/0 for v4.0.0 → v4.0.1, and the same diff computed from bronze rows alone matches
+both exactly. The table's 244/212/213 file counts match bronze's row counts per tag.
+
 ---
 
 ## D-003 — Where the processing runs
 
-- **Date:** 2026-10-14 · **Status:** Proposed
+- **Date:** 2026-10-14 · **Status:** Accepted 2026-10-15 (implemented in M1)
 
 **Context.** The corpus is small: v4.1.0 has 225 `.md` files totalling 2,853,739 bytes
 (`git ls-tree -r -l`).
@@ -196,18 +200,24 @@ The value Databricks adds here is Delta (MERGE, CDF, time travel), Unity Catalog
 the managed index sync, not parallelism. We will say this plainly in the README rather than pretend
 this is a big-data workload.
 
+**In M1.** `jobs/bronze_ingest.py` reads the archive with the pure `docs_rag` core on the driver; Spark does
+only the Delta reads, the MERGE and the checks. A whole tag load (download a 34.6–48.6 MB archive in 4.0–4.9 s,
+parse, MERGE) ran in 45.5–74.0 s per job, serverless start-up included (`runs/m1_a_*`, `m1_d_*`, `m1_e_*`).
+
 ---
 
 ## D-004 — Milestone order: DQ before gold, CI from M1
 
-- **Date:** 2026-10-14 · **Status:** Proposed
+- **Date:** 2026-10-14 · **Status:** Accepted 2026-10-15 (CI done in M1; the DQ gate lands in M4)
 
 The brief lists DQ checks after embeddings and CI with deployment. Two changes:
 - **DQ runs as a gate between silver and gold (write-audit-publish).** If a check fails after we have
   already written to the index source table, the index ends up half updated. Checks must run on the
   staged change set before any publish.
 - **CI runs the unit tests from M1.** It costs nothing, and every later milestone gets a green or red
-  signal.
+  signal. Done: `.github/workflows/ci.yml` runs `uv sync --locked`, ruff, `mypy --strict` and pytest on every
+  push and pull request (actions/checkout v7.0.1, astral-sh/setup-uv v10.3.0, read-only token). First green
+  run: [38726258303](https://github.com/m3rcury02/spark-rag/actions/runs/38726258303).
 
 ---
 
@@ -229,8 +239,107 @@ The brief lists DQ checks after embeddings and CI with deployment. Two changes:
   job-level environment overrides it
   ([serverless dependencies](https://docs.databricks.com/aws/en/compute/serverless/dependencies), updated
   2026-09-29). So every job (runs/submit payload and bundle YAML) declares an `environments` entry with
-  `environment_version` 3 or later, and each task references it with `environment_key`. The first M1 run
-  asserts `sys.version_info[:2] == (3, 12)` and saves the output under `runs/`.
+  `environment_version` 3 or later, and each task references it with `environment_key`.
+- **Pinned 2026-10-15: environment version 4 for every job** (`scripts/run_job.py`). Versions 3–6 all ship
+  Python 3.12.3, so the choice between them is low-stakes. 4 has been out since 2025-08-13 and is supported
+  until 2028-08-13, well past this project; 5 and 6 add Databricks Connect 18/19, which we do not need
+  ([release notes](https://docs.databricks.com/aws/en/release-notes/serverless/environment-version/), updated
+  2026-10-12). **Verified by a run:** Python 3.12.3, `DATABRICKS_RUNTIME_VERSION` `client.4.10`, Databricks
+  Connect 17.3.14 (`runs/m1_a_v3.5.0_first.json` → `environment`). The job fails if any of these differ, so a
+  Python check alone (which envs 3–6 would all pass) is not the only guard.
+- **The package version comes from git** (hatch-vcs), e.g. `0.0.1.dev11+g2474cafb4`. "If you change the
+  implementation of a custom Python package used in a job on serverless, you must also update its version
+  number so that jobs can pick up the latest implementation" (serverless dependencies page). The job asserts
+  it imported exactly the wheel built for the run; run (c4) imported `0.0.1.dev13+g77dd68f4f` after a code
+  change (`runs/m1_c4_*`).
+- **A job script in a Volume is addressed as `dbfs:/Volumes/...`.** A bare `/Volumes/...` path is looked up
+  in the workspace file tree and failed with "Cannot read the python file" (`runs/m1_a0_*`); the
+  [Python script task docs](https://docs.databricks.com/aws/en/jobs/python-script) (updated 2026-09-11) give
+  the `dbfs:` URI form for scripts in a volume.
+
+---
+
+## D-006 — Bronze: one immutable snapshot per tag
+
+- **Date:** 2026-10-15 · **Status:** Accepted (evidence: `runs/m1_*`)
+
+**Context.** Bronze must hold raw docs with source path, version tag, content hash and ingest time, and a
+re-run must never create duplicates (brief item 1). M3 builds change detection on top of it (D-002 sequence).
+
+**Options.**
+1. One row per `(source_repo, version_tag, path)`: a snapshot per tag, kept side by side.
+2. One row per `path` holding the latest version (SCD1), with history from Delta time travel or CDF.
+3. SCD2 rows with valid-from/valid-to per path.
+
+**Decision.** Option 1, and each tag's snapshot is **immutable**.
+- Loading a tag that bronze already holds must reproduce it exactly: same paths, same content hashes, same
+  commit. Any difference stops the run before anything is written (`docs_rag.bronze.check_against_stored`),
+  because it means the fetch is broken or the tag moved. Re-ingesting a changed tag is a deliberate manual
+  step: delete that tag's rows, then load it.
+- New tags go in with an insert-only MERGE on `(source_repo, version_tag, path)`. A tag that is already stored
+  identically skips the MERGE.
+
+**Why.**
+- "Re-running changes nothing" has an obvious definition (same tag in, nothing written) and an obvious check.
+- M3's change detection becomes a diff of two snapshots by path and hash, and deletes show up as paths missing
+  from the newer tag. That diff already reproduces D-002 from bronze alone (`runs/m1_f_bronze_vs_git.json`).
+- A design review (2026-10-15) rejected the first draft, which had `WHEN MATCHED ... UPDATE` and a tag-scoped
+  `WHEN NOT MATCHED BY SOURCE ... DELETE`. Release tags do not move, so those branches had no legitimate trigger,
+  and a silently partial fetch would have turned the delete into data loss. Now a partial fetch fails (D-007)
+  and a mismatch fails (this check), so neither branch is needed.
+- Storage is trivial: 2.7–2.8 MB of docs per tag.
+
+**Evidence** (each a one-off serverless run of `jobs/bronze_ingest.py` via `scripts/run_job.py`):
+
+| Run | What happened | File |
+|---|---|---|
+| a | v3.5.0 first load: check `new`; MERGE inserted 244 rows in one commit (version 1), 0 rows copied | `m1_a_v3.5.0_first.json` |
+| b | v3.5.0 again: check `identical`; MERGE inserted 0 rows and added or removed 0 files, **but Databricks still wrote an empty table version (2)** | `m1_b_v3.5.0_rerun.json` |
+| c1 | Tamper: overwrote the stored hash of `docs/index.md` (version 3) | `m1_c1_tamper.json` |
+| c2 | v3.5.0 again: **failed** with "content changed: docs/index.md"; nothing written (latest version still 3) | `m1_c2_*.json`, `m1_c3_restore.json` |
+| c3 | Restored the hash from `sha2(content, 256)` (version 4); 244 docs, 0 mismatches | `m1_c3_restore.json` |
+| c4 | v3.5.0 again, with the skip in place: check `identical`, MERGE skipped, **table version 4 → 4** | `m1_c4_*.json` |
+| d, e | v4.0.0 (212 docs, 9 in nested folders) and v4.0.1 (213) inserted in one commit each; earlier tags untouched | `m1_d_*.json`, `m1_e_*.json` |
+| f | 24/24 checks against git: per-tag docs, bytes and commit ids, `sha2(content) = content_sha256` and `octet_length(content) = size_bytes` for every row, and the bronze-only diffs equal D-002 | `m1_f_bronze_vs_git.json` |
+
+Run (b) is why the job skips the MERGE on an identical snapshot: open-source Delta skips empty commits by
+default, but this engine committed one, and a re-run should leave the table history alone too.
+
+**Consequences.**
+- **M3's diff baseline is the last *published* `(version_tag, commit_sha)`**, recorded in `ops_run_log` only
+  after the gold MERGE and the index sync have completed. Never "the latest tag in bronze" and never ordering by
+  `ingested_at`, which is audit-only: bronze can be ahead of what is published when the M4 gate stops a run.
+- Bronze snapshots of a tag that was ever published are never deleted.
+- Columns: `source_repo, version_tag, commit_sha, path, content, content_sha256, size_bytes, ingested_at,
+  ingest_run_id`, all NOT NULL. `content_sha256` is SHA-256 of the raw file bytes. Content is decoded as strict
+  UTF-8 with no normalisation, so `sha2(content, 256) = content_sha256` must hold, and every run checks it.
+
+---
+
+## D-007 — Fetch: one source archive per tag, verified complete
+
+- **Date:** 2026-10-15 · **Status:** Accepted (evidence: `runs/m1_*`)
+
+**Options.** (a) GitHub's codeload tarball of the tag: one request. (b) The git trees API to list files, then one
+raw.githubusercontent.com request per file (~245). (c) Fetch outside Databricks (CI or locally) and upload to a
+Volume.
+
+**Decision.** (a), inside the Databricks job. M0 showed serverless reaches codeload.github.com.
+
+**Why.** One request is one atomic snapshot of the tag, with the commit id in the archive's pax header (git
+archive writes it there). (b) has ~245 failure points, and the trees call counts against GitHub's 60/hour
+unauthenticated API limit. (c) adds a moving part for no gain while the job can reach GitHub. Measured: the
+archives are 34.6 MB (v3.5.0) and 48.6 MB (v4.0.0, v4.0.1), downloaded in 4.0–4.9 s; the commit ids read from
+them equal git's (`runs/m1_f_bronze_vs_git.json`).
+
+**Completeness.** A snapshot is all or nothing, because D-006 treats it as the whole tag. `read_snapshot`
+decompresses the whole archive (gzip checks CRC and length), requires the tar end-of-archive marker, one
+top-level folder, at least one doc and a commit id, and decodes strict UTF-8. Python's streaming tar reader
+(`r|gz`), used in the first draft, stops silently at a truncation; the design review reproduced this, and unit
+tests now cover both truncation kinds and a real `git archive`.
+
+**Filter.** Regular files under `docs/` ending in `.md`, at any depth. 4.x tags have nested folders such as
+`docs/streaming/`, so a top-level-only filter would drop 9 files in v4.0.0 (`runs/m1_d_*` → `nested_docs`).
 
 ---
 

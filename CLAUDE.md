@@ -31,8 +31,9 @@ Read both before starting any milestone.
   Vector index: Databricks **AI Search** (renamed from Vector Search in 2026) —
   Delta Sync index with self-managed embeddings, on the single endpoint `docs_rag_endpoint`.
   **Status: accepted 2026-10-15** after the workspace smoke test (D-001, evidence in `runs/m0_*`).
-- Python 3.12 (matches serverless environment versions 3–6). Managed with `uv`. A job submitted
-  with no environment spec ran on env 2 / **Python 3.11**, so pin the environment version from M1 (D-005).
+- Python 3.12, managed with `uv`. Every Databricks job pins **serverless environment version 4** (Python
+  3.12.3) and asserts it at start-up; with no spec a job got env 2 / Python 3.11 (D-005). The package version
+  comes from git (hatch-vcs), so serverless never runs a cached older wheel.
 - Embeddings: open-source sentence-transformers models, computed by us.
 - Deployment: Databricks Asset Bundles (dev/prod targets). CI: GitHub Actions.
 
@@ -42,7 +43,10 @@ Read both before starting any milestone.
   diff, DQ rules, metrics). It must not import pyspark, so unit tests run in CI
   without a JVM or a workspace.
 - Spark/Databricks code (Delta reads/writes, MERGE, AI Search calls) lives in thin
-  adapter modules and notebooks/jobs that call the core.
+  adapter modules and notebooks/jobs that call the core: `jobs/` holds Databricks job scripts,
+  `scripts/` holds local tooling that runs them (`run_job.py`, `run_sql.py`, verification).
+- Everything written to `runs/` goes through `scripts/redact.py` (the repo is public; Databricks
+  error messages name the owner's email). Run tooling refuses to run on uncommitted code.
 - Type hints on every function; `mypy --strict` on `src/`. `ruff` for lint+format.
 - Frozen dataclasses for records crossing layer boundaries.
 - Tests in `tests/`, pytest, no network. Use small fixture docs, not the live corpus.
@@ -74,21 +78,31 @@ uv run --with databricks-sdk==0.152.0 python scripts/m0_submit_smoke_test.py
 uv run --with databricks-sdk==0.152.0 --with databricks-ai-search==0.78 \
     python scripts/m0_collect_evidence.py --run-id <run id>
 uv run --with databricks-sdk==0.152.0 python scripts/m0_cleanup.py
+
+# M1 bronze (needs the same credentials). Each writes runs/<label>.json.
+uv run --with databricks-sdk==0.152.0 python scripts/run_job.py \
+    --script jobs/bronze_ingest.py --label <label> -- --tag v3.5.0
+uv run --with databricks-sdk==0.152.0 python scripts/run_sql.py --label <label> --sql "<statement>"
+uv run --with databricks-sdk==0.152.0 python scripts/m1_verify_bronze.py \
+    --label <label> --tags v3.5.0 v4.0.0 v4.0.1
 ```
 
 ## Next session: pick up here
 
-M0 is complete: the smoke test passed and D-001 is Accepted (see `runs/m0_*`). **Wait for the owner to
-say "start M1" before doing any M1 work.** Open items from M0:
-- Done 2026-10-15: the owner confirmed Free Edition in the UI. The smoke-test index, table and schema were
-  deleted (`runs/m0_cleanup.json`). Keep `docs_rag_endpoint` (ONLINE, 0 indexes): Free Edition allows only
-  one endpoint.
-- Re-probe `system.billing.usage` more than 24 h after a run (the M0 run ended 2026-10-14T23:19Z) and save
-  the output under `runs/` (D-001 Quota).
-- Carry into M1: pin the serverless environment version (3 or later, Python 3.12) in every job, and
-  verify it with a run. The default was env 2 / Python 3.11, where our package does not install (D-005).
-- Carry into M3: the run log takes add/change/delete counts from our own MERGE metrics. The sync pipeline's
-  row metrics are always 0 (D-001).
+M1 is complete on branch `m1-bronze` (D-006, D-007, evidence in `runs/m1_*`). `workspace.docs_rag_dev.bronze_docs`
+holds v3.5.0 (244 docs), v4.0.0 (212) and v4.0.1 (213). **Wait for the owner to say "start M2" before doing
+any M2 work.** Open items:
+- Owner decides whether to merge `m1-bronze` into `main`.
+- Remote branches `m0-smoke-test` (merged) and `claude/modest-archimedes-mp5zx3` (stale) are still on GitHub:
+  the owner approved deleting them, but the session's permission classifier blocked `git push --delete`.
+  The owner can delete them in the GitHub UI.
+- Re-probe `system.billing.usage` more than 24 h after a run and save the output under `runs/` (D-001 Quota).
+- Keep `docs_rag_endpoint` (ONLINE, 0 indexes): Free Edition allows only one endpoint.
+- Carry into M2: chunk IDs must be stable across tags (content-addressed within heading sections, see Open
+  questions). Silver reads bronze per (version_tag, commit_sha).
+- Carry into M3: the diff baseline is the last *published* (version_tag, commit_sha), never "latest in bronze"
+  (D-006). The run log takes add/change/delete counts from our own MERGE metrics; the sync pipeline's row
+  metrics are always 0 (D-001). On Databricks a no-op MERGE still writes an empty table version (D-006 run b).
 - Carry into M5: create the real index only after the full gold backfill, because capacity is sized from the
   source table at creation and a small start limits growth. Re-test insert, update and delete with the real
   MERGE. Sync right after each MERGE and wait for the update to complete ("ready" is not "synced") (D-001).
@@ -96,7 +110,7 @@ say "start M1" before doing any M1 work.** Open items from M0:
 ## Milestones (status)
 
 - [x] M0 — Platform research, scaffold, workspace smoke test (passed 2026-10-14; D-001 accepted)
-- [ ] M1 — Bronze ingestion: fetch tag → `bronze_docs`, content hash, idempotent MERGE, tests, CI
+- [x] M1 — Bronze ingestion: fetch tag → `bronze_docs`, content hash, idempotent MERGE, tests, CI (2026-10-15; D-006, D-007)
 - [ ] M2 — Silver: Markdown cleaning + section-aware chunking, stable chunk IDs, tests
 - [ ] M3 — Change detection (doc + chunk level) and run log; v1 → v2 → re-run
 - [ ] M4 — DQ checks as a gate between silver and gold
