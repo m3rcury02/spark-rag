@@ -189,7 +189,7 @@ def ingest(args: argparse.Namespace, summary: dict[str, Any]) -> None:
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser()
+    ap = argparse.ArgumentParser(allow_abbrev=False)  # no prefix matching: options are spelled out in full
     ap.add_argument("--tag", required=True)
     ap.add_argument("--catalog", default=Config.catalog)
     ap.add_argument("--schema", default=Config.schema)

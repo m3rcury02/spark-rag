@@ -86,7 +86,9 @@ def main() -> None:
     ap.add_argument("job_args", nargs=argparse.REMAINDER, help="arguments after -- go to the job script")
     args = ap.parse_args()
     job_args = [a for a in args.job_args if a != "--"]
-    if {"--catalog", "--schema"} & set(job_args):
+    # Catch every spelling argparse would accept for these options: "--schema x", "--schema=x" and prefixes.
+    names = {a.split("=", 1)[0] for a in job_args if a.startswith("--")}
+    if any(len(n) > 2 and ("--catalog".startswith(n) or "--schema".startswith(n)) for n in names):
         sys.exit("pass --catalog/--schema to run_job.py itself, so artifacts and the job use the same target")
     config = Config(catalog=args.catalog, schema=args.schema)
     volume_root = config.volume(ARTIFACTS)

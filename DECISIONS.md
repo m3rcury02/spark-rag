@@ -293,7 +293,9 @@ re-run must never create duplicates (brief item 1). M3 builds change detection o
   and a mismatch fails (this check), so neither branch is needed.
 - Storage is trivial: 2.7–2.8 MB of docs per tag.
 
-**Evidence** (each a one-off serverless run of `jobs/bronze_ingest.py` via `scripts/run_job.py`):
+**Evidence.** Runs a, b, c2, c4, d, e, g2 and g4 are one-off serverless runs of `jobs/bronze_ingest.py` via
+`scripts/run_job.py`. c1, c3, g1 and g3 are SQL statements run on the starter warehouse by `scripts/run_sql.py`.
+f and h are `scripts/m1_verify_bronze.py` (git plus a warehouse query).
 
 | Run | What happened | File |
 |---|---|---|
@@ -301,13 +303,13 @@ re-run must never create duplicates (brief item 1). M3 builds change detection o
 | b | v3.5.0 again: check `identical`; MERGE inserted 0 rows and added or removed 0 files, **but Databricks still wrote an empty table version (2)** | `m1_b_v3.5.0_rerun.json` |
 | c1 | Tamper: overwrote the stored hash of `docs/index.md` (version 3) | `m1_c1_tamper.json` |
 | c2 | v3.5.0 again: **failed** with "content changed: docs/index.md"; nothing written (latest version still 3) | `m1_c2_*.json`, `m1_c3_restore.json` |
-| c3 | Restored the hash from `sha2(content, 256)` (version 4); 244 docs, 0 mismatches | `m1_c3_restore.json` |
+| c3 | Restored the hash from `sha2(content, 256)`; 244 docs, 0 mismatches. The restore is version 4 (c4's `version_before_merge`) | `m1_c3_restore.json`, `m1_c4_*.json` |
 | c4 | v3.5.0 again, with the skip in place: check `identical`, MERGE skipped, **table version 4 → 4** | `m1_c4_*.json` |
 | d, e | v4.0.0 (212 docs, 9 in nested folders) and v4.0.1 (213) inserted in one commit each; earlier tags untouched | `m1_d_*.json`, `m1_e_*.json` |
 | f | First comparison with git, totals only: per-tag docs, bytes and commit ids, and the bronze-only diffs equal D-002 (15 checks), plus 9 bronze self-checks that the file also labels "git". Superseded by h | `m1_f_bronze_vs_git.json` |
 | g1 | Tamper the case the hash column cannot show: appended a space to the **content** of `docs/index.md` (hash untouched) and inserted a duplicate `docs/quick-start.md` row (versions 7, 8). The c1–c4 code would have called this `identical` | `m1_g1_*.json` |
 | g2 | v3.5.0 again: **failed** with "stored content does not match its stored hash: docs/index.md; stored more than once: docs/quick-start.md"; nothing written (latest version still 8) | `m1_g2_*.json`, `m1_g3_restore.json` |
-| g3 | Restored both; 244 rows, 244 paths, 0 hash and 0 size mismatches (versions 9, 10) | `m1_g3_restore.json` |
+| g3 | Restored both; 244 rows, 244 paths, 0 hash and 0 size mismatches. The UPDATE and DELETE leave the table at version 10 (g4's `version_before_merge`; 9 is inferred as the UPDATE's commit) | `m1_g3_restore.json`, `m1_g4_*.json` |
 | g4 | v3.5.0 again: `identical`, MERGE skipped, version 10 → 10, invariants checked and none violated | `m1_g4_*.json` |
 | h | **Every file compared with git**: for 669 files over three tags, the git blob id computed from bronze content equals git's, with no missing or extra paths; commit ids and D-002 diffs match (24/24 vs git, 9/9 invariants) | `m1_h_bronze_vs_git_files.json` |
 
