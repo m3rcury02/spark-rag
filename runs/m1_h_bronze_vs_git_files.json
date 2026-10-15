@@ -1,0 +1,2995 @@
+{
+  "label": "m1_h_bronze_vs_git_files",
+  "git_commit": "5fc1e8f4f1a5e8fa3ab87c3759aae612c12673b9",
+  "table": "workspace.docs_rag_dev.bronze_docs",
+  "all_pass": true,
+  "summary": {
+    "checks_vs_git": "24/24",
+    "invariants": "9/9",
+    "files_compared_with_git": 669
+  },
+  "method": "bronze blob id = sha1('blob ' + octet_length(content) + NUL + content), as git does",
+  "checks": [
+    {
+      "scope": "v3.5.0",
+      "kind": "vs git",
+      "check": "docs",
+      "expected": 244,
+      "bronze": 244,
+      "pass": true
+    },
+    {
+      "scope": "v3.5.0",
+      "kind": "vs git",
+      "check": "bytes",
+      "expected": 2749091,
+      "bronze": 2749091,
+      "pass": true
+    },
+    {
+      "scope": "v3.5.0",
+      "kind": "vs git",
+      "check": "commit_sha",
+      "expected": [
+        "ce5ddad990373636e94071e7cef2f31021add07b"
+      ],
+      "bronze": [
+        "ce5ddad990373636e94071e7cef2f31021add07b"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "v3.5.0",
+      "kind": "vs git",
+      "check": "paths in git but not in bronze",
+      "expected": 0,
+      "bronze": 0,
+      "pass": true
+    },
+    {
+      "scope": "v3.5.0",
+      "kind": "vs git",
+      "check": "paths in bronze but not in git",
+      "expected": 0,
+      "bronze": 0,
+      "pass": true
+    },
+    {
+      "scope": "v3.5.0",
+      "kind": "vs git",
+      "check": "paths whose content differs from git's blob",
+      "expected": 0,
+      "bronze": 0,
+      "pass": true
+    },
+    {
+      "scope": "v3.5.0",
+      "kind": "invariant",
+      "check": "paths stored more than once",
+      "expected": 0,
+      "bronze": 0,
+      "pass": true
+    },
+    {
+      "scope": "v3.5.0",
+      "kind": "invariant",
+      "check": "rows where sha2(content) <> content_sha256",
+      "expected": 0,
+      "bronze": 0,
+      "pass": true
+    },
+    {
+      "scope": "v3.5.0",
+      "kind": "invariant",
+      "check": "rows where octet_length <> size_bytes",
+      "expected": 0,
+      "bronze": 0,
+      "pass": true
+    },
+    {
+      "scope": "v4.0.0",
+      "kind": "vs git",
+      "check": "docs",
+      "expected": 212,
+      "bronze": 212,
+      "pass": true
+    },
+    {
+      "scope": "v4.0.0",
+      "kind": "vs git",
+      "check": "bytes",
+      "expected": 2767372,
+      "bronze": 2767372,
+      "pass": true
+    },
+    {
+      "scope": "v4.0.0",
+      "kind": "vs git",
+      "check": "commit_sha",
+      "expected": [
+        "fa33ea000a0bda9e5a3fa1af98e8e85b8cc5e4d4"
+      ],
+      "bronze": [
+        "fa33ea000a0bda9e5a3fa1af98e8e85b8cc5e4d4"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "v4.0.0",
+      "kind": "vs git",
+      "check": "paths in git but not in bronze",
+      "expected": 0,
+      "bronze": 0,
+      "pass": true
+    },
+    {
+      "scope": "v4.0.0",
+      "kind": "vs git",
+      "check": "paths in bronze but not in git",
+      "expected": 0,
+      "bronze": 0,
+      "pass": true
+    },
+    {
+      "scope": "v4.0.0",
+      "kind": "vs git",
+      "check": "paths whose content differs from git's blob",
+      "expected": 0,
+      "bronze": 0,
+      "pass": true
+    },
+    {
+      "scope": "v4.0.0",
+      "kind": "invariant",
+      "check": "paths stored more than once",
+      "expected": 0,
+      "bronze": 0,
+      "pass": true
+    },
+    {
+      "scope": "v4.0.0",
+      "kind": "invariant",
+      "check": "rows where sha2(content) <> content_sha256",
+      "expected": 0,
+      "bronze": 0,
+      "pass": true
+    },
+    {
+      "scope": "v4.0.0",
+      "kind": "invariant",
+      "check": "rows where octet_length <> size_bytes",
+      "expected": 0,
+      "bronze": 0,
+      "pass": true
+    },
+    {
+      "scope": "v4.0.1",
+      "kind": "vs git",
+      "check": "docs",
+      "expected": 213,
+      "bronze": 213,
+      "pass": true
+    },
+    {
+      "scope": "v4.0.1",
+      "kind": "vs git",
+      "check": "bytes",
+      "expected": 2777551,
+      "bronze": 2777551,
+      "pass": true
+    },
+    {
+      "scope": "v4.0.1",
+      "kind": "vs git",
+      "check": "commit_sha",
+      "expected": [
+        "29434ea766b0fc3c3bf6eaadb43a8f931133649e"
+      ],
+      "bronze": [
+        "29434ea766b0fc3c3bf6eaadb43a8f931133649e"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "v4.0.1",
+      "kind": "vs git",
+      "check": "paths in git but not in bronze",
+      "expected": 0,
+      "bronze": 0,
+      "pass": true
+    },
+    {
+      "scope": "v4.0.1",
+      "kind": "vs git",
+      "check": "paths in bronze but not in git",
+      "expected": 0,
+      "bronze": 0,
+      "pass": true
+    },
+    {
+      "scope": "v4.0.1",
+      "kind": "vs git",
+      "check": "paths whose content differs from git's blob",
+      "expected": 0,
+      "bronze": 0,
+      "pass": true
+    },
+    {
+      "scope": "v4.0.1",
+      "kind": "invariant",
+      "check": "paths stored more than once",
+      "expected": 0,
+      "bronze": 0,
+      "pass": true
+    },
+    {
+      "scope": "v4.0.1",
+      "kind": "invariant",
+      "check": "rows where sha2(content) <> content_sha256",
+      "expected": 0,
+      "bronze": 0,
+      "pass": true
+    },
+    {
+      "scope": "v4.0.1",
+      "kind": "invariant",
+      "check": "rows where octet_length <> size_bytes",
+      "expected": 0,
+      "bronze": 0,
+      "pass": true
+    },
+    {
+      "scope": "v3.5.0->v4.0.0",
+      "kind": "vs git",
+      "check": "added (D-002 method)",
+      "expected": 19,
+      "bronze": 19,
+      "pass": true
+    },
+    {
+      "scope": "v3.5.0->v4.0.0",
+      "kind": "vs git",
+      "check": "modified (D-002 method)",
+      "expected": 96,
+      "bronze": 96,
+      "pass": true
+    },
+    {
+      "scope": "v3.5.0->v4.0.0",
+      "kind": "vs git",
+      "check": "deleted (D-002 method)",
+      "expected": 51,
+      "bronze": 51,
+      "pass": true
+    },
+    {
+      "scope": "v4.0.0->v4.0.1",
+      "kind": "vs git",
+      "check": "added (D-002 method)",
+      "expected": 1,
+      "bronze": 1,
+      "pass": true
+    },
+    {
+      "scope": "v4.0.0->v4.0.1",
+      "kind": "vs git",
+      "check": "modified (D-002 method)",
+      "expected": 4,
+      "bronze": 4,
+      "pass": true
+    },
+    {
+      "scope": "v4.0.0->v4.0.1",
+      "kind": "vs git",
+      "check": "deleted (D-002 method)",
+      "expected": 0,
+      "bronze": 0,
+      "pass": true
+    }
+  ],
+  "git": {
+    "v3.5.0": {
+      "commit_sha": "ce5ddad990373636e94071e7cef2f31021add07b",
+      "files": {
+        "docs/404.md": {
+          "blob_id": "4d78234927a1e80e5b28e819b15d87009b130ec5",
+          "size": 996
+        },
+        "docs/README.md": {
+          "blob_id": "87d68c2f86499dccfb6c643e77827c6613c84acd",
+          "size": 6334
+        },
+        "docs/building-spark.md": {
+          "blob_id": "4b8e70655d59cb579889cd824e1cbb25be7e246b",
+          "size": 13977
+        },
+        "docs/cloud-integration.md": {
+          "blob_id": "06342645e6d9d41e9e0476d3db94e8371d949b45",
+          "size": 18714
+        },
+        "docs/cluster-overview.md": {
+          "blob_id": "7da06a852089ef5eb629535fc6d038a291a9b7ef",
+          "size": 7219
+        },
+        "docs/configuration.md": {
+          "blob_id": "dfded480c99d3898b8f6dd6785a0959ee544a0b8",
+          "size": 155272
+        },
+        "docs/core-migration-guide.md": {
+          "blob_id": "3f97a484e1a68f44b62339bba147acf2417d3164",
+          "size": 6961
+        },
+        "docs/graphx-programming-guide.md": {
+          "blob_id": "4791e215f458c997877d6a5a1a7d6371f89670f6",
+          "size": 53514
+        },
+        "docs/hadoop-provided.md": {
+          "blob_id": "6442e947abcd00b8e6ccb45985d79e13e9b27b43",
+          "size": 2803
+        },
+        "docs/hardware-provisioning.md": {
+          "blob_id": "fc87995f9817fec65d7acd0fba5d09891919a85c",
+          "size": 4575
+        },
+        "docs/index.md": {
+          "blob_id": "c673537d2141ead95ebcc01cfd39f89576cf54c1",
+          "size": 9460
+        },
+        "docs/job-scheduling.md": {
+          "blob_id": "0875bd5558e5b420369105d766ced3fe0dee8531",
+          "size": 19541
+        },
+        "docs/migration-guide.md": {
+          "blob_id": "9ca0ada37a2fe0cdaa1f5ef4ff185fd4c90c363b",
+          "size": 1299
+        },
+        "docs/ml-advanced.md": {
+          "blob_id": "0e19bca92d19de085ecb7c56dd70aa282c0c4728",
+          "size": 7101
+        },
+        "docs/ml-ann.md": {
+          "blob_id": "df5127d501ace8a0d6d78ef69556bb955fb9d27d",
+          "size": 1055
+        },
+        "docs/ml-classification-regression.md": {
+          "blob_id": "d184f4fe0257c03f7ce5432eac5a2a595cefeb1d",
+          "size": 56397
+        },
+        "docs/ml-clustering.md": {
+          "blob_id": "00a156b6645cec935d2c9831e582781b3b04ecc9",
+          "size": 10147
+        },
+        "docs/ml-collaborative-filtering.md": {
+          "blob_id": "681c260c76d3b7abd59f1a042711b382fd95cc1a",
+          "size": 9156
+        },
+        "docs/ml-datasource.md": {
+          "blob_id": "ca0f10cfde704c37127e01345555262438c7c5f3",
+          "size": 9593
+        },
+        "docs/ml-decision-tree.md": {
+          "blob_id": "43c1fcafd262f1f36544f02930d24e2db1bab473",
+          "size": 1001
+        },
+        "docs/ml-ensembles.md": {
+          "blob_id": "bab04a6780853d41f60fd245cdf4cb7fc8a50e1c",
+          "size": 1015
+        },
+        "docs/ml-features.md": {
+          "blob_id": "3dbb960dea03e2d663495e2be2486da58ae6bbcb",
+          "size": 85034
+        },
+        "docs/ml-frequent-pattern-mining.md": {
+          "blob_id": "00421b47ee7f2ded16314172147fc8831bf56d70",
+          "size": 7717
+        },
+        "docs/ml-guide.md": {
+          "blob_id": "572f61ef97352584599c7d0325f82cc7278d12a9",
+          "size": 7521
+        },
+        "docs/ml-linalg-guide.md": {
+          "blob_id": "6e91d81f49760e8b4be3830da4d65468491862ba",
+          "size": 5590
+        },
+        "docs/ml-linear-methods.md": {
+          "blob_id": "047a6c79ff625fc904cb3e1e0df139df342f4edd",
+          "size": 986
+        },
+        "docs/ml-migration-guide.md": {
+          "blob_id": "8523151f3576fdbe8b444caf9b970f13fb25c4a6",
+          "size": 31064
+        },
+        "docs/ml-pipeline.md": {
+          "blob_id": "caded30bc54f1c93e754bc6499dd565299d2a8b3",
+          "size": 15497
+        },
+        "docs/ml-statistics.md": {
+          "blob_id": "92e8bbf7858b95bb27ed44cf5b433bbe2416242c",
+          "size": 5349
+        },
+        "docs/ml-survival-regression.md": {
+          "blob_id": "e3bb133482d4f8e5b6fba8698cdd462c5ea0d530",
+          "size": 1016
+        },
+        "docs/ml-tuning.md": {
+          "blob_id": "d95c8fffd717e9959f0222d74de3df09b6f11a95",
+          "size": 8689
+        },
+        "docs/mllib-classification-regression.md": {
+          "blob_id": "10cb85e392029df20a50fe40fa86c599e7220d73",
+          "size": 2569
+        },
+        "docs/mllib-clustering.md": {
+          "blob_id": "b0be1d6227b32f4d05ba7232e04c3f1762040855",
+          "size": 25065
+        },
+        "docs/mllib-collaborative-filtering.md": {
+          "blob_id": "672428157a72151f51a1f4a6843840a7ee7f4aa2",
+          "size": 7055
+        },
+        "docs/mllib-data-types.md": {
+          "blob_id": "e49c5e754755bdbee53a86cf6f3d723c577dedec",
+          "size": 31708
+        },
+        "docs/mllib-decision-tree.md": {
+          "blob_id": "174255c48b699fc49e6908fe936cb31cd8561ebf",
+          "size": 15605
+        },
+        "docs/mllib-dimensionality-reduction.md": {
+          "blob_id": "a3262d21b10efe88f27f52678e1dc942c38aedd7",
+          "size": 6819
+        },
+        "docs/mllib-ensembles.md": {
+          "blob_id": "b1006f2730db5a63713290937ae7f6071c82ff4b",
+          "size": 17040
+        },
+        "docs/mllib-evaluation-metrics.md": {
+          "blob_id": "f82f6a01136b9fec550468e282e6c2e1471e3a82",
+          "size": 25736
+        },
+        "docs/mllib-feature-extraction.md": {
+          "blob_id": "6719cfa2fc4e6c9c050f37f6426f6480b1e1886a",
+          "size": 16423
+        },
+        "docs/mllib-frequent-pattern-mining.md": {
+          "blob_id": "014b971e34f6d60eb094725e685746e43ce8e7b3",
+          "size": 8417
+        },
+        "docs/mllib-guide.md": {
+          "blob_id": "dbb74407d030dd8f291a4069abcf05890e091d36",
+          "size": 3629
+        },
+        "docs/mllib-isotonic-regression.md": {
+          "blob_id": "26ac010b6bb70cbbebba2ceafa876816984151d8",
+          "size": 5352
+        },
+        "docs/mllib-linear-methods.md": {
+          "blob_id": "b535d2de307a9d4fa341984c2f3fe0af557eeae7",
+          "size": 21753
+        },
+        "docs/mllib-naive-bayes.md": {
+          "blob_id": "123beceae62c9ac6ea307175059c63d03912c031",
+          "size": 5106
+        },
+        "docs/mllib-optimization.md": {
+          "blob_id": "f0b0c817ed3f6a1fb0f45d7353af4cc7c48f5a85",
+          "size": 13819
+        },
+        "docs/mllib-pmml-model-export.md": {
+          "blob_id": "e20d7c2fe4e17db09af1f815db7513e3732c008b",
+          "size": 2829
+        },
+        "docs/mllib-statistics.md": {
+          "blob_id": "c616ec7e0b8c12624c90cc0be1cfd2032a8cfbf6",
+          "size": 18465
+        },
+        "docs/monitoring.md": {
+          "blob_id": "ebd8781fd0071c2ca6ac4879472cecaaeeffca2e",
+          "size": 63792
+        },
+        "docs/programming-guide.md": {
+          "blob_id": "986bea3f7165b377a1b1b7df3b39676d767f0c57",
+          "size": 943
+        },
+        "docs/pyspark-migration-guide.md": {
+          "blob_id": "5a1ca9be94d8d18d5d5ffcc310324a070d099931",
+          "size": 1017
+        },
+        "docs/quick-start.md": {
+          "blob_id": "cab541a0351e94dfc2117c08f013df0f8e85dc65",
+          "size": 19300
+        },
+        "docs/rdd-programming-guide.md": {
+          "blob_id": "aee22ad484e60d2c8a9fb425bd5778e6e73005a8",
+          "size": 84059
+        },
+        "docs/running-on-kubernetes.md": {
+          "blob_id": "707a76196f3ab29fc53fe45f7a77415e453e40f1",
+          "size": 95869
+        },
+        "docs/running-on-mesos.md": {
+          "blob_id": "b1a54a089a542c20327bd3bf86886f1c9d2ce132",
+          "size": 39679
+        },
+        "docs/running-on-yarn.md": {
+          "blob_id": "5eec6c490cb1f2074b68b2a8f8bfdff0f2f9a29e",
+          "size": 53467
+        },
+        "docs/security.md": {
+          "blob_id": "3c6fd507fec6d66fd3096039d095498c933daab3",
+          "size": 39595
+        },
+        "docs/spark-connect-overview.md": {
+          "blob_id": "0673763f03bcc32cc48dad6a3856e2eac84af2cd",
+          "size": 16962
+        },
+        "docs/spark-standalone.md": {
+          "blob_id": "3e87edad0aaddbd47889a737c2c5f1d7d79ed043",
+          "size": 31649
+        },
+        "docs/sparkr-migration-guide.md": {
+          "blob_id": "3a937b729a288f24cd971eeb503eb21f99541074",
+          "size": 5730
+        },
+        "docs/sparkr.md": {
+          "blob_id": "8e6a98e40b680cdb6f052cb777838ba950b04b2f",
+          "size": 31561
+        },
+        "docs/sql-data-sources-avro.md": {
+          "blob_id": "b01174b91824599ae304a57b37f635cc7c8dfa35",
+          "size": 22333
+        },
+        "docs/sql-data-sources-binaryFile.md": {
+          "blob_id": "ce34e3d62424f0df0e09d45663a363de755e3d7d",
+          "size": 2394
+        },
+        "docs/sql-data-sources-csv.md": {
+          "blob_id": "31167f5514302c748e46ab4f7a767783f37e4989",
+          "size": 14283
+        },
+        "docs/sql-data-sources-generic-options.md": {
+          "blob_id": "d180f15de27a7abfdfcf4a2980cd50ceacae88d2",
+          "size": 6245
+        },
+        "docs/sql-data-sources-hive-tables.md": {
+          "blob_id": "0de573ec64b8939e19450252d12a4f5f0ae8a90e",
+          "size": 10327
+        },
+        "docs/sql-data-sources-jdbc.md": {
+          "blob_id": "f96776514c672abfe0e3a3276fa8d5fff2c57454",
+          "size": 20980
+        },
+        "docs/sql-data-sources-json.md": {
+          "blob_id": "881a69cb1cea4e67ffe3713d5249e1492ae520bb",
+          "size": 12521
+        },
+        "docs/sql-data-sources-load-save-functions.md": {
+          "blob_id": "9d0a3f9c72b9a2886a2f6c3e34a95e5e66495a92",
+          "size": 13271
+        },
+        "docs/sql-data-sources-orc.md": {
+          "blob_id": "4e492598f595d682721e2116a66b3dcc977bc717",
+          "size": 9649
+        },
+        "docs/sql-data-sources-parquet.md": {
+          "blob_id": "925e47504e5ef34dcb44f268c261b2af545c230e",
+          "size": 28832
+        },
+        "docs/sql-data-sources-protobuf.md": {
+          "blob_id": "f92a8f20b35706ae0a805e37f8d28040d234283c",
+          "size": 14529
+        },
+        "docs/sql-data-sources-text.md": {
+          "blob_id": "bb485d29c396a06f84bfb3045295ee3f4f79a0ce",
+          "size": 3115
+        },
+        "docs/sql-data-sources-troubleshooting.md": {
+          "blob_id": "993d9bf686f36ab1aa8c46f004d4ba85bfe240f0",
+          "size": 1789
+        },
+        "docs/sql-data-sources.md": {
+          "blob_id": "041919b071d4d23283f8fcfed98b490302ebeec4",
+          "size": 4872
+        },
+        "docs/sql-distributed-sql-engine-spark-sql-cli.md": {
+          "blob_id": "a67e009b9ae1034ac38cc3ebd449746bc5a5dd14",
+          "size": 6939
+        },
+        "docs/sql-distributed-sql-engine.md": {
+          "blob_id": "734723f8c623565b010d47ce905576298408c508",
+          "size": 4031
+        },
+        "docs/sql-error-conditions-as-of-join-error-class.md": {
+          "blob_id": "921c720d39ad981a6c37bd0e50f144a27a0cbedd",
+          "size": 1150
+        },
+        "docs/sql-error-conditions-cannot-update-field-error-class.md": {
+          "blob_id": "e5dc68a157de966363ccb88c84e1270602d9d5bf",
+          "size": 1388
+        },
+        "docs/sql-error-conditions-connect-error-class.md": {
+          "blob_id": "b110fb9834378d57ea935bcf8a5a73fa296de9de",
+          "size": 1483
+        },
+        "docs/sql-error-conditions-create-view-column-arity-mismatch-error-class.md": {
+          "blob_id": "29a59f91a99a6959798fb9adbd8157eace156907",
+          "size": 1349
+        },
+        "docs/sql-error-conditions-datatype-mismatch-error-class.md": {
+          "blob_id": "ddc3e0c2b1b0f05a49b2975a704df4b1b32fb40d",
+          "size": 8220
+        },
+        "docs/sql-error-conditions-duplicate-routine-parameter-assignment-error-class.md": {
+          "blob_id": "eb5ca2a0169d100ce3c0a5a9b825ce482fc1ae9d",
+          "size": 1543
+        },
+        "docs/sql-error-conditions-incompatible-data-for-table-error-class.md": {
+          "blob_id": "0dd28e9d55c5038d996d457a7b64626bedeb0990",
+          "size": 1946
+        },
+        "docs/sql-error-conditions-incompatible-data-to-table-error-class.md": {
+          "blob_id": "180a9cb9e49e4464d41040ebd27075c756c32e3f",
+          "size": 1886
+        },
+        "docs/sql-error-conditions-incomplete-type-definition-error-class.md": {
+          "blob_id": "b7ef843f6f9ca70835ac23746bdfb164e3e5c62b",
+          "size": 1523
+        },
+        "docs/sql-error-conditions-inconsistent-behavior-cross-version-error-class.md": {
+          "blob_id": "7a8dfb525fbfaeb07d6d4aa253da640a517bd580",
+          "size": 3011
+        },
+        "docs/sql-error-conditions-insert-column-arity-mismatch-error-class.md": {
+          "blob_id": "47d4108982ff0f76f0de25e12e725d7b21134bf3",
+          "size": 1341
+        },
+        "docs/sql-error-conditions-insufficient-table-property-error-class.md": {
+          "blob_id": "1577cb3b7027b6b3bb166fd3b6d46773d239a4e6",
+          "size": 1127
+        },
+        "docs/sql-error-conditions-invalid-boundary-error-class.md": {
+          "blob_id": "cb6062a70fa8fdf32375b6f8279c50c1d907a5eb",
+          "size": 1224
+        },
+        "docs/sql-error-conditions-invalid-cursor-error-class.md": {
+          "blob_id": "0b6a4ae17aa3214d13fe097b8b59633525314c82",
+          "size": 1365
+        },
+        "docs/sql-error-conditions-invalid-default-value-error-class.md": {
+          "blob_id": "466b5a9274cad357cbcbe9c6c71ff07f59f051b3",
+          "size": 1375
+        },
+        "docs/sql-error-conditions-invalid-format-error-class.md": {
+          "blob_id": "0260e91ffa13b85638da5bc3308726725b56bbbe",
+          "size": 2143
+        },
+        "docs/sql-error-conditions-invalid-handle-error-class.md": {
+          "blob_id": "c4cbb48035ff5ffb7848248657e57e5246347083",
+          "size": 1457
+        },
+        "docs/sql-error-conditions-invalid-inline-table-error-class.md": {
+          "blob_id": "a7f2bc28e9218fafb7762c276152473909a40577",
+          "size": 1538
+        },
+        "docs/sql-error-conditions-invalid-lambda-function-call-error-class.md": {
+          "blob_id": "0bd6a3daa7289a2aa62aec27df1d867c95e098f6",
+          "size": 1480
+        },
+        "docs/sql-error-conditions-invalid-limit-like-expression-error-class.md": {
+          "blob_id": "379d0c6e5a6fa6aecb11f37fe956ed7a0de5ebe3",
+          "size": 1369
+        },
+        "docs/sql-error-conditions-invalid-observed-metrics-error-class.md": {
+          "blob_id": "394e893fd2252f1a8329f67b25f307d50bfd27d0",
+          "size": 1873
+        },
+        "docs/sql-error-conditions-invalid-options-error-class.md": {
+          "blob_id": "4241311cfd235bea056bba30ea83345a2912b032",
+          "size": 1231
+        },
+        "docs/sql-error-conditions-invalid-parameter-value-error-class.md": {
+          "blob_id": "370e6da336293e398fadf958539ffe5bf902a20b",
+          "size": 1765
+        },
+        "docs/sql-error-conditions-invalid-partition-operation-error-class.md": {
+          "blob_id": "b373f0ec1cc0541f19db93b8fff3ef84005b1010",
+          "size": 1195
+        },
+        "docs/sql-error-conditions-invalid-schema-error-class.md": {
+          "blob_id": "676a62fd17245ef9a4e180b561a43417039c1e3b",
+          "size": 1350
+        },
+        "docs/sql-error-conditions-invalid-sql-syntax-error-class.md": {
+          "blob_id": "b1e298f7b908b2886cbdbd8b2218d64b89971085",
+          "size": 3034
+        },
+        "docs/sql-error-conditions-invalid-subquery-expression-error-class.md": {
+          "blob_id": "25c681bf18e57cc4a7d06971780ebdad4e1063dd",
+          "size": 1217
+        },
+        "docs/sql-error-conditions-invalid-time-travel-timestamp-expr-error-class.md": {
+          "blob_id": "4d82743219ac912b7e9015d9faf0f140f08bbb86",
+          "size": 1207
+        },
+        "docs/sql-error-conditions-invalid-write-distribution-error-class.md": {
+          "blob_id": "f81bea4769c275087206d53ba182e8a6e6f782c8",
+          "size": 1409
+        },
+        "docs/sql-error-conditions-malformed-record-in-parsing-error-class.md": {
+          "blob_id": "ab9582dffcd31d9130c35a36cabe34ecf9f2337c",
+          "size": 1353
+        },
+        "docs/sql-error-conditions-missing-attributes-error-class.md": {
+          "blob_id": "82d99315bc7b579092e4f4792ba839ea1518334c",
+          "size": 1284
+        },
+        "docs/sql-error-conditions-not-a-constant-string-error-class.md": {
+          "blob_id": "037382a79f832ee22b28858a9eefd920088f5769",
+          "size": 1450
+        },
+        "docs/sql-error-conditions-not-allowed-in-from-error-class.md": {
+          "blob_id": "99142e9a3c47b8ccdc143f81705c3575d052f286",
+          "size": 1179
+        },
+        "docs/sql-error-conditions-not-null-constraint-violation-error-class.md": {
+          "blob_id": "1243d101ce241f38fa3e1e5bd73f00af9be1f37f",
+          "size": 1310
+        },
+        "docs/sql-error-conditions-not-supported-in-jdbc-catalog-error-class.md": {
+          "blob_id": "1d8ebe508548ab0684e825eab9d2fde0a2d80165",
+          "size": 1178
+        },
+        "docs/sql-error-conditions-sqlstates.md": {
+          "blob_id": "5529c961b3bfb98322785caa4c129edef6acd852",
+          "size": 25165
+        },
+        "docs/sql-error-conditions-unresolved-column-error-class.md": {
+          "blob_id": "bdda298d30189272263dbcf1c49245ffeac4d33d",
+          "size": 1231
+        },
+        "docs/sql-error-conditions-unresolved-field-error-class.md": {
+          "blob_id": "6d05a135f5cf40a8983230b9ac63162a3588dfe3",
+          "size": 1248
+        },
+        "docs/sql-error-conditions-unresolved-map-key-error-class.md": {
+          "blob_id": "1f173cd95f0685377eaac9ae8b5e9aa86c4c3a4c",
+          "size": 1296
+        },
+        "docs/sql-error-conditions-unsupported-add-file-error-class.md": {
+          "blob_id": "6017e8505ddd09b84365d2a53bd91a3869813435",
+          "size": 1224
+        },
+        "docs/sql-error-conditions-unsupported-default-value-error-class.md": {
+          "blob_id": "54597d3bc7ef1b6ef608ec5637ea0da2b9c4ca59",
+          "size": 1148
+        },
+        "docs/sql-error-conditions-unsupported-deserializer-error-class.md": {
+          "blob_id": "0de46f58ab481f5877764d160d2662b19d73f856",
+          "size": 1292
+        },
+        "docs/sql-error-conditions-unsupported-feature-error-class.md": {
+          "blob_id": "7a60dc76fa640d74b1795106c7bd6c411401cf3a",
+          "size": 5458
+        },
+        "docs/sql-error-conditions-unsupported-generator-error-class.md": {
+          "blob_id": "7960c14767d1782a14e23764452745a78b1e308e",
+          "size": 1455
+        },
+        "docs/sql-error-conditions-unsupported-insert-error-class.md": {
+          "blob_id": "abd6145f6c1e578bae768ce16e1ada7a5c899832",
+          "size": 1291
+        },
+        "docs/sql-error-conditions-unsupported-merge-condition-error-class.md": {
+          "blob_id": "a24f0c9db97edc36e353e616104ee5922b1ba42b",
+          "size": 1246
+        },
+        "docs/sql-error-conditions-unsupported-overwrite-error-class.md": {
+          "blob_id": "42fbc071ab426a500ec3aeee6d813707968335ec",
+          "size": 1126
+        },
+        "docs/sql-error-conditions-unsupported-save-mode-error-class.md": {
+          "blob_id": "25bd31527e8d40ac4b901d06aa2c6c99ee662888",
+          "size": 1118
+        },
+        "docs/sql-error-conditions-unsupported-subquery-expression-category-error-class.md": {
+          "blob_id": "f61ea721aa0c43969c7b064fa5f9c02ce035a25d",
+          "size": 2859
+        },
+        "docs/sql-error-conditions-wrong-num-args-error-class.md": {
+          "blob_id": "3f53f1223d038ac2baa2f4dce5bb0a312d11bf07",
+          "size": 1395
+        },
+        "docs/sql-error-conditions.md": {
+          "blob_id": "e7df1aa9a4f9cb916f936be01d30846a34f3978f",
+          "size": 75020
+        },
+        "docs/sql-getting-started.md": {
+          "blob_id": "ed2678fdcd427807112e6f9b322892df3bb360d7",
+          "size": 16449
+        },
+        "docs/sql-migration-guide.md": {
+          "blob_id": "5fc323ec1b0ea0f0ef9b03c46757dccc5f69b6e4",
+          "size": 106263
+        },
+        "docs/sql-performance-tuning.md": {
+          "blob_id": "1467409bb500d97a767478c8c00a674a78b8b2a4",
+          "size": 20041
+        },
+        "docs/sql-programming-guide.md": {
+          "blob_id": "38818e3d254044a50979805c83b5b0470b2652aa",
+          "size": 4212
+        },
+        "docs/sql-pyspark-pandas-with-arrow.md": {
+          "blob_id": "7697588d1a89e4bf6c450190ea915f7c7a852e60",
+          "size": 1070
+        },
+        "docs/sql-ref-ansi-compliance.md": {
+          "blob_id": "66258f7a8cd145b22846155a3d03275e2ae13269",
+          "size": 45335
+        },
+        "docs/sql-ref-datatypes.md": {
+          "blob_id": "25dc00f18a4e9eb98fe643c1edd5396d4f325dc1",
+          "size": 19920
+        },
+        "docs/sql-ref-datetime-pattern.md": {
+          "blob_id": "5e28a18acefa4c5ae6660c5ac36288b8ca1eb655",
+          "size": 9922
+        },
+        "docs/sql-ref-functions-builtin.md": {
+          "blob_id": "c28905c3fdc0d7b98f9d549d4a2e96fbe0a2a125",
+          "size": 5608
+        },
+        "docs/sql-ref-functions-udf-aggregate.md": {
+          "blob_id": "da3182149410b2d46e878a8e7bfc98d48bc2540c",
+          "size": 4486
+        },
+        "docs/sql-ref-functions-udf-hive.md": {
+          "blob_id": "ed05902c09fdb224c849fe428fe0a5d6a9bdecd6",
+          "size": 4404
+        },
+        "docs/sql-ref-functions-udf-scalar.md": {
+          "blob_id": "97f5a89d3fb19953363efd87c612d05aea3131e4",
+          "size": 2146
+        },
+        "docs/sql-ref-functions.md": {
+          "blob_id": "58be9e7e6196383bffde638f3b75315b0eaeec6c",
+          "size": 3497
+        },
+        "docs/sql-ref-identifier-clause.md": {
+          "blob_id": "694731109f822a7779eb3dd81e97f350617b4fc9",
+          "size": 3537
+        },
+        "docs/sql-ref-identifier.md": {
+          "blob_id": "e4d9727c09b7e607aa2bb98d11927dcdd3d820df",
+          "size": 2410
+        },
+        "docs/sql-ref-literals.md": {
+          "blob_id": "44164d94fdca33cf2c69185bd19104c12e511374",
+          "size": 12558
+        },
+        "docs/sql-ref-null-semantics.md": {
+          "blob_id": "9128a1d0c966f87ab9c32a9f1bc4d313827984d0",
+          "size": 19378
+        },
+        "docs/sql-ref-number-pattern.md": {
+          "blob_id": "3d51a2780cd42714fd1e9835f211a6da28c77337",
+          "size": 6385
+        },
+        "docs/sql-ref-syntax-aux-analyze-table.md": {
+          "blob_id": "0e65de17d602dab0a6f831ef8b275ae12c6fd887",
+          "size": 6908
+        },
+        "docs/sql-ref-syntax-aux-cache-cache-table.md": {
+          "blob_id": "9a1e61abbabb2ec4c447259d1cda198115c5e316",
+          "size": 2871
+        },
+        "docs/sql-ref-syntax-aux-cache-clear-cache.md": {
+          "blob_id": "aae4e3960037590ebc577c7b4edbd5289c0128be",
+          "size": 1408
+        },
+        "docs/sql-ref-syntax-aux-cache-refresh-function.md": {
+          "blob_id": "d91fc062eb714d373c1c67afa3d6536d48f5392f",
+          "size": 2204
+        },
+        "docs/sql-ref-syntax-aux-cache-refresh-table.md": {
+          "blob_id": "cc35c0451d5cbb7af8834d006651fb404ad4c446",
+          "size": 2172
+        },
+        "docs/sql-ref-syntax-aux-cache-refresh.md": {
+          "blob_id": "715bdcac3b6f145c3496e2ba5ef6e92f5fe76bb6",
+          "size": 1815
+        },
+        "docs/sql-ref-syntax-aux-cache-uncache-table.md": {
+          "blob_id": "4456378cdee15add002345f9385b6ba54dc4c0e4",
+          "size": 1851
+        },
+        "docs/sql-ref-syntax-aux-cache.md": {
+          "blob_id": "17a13e67e532e86e151e3420d3e6363d13c78500",
+          "size": 1298
+        },
+        "docs/sql-ref-syntax-aux-conf-mgmt-reset.md": {
+          "blob_id": "d91c767b2515454724a6035b4f23f661d186fc88",
+          "size": 2008
+        },
+        "docs/sql-ref-syntax-aux-conf-mgmt-set-timezone.md": {
+          "blob_id": "ada86d8dd3913e54ecbfc8659587decb998dd613",
+          "size": 2496
+        },
+        "docs/sql-ref-syntax-aux-conf-mgmt-set.md": {
+          "blob_id": "f97b7f2a8efedaf746c855ed112b2a8fd739cb5e",
+          "size": 1977
+        },
+        "docs/sql-ref-syntax-aux-conf-mgmt.md": {
+          "blob_id": "3312bcb503500920bc502ef0973260ea55e0e6cb",
+          "size": 1053
+        },
+        "docs/sql-ref-syntax-aux-describe-database.md": {
+          "blob_id": "143fa78b205caf67a858584ef4ca5c844688dcf2",
+          "size": 3976
+        },
+        "docs/sql-ref-syntax-aux-describe-function.md": {
+          "blob_id": "a871fb5bfd4060ee08273f0625b6806c69c28028",
+          "size": 5228
+        },
+        "docs/sql-ref-syntax-aux-describe-query.md": {
+          "blob_id": "b2a74cbd060787e3f8f3709f0cfe03e545ad449c",
+          "size": 3528
+        },
+        "docs/sql-ref-syntax-aux-describe-table.md": {
+          "blob_id": "4b6e1e8c3461ed1985284294d48717d82bf29a57",
+          "size": 8681
+        },
+        "docs/sql-ref-syntax-aux-describe.md": {
+          "blob_id": "723943f97aa07b733a89487c753a6de59c501920",
+          "size": 1124
+        },
+        "docs/sql-ref-syntax-aux-resource-mgmt-add-archive.md": {
+          "blob_id": "0ae444a96b980d87bd210be81e94e9feae8d87fc",
+          "size": 1924
+        },
+        "docs/sql-ref-syntax-aux-resource-mgmt-add-file.md": {
+          "blob_id": "c1f55b5598a0e4ca8c9a81f6f6e2a8f08adf78df",
+          "size": 1813
+        },
+        "docs/sql-ref-syntax-aux-resource-mgmt-add-jar.md": {
+          "blob_id": "7ad56bf0657b246534f58565181980efe7d32518",
+          "size": 2690
+        },
+        "docs/sql-ref-syntax-aux-resource-mgmt-list-archive.md": {
+          "blob_id": "ae5051ab116dc24dca31fb6cefde06d17e3b3d87",
+          "size": 1656
+        },
+        "docs/sql-ref-syntax-aux-resource-mgmt-list-file.md": {
+          "blob_id": "d92f5fe162794c2b87065c9c55688777b2133514",
+          "size": 1623
+        },
+        "docs/sql-ref-syntax-aux-resource-mgmt-list-jar.md": {
+          "blob_id": "6c705aa8b1dc7864c5d432bd77fb4ba7a4c22c71",
+          "size": 1678
+        },
+        "docs/sql-ref-syntax-aux-resource-mgmt.md": {
+          "blob_id": "4a262824b7ae6fbd4030383cc51bf489159fbb46",
+          "size": 1261
+        },
+        "docs/sql-ref-syntax-aux-show-columns.md": {
+          "blob_id": "b76db252f1a0f3c19fd44e52bc700a7983aaa983",
+          "size": 2511
+        },
+        "docs/sql-ref-syntax-aux-show-create-table.md": {
+          "blob_id": "83013b07213a0d9c5c4eae8b349372ef53c64f2f",
+          "size": 3021
+        },
+        "docs/sql-ref-syntax-aux-show-databases.md": {
+          "blob_id": "44c0fbbef39295e5f9acdafaf144ed865d4b7f4f",
+          "size": 2637
+        },
+        "docs/sql-ref-syntax-aux-show-functions.md": {
+          "blob_id": "3e674dcc482625e88a63cb3256ba71c487637c60",
+          "size": 3813
+        },
+        "docs/sql-ref-syntax-aux-show-partitions.md": {
+          "blob_id": "d93825550413f40eb6d325ef92176b669b246677",
+          "size": 3564
+        },
+        "docs/sql-ref-syntax-aux-show-table.md": {
+          "blob_id": "3314402ea3e2bbb1776f726a99c4238b070593c7",
+          "size": 10084
+        },
+        "docs/sql-ref-syntax-aux-show-tables.md": {
+          "blob_id": "fef9722a444f8d2957a9af1b9aa00b55a1a819c3",
+          "size": 3529
+        },
+        "docs/sql-ref-syntax-aux-show-tblproperties.md": {
+          "blob_id": "5b7ddcbcd9534b3b41512bacd2caf83e653d7cff",
+          "size": 3634
+        },
+        "docs/sql-ref-syntax-aux-show-views.md": {
+          "blob_id": "5003c092cabce16a09b7dff23554881647bdbc13",
+          "size": 4749
+        },
+        "docs/sql-ref-syntax-aux-show.md": {
+          "blob_id": "9f64ea2d50ae1b8cddce78026ea1f5b69674b73f",
+          "size": 1403
+        },
+        "docs/sql-ref-syntax-ddl-alter-database.md": {
+          "blob_id": "0ac003823643310b628cf0b5bbce01a372ad62e9",
+          "size": 4137
+        },
+        "docs/sql-ref-syntax-ddl-alter-table.md": {
+          "blob_id": "566e73da21513341bdde23405ff14fdd24af8de1",
+          "size": 18301
+        },
+        "docs/sql-ref-syntax-ddl-alter-view.md": {
+          "blob_id": "d69f24677116db3a6743d7cd4d2351135e97cbfa",
+          "size": 8577
+        },
+        "docs/sql-ref-syntax-ddl-create-database.md": {
+          "blob_id": "9d8bf4784472492cf8c1d70cf9a7e4928626d2f0",
+          "size": 3324
+        },
+        "docs/sql-ref-syntax-ddl-create-function.md": {
+          "blob_id": "db54a4bd5ea69137484c5a7d38f21628a4b8bfb6",
+          "size": 5925
+        },
+        "docs/sql-ref-syntax-ddl-create-table-datasource.md": {
+          "blob_id": "7920a8a558e3d01a9eccf0d1c756710943fe4b30",
+          "size": 5767
+        },
+        "docs/sql-ref-syntax-ddl-create-table-hiveformat.md": {
+          "blob_id": "b2f5957416a809c0521abde6c93556764220dede",
+          "size": 6567
+        },
+        "docs/sql-ref-syntax-ddl-create-table-like.md": {
+          "blob_id": "cfb959ca6b23d88a6cb2844af8c2fa833f1ae7fd",
+          "size": 2782
+        },
+        "docs/sql-ref-syntax-ddl-create-table.md": {
+          "blob_id": "85dc2020e6585f828f7bdc32b3b89467187b4400",
+          "size": 1343
+        },
+        "docs/sql-ref-syntax-ddl-create-view.md": {
+          "blob_id": "1a9c1f62728e716d0622ba98c902ec489be60531",
+          "size": 3097
+        },
+        "docs/sql-ref-syntax-ddl-drop-database.md": {
+          "blob_id": "4a3bc0c68b6d449bd07ecbfd715a1d367dbecc72",
+          "size": 2061
+        },
+        "docs/sql-ref-syntax-ddl-drop-function.md": {
+          "blob_id": "bef31d74afcff561b8c421c96bc4c4971dbf328f",
+          "size": 2824
+        },
+        "docs/sql-ref-syntax-ddl-drop-table.md": {
+          "blob_id": "ce1b033a4eac8729b4056489681da3a7a943db32",
+          "size": 2624
+        },
+        "docs/sql-ref-syntax-ddl-drop-view.md": {
+          "blob_id": "5b680d7f907e02a5689cec047ea34532a02b1779",
+          "size": 2154
+        },
+        "docs/sql-ref-syntax-ddl-repair-table.md": {
+          "blob_id": "c64da2338dcdab2c6867d139152df2b38d2ed609",
+          "size": 3118
+        },
+        "docs/sql-ref-syntax-ddl-truncate-table.md": {
+          "blob_id": "3bc4d7a93e5205bc4d7771cfe5e9a0478fd0869f",
+          "size": 2771
+        },
+        "docs/sql-ref-syntax-ddl-usedb.md": {
+          "blob_id": "90076e0306125f338767f076e7b7ef9ad67596d9",
+          "size": 1770
+        },
+        "docs/sql-ref-syntax-dml-insert-overwrite-directory.md": {
+          "blob_id": "3ef32bdb5e4cebd73a04fbf3391956a9f60a4033",
+          "size": 4407
+        },
+        "docs/sql-ref-syntax-dml-insert-table.md": {
+          "blob_id": "ea8a2789caece4d03526f0ff98a71e8dfa4c9183",
+          "size": 18201
+        },
+        "docs/sql-ref-syntax-dml-load.md": {
+          "blob_id": "08922b869da32e4c9229bd1abfbb2f5fe077210c",
+          "size": 4244
+        },
+        "docs/sql-ref-syntax-hive-format.md": {
+          "blob_id": "8092e582d97adfc5bef3e6ce7b6d54af7814b51c",
+          "size": 2325
+        },
+        "docs/sql-ref-syntax-qry-explain.md": {
+          "blob_id": "7b84264a28cca3b4ac2ff4b81c7c6b812035b70f",
+          "size": 4338
+        },
+        "docs/sql-ref-syntax-qry-select-aggregate.md": {
+          "blob_id": "e0e294cc50c27a1bb92b4f06af7225618dc27c3e",
+          "size": 5624
+        },
+        "docs/sql-ref-syntax-qry-select-case.md": {
+          "blob_id": "d9725f001ae3a4042df37c310bca18124339ac2f",
+          "size": 4569
+        },
+        "docs/sql-ref-syntax-qry-select-clusterby.md": {
+          "blob_id": "79d72ca438b4fd6f88c420b1b1375598c5772918",
+          "size": 3692
+        },
+        "docs/sql-ref-syntax-qry-select-cte.md": {
+          "blob_id": "351de64a2d02664cf978459893d75f2a207fc06a",
+          "size": 2821
+        },
+        "docs/sql-ref-syntax-qry-select-distribute-by.md": {
+          "blob_id": "91c75f61b972f020776a8fdc99e9d6a3ef5fe777",
+          "size": 3331
+        },
+        "docs/sql-ref-syntax-qry-select-file.md": {
+          "blob_id": "c3dc406ee79e659afb90cb33d9ab3d77f75cfdb9",
+          "size": 2087
+        },
+        "docs/sql-ref-syntax-qry-select-groupby.md": {
+          "blob_id": "72ccfcce09926b47b9b872f5e4f782aa8293845f",
+          "size": 13071
+        },
+        "docs/sql-ref-syntax-qry-select-having.md": {
+          "blob_id": "e6851d3cb9716df5bbf45cdfdecf486dc9c29429",
+          "size": 4075
+        },
+        "docs/sql-ref-syntax-qry-select-hints.md": {
+          "blob_id": "861e7fbae6687bb08e200f64f994565d32de0b05",
+          "size": 7252
+        },
+        "docs/sql-ref-syntax-qry-select-inline-table.md": {
+          "blob_id": "7f0372ea787e5daef633da25caffbd76f7cba51a",
+          "size": 1930
+        },
+        "docs/sql-ref-syntax-qry-select-join.md": {
+          "blob_id": "698884dc28b570efdf3a6df45b802684aace089c",
+          "size": 7239
+        },
+        "docs/sql-ref-syntax-qry-select-lateral-subquery.md": {
+          "blob_id": "54961b690d5b1a477e79d472a00f4f58c9ba8ecb",
+          "size": 2635
+        },
+        "docs/sql-ref-syntax-qry-select-lateral-view.md": {
+          "blob_id": "80404bbb6571836bc830b5a438a426f538ff69de",
+          "size": 5239
+        },
+        "docs/sql-ref-syntax-qry-select-like.md": {
+          "blob_id": "3604a9ba1ea020db8c80058ec16a2becdf86a4cb",
+          "size": 4318
+        },
+        "docs/sql-ref-syntax-qry-select-limit.md": {
+          "blob_id": "9389c306fb845f8acb4dac7edcc752f9ef104b00",
+          "size": 3337
+        },
+        "docs/sql-ref-syntax-qry-select-offset.md": {
+          "blob_id": "1febf19fe8b7b2ddb82f603005e6537614c9e9f4",
+          "size": 3187
+        },
+        "docs/sql-ref-syntax-qry-select-orderby.md": {
+          "blob_id": "d630c5b2dbfefe992d12483a8b2e2fce677ce071",
+          "size": 4521
+        },
+        "docs/sql-ref-syntax-qry-select-pivot.md": {
+          "blob_id": "71f7cc7cff122dddcce3f131cb324d27d19dd8f1",
+          "size": 4063
+        },
+        "docs/sql-ref-syntax-qry-select-sampling.md": {
+          "blob_id": "f9c7b760a239fb987a40d119295fb93fe1a6ef99",
+          "size": 2268
+        },
+        "docs/sql-ref-syntax-qry-select-setops.md": {
+          "blob_id": "8cd12c37fa6030977ad609f65f11827f0e7b4daf",
+          "size": 3657
+        },
+        "docs/sql-ref-syntax-qry-select-sortby.md": {
+          "blob_id": "6fadca591666912f116a2d0981aa4a4437f9db00",
+          "size": 6318
+        },
+        "docs/sql-ref-syntax-qry-select-subqueries.md": {
+          "blob_id": "976e201f2714bb44afcf66775ee72ca7656b016f",
+          "size": 894
+        },
+        "docs/sql-ref-syntax-qry-select-transform.md": {
+          "blob_id": "2ca69727a704d1a6c2d09c76c452280261164235",
+          "size": 10381
+        },
+        "docs/sql-ref-syntax-qry-select-tvf.md": {
+          "blob_id": "b04e2f5c3fbd76e4304acc43464f84aaf46237d5",
+          "size": 6071
+        },
+        "docs/sql-ref-syntax-qry-select-unpivot.md": {
+          "blob_id": "8a4bb97b94168884dde9c58efb2e85a62855b870",
+          "size": 4743
+        },
+        "docs/sql-ref-syntax-qry-select-where.md": {
+          "blob_id": "0e3f7c1765ddad8c33172d74c8acf540552981a3",
+          "size": 3718
+        },
+        "docs/sql-ref-syntax-qry-select-window.md": {
+          "blob_id": "3615252895592146e5324e08769b846857bf3631",
+          "size": 8472
+        },
+        "docs/sql-ref-syntax-qry-select.md": {
+          "blob_id": "67f44b00818408762705c658c8a99c6e553f880d",
+          "size": 8468
+        },
+        "docs/sql-ref-syntax.md": {
+          "blob_id": "9109d130ab7c963e27c51c5887bfb3ab1125a222",
+          "size": 6283
+        },
+        "docs/sql-ref.md": {
+          "blob_id": "8f3289e9b77ad18a28f1defa371dc55aea449147",
+          "size": 2173
+        },
+        "docs/ss-migration-guide.md": {
+          "blob_id": "57fe3a84e12ca26bf16b7aab4d81af88f62ebdb8",
+          "size": 4832
+        },
+        "docs/storage-openstack-swift.md": {
+          "blob_id": "73b21a1f7c27bf60dc6454fc78c4b755cd82b861",
+          "size": 5389
+        },
+        "docs/streaming-custom-receivers.md": {
+          "blob_id": "591a4415bb1a512463eb92f6bd0077d38129e0c5",
+          "size": 10906
+        },
+        "docs/streaming-kafka-0-10-integration.md": {
+          "blob_id": "0f5964786fbce934f41ae749ec18abb40f4b5922",
+          "size": 17859
+        },
+        "docs/streaming-kafka-integration.md": {
+          "blob_id": "3282124b0be5d6e985e571e365f15e71fc5ab98b",
+          "size": 1311
+        },
+        "docs/streaming-kinesis-integration.md": {
+          "blob_id": "ed19ddcc9b08760f51c33d426011d1ffe9a0bbe9",
+          "size": 18552
+        },
+        "docs/streaming-programming-guide.md": {
+          "blob_id": "f8f98ca54425d57b5c7bce816a372bda2e7531db",
+          "size": 123623
+        },
+        "docs/structured-streaming-kafka-integration.md": {
+          "blob_id": "66e6efb1c8a9fd5f1d3b72a6ba3ead34527800fc",
+          "size": 47768
+        },
+        "docs/structured-streaming-programming-guide.md": {
+          "blob_id": "76a22621a0e328ecfab6b02172b51ec0021b46f2",
+          "size": 174415
+        },
+        "docs/submitting-applications.md": {
+          "blob_id": "becdfb4b18f5dffa3b6e5a5043758046ca4634ef",
+          "size": 13531
+        },
+        "docs/tuning.md": {
+          "blob_id": "550ffb0f357bfc350c642b2edeb6b991491dadb0",
+          "size": 22123
+        },
+        "docs/web-ui.md": {
+          "blob_id": "079bc6137f020e1a6832f703c8cfc609543d9f6a",
+          "size": 26638
+        }
+      }
+    },
+    "v4.0.0": {
+      "commit_sha": "fa33ea000a0bda9e5a3fa1af98e8e85b8cc5e4d4",
+      "files": {
+        "docs/404.md": {
+          "blob_id": "4d78234927a1e80e5b28e819b15d87009b130ec5",
+          "size": 996
+        },
+        "docs/README.md": {
+          "blob_id": "1235efe91812b4a2dfec44eeffe0b7b98f047480",
+          "size": 6400
+        },
+        "docs/app-dev-spark-connect.md": {
+          "blob_id": "e61aa05d3f11ec55b02d3601e5bbd8fa14f8501b",
+          "size": 12470
+        },
+        "docs/building-spark.md": {
+          "blob_id": "518d936c3c85c98925066b54d3180d15bf214879",
+          "size": 13338
+        },
+        "docs/cloud-integration.md": {
+          "blob_id": "7afbfef0b393a8395466259c840a510827a0576e",
+          "size": 18744
+        },
+        "docs/cluster-overview.md": {
+          "blob_id": "c2145e35f7f24de3391c6b4d42ad96589a756377",
+          "size": 7026
+        },
+        "docs/configuration.md": {
+          "blob_id": "9ee7ea2c9317b42c5298161a77bee66981db0140",
+          "size": 164079
+        },
+        "docs/core-migration-guide.md": {
+          "blob_id": "7f92fa14f170a5e233f92ecf5d72c910d1c1385a",
+          "size": 10521
+        },
+        "docs/graphx-programming-guide.md": {
+          "blob_id": "4791e215f458c997877d6a5a1a7d6371f89670f6",
+          "size": 53514
+        },
+        "docs/hadoop-provided.md": {
+          "blob_id": "6442e947abcd00b8e6ccb45985d79e13e9b27b43",
+          "size": 2803
+        },
+        "docs/hardware-provisioning.md": {
+          "blob_id": "0a008fc77036b458c0890b3c659580bbb35534e9",
+          "size": 4541
+        },
+        "docs/index.md": {
+          "blob_id": "88ea8ad9efc3b80de828eebb112819166439793f",
+          "size": 9503
+        },
+        "docs/job-scheduling.md": {
+          "blob_id": "189b9d5acbdbf4a9c02672b0c00beed68e88b1c8",
+          "size": 18783
+        },
+        "docs/migration-guide.md": {
+          "blob_id": "3a8387c3afb9c4a996e7251ae1844ac3cbfea295",
+          "size": 1311
+        },
+        "docs/ml-advanced.md": {
+          "blob_id": "0e19bca92d19de085ecb7c56dd70aa282c0c4728",
+          "size": 7101
+        },
+        "docs/ml-ann.md": {
+          "blob_id": "df5127d501ace8a0d6d78ef69556bb955fb9d27d",
+          "size": 1055
+        },
+        "docs/ml-classification-regression.md": {
+          "blob_id": "9a401c026cd89a3dbe596c760333b96514867b33",
+          "size": 56309
+        },
+        "docs/ml-clustering.md": {
+          "blob_id": "fdb8173ce3bbee859a0e4c55a96c866e75a3cdfd",
+          "size": 10035
+        },
+        "docs/ml-collaborative-filtering.md": {
+          "blob_id": "681c260c76d3b7abd59f1a042711b382fd95cc1a",
+          "size": 9156
+        },
+        "docs/ml-datasource.md": {
+          "blob_id": "ca0f10cfde704c37127e01345555262438c7c5f3",
+          "size": 9593
+        },
+        "docs/ml-decision-tree.md": {
+          "blob_id": "43c1fcafd262f1f36544f02930d24e2db1bab473",
+          "size": 1001
+        },
+        "docs/ml-ensembles.md": {
+          "blob_id": "bab04a6780853d41f60fd245cdf4cb7fc8a50e1c",
+          "size": 1015
+        },
+        "docs/ml-features.md": {
+          "blob_id": "418e94ad1ea199d556a68fdd9988c313b4ddd93f",
+          "size": 91027
+        },
+        "docs/ml-frequent-pattern-mining.md": {
+          "blob_id": "00421b47ee7f2ded16314172147fc8831bf56d70",
+          "size": 7717
+        },
+        "docs/ml-guide.md": {
+          "blob_id": "132805e7bcd68acc1ad9158fd8b66085e9333d4f",
+          "size": 7518
+        },
+        "docs/ml-linalg-guide.md": {
+          "blob_id": "6e91d81f49760e8b4be3830da4d65468491862ba",
+          "size": 5590
+        },
+        "docs/ml-linear-methods.md": {
+          "blob_id": "047a6c79ff625fc904cb3e1e0df139df342f4edd",
+          "size": 986
+        },
+        "docs/ml-migration-guide.md": {
+          "blob_id": "fe5bdc4aedbcbf4eb59ea4cb41956b313d7783cd",
+          "size": 31521
+        },
+        "docs/ml-pipeline.md": {
+          "blob_id": "4eaf85ad6eaf75150194935a5e5b79bf0324946a",
+          "size": 15497
+        },
+        "docs/ml-statistics.md": {
+          "blob_id": "92e8bbf7858b95bb27ed44cf5b433bbe2416242c",
+          "size": 5349
+        },
+        "docs/ml-survival-regression.md": {
+          "blob_id": "e3bb133482d4f8e5b6fba8698cdd462c5ea0d530",
+          "size": 1016
+        },
+        "docs/ml-tuning.md": {
+          "blob_id": "d95c8fffd717e9959f0222d74de3df09b6f11a95",
+          "size": 8689
+        },
+        "docs/mllib-classification-regression.md": {
+          "blob_id": "b3305314abc563688b657ba457c68a82912daf26",
+          "size": 2541
+        },
+        "docs/mllib-clustering.md": {
+          "blob_id": "fde354457f23d36cf493377a52f8b25a28b0dd69",
+          "size": 25099
+        },
+        "docs/mllib-collaborative-filtering.md": {
+          "blob_id": "672428157a72151f51a1f4a6843840a7ee7f4aa2",
+          "size": 7055
+        },
+        "docs/mllib-data-types.md": {
+          "blob_id": "e49c5e754755bdbee53a86cf6f3d723c577dedec",
+          "size": 31708
+        },
+        "docs/mllib-decision-tree.md": {
+          "blob_id": "601eb1513ca88bb76f18dec2f1de7df33a138499",
+          "size": 15596
+        },
+        "docs/mllib-dimensionality-reduction.md": {
+          "blob_id": "0cb7b29360c80c6c86232644587d3b101d6f194f",
+          "size": 6868
+        },
+        "docs/mllib-ensembles.md": {
+          "blob_id": "a161293072bcbdc51a001dd857146c71255616b1",
+          "size": 17027
+        },
+        "docs/mllib-evaluation-metrics.md": {
+          "blob_id": "aa587b26dca6dfec912f765deaace0405d105f2f",
+          "size": 25596
+        },
+        "docs/mllib-feature-extraction.md": {
+          "blob_id": "6719cfa2fc4e6c9c050f37f6426f6480b1e1886a",
+          "size": 16423
+        },
+        "docs/mllib-frequent-pattern-mining.md": {
+          "blob_id": "014b971e34f6d60eb094725e685746e43ce8e7b3",
+          "size": 8417
+        },
+        "docs/mllib-guide.md": {
+          "blob_id": "080f80531a6d7f5d173ba230fcfd7d347a124756",
+          "size": 3628
+        },
+        "docs/mllib-isotonic-regression.md": {
+          "blob_id": "26ac010b6bb70cbbebba2ceafa876816984151d8",
+          "size": 5352
+        },
+        "docs/mllib-linear-methods.md": {
+          "blob_id": "f8cd73eb2d0b4e93fb38c729423b2c4f46d2ecd0",
+          "size": 21730
+        },
+        "docs/mllib-naive-bayes.md": {
+          "blob_id": "123beceae62c9ac6ea307175059c63d03912c031",
+          "size": 5106
+        },
+        "docs/mllib-optimization.md": {
+          "blob_id": "f0b0c817ed3f6a1fb0f45d7353af4cc7c48f5a85",
+          "size": 13819
+        },
+        "docs/mllib-pmml-model-export.md": {
+          "blob_id": "02b5fda7a36dfef962755f8eb480c2c7750fd46d",
+          "size": 2801
+        },
+        "docs/mllib-statistics.md": {
+          "blob_id": "c616ec7e0b8c12624c90cc0be1cfd2032a8cfbf6",
+          "size": 18465
+        },
+        "docs/monitoring.md": {
+          "blob_id": "957ee555191a431b893cab4c71a1f435a1821f29",
+          "size": 65433
+        },
+        "docs/programming-guide.md": {
+          "blob_id": "986bea3f7165b377a1b1b7df3b39676d767f0c57",
+          "size": 943
+        },
+        "docs/pyspark-migration-guide.md": {
+          "blob_id": "5a1ca9be94d8d18d5d5ffcc310324a070d099931",
+          "size": 1017
+        },
+        "docs/quick-start.md": {
+          "blob_id": "5a03af98cd832bfda8a6611c534b7893607077f1",
+          "size": 19306
+        },
+        "docs/rdd-programming-guide.md": {
+          "blob_id": "400f8a512e7a713b4114a67c41554b24f21e4962",
+          "size": 83853
+        },
+        "docs/running-on-kubernetes.md": {
+          "blob_id": "d43dba41c11b310d29cc176d9fea9a63086c6531",
+          "size": 99587
+        },
+        "docs/running-on-yarn.md": {
+          "blob_id": "465f3a9d075a2de59908732ceb61f3ff7d468126",
+          "size": 55260
+        },
+        "docs/security.md": {
+          "blob_id": "2c732603ea8a17c78429c4189360000f85379895",
+          "size": 44784
+        },
+        "docs/spark-connect-overview.md": {
+          "blob_id": "ab312e33c8688aa24869e0fe5e97fd17d5203291",
+          "size": 17173
+        },
+        "docs/spark-standalone.md": {
+          "blob_id": "51f6ca977c991d24ff867bdd56c418cc332aac8a",
+          "size": 42068
+        },
+        "docs/sparkr-migration-guide.md": {
+          "blob_id": "568cf6ec4f3acec603e05bc0fe7591da09cd871b",
+          "size": 5848
+        },
+        "docs/sparkr.md": {
+          "blob_id": "45f506c9dc5173ce3072fce459ebea1effdd57f6",
+          "size": 31544
+        },
+        "docs/sql-data-sources-avro.md": {
+          "blob_id": "7c1b716360711a3994bc2996aaf5ee460d766e06",
+          "size": 26160
+        },
+        "docs/sql-data-sources-binaryFile.md": {
+          "blob_id": "ce34e3d62424f0df0e09d45663a363de755e3d7d",
+          "size": 2394
+        },
+        "docs/sql-data-sources-csv.md": {
+          "blob_id": "8008bc562082cb7febf66464841c256767e140a6",
+          "size": 15299
+        },
+        "docs/sql-data-sources-generic-options.md": {
+          "blob_id": "d180f15de27a7abfdfcf4a2980cd50ceacae88d2",
+          "size": 6245
+        },
+        "docs/sql-data-sources-hive-tables.md": {
+          "blob_id": "d45174425f470a692cb0abe640027afdecc53597",
+          "size": 10343
+        },
+        "docs/sql-data-sources-jdbc.md": {
+          "blob_id": "bf53ffa65d618c13d5accf3d985a55bfb45e979e",
+          "size": 61392
+        },
+        "docs/sql-data-sources-json.md": {
+          "blob_id": "58f18486e80b2e54905ae38e1b673188ebd95fda",
+          "size": 12648
+        },
+        "docs/sql-data-sources-load-save-functions.md": {
+          "blob_id": "70105c22e583c1dfd2f18cf680d99a675ae68a75",
+          "size": 13355
+        },
+        "docs/sql-data-sources-orc.md": {
+          "blob_id": "129f5370c681843ae74b229d10c80fae5bd76821",
+          "size": 9670
+        },
+        "docs/sql-data-sources-parquet.md": {
+          "blob_id": "c6649336ec92a40411d1c5e725f52e2acad1b773",
+          "size": 28902
+        },
+        "docs/sql-data-sources-protobuf.md": {
+          "blob_id": "4dd6579f92cd21281d2bb89da3f464dd4cd5042a",
+          "size": 19298
+        },
+        "docs/sql-data-sources-text.md": {
+          "blob_id": "aed8a2e9942fba9a3fd0931c9c0d4809d9198d0f",
+          "size": 3087
+        },
+        "docs/sql-data-sources-troubleshooting.md": {
+          "blob_id": "993d9bf686f36ab1aa8c46f004d4ba85bfe240f0",
+          "size": 1789
+        },
+        "docs/sql-data-sources-xml.md": {
+          "blob_id": "949e6239e52ba563c6dc9cf5575c6758b919db6b",
+          "size": 10922
+        },
+        "docs/sql-data-sources.md": {
+          "blob_id": "8ac819e1285e940cf33b53e7e8533cfeefb901d3",
+          "size": 4909
+        },
+        "docs/sql-distributed-sql-engine-spark-sql-cli.md": {
+          "blob_id": "6d506cbb09c210f27303829dad69ffdb24649ec7",
+          "size": 6883
+        },
+        "docs/sql-distributed-sql-engine.md": {
+          "blob_id": "ae8fd9c7211bdb5b0bb19e6400bce5e115307eff",
+          "size": 3997
+        },
+        "docs/sql-error-conditions.md": {
+          "blob_id": "590c14b9912d49ca5dfe1a3d6abf728b085b817a",
+          "size": 1654
+        },
+        "docs/sql-getting-started.md": {
+          "blob_id": "c2733a0ebf012eea0e517282d4442356995dba51",
+          "size": 16449
+        },
+        "docs/sql-migration-guide.md": {
+          "blob_id": "24b5851ce9beed18ed4d75de24ff40268eaf3a7d",
+          "size": 118022
+        },
+        "docs/sql-performance-tuning.md": {
+          "blob_id": "ff797f200f7fc8dc5734e8c39ec90ed06966b6f5",
+          "size": 27161
+        },
+        "docs/sql-pipe-syntax.md": {
+          "blob_id": "3d757db9662391429369c90fedcd8da9bf224282",
+          "size": 21280
+        },
+        "docs/sql-programming-guide.md": {
+          "blob_id": "dd2a16cfd10923dc7c08b4471afc447d34e235a1",
+          "size": 4211
+        },
+        "docs/sql-pyspark-pandas-with-arrow.md": {
+          "blob_id": "7697588d1a89e4bf6c450190ea915f7c7a852e60",
+          "size": 1070
+        },
+        "docs/sql-ref-ansi-compliance.md": {
+          "blob_id": "87ef332cdd15ba282bde2c30378ef90c99b2af12",
+          "size": 47568
+        },
+        "docs/sql-ref-datatypes.md": {
+          "blob_id": "3a4530dcecaef89d8f0f87fe0fe20a32f7664b88",
+          "size": 20179
+        },
+        "docs/sql-ref-datetime-pattern.md": {
+          "blob_id": "e5d5388f262e46d61bb8d534c7d5bd56d91abc18",
+          "size": 9922
+        },
+        "docs/sql-ref-function-invocation.md": {
+          "blob_id": "124356c4b9b441b47dbd9e07400e4cf551616189",
+          "size": 4200
+        },
+        "docs/sql-ref-functions-builtin.md": {
+          "blob_id": "b6572609a34b839dd3b2c75879ad7a06b2580066",
+          "size": 4206
+        },
+        "docs/sql-ref-functions-udf-aggregate.md": {
+          "blob_id": "da3182149410b2d46e878a8e7bfc98d48bc2540c",
+          "size": 4486
+        },
+        "docs/sql-ref-functions-udf-hive.md": {
+          "blob_id": "ed05902c09fdb224c849fe428fe0a5d6a9bdecd6",
+          "size": 4404
+        },
+        "docs/sql-ref-functions-udf-scalar.md": {
+          "blob_id": "97f5a89d3fb19953363efd87c612d05aea3131e4",
+          "size": 2146
+        },
+        "docs/sql-ref-functions.md": {
+          "blob_id": "b4891fe72eb354dea550355e66f619bf9130726d",
+          "size": 3854
+        },
+        "docs/sql-ref-identifier-clause.md": {
+          "blob_id": "1772e1a5538dea1d00e42b3542c391b45e4a03ab",
+          "size": 4942
+        },
+        "docs/sql-ref-identifier.md": {
+          "blob_id": "7aca08ea9fd8d6383bdc178e5279a38bc76f4f00",
+          "size": 2426
+        },
+        "docs/sql-ref-literals.md": {
+          "blob_id": "7a10676cce237ff6848590f3b19682fa39ae46d9",
+          "size": 13502
+        },
+        "docs/sql-ref-null-semantics.md": {
+          "blob_id": "36493bced7674dab45251987f1a7af51fc1025d9",
+          "size": 18058
+        },
+        "docs/sql-ref-number-pattern.md": {
+          "blob_id": "eecc3f9640ae09f732f5f729fbc466dfeda3dd3d",
+          "size": 6386
+        },
+        "docs/sql-ref-operators.md": {
+          "blob_id": "102e45fba8d20d47952a04960e2840a15f04d273",
+          "size": 3885
+        },
+        "docs/sql-ref-syntax-aux-analyze-table.md": {
+          "blob_id": "d6a938e31866ff29a2a104ab76a3e4391d34516f",
+          "size": 7021
+        },
+        "docs/sql-ref-syntax-aux-cache-cache-table.md": {
+          "blob_id": "9a1e61abbabb2ec4c447259d1cda198115c5e316",
+          "size": 2871
+        },
+        "docs/sql-ref-syntax-aux-cache-clear-cache.md": {
+          "blob_id": "aae4e3960037590ebc577c7b4edbd5289c0128be",
+          "size": 1408
+        },
+        "docs/sql-ref-syntax-aux-cache-refresh-function.md": {
+          "blob_id": "d91fc062eb714d373c1c67afa3d6536d48f5392f",
+          "size": 2204
+        },
+        "docs/sql-ref-syntax-aux-cache-refresh-table.md": {
+          "blob_id": "cc35c0451d5cbb7af8834d006651fb404ad4c446",
+          "size": 2172
+        },
+        "docs/sql-ref-syntax-aux-cache-refresh.md": {
+          "blob_id": "715bdcac3b6f145c3496e2ba5ef6e92f5fe76bb6",
+          "size": 1815
+        },
+        "docs/sql-ref-syntax-aux-cache-uncache-table.md": {
+          "blob_id": "4456378cdee15add002345f9385b6ba54dc4c0e4",
+          "size": 1851
+        },
+        "docs/sql-ref-syntax-aux-cache.md": {
+          "blob_id": "17a13e67e532e86e151e3420d3e6363d13c78500",
+          "size": 1298
+        },
+        "docs/sql-ref-syntax-aux-conf-mgmt-reset.md": {
+          "blob_id": "d91c767b2515454724a6035b4f23f661d186fc88",
+          "size": 2008
+        },
+        "docs/sql-ref-syntax-aux-conf-mgmt-set-timezone.md": {
+          "blob_id": "ada86d8dd3913e54ecbfc8659587decb998dd613",
+          "size": 2496
+        },
+        "docs/sql-ref-syntax-aux-conf-mgmt-set.md": {
+          "blob_id": "9e57a221f9688093f454621af8f2cd4bf2fd3b56",
+          "size": 2166
+        },
+        "docs/sql-ref-syntax-aux-conf-mgmt.md": {
+          "blob_id": "3312bcb503500920bc502ef0973260ea55e0e6cb",
+          "size": 1053
+        },
+        "docs/sql-ref-syntax-aux-describe-database.md": {
+          "blob_id": "143fa78b205caf67a858584ef4ca5c844688dcf2",
+          "size": 3976
+        },
+        "docs/sql-ref-syntax-aux-describe-function.md": {
+          "blob_id": "0c5a3d751a56433f89f1c0910601a5057340f8c6",
+          "size": 5229
+        },
+        "docs/sql-ref-syntax-aux-describe-query.md": {
+          "blob_id": "b2a74cbd060787e3f8f3709f0cfe03e545ad449c",
+          "size": 3528
+        },
+        "docs/sql-ref-syntax-aux-describe-table.md": {
+          "blob_id": "46d9432f5d0726e820653a4376fb69ba30efa779",
+          "size": 16186
+        },
+        "docs/sql-ref-syntax-aux-describe.md": {
+          "blob_id": "723943f97aa07b733a89487c753a6de59c501920",
+          "size": 1124
+        },
+        "docs/sql-ref-syntax-aux-exec-imm.md": {
+          "blob_id": "904a676605c816ff8c7be692addd50033ecbdfde",
+          "size": 2665
+        },
+        "docs/sql-ref-syntax-aux-resource-mgmt-add-archive.md": {
+          "blob_id": "0ae444a96b980d87bd210be81e94e9feae8d87fc",
+          "size": 1924
+        },
+        "docs/sql-ref-syntax-aux-resource-mgmt-add-file.md": {
+          "blob_id": "c1f55b5598a0e4ca8c9a81f6f6e2a8f08adf78df",
+          "size": 1813
+        },
+        "docs/sql-ref-syntax-aux-resource-mgmt-add-jar.md": {
+          "blob_id": "9a50db992f9c8a32a64cd7d4e3d1a8b8fb41d0c4",
+          "size": 2693
+        },
+        "docs/sql-ref-syntax-aux-resource-mgmt-list-archive.md": {
+          "blob_id": "ae5051ab116dc24dca31fb6cefde06d17e3b3d87",
+          "size": 1656
+        },
+        "docs/sql-ref-syntax-aux-resource-mgmt-list-file.md": {
+          "blob_id": "cd7589d5255d0015cfb5462fdadc172b734c72ab",
+          "size": 1624
+        },
+        "docs/sql-ref-syntax-aux-resource-mgmt-list-jar.md": {
+          "blob_id": "6c705aa8b1dc7864c5d432bd77fb4ba7a4c22c71",
+          "size": 1678
+        },
+        "docs/sql-ref-syntax-aux-resource-mgmt.md": {
+          "blob_id": "4a262824b7ae6fbd4030383cc51bf489159fbb46",
+          "size": 1261
+        },
+        "docs/sql-ref-syntax-aux-set-var.md": {
+          "blob_id": "5a61a970c03fdaac979a16e3a68491d7e781f63a",
+          "size": 2772
+        },
+        "docs/sql-ref-syntax-aux-show-columns.md": {
+          "blob_id": "b76db252f1a0f3c19fd44e52bc700a7983aaa983",
+          "size": 2511
+        },
+        "docs/sql-ref-syntax-aux-show-create-table.md": {
+          "blob_id": "83013b07213a0d9c5c4eae8b349372ef53c64f2f",
+          "size": 3021
+        },
+        "docs/sql-ref-syntax-aux-show-databases.md": {
+          "blob_id": "44c0fbbef39295e5f9acdafaf144ed865d4b7f4f",
+          "size": 2637
+        },
+        "docs/sql-ref-syntax-aux-show-functions.md": {
+          "blob_id": "3e674dcc482625e88a63cb3256ba71c487637c60",
+          "size": 3813
+        },
+        "docs/sql-ref-syntax-aux-show-partitions.md": {
+          "blob_id": "0b2ed3507e29589060e5091ce1c4755387b4d835",
+          "size": 3570
+        },
+        "docs/sql-ref-syntax-aux-show-table.md": {
+          "blob_id": "3314402ea3e2bbb1776f726a99c4238b070593c7",
+          "size": 10084
+        },
+        "docs/sql-ref-syntax-aux-show-tables.md": {
+          "blob_id": "fef9722a444f8d2957a9af1b9aa00b55a1a819c3",
+          "size": 3529
+        },
+        "docs/sql-ref-syntax-aux-show-tblproperties.md": {
+          "blob_id": "5b7ddcbcd9534b3b41512bacd2caf83e653d7cff",
+          "size": 3634
+        },
+        "docs/sql-ref-syntax-aux-show-views.md": {
+          "blob_id": "a4a827304948d0491c485bc4fc69de331924bbd2",
+          "size": 4747
+        },
+        "docs/sql-ref-syntax-aux-show.md": {
+          "blob_id": "9f64ea2d50ae1b8cddce78026ea1f5b69674b73f",
+          "size": 1403
+        },
+        "docs/sql-ref-syntax-ddl-alter-database.md": {
+          "blob_id": "727fedb19e237defe675831694cb1e4cfa950084",
+          "size": 5604
+        },
+        "docs/sql-ref-syntax-ddl-alter-table.md": {
+          "blob_id": "28ecc44a5bf7e1f6769b60b497fc9e16f4f0710c",
+          "size": 20686
+        },
+        "docs/sql-ref-syntax-ddl-alter-view.md": {
+          "blob_id": "ca272d27bc7e670b4848f9e037c130f45c474dc3",
+          "size": 10912
+        },
+        "docs/sql-ref-syntax-ddl-create-database.md": {
+          "blob_id": "9d8bf4784472492cf8c1d70cf9a7e4928626d2f0",
+          "size": 3324
+        },
+        "docs/sql-ref-syntax-ddl-create-function.md": {
+          "blob_id": "db54a4bd5ea69137484c5a7d38f21628a4b8bfb6",
+          "size": 5925
+        },
+        "docs/sql-ref-syntax-ddl-create-table-datasource.md": {
+          "blob_id": "f645732a15df92662af6137c1d060619caa5b239",
+          "size": 5931
+        },
+        "docs/sql-ref-syntax-ddl-create-table-hiveformat.md": {
+          "blob_id": "583e890f8305e7e6b1a1ca18f73b4bf0f3f43321",
+          "size": 6569
+        },
+        "docs/sql-ref-syntax-ddl-create-table-like.md": {
+          "blob_id": "cfb959ca6b23d88a6cb2844af8c2fa833f1ae7fd",
+          "size": 2782
+        },
+        "docs/sql-ref-syntax-ddl-create-table.md": {
+          "blob_id": "85dc2020e6585f828f7bdc32b3b89467187b4400",
+          "size": 1343
+        },
+        "docs/sql-ref-syntax-ddl-create-view.md": {
+          "blob_id": "21174f12300e3b66ed10bb9b3a6f7795e5427959",
+          "size": 4155
+        },
+        "docs/sql-ref-syntax-ddl-declare-variable.md": {
+          "blob_id": "41ecba1364361c5bf27eb1cdf5ea899f3b23b85e",
+          "size": 3313
+        },
+        "docs/sql-ref-syntax-ddl-drop-database.md": {
+          "blob_id": "4a3bc0c68b6d449bd07ecbfd715a1d367dbecc72",
+          "size": 2061
+        },
+        "docs/sql-ref-syntax-ddl-drop-function.md": {
+          "blob_id": "bef31d74afcff561b8c421c96bc4c4971dbf328f",
+          "size": 2824
+        },
+        "docs/sql-ref-syntax-ddl-drop-table.md": {
+          "blob_id": "ce1b033a4eac8729b4056489681da3a7a943db32",
+          "size": 2624
+        },
+        "docs/sql-ref-syntax-ddl-drop-variable.md": {
+          "blob_id": "5b2b0da769459944db1de05917e76daf407cce26",
+          "size": 2212
+        },
+        "docs/sql-ref-syntax-ddl-drop-view.md": {
+          "blob_id": "5b680d7f907e02a5689cec047ea34532a02b1779",
+          "size": 2154
+        },
+        "docs/sql-ref-syntax-ddl-repair-table.md": {
+          "blob_id": "c64da2338dcdab2c6867d139152df2b38d2ed609",
+          "size": 3118
+        },
+        "docs/sql-ref-syntax-ddl-truncate-table.md": {
+          "blob_id": "3bc4d7a93e5205bc4d7771cfe5e9a0478fd0869f",
+          "size": 2771
+        },
+        "docs/sql-ref-syntax-ddl-usedb.md": {
+          "blob_id": "90076e0306125f338767f076e7b7ef9ad67596d9",
+          "size": 1770
+        },
+        "docs/sql-ref-syntax-dml-insert-overwrite-directory.md": {
+          "blob_id": "3ef32bdb5e4cebd73a04fbf3391956a9f60a4033",
+          "size": 4407
+        },
+        "docs/sql-ref-syntax-dml-insert-table.md": {
+          "blob_id": "6f85d4401d3b1c9bd59e3c8c5abda593b15c4e68",
+          "size": 19971
+        },
+        "docs/sql-ref-syntax-dml-load.md": {
+          "blob_id": "08922b869da32e4c9229bd1abfbb2f5fe077210c",
+          "size": 4244
+        },
+        "docs/sql-ref-syntax-hive-format.md": {
+          "blob_id": "8092e582d97adfc5bef3e6ce7b6d54af7814b51c",
+          "size": 2325
+        },
+        "docs/sql-ref-syntax-qry-explain.md": {
+          "blob_id": "7b84264a28cca3b4ac2ff4b81c7c6b812035b70f",
+          "size": 4338
+        },
+        "docs/sql-ref-syntax-qry-select-aggregate.md": {
+          "blob_id": "8cb371486335a1344ad69c4d5e52d46253e0557b",
+          "size": 5635
+        },
+        "docs/sql-ref-syntax-qry-select-case.md": {
+          "blob_id": "d9725f001ae3a4042df37c310bca18124339ac2f",
+          "size": 4569
+        },
+        "docs/sql-ref-syntax-qry-select-clusterby.md": {
+          "blob_id": "79d72ca438b4fd6f88c420b1b1375598c5772918",
+          "size": 3692
+        },
+        "docs/sql-ref-syntax-qry-select-cte.md": {
+          "blob_id": "eca7a2c16f028a751b257d7e1a8522cd91824721",
+          "size": 2530
+        },
+        "docs/sql-ref-syntax-qry-select-distribute-by.md": {
+          "blob_id": "91c75f61b972f020776a8fdc99e9d6a3ef5fe777",
+          "size": 3331
+        },
+        "docs/sql-ref-syntax-qry-select-file.md": {
+          "blob_id": "c3dc406ee79e659afb90cb33d9ab3d77f75cfdb9",
+          "size": 2087
+        },
+        "docs/sql-ref-syntax-qry-select-groupby.md": {
+          "blob_id": "72ccfcce09926b47b9b872f5e4f782aa8293845f",
+          "size": 13071
+        },
+        "docs/sql-ref-syntax-qry-select-having.md": {
+          "blob_id": "e6851d3cb9716df5bbf45cdfdecf486dc9c29429",
+          "size": 4075
+        },
+        "docs/sql-ref-syntax-qry-select-hints.md": {
+          "blob_id": "861e7fbae6687bb08e200f64f994565d32de0b05",
+          "size": 7252
+        },
+        "docs/sql-ref-syntax-qry-select-inline-table.md": {
+          "blob_id": "7f0372ea787e5daef633da25caffbd76f7cba51a",
+          "size": 1930
+        },
+        "docs/sql-ref-syntax-qry-select-join.md": {
+          "blob_id": "698884dc28b570efdf3a6df45b802684aace089c",
+          "size": 7239
+        },
+        "docs/sql-ref-syntax-qry-select-lateral-subquery.md": {
+          "blob_id": "54961b690d5b1a477e79d472a00f4f58c9ba8ecb",
+          "size": 2635
+        },
+        "docs/sql-ref-syntax-qry-select-lateral-view.md": {
+          "blob_id": "80404bbb6571836bc830b5a438a426f538ff69de",
+          "size": 5239
+        },
+        "docs/sql-ref-syntax-qry-select-like.md": {
+          "blob_id": "3604a9ba1ea020db8c80058ec16a2becdf86a4cb",
+          "size": 4318
+        },
+        "docs/sql-ref-syntax-qry-select-limit.md": {
+          "blob_id": "9389c306fb845f8acb4dac7edcc752f9ef104b00",
+          "size": 3337
+        },
+        "docs/sql-ref-syntax-qry-select-offset.md": {
+          "blob_id": "1febf19fe8b7b2ddb82f603005e6537614c9e9f4",
+          "size": 3187
+        },
+        "docs/sql-ref-syntax-qry-select-orderby.md": {
+          "blob_id": "d630c5b2dbfefe992d12483a8b2e2fce677ce071",
+          "size": 4521
+        },
+        "docs/sql-ref-syntax-qry-select-pivot.md": {
+          "blob_id": "71f7cc7cff122dddcce3f131cb324d27d19dd8f1",
+          "size": 4063
+        },
+        "docs/sql-ref-syntax-qry-select-sampling.md": {
+          "blob_id": "f9c7b760a239fb987a40d119295fb93fe1a6ef99",
+          "size": 2268
+        },
+        "docs/sql-ref-syntax-qry-select-setops.md": {
+          "blob_id": "8cd12c37fa6030977ad609f65f11827f0e7b4daf",
+          "size": 3657
+        },
+        "docs/sql-ref-syntax-qry-select-sortby.md": {
+          "blob_id": "6fadca591666912f116a2d0981aa4a4437f9db00",
+          "size": 6318
+        },
+        "docs/sql-ref-syntax-qry-select-subqueries.md": {
+          "blob_id": "976e201f2714bb44afcf66775ee72ca7656b016f",
+          "size": 894
+        },
+        "docs/sql-ref-syntax-qry-select-transform.md": {
+          "blob_id": "18d05db3ddf4dc6c534db1c9773e54a39ee8905f",
+          "size": 10368
+        },
+        "docs/sql-ref-syntax-qry-select-tvf.md": {
+          "blob_id": "099f423f185311acdf3169bc172e0d57cd2a46c8",
+          "size": 8206
+        },
+        "docs/sql-ref-syntax-qry-select-unpivot.md": {
+          "blob_id": "8a4bb97b94168884dde9c58efb2e85a62855b870",
+          "size": 4743
+        },
+        "docs/sql-ref-syntax-qry-select-where.md": {
+          "blob_id": "0e3f7c1765ddad8c33172d74c8acf540552981a3",
+          "size": 3718
+        },
+        "docs/sql-ref-syntax-qry-select-window.md": {
+          "blob_id": "3615252895592146e5324e08769b846857bf3631",
+          "size": 8472
+        },
+        "docs/sql-ref-syntax-qry-select.md": {
+          "blob_id": "1d5532898c6546df2300a109e9673c6d558a21d8",
+          "size": 8650
+        },
+        "docs/sql-ref-syntax-qry-star.md": {
+          "blob_id": "c575727e820e87c8562c02d2a0bd89545358ed94",
+          "size": 3409
+        },
+        "docs/sql-ref-syntax.md": {
+          "blob_id": "1837f22a57f31e22d004ff176589ad7814ab4f7f",
+          "size": 6571
+        },
+        "docs/sql-ref.md": {
+          "blob_id": "6d557caaca3d6cf7a113e9b6a4ec1e35295abde7",
+          "size": 2314
+        },
+        "docs/ss-migration-guide.md": {
+          "blob_id": "1e4c892f062af37c09b6f8eb48e182be65f56ef7",
+          "size": 1026
+        },
+        "docs/storage-openstack-swift.md": {
+          "blob_id": "18e879ff78da70743ece48536fe57c1e5eb14035",
+          "size": 5361
+        },
+        "docs/streaming-custom-receivers.md": {
+          "blob_id": "11a52232510fdb6ebfd87caaad88861a9eaf2170",
+          "size": 10878
+        },
+        "docs/streaming-kafka-0-10-integration.md": {
+          "blob_id": "6af14c17476db00411f3db75f5c8c736b50c3684",
+          "size": 17868
+        },
+        "docs/streaming-kafka-integration.md": {
+          "blob_id": "3282124b0be5d6e985e571e365f15e71fc5ab98b",
+          "size": 1311
+        },
+        "docs/streaming-kinesis-integration.md": {
+          "blob_id": "0396d3cc64d14f35d3ca598637c006a567d0e97e",
+          "size": 18181
+        },
+        "docs/streaming-programming-guide.md": {
+          "blob_id": "51d50d7e1bf86f21ff314557a3004eab1574cef5",
+          "size": 122123
+        },
+        "docs/streaming/additional-information.md": {
+          "blob_id": "a2574cc547df48213a07c0bb2209a359735e9f0b",
+          "size": 4355
+        },
+        "docs/streaming/apis-on-dataframes-and-datasets.md": {
+          "blob_id": "a1b5ffe9a54a898c8debd39a0c0f32f027f8c946",
+          "size": 144553
+        },
+        "docs/streaming/getting-started.md": {
+          "blob_id": "9b34bcf58baf942bd462a515d5d182960bab0876",
+          "size": 20809
+        },
+        "docs/streaming/index.md": {
+          "blob_id": "046d8317218a60099951339b98011984787e0ed7",
+          "size": 2841
+        },
+        "docs/streaming/performance-tips.md": {
+          "blob_id": "7fdebddbbeeece9cffbcdcf9f688f180fa419023",
+          "size": 9422
+        },
+        "docs/streaming/ss-migration-guide.md": {
+          "blob_id": "da4e5d7a8c59ac1a3df5b96ac742fef0da071668",
+          "size": 6255
+        },
+        "docs/streaming/structured-streaming-kafka-integration.md": {
+          "blob_id": "a8f2bcdeb9bc1a3db335042f6572945f7d14bb75",
+          "size": 48492
+        },
+        "docs/streaming/structured-streaming-state-data-source.md": {
+          "blob_id": "0ebebcbd1f00a92f5d0db0160097dd5007ea37d0",
+          "size": 15082
+        },
+        "docs/streaming/structured-streaming-transform-with-state.md": {
+          "blob_id": "2ab6f371817b1d79e72b5b0ec5cf42da0fbfdd42",
+          "size": 16445
+        },
+        "docs/structured-streaming-kafka-integration.md": {
+          "blob_id": "17bb858bace051be4f789820838554d21c601073",
+          "size": 1058
+        },
+        "docs/structured-streaming-programming-guide.md": {
+          "blob_id": "661edf67bf4500b5ac9f407fb67f5bff1a3e00d6",
+          "size": 1076
+        },
+        "docs/submitting-applications.md": {
+          "blob_id": "071fbf5549398102edc55f36355b687b9b7de0ff",
+          "size": 13017
+        },
+        "docs/tuning.md": {
+          "blob_id": "f72dc0efd98eb7738ff24123f6f52bcef051826c",
+          "size": 22082
+        },
+        "docs/web-ui.md": {
+          "blob_id": "3889b41f03a04bf6a0ccbc1905067bc211e5dbbc",
+          "size": 26479
+        }
+      }
+    },
+    "v4.0.1": {
+      "commit_sha": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+      "files": {
+        "docs/404.md": {
+          "blob_id": "4d78234927a1e80e5b28e819b15d87009b130ec5",
+          "size": 996
+        },
+        "docs/README.md": {
+          "blob_id": "1235efe91812b4a2dfec44eeffe0b7b98f047480",
+          "size": 6400
+        },
+        "docs/app-dev-spark-connect.md": {
+          "blob_id": "e61aa05d3f11ec55b02d3601e5bbd8fa14f8501b",
+          "size": 12470
+        },
+        "docs/building-spark.md": {
+          "blob_id": "518d936c3c85c98925066b54d3180d15bf214879",
+          "size": 13338
+        },
+        "docs/cloud-integration.md": {
+          "blob_id": "7afbfef0b393a8395466259c840a510827a0576e",
+          "size": 18744
+        },
+        "docs/cluster-overview.md": {
+          "blob_id": "c2145e35f7f24de3391c6b4d42ad96589a756377",
+          "size": 7026
+        },
+        "docs/configuration.md": {
+          "blob_id": "9ee7ea2c9317b42c5298161a77bee66981db0140",
+          "size": 164079
+        },
+        "docs/core-migration-guide.md": {
+          "blob_id": "7f92fa14f170a5e233f92ecf5d72c910d1c1385a",
+          "size": 10521
+        },
+        "docs/graphx-programming-guide.md": {
+          "blob_id": "4791e215f458c997877d6a5a1a7d6371f89670f6",
+          "size": 53514
+        },
+        "docs/hadoop-provided.md": {
+          "blob_id": "6442e947abcd00b8e6ccb45985d79e13e9b27b43",
+          "size": 2803
+        },
+        "docs/hardware-provisioning.md": {
+          "blob_id": "0a008fc77036b458c0890b3c659580bbb35534e9",
+          "size": 4541
+        },
+        "docs/index.md": {
+          "blob_id": "88ea8ad9efc3b80de828eebb112819166439793f",
+          "size": 9503
+        },
+        "docs/job-scheduling.md": {
+          "blob_id": "189b9d5acbdbf4a9c02672b0c00beed68e88b1c8",
+          "size": 18783
+        },
+        "docs/migration-guide.md": {
+          "blob_id": "3a8387c3afb9c4a996e7251ae1844ac3cbfea295",
+          "size": 1311
+        },
+        "docs/ml-advanced.md": {
+          "blob_id": "0e19bca92d19de085ecb7c56dd70aa282c0c4728",
+          "size": 7101
+        },
+        "docs/ml-ann.md": {
+          "blob_id": "df5127d501ace8a0d6d78ef69556bb955fb9d27d",
+          "size": 1055
+        },
+        "docs/ml-classification-regression.md": {
+          "blob_id": "9a401c026cd89a3dbe596c760333b96514867b33",
+          "size": 56309
+        },
+        "docs/ml-clustering.md": {
+          "blob_id": "fdb8173ce3bbee859a0e4c55a96c866e75a3cdfd",
+          "size": 10035
+        },
+        "docs/ml-collaborative-filtering.md": {
+          "blob_id": "681c260c76d3b7abd59f1a042711b382fd95cc1a",
+          "size": 9156
+        },
+        "docs/ml-datasource.md": {
+          "blob_id": "ca0f10cfde704c37127e01345555262438c7c5f3",
+          "size": 9593
+        },
+        "docs/ml-decision-tree.md": {
+          "blob_id": "43c1fcafd262f1f36544f02930d24e2db1bab473",
+          "size": 1001
+        },
+        "docs/ml-ensembles.md": {
+          "blob_id": "bab04a6780853d41f60fd245cdf4cb7fc8a50e1c",
+          "size": 1015
+        },
+        "docs/ml-features.md": {
+          "blob_id": "418e94ad1ea199d556a68fdd9988c313b4ddd93f",
+          "size": 91027
+        },
+        "docs/ml-frequent-pattern-mining.md": {
+          "blob_id": "00421b47ee7f2ded16314172147fc8831bf56d70",
+          "size": 7717
+        },
+        "docs/ml-guide.md": {
+          "blob_id": "132805e7bcd68acc1ad9158fd8b66085e9333d4f",
+          "size": 7518
+        },
+        "docs/ml-linalg-guide.md": {
+          "blob_id": "6e91d81f49760e8b4be3830da4d65468491862ba",
+          "size": 5590
+        },
+        "docs/ml-linear-methods.md": {
+          "blob_id": "047a6c79ff625fc904cb3e1e0df139df342f4edd",
+          "size": 986
+        },
+        "docs/ml-migration-guide.md": {
+          "blob_id": "fe5bdc4aedbcbf4eb59ea4cb41956b313d7783cd",
+          "size": 31521
+        },
+        "docs/ml-pipeline.md": {
+          "blob_id": "4eaf85ad6eaf75150194935a5e5b79bf0324946a",
+          "size": 15497
+        },
+        "docs/ml-statistics.md": {
+          "blob_id": "92e8bbf7858b95bb27ed44cf5b433bbe2416242c",
+          "size": 5349
+        },
+        "docs/ml-survival-regression.md": {
+          "blob_id": "e3bb133482d4f8e5b6fba8698cdd462c5ea0d530",
+          "size": 1016
+        },
+        "docs/ml-tuning.md": {
+          "blob_id": "d95c8fffd717e9959f0222d74de3df09b6f11a95",
+          "size": 8689
+        },
+        "docs/mllib-classification-regression.md": {
+          "blob_id": "b3305314abc563688b657ba457c68a82912daf26",
+          "size": 2541
+        },
+        "docs/mllib-clustering.md": {
+          "blob_id": "fde354457f23d36cf493377a52f8b25a28b0dd69",
+          "size": 25099
+        },
+        "docs/mllib-collaborative-filtering.md": {
+          "blob_id": "672428157a72151f51a1f4a6843840a7ee7f4aa2",
+          "size": 7055
+        },
+        "docs/mllib-data-types.md": {
+          "blob_id": "e49c5e754755bdbee53a86cf6f3d723c577dedec",
+          "size": 31708
+        },
+        "docs/mllib-decision-tree.md": {
+          "blob_id": "601eb1513ca88bb76f18dec2f1de7df33a138499",
+          "size": 15596
+        },
+        "docs/mllib-dimensionality-reduction.md": {
+          "blob_id": "0cb7b29360c80c6c86232644587d3b101d6f194f",
+          "size": 6868
+        },
+        "docs/mllib-ensembles.md": {
+          "blob_id": "a161293072bcbdc51a001dd857146c71255616b1",
+          "size": 17027
+        },
+        "docs/mllib-evaluation-metrics.md": {
+          "blob_id": "aa587b26dca6dfec912f765deaace0405d105f2f",
+          "size": 25596
+        },
+        "docs/mllib-feature-extraction.md": {
+          "blob_id": "6719cfa2fc4e6c9c050f37f6426f6480b1e1886a",
+          "size": 16423
+        },
+        "docs/mllib-frequent-pattern-mining.md": {
+          "blob_id": "014b971e34f6d60eb094725e685746e43ce8e7b3",
+          "size": 8417
+        },
+        "docs/mllib-guide.md": {
+          "blob_id": "080f80531a6d7f5d173ba230fcfd7d347a124756",
+          "size": 3628
+        },
+        "docs/mllib-isotonic-regression.md": {
+          "blob_id": "26ac010b6bb70cbbebba2ceafa876816984151d8",
+          "size": 5352
+        },
+        "docs/mllib-linear-methods.md": {
+          "blob_id": "f8cd73eb2d0b4e93fb38c729423b2c4f46d2ecd0",
+          "size": 21730
+        },
+        "docs/mllib-naive-bayes.md": {
+          "blob_id": "123beceae62c9ac6ea307175059c63d03912c031",
+          "size": 5106
+        },
+        "docs/mllib-optimization.md": {
+          "blob_id": "f0b0c817ed3f6a1fb0f45d7353af4cc7c48f5a85",
+          "size": 13819
+        },
+        "docs/mllib-pmml-model-export.md": {
+          "blob_id": "02b5fda7a36dfef962755f8eb480c2c7750fd46d",
+          "size": 2801
+        },
+        "docs/mllib-statistics.md": {
+          "blob_id": "c616ec7e0b8c12624c90cc0be1cfd2032a8cfbf6",
+          "size": 18465
+        },
+        "docs/monitoring.md": {
+          "blob_id": "957ee555191a431b893cab4c71a1f435a1821f29",
+          "size": 65433
+        },
+        "docs/programming-guide.md": {
+          "blob_id": "986bea3f7165b377a1b1b7df3b39676d767f0c57",
+          "size": 943
+        },
+        "docs/pyspark-migration-guide.md": {
+          "blob_id": "5a1ca9be94d8d18d5d5ffcc310324a070d099931",
+          "size": 1017
+        },
+        "docs/quick-start.md": {
+          "blob_id": "83fc3421c03812180f33581b569a334116e1e2bc",
+          "size": 19304
+        },
+        "docs/rdd-programming-guide.md": {
+          "blob_id": "400f8a512e7a713b4114a67c41554b24f21e4962",
+          "size": 83853
+        },
+        "docs/running-on-kubernetes.md": {
+          "blob_id": "d43dba41c11b310d29cc176d9fea9a63086c6531",
+          "size": 99587
+        },
+        "docs/running-on-yarn.md": {
+          "blob_id": "465f3a9d075a2de59908732ceb61f3ff7d468126",
+          "size": 55260
+        },
+        "docs/security.md": {
+          "blob_id": "2c732603ea8a17c78429c4189360000f85379895",
+          "size": 44784
+        },
+        "docs/spark-connect-overview.md": {
+          "blob_id": "ab312e33c8688aa24869e0fe5e97fd17d5203291",
+          "size": 17173
+        },
+        "docs/spark-standalone.md": {
+          "blob_id": "51f6ca977c991d24ff867bdd56c418cc332aac8a",
+          "size": 42068
+        },
+        "docs/sparkr-migration-guide.md": {
+          "blob_id": "568cf6ec4f3acec603e05bc0fe7591da09cd871b",
+          "size": 5848
+        },
+        "docs/sparkr.md": {
+          "blob_id": "45f506c9dc5173ce3072fce459ebea1effdd57f6",
+          "size": 31544
+        },
+        "docs/sql-data-sources-avro.md": {
+          "blob_id": "7c1b716360711a3994bc2996aaf5ee460d766e06",
+          "size": 26160
+        },
+        "docs/sql-data-sources-binaryFile.md": {
+          "blob_id": "ce34e3d62424f0df0e09d45663a363de755e3d7d",
+          "size": 2394
+        },
+        "docs/sql-data-sources-csv.md": {
+          "blob_id": "8008bc562082cb7febf66464841c256767e140a6",
+          "size": 15299
+        },
+        "docs/sql-data-sources-generic-options.md": {
+          "blob_id": "d180f15de27a7abfdfcf4a2980cd50ceacae88d2",
+          "size": 6245
+        },
+        "docs/sql-data-sources-hive-tables.md": {
+          "blob_id": "d45174425f470a692cb0abe640027afdecc53597",
+          "size": 10343
+        },
+        "docs/sql-data-sources-jdbc.md": {
+          "blob_id": "bf53ffa65d618c13d5accf3d985a55bfb45e979e",
+          "size": 61392
+        },
+        "docs/sql-data-sources-json.md": {
+          "blob_id": "58f18486e80b2e54905ae38e1b673188ebd95fda",
+          "size": 12648
+        },
+        "docs/sql-data-sources-load-save-functions.md": {
+          "blob_id": "70105c22e583c1dfd2f18cf680d99a675ae68a75",
+          "size": 13355
+        },
+        "docs/sql-data-sources-orc.md": {
+          "blob_id": "129f5370c681843ae74b229d10c80fae5bd76821",
+          "size": 9670
+        },
+        "docs/sql-data-sources-parquet.md": {
+          "blob_id": "c6649336ec92a40411d1c5e725f52e2acad1b773",
+          "size": 28902
+        },
+        "docs/sql-data-sources-protobuf.md": {
+          "blob_id": "4dd6579f92cd21281d2bb89da3f464dd4cd5042a",
+          "size": 19298
+        },
+        "docs/sql-data-sources-text.md": {
+          "blob_id": "aed8a2e9942fba9a3fd0931c9c0d4809d9198d0f",
+          "size": 3087
+        },
+        "docs/sql-data-sources-troubleshooting.md": {
+          "blob_id": "993d9bf686f36ab1aa8c46f004d4ba85bfe240f0",
+          "size": 1789
+        },
+        "docs/sql-data-sources-xml.md": {
+          "blob_id": "949e6239e52ba563c6dc9cf5575c6758b919db6b",
+          "size": 10922
+        },
+        "docs/sql-data-sources.md": {
+          "blob_id": "8ac819e1285e940cf33b53e7e8533cfeefb901d3",
+          "size": 4909
+        },
+        "docs/sql-distributed-sql-engine-spark-sql-cli.md": {
+          "blob_id": "6d506cbb09c210f27303829dad69ffdb24649ec7",
+          "size": 6883
+        },
+        "docs/sql-distributed-sql-engine.md": {
+          "blob_id": "ae8fd9c7211bdb5b0bb19e6400bce5e115307eff",
+          "size": 3997
+        },
+        "docs/sql-error-conditions.md": {
+          "blob_id": "590c14b9912d49ca5dfe1a3d6abf728b085b817a",
+          "size": 1654
+        },
+        "docs/sql-getting-started.md": {
+          "blob_id": "c2733a0ebf012eea0e517282d4442356995dba51",
+          "size": 16449
+        },
+        "docs/sql-migration-guide.md": {
+          "blob_id": "24b5851ce9beed18ed4d75de24ff40268eaf3a7d",
+          "size": 118022
+        },
+        "docs/sql-performance-tuning.md": {
+          "blob_id": "ff797f200f7fc8dc5734e8c39ec90ed06966b6f5",
+          "size": 27161
+        },
+        "docs/sql-pipe-syntax.md": {
+          "blob_id": "3d757db9662391429369c90fedcd8da9bf224282",
+          "size": 21280
+        },
+        "docs/sql-programming-guide.md": {
+          "blob_id": "dd2a16cfd10923dc7c08b4471afc447d34e235a1",
+          "size": 4211
+        },
+        "docs/sql-pyspark-pandas-with-arrow.md": {
+          "blob_id": "7697588d1a89e4bf6c450190ea915f7c7a852e60",
+          "size": 1070
+        },
+        "docs/sql-ref-ansi-compliance.md": {
+          "blob_id": "87ef332cdd15ba282bde2c30378ef90c99b2af12",
+          "size": 47568
+        },
+        "docs/sql-ref-datatypes.md": {
+          "blob_id": "3a4530dcecaef89d8f0f87fe0fe20a32f7664b88",
+          "size": 20179
+        },
+        "docs/sql-ref-datetime-pattern.md": {
+          "blob_id": "e5d5388f262e46d61bb8d534c7d5bd56d91abc18",
+          "size": 9922
+        },
+        "docs/sql-ref-function-invocation.md": {
+          "blob_id": "124356c4b9b441b47dbd9e07400e4cf551616189",
+          "size": 4200
+        },
+        "docs/sql-ref-functions-builtin.md": {
+          "blob_id": "b6572609a34b839dd3b2c75879ad7a06b2580066",
+          "size": 4206
+        },
+        "docs/sql-ref-functions-udf-aggregate.md": {
+          "blob_id": "da3182149410b2d46e878a8e7bfc98d48bc2540c",
+          "size": 4486
+        },
+        "docs/sql-ref-functions-udf-hive.md": {
+          "blob_id": "ed05902c09fdb224c849fe428fe0a5d6a9bdecd6",
+          "size": 4404
+        },
+        "docs/sql-ref-functions-udf-scalar.md": {
+          "blob_id": "97f5a89d3fb19953363efd87c612d05aea3131e4",
+          "size": 2146
+        },
+        "docs/sql-ref-functions.md": {
+          "blob_id": "b4891fe72eb354dea550355e66f619bf9130726d",
+          "size": 3854
+        },
+        "docs/sql-ref-identifier-clause.md": {
+          "blob_id": "1772e1a5538dea1d00e42b3542c391b45e4a03ab",
+          "size": 4942
+        },
+        "docs/sql-ref-identifier.md": {
+          "blob_id": "7aca08ea9fd8d6383bdc178e5279a38bc76f4f00",
+          "size": 2426
+        },
+        "docs/sql-ref-literals.md": {
+          "blob_id": "7a10676cce237ff6848590f3b19682fa39ae46d9",
+          "size": 13502
+        },
+        "docs/sql-ref-null-semantics.md": {
+          "blob_id": "36493bced7674dab45251987f1a7af51fc1025d9",
+          "size": 18058
+        },
+        "docs/sql-ref-number-pattern.md": {
+          "blob_id": "eecc3f9640ae09f732f5f729fbc466dfeda3dd3d",
+          "size": 6386
+        },
+        "docs/sql-ref-operators.md": {
+          "blob_id": "102e45fba8d20d47952a04960e2840a15f04d273",
+          "size": 3885
+        },
+        "docs/sql-ref-syntax-aux-analyze-table.md": {
+          "blob_id": "d6a938e31866ff29a2a104ab76a3e4391d34516f",
+          "size": 7021
+        },
+        "docs/sql-ref-syntax-aux-cache-cache-table.md": {
+          "blob_id": "9a1e61abbabb2ec4c447259d1cda198115c5e316",
+          "size": 2871
+        },
+        "docs/sql-ref-syntax-aux-cache-clear-cache.md": {
+          "blob_id": "aae4e3960037590ebc577c7b4edbd5289c0128be",
+          "size": 1408
+        },
+        "docs/sql-ref-syntax-aux-cache-refresh-function.md": {
+          "blob_id": "d91fc062eb714d373c1c67afa3d6536d48f5392f",
+          "size": 2204
+        },
+        "docs/sql-ref-syntax-aux-cache-refresh-table.md": {
+          "blob_id": "cc35c0451d5cbb7af8834d006651fb404ad4c446",
+          "size": 2172
+        },
+        "docs/sql-ref-syntax-aux-cache-refresh.md": {
+          "blob_id": "715bdcac3b6f145c3496e2ba5ef6e92f5fe76bb6",
+          "size": 1815
+        },
+        "docs/sql-ref-syntax-aux-cache-uncache-table.md": {
+          "blob_id": "4456378cdee15add002345f9385b6ba54dc4c0e4",
+          "size": 1851
+        },
+        "docs/sql-ref-syntax-aux-cache.md": {
+          "blob_id": "17a13e67e532e86e151e3420d3e6363d13c78500",
+          "size": 1298
+        },
+        "docs/sql-ref-syntax-aux-conf-mgmt-reset.md": {
+          "blob_id": "d91c767b2515454724a6035b4f23f661d186fc88",
+          "size": 2008
+        },
+        "docs/sql-ref-syntax-aux-conf-mgmt-set-timezone.md": {
+          "blob_id": "ada86d8dd3913e54ecbfc8659587decb998dd613",
+          "size": 2496
+        },
+        "docs/sql-ref-syntax-aux-conf-mgmt-set.md": {
+          "blob_id": "9e57a221f9688093f454621af8f2cd4bf2fd3b56",
+          "size": 2166
+        },
+        "docs/sql-ref-syntax-aux-conf-mgmt.md": {
+          "blob_id": "3312bcb503500920bc502ef0973260ea55e0e6cb",
+          "size": 1053
+        },
+        "docs/sql-ref-syntax-aux-describe-database.md": {
+          "blob_id": "143fa78b205caf67a858584ef4ca5c844688dcf2",
+          "size": 3976
+        },
+        "docs/sql-ref-syntax-aux-describe-function.md": {
+          "blob_id": "0c5a3d751a56433f89f1c0910601a5057340f8c6",
+          "size": 5229
+        },
+        "docs/sql-ref-syntax-aux-describe-query.md": {
+          "blob_id": "b2a74cbd060787e3f8f3709f0cfe03e545ad449c",
+          "size": 3528
+        },
+        "docs/sql-ref-syntax-aux-describe-table.md": {
+          "blob_id": "46d9432f5d0726e820653a4376fb69ba30efa779",
+          "size": 16186
+        },
+        "docs/sql-ref-syntax-aux-describe.md": {
+          "blob_id": "723943f97aa07b733a89487c753a6de59c501920",
+          "size": 1124
+        },
+        "docs/sql-ref-syntax-aux-exec-imm.md": {
+          "blob_id": "904a676605c816ff8c7be692addd50033ecbdfde",
+          "size": 2665
+        },
+        "docs/sql-ref-syntax-aux-resource-mgmt-add-archive.md": {
+          "blob_id": "0ae444a96b980d87bd210be81e94e9feae8d87fc",
+          "size": 1924
+        },
+        "docs/sql-ref-syntax-aux-resource-mgmt-add-file.md": {
+          "blob_id": "c1f55b5598a0e4ca8c9a81f6f6e2a8f08adf78df",
+          "size": 1813
+        },
+        "docs/sql-ref-syntax-aux-resource-mgmt-add-jar.md": {
+          "blob_id": "9a50db992f9c8a32a64cd7d4e3d1a8b8fb41d0c4",
+          "size": 2693
+        },
+        "docs/sql-ref-syntax-aux-resource-mgmt-list-archive.md": {
+          "blob_id": "ae5051ab116dc24dca31fb6cefde06d17e3b3d87",
+          "size": 1656
+        },
+        "docs/sql-ref-syntax-aux-resource-mgmt-list-file.md": {
+          "blob_id": "cd7589d5255d0015cfb5462fdadc172b734c72ab",
+          "size": 1624
+        },
+        "docs/sql-ref-syntax-aux-resource-mgmt-list-jar.md": {
+          "blob_id": "6c705aa8b1dc7864c5d432bd77fb4ba7a4c22c71",
+          "size": 1678
+        },
+        "docs/sql-ref-syntax-aux-resource-mgmt.md": {
+          "blob_id": "4a262824b7ae6fbd4030383cc51bf489159fbb46",
+          "size": 1261
+        },
+        "docs/sql-ref-syntax-aux-set-var.md": {
+          "blob_id": "5a61a970c03fdaac979a16e3a68491d7e781f63a",
+          "size": 2772
+        },
+        "docs/sql-ref-syntax-aux-show-columns.md": {
+          "blob_id": "b76db252f1a0f3c19fd44e52bc700a7983aaa983",
+          "size": 2511
+        },
+        "docs/sql-ref-syntax-aux-show-create-table.md": {
+          "blob_id": "83013b07213a0d9c5c4eae8b349372ef53c64f2f",
+          "size": 3021
+        },
+        "docs/sql-ref-syntax-aux-show-databases.md": {
+          "blob_id": "44c0fbbef39295e5f9acdafaf144ed865d4b7f4f",
+          "size": 2637
+        },
+        "docs/sql-ref-syntax-aux-show-functions.md": {
+          "blob_id": "3e674dcc482625e88a63cb3256ba71c487637c60",
+          "size": 3813
+        },
+        "docs/sql-ref-syntax-aux-show-partitions.md": {
+          "blob_id": "0b2ed3507e29589060e5091ce1c4755387b4d835",
+          "size": 3570
+        },
+        "docs/sql-ref-syntax-aux-show-table.md": {
+          "blob_id": "3314402ea3e2bbb1776f726a99c4238b070593c7",
+          "size": 10084
+        },
+        "docs/sql-ref-syntax-aux-show-tables.md": {
+          "blob_id": "fef9722a444f8d2957a9af1b9aa00b55a1a819c3",
+          "size": 3529
+        },
+        "docs/sql-ref-syntax-aux-show-tblproperties.md": {
+          "blob_id": "5b7ddcbcd9534b3b41512bacd2caf83e653d7cff",
+          "size": 3634
+        },
+        "docs/sql-ref-syntax-aux-show-views.md": {
+          "blob_id": "a4a827304948d0491c485bc4fc69de331924bbd2",
+          "size": 4747
+        },
+        "docs/sql-ref-syntax-aux-show.md": {
+          "blob_id": "9f64ea2d50ae1b8cddce78026ea1f5b69674b73f",
+          "size": 1403
+        },
+        "docs/sql-ref-syntax-ddl-alter-database.md": {
+          "blob_id": "727fedb19e237defe675831694cb1e4cfa950084",
+          "size": 5604
+        },
+        "docs/sql-ref-syntax-ddl-alter-table.md": {
+          "blob_id": "28ecc44a5bf7e1f6769b60b497fc9e16f4f0710c",
+          "size": 20686
+        },
+        "docs/sql-ref-syntax-ddl-alter-view.md": {
+          "blob_id": "ca272d27bc7e670b4848f9e037c130f45c474dc3",
+          "size": 10912
+        },
+        "docs/sql-ref-syntax-ddl-create-database.md": {
+          "blob_id": "9d8bf4784472492cf8c1d70cf9a7e4928626d2f0",
+          "size": 3324
+        },
+        "docs/sql-ref-syntax-ddl-create-function.md": {
+          "blob_id": "e0e2545f5ee3f9c03a639313208d0367c0c41b5e",
+          "size": 6027
+        },
+        "docs/sql-ref-syntax-ddl-create-sql-function.md": {
+          "blob_id": "649cd895a1974a048f11888a8be9f3f8069c83f2",
+          "size": 10069
+        },
+        "docs/sql-ref-syntax-ddl-create-table-datasource.md": {
+          "blob_id": "f645732a15df92662af6137c1d060619caa5b239",
+          "size": 5931
+        },
+        "docs/sql-ref-syntax-ddl-create-table-hiveformat.md": {
+          "blob_id": "583e890f8305e7e6b1a1ca18f73b4bf0f3f43321",
+          "size": 6569
+        },
+        "docs/sql-ref-syntax-ddl-create-table-like.md": {
+          "blob_id": "cfb959ca6b23d88a6cb2844af8c2fa833f1ae7fd",
+          "size": 2782
+        },
+        "docs/sql-ref-syntax-ddl-create-table.md": {
+          "blob_id": "85dc2020e6585f828f7bdc32b3b89467187b4400",
+          "size": 1343
+        },
+        "docs/sql-ref-syntax-ddl-create-view.md": {
+          "blob_id": "21174f12300e3b66ed10bb9b3a6f7795e5427959",
+          "size": 4155
+        },
+        "docs/sql-ref-syntax-ddl-declare-variable.md": {
+          "blob_id": "41ecba1364361c5bf27eb1cdf5ea899f3b23b85e",
+          "size": 3313
+        },
+        "docs/sql-ref-syntax-ddl-drop-database.md": {
+          "blob_id": "4a3bc0c68b6d449bd07ecbfd715a1d367dbecc72",
+          "size": 2061
+        },
+        "docs/sql-ref-syntax-ddl-drop-function.md": {
+          "blob_id": "bef31d74afcff561b8c421c96bc4c4971dbf328f",
+          "size": 2824
+        },
+        "docs/sql-ref-syntax-ddl-drop-table.md": {
+          "blob_id": "ce1b033a4eac8729b4056489681da3a7a943db32",
+          "size": 2624
+        },
+        "docs/sql-ref-syntax-ddl-drop-variable.md": {
+          "blob_id": "5b2b0da769459944db1de05917e76daf407cce26",
+          "size": 2212
+        },
+        "docs/sql-ref-syntax-ddl-drop-view.md": {
+          "blob_id": "5b680d7f907e02a5689cec047ea34532a02b1779",
+          "size": 2154
+        },
+        "docs/sql-ref-syntax-ddl-repair-table.md": {
+          "blob_id": "c64da2338dcdab2c6867d139152df2b38d2ed609",
+          "size": 3118
+        },
+        "docs/sql-ref-syntax-ddl-truncate-table.md": {
+          "blob_id": "3bc4d7a93e5205bc4d7771cfe5e9a0478fd0869f",
+          "size": 2771
+        },
+        "docs/sql-ref-syntax-ddl-usedb.md": {
+          "blob_id": "90076e0306125f338767f076e7b7ef9ad67596d9",
+          "size": 1770
+        },
+        "docs/sql-ref-syntax-dml-insert-overwrite-directory.md": {
+          "blob_id": "3ef32bdb5e4cebd73a04fbf3391956a9f60a4033",
+          "size": 4407
+        },
+        "docs/sql-ref-syntax-dml-insert-table.md": {
+          "blob_id": "6f85d4401d3b1c9bd59e3c8c5abda593b15c4e68",
+          "size": 19971
+        },
+        "docs/sql-ref-syntax-dml-load.md": {
+          "blob_id": "08922b869da32e4c9229bd1abfbb2f5fe077210c",
+          "size": 4244
+        },
+        "docs/sql-ref-syntax-hive-format.md": {
+          "blob_id": "8092e582d97adfc5bef3e6ce7b6d54af7814b51c",
+          "size": 2325
+        },
+        "docs/sql-ref-syntax-qry-explain.md": {
+          "blob_id": "7b84264a28cca3b4ac2ff4b81c7c6b812035b70f",
+          "size": 4338
+        },
+        "docs/sql-ref-syntax-qry-select-aggregate.md": {
+          "blob_id": "8cb371486335a1344ad69c4d5e52d46253e0557b",
+          "size": 5635
+        },
+        "docs/sql-ref-syntax-qry-select-case.md": {
+          "blob_id": "d9725f001ae3a4042df37c310bca18124339ac2f",
+          "size": 4569
+        },
+        "docs/sql-ref-syntax-qry-select-clusterby.md": {
+          "blob_id": "79d72ca438b4fd6f88c420b1b1375598c5772918",
+          "size": 3692
+        },
+        "docs/sql-ref-syntax-qry-select-cte.md": {
+          "blob_id": "eca7a2c16f028a751b257d7e1a8522cd91824721",
+          "size": 2530
+        },
+        "docs/sql-ref-syntax-qry-select-distribute-by.md": {
+          "blob_id": "91c75f61b972f020776a8fdc99e9d6a3ef5fe777",
+          "size": 3331
+        },
+        "docs/sql-ref-syntax-qry-select-file.md": {
+          "blob_id": "c3dc406ee79e659afb90cb33d9ab3d77f75cfdb9",
+          "size": 2087
+        },
+        "docs/sql-ref-syntax-qry-select-groupby.md": {
+          "blob_id": "72ccfcce09926b47b9b872f5e4f782aa8293845f",
+          "size": 13071
+        },
+        "docs/sql-ref-syntax-qry-select-having.md": {
+          "blob_id": "e6851d3cb9716df5bbf45cdfdecf486dc9c29429",
+          "size": 4075
+        },
+        "docs/sql-ref-syntax-qry-select-hints.md": {
+          "blob_id": "861e7fbae6687bb08e200f64f994565d32de0b05",
+          "size": 7252
+        },
+        "docs/sql-ref-syntax-qry-select-inline-table.md": {
+          "blob_id": "7f0372ea787e5daef633da25caffbd76f7cba51a",
+          "size": 1930
+        },
+        "docs/sql-ref-syntax-qry-select-join.md": {
+          "blob_id": "698884dc28b570efdf3a6df45b802684aace089c",
+          "size": 7239
+        },
+        "docs/sql-ref-syntax-qry-select-lateral-subquery.md": {
+          "blob_id": "54961b690d5b1a477e79d472a00f4f58c9ba8ecb",
+          "size": 2635
+        },
+        "docs/sql-ref-syntax-qry-select-lateral-view.md": {
+          "blob_id": "80404bbb6571836bc830b5a438a426f538ff69de",
+          "size": 5239
+        },
+        "docs/sql-ref-syntax-qry-select-like.md": {
+          "blob_id": "3604a9ba1ea020db8c80058ec16a2becdf86a4cb",
+          "size": 4318
+        },
+        "docs/sql-ref-syntax-qry-select-limit.md": {
+          "blob_id": "9389c306fb845f8acb4dac7edcc752f9ef104b00",
+          "size": 3337
+        },
+        "docs/sql-ref-syntax-qry-select-offset.md": {
+          "blob_id": "1febf19fe8b7b2ddb82f603005e6537614c9e9f4",
+          "size": 3187
+        },
+        "docs/sql-ref-syntax-qry-select-orderby.md": {
+          "blob_id": "d630c5b2dbfefe992d12483a8b2e2fce677ce071",
+          "size": 4521
+        },
+        "docs/sql-ref-syntax-qry-select-pivot.md": {
+          "blob_id": "71f7cc7cff122dddcce3f131cb324d27d19dd8f1",
+          "size": 4063
+        },
+        "docs/sql-ref-syntax-qry-select-sampling.md": {
+          "blob_id": "f9c7b760a239fb987a40d119295fb93fe1a6ef99",
+          "size": 2268
+        },
+        "docs/sql-ref-syntax-qry-select-setops.md": {
+          "blob_id": "8cd12c37fa6030977ad609f65f11827f0e7b4daf",
+          "size": 3657
+        },
+        "docs/sql-ref-syntax-qry-select-sortby.md": {
+          "blob_id": "6fadca591666912f116a2d0981aa4a4437f9db00",
+          "size": 6318
+        },
+        "docs/sql-ref-syntax-qry-select-subqueries.md": {
+          "blob_id": "976e201f2714bb44afcf66775ee72ca7656b016f",
+          "size": 894
+        },
+        "docs/sql-ref-syntax-qry-select-transform.md": {
+          "blob_id": "18d05db3ddf4dc6c534db1c9773e54a39ee8905f",
+          "size": 10368
+        },
+        "docs/sql-ref-syntax-qry-select-tvf.md": {
+          "blob_id": "099f423f185311acdf3169bc172e0d57cd2a46c8",
+          "size": 8206
+        },
+        "docs/sql-ref-syntax-qry-select-unpivot.md": {
+          "blob_id": "8a4bb97b94168884dde9c58efb2e85a62855b870",
+          "size": 4743
+        },
+        "docs/sql-ref-syntax-qry-select-where.md": {
+          "blob_id": "0e3f7c1765ddad8c33172d74c8acf540552981a3",
+          "size": 3718
+        },
+        "docs/sql-ref-syntax-qry-select-window.md": {
+          "blob_id": "3615252895592146e5324e08769b846857bf3631",
+          "size": 8472
+        },
+        "docs/sql-ref-syntax-qry-select.md": {
+          "blob_id": "1d5532898c6546df2300a109e9673c6d558a21d8",
+          "size": 8650
+        },
+        "docs/sql-ref-syntax-qry-star.md": {
+          "blob_id": "c575727e820e87c8562c02d2a0bd89545358ed94",
+          "size": 3409
+        },
+        "docs/sql-ref-syntax.md": {
+          "blob_id": "1837f22a57f31e22d004ff176589ad7814ab4f7f",
+          "size": 6571
+        },
+        "docs/sql-ref.md": {
+          "blob_id": "6d557caaca3d6cf7a113e9b6a4ec1e35295abde7",
+          "size": 2314
+        },
+        "docs/ss-migration-guide.md": {
+          "blob_id": "1e4c892f062af37c09b6f8eb48e182be65f56ef7",
+          "size": 1026
+        },
+        "docs/storage-openstack-swift.md": {
+          "blob_id": "18e879ff78da70743ece48536fe57c1e5eb14035",
+          "size": 5361
+        },
+        "docs/streaming-custom-receivers.md": {
+          "blob_id": "11a52232510fdb6ebfd87caaad88861a9eaf2170",
+          "size": 10878
+        },
+        "docs/streaming-kafka-0-10-integration.md": {
+          "blob_id": "6af14c17476db00411f3db75f5c8c736b50c3684",
+          "size": 17868
+        },
+        "docs/streaming-kafka-integration.md": {
+          "blob_id": "3282124b0be5d6e985e571e365f15e71fc5ab98b",
+          "size": 1311
+        },
+        "docs/streaming-kinesis-integration.md": {
+          "blob_id": "0396d3cc64d14f35d3ca598637c006a567d0e97e",
+          "size": 18181
+        },
+        "docs/streaming-programming-guide.md": {
+          "blob_id": "51d50d7e1bf86f21ff314557a3004eab1574cef5",
+          "size": 122123
+        },
+        "docs/streaming/additional-information.md": {
+          "blob_id": "a2574cc547df48213a07c0bb2209a359735e9f0b",
+          "size": 4355
+        },
+        "docs/streaming/apis-on-dataframes-and-datasets.md": {
+          "blob_id": "a1b5ffe9a54a898c8debd39a0c0f32f027f8c946",
+          "size": 144553
+        },
+        "docs/streaming/getting-started.md": {
+          "blob_id": "9b34bcf58baf942bd462a515d5d182960bab0876",
+          "size": 20809
+        },
+        "docs/streaming/index.md": {
+          "blob_id": "046d8317218a60099951339b98011984787e0ed7",
+          "size": 2841
+        },
+        "docs/streaming/performance-tips.md": {
+          "blob_id": "7fdebddbbeeece9cffbcdcf9f688f180fa419023",
+          "size": 9422
+        },
+        "docs/streaming/ss-migration-guide.md": {
+          "blob_id": "da4e5d7a8c59ac1a3df5b96ac742fef0da071668",
+          "size": 6255
+        },
+        "docs/streaming/structured-streaming-kafka-integration.md": {
+          "blob_id": "a8f2bcdeb9bc1a3db335042f6572945f7d14bb75",
+          "size": 48492
+        },
+        "docs/streaming/structured-streaming-state-data-source.md": {
+          "blob_id": "0ebebcbd1f00a92f5d0db0160097dd5007ea37d0",
+          "size": 15082
+        },
+        "docs/streaming/structured-streaming-transform-with-state.md": {
+          "blob_id": "2ab6f371817b1d79e72b5b0ec5cf42da0fbfdd42",
+          "size": 16445
+        },
+        "docs/structured-streaming-kafka-integration.md": {
+          "blob_id": "17bb858bace051be4f789820838554d21c601073",
+          "size": 1058
+        },
+        "docs/structured-streaming-programming-guide.md": {
+          "blob_id": "51fd0a505f37ec7e66c817ad4b9831fca1b3a0f2",
+          "size": 1088
+        },
+        "docs/submitting-applications.md": {
+          "blob_id": "922c0a953d423d3395abdc5c986d7f72856ebdf6",
+          "size": 13015
+        },
+        "docs/tuning.md": {
+          "blob_id": "f72dc0efd98eb7738ff24123f6f52bcef051826c",
+          "size": 22082
+        },
+        "docs/web-ui.md": {
+          "blob_id": "3889b41f03a04bf6a0ccbc1905067bc211e5dbbc",
+          "size": 26479
+        }
+      }
+    }
+  },
+  "git_diffs": {
+    "v3.5.0->v4.0.0": {
+      "added": 19,
+      "modified": 96,
+      "deleted": 51
+    },
+    "v4.0.0->v4.0.1": {
+      "added": 1,
+      "modified": 4,
+      "deleted": 0
+    }
+  }
+}

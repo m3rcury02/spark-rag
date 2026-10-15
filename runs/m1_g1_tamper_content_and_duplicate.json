@@ -1,0 +1,88 @@
+{
+  "label": "m1_g1_tamper_content_and_duplicate",
+  "git_commit": "5fc1e8f4f1a5e8fa3ab87c3759aae612c12673b9",
+  "statements": [
+    {
+      "sql": "SELECT path, sha2(content, 256) = content_sha256 AS hash_ok FROM workspace.docs_rag_dev.bronze_docs WHERE source_repo = 'apache/spark' AND version_tag = 'v3.5.0' AND path IN ('docs/index.md', 'docs/quick-start.md') ORDER BY path",
+      "columns": [
+        "path",
+        "hash_ok"
+      ],
+      "rows": [
+        [
+          "docs/index.md",
+          "true"
+        ],
+        [
+          "docs/quick-start.md",
+          "true"
+        ]
+      ]
+    },
+    {
+      "sql": "UPDATE workspace.docs_rag_dev.bronze_docs SET content = content || ' ' WHERE source_repo = 'apache/spark' AND version_tag = 'v3.5.0' AND path = 'docs/index.md'",
+      "columns": [
+        "num_affected_rows"
+      ],
+      "rows": [
+        [
+          "1"
+        ]
+      ]
+    },
+    {
+      "sql": "INSERT INTO workspace.docs_rag_dev.bronze_docs SELECT source_repo, version_tag, commit_sha, path, content, content_sha256, size_bytes, ingested_at, 'm1-dup-test' FROM workspace.docs_rag_dev.bronze_docs WHERE source_repo = 'apache/spark' AND version_tag = 'v3.5.0' AND path = 'docs/quick-start.md'",
+      "columns": [
+        "num_affected_rows",
+        "num_inserted_rows"
+      ],
+      "rows": [
+        [
+          "1",
+          "1"
+        ]
+      ]
+    },
+    {
+      "sql": "SELECT path, count(*) AS rows, count_if(sha2(content, 256) <> content_sha256) AS hash_mismatches FROM workspace.docs_rag_dev.bronze_docs WHERE source_repo = 'apache/spark' AND version_tag = 'v3.5.0' AND path IN ('docs/index.md', 'docs/quick-start.md') GROUP BY path ORDER BY path",
+      "columns": [
+        "path",
+        "rows",
+        "hash_mismatches"
+      ],
+      "rows": [
+        [
+          "docs/index.md",
+          "1",
+          "1"
+        ],
+        [
+          "docs/quick-start.md",
+          "2",
+          "0"
+        ]
+      ]
+    },
+    {
+      "sql": "SELECT version, operation FROM (DESCRIBE HISTORY workspace.docs_rag_dev.bronze_docs) ORDER BY version DESC LIMIT 3",
+      "columns": [
+        "version",
+        "operation"
+      ],
+      "rows": [
+        [
+          "8",
+          "WRITE"
+        ],
+        [
+          "7",
+          "UPDATE"
+        ],
+        [
+          "6",
+          "MERGE"
+        ]
+      ]
+    }
+  ]
+}

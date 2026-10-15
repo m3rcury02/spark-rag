@@ -1,0 +1,62 @@
+{
+  "label": "m1_g3_restore",
+  "git_commit": "5fc1e8f4f1a5e8fa3ab87c3759aae612c12673b9",
+  "statements": [
+    {
+      "sql": "SELECT version, operation FROM (DESCRIBE HISTORY workspace.docs_rag_dev.bronze_docs) ORDER BY version DESC LIMIT 2",
+      "columns": [
+        "version",
+        "operation"
+      ],
+      "rows": [
+        [
+          "8",
+          "WRITE"
+        ],
+        [
+          "7",
+          "UPDATE"
+        ]
+      ]
+    },
+    {
+      "sql": "UPDATE workspace.docs_rag_dev.bronze_docs SET content = substr(content, 1, char_length(content) - 1) WHERE source_repo = 'apache/spark' AND version_tag = 'v3.5.0' AND path = 'docs/index.md' AND endswith(content, ' ') AND sha2(content, 256) <> content_sha256",
+      "columns": [
+        "num_affected_rows"
+      ],
+      "rows": [
+        [
+          "1"
+        ]
+      ]
+    },
+    {
+      "sql": "DELETE FROM workspace.docs_rag_dev.bronze_docs WHERE source_repo = 'apache/spark' AND version_tag = 'v3.5.0' AND ingest_run_id = 'm1-dup-test'",
+      "columns": [
+        "num_affected_rows"
+      ],
+      "rows": [
+        [
+          "1"
+        ]
+      ]
+    },
+    {
+      "sql": "SELECT count(*) AS docs, count(DISTINCT path) AS paths, count_if(sha2(content, 256) <> content_sha256) AS hash_mismatches, count_if(octet_length(content) <> size_bytes) AS size_mismatches FROM workspace.docs_rag_dev.bronze_docs WHERE source_repo = 'apache/spark' AND version_tag = 'v3.5.0'",
+      "columns": [
+        "docs",
+        "paths",
+        "hash_mismatches",
+        "size_mismatches"
+      ],
+      "rows": [
+        [
+          "244",
+          "244",
+          "0",
+          "0"
+        ]
+      ]
+    }
+  ]
+}
