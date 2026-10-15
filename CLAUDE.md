@@ -78,14 +78,18 @@ uv run --with databricks-sdk==0.152.0 --with databricks-ai-search==0.78 \
 
 M0 is complete: the smoke test passed and D-001 is Accepted (see `runs/m0_*`). **Wait for the owner to
 say "start M1" before doing any M1 work.** Open items from M0:
-- The owner decides whether to drop the smoke-test index, table and schema (`workspace.docs_rag_smoke`,
-  the notebook's section 6 "Cleanup"). Keep `docs_rag_endpoint`: Free Edition allows only one endpoint.
+- **Owner confirms in the UI that the workspace is Free Edition.** The API probe only rules out the
+  Enterprise tier (D-001 tier row). If it is a paid workspace, the endpoint and index are billing: delete them.
+- The owner decides whether to drop the smoke-test index, table and schema (`workspace.docs_rag_smoke`;
+  exact commands in D-001 Consequences). Keep `docs_rag_endpoint`: Free Edition allows only one endpoint.
+- Re-probe `system.billing.usage` more than 24 h after a run and save the output under `runs/` (D-001 Quota).
 - Carry into M1: pin the serverless environment version (3 or later, Python 3.12) in every job, and
   verify it with a run. The default was env 2 / Python 3.11, where our package does not install (D-005).
+- Carry into M3: the run log takes add/change/delete counts from our own MERGE metrics. The sync pipeline's
+  row metrics are always 0 (D-001).
 - Carry into M5: create the real index only after the full gold backfill, because capacity is sized from the
   source table at creation and a small start limits growth. Re-test insert, update and delete with the real
-  MERGE. Sync right after each MERGE and wait for the update to complete ("ready" is not "synced"). Take
-  change counts from our MERGE metrics, not the sync pipeline (D-001).
+  MERGE. Sync right after each MERGE and wait for the update to complete ("ready" is not "synced") (D-001).
 
 ## Milestones (status)
 

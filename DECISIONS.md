@@ -9,7 +9,9 @@ measured carry the exact command.
 
 ## D-001 — Vector index platform
 
-- **Date:** 2026-10-14 · **Status:** Accepted 2026-10-15 (workspace smoke test passed, no fallback criterion met)
+- **Date:** 2026-10-14 · **Status:** Accepted 2026-10-15 (workspace smoke test passed, no fallback criterion met),
+  **conditional on the owner confirming the workspace is Free Edition** (see the tier row below). On a paid
+  workspace the endpoint and index bill per hour, which would change the cost side of this decision.
 
 **Context.** The brief says to prefer Databricks Vector Search synced from a Delta table if the
 Free Edition workspace supports it, and to fall back to Postgres + pgvector in Docker otherwise.
@@ -22,7 +24,7 @@ Free Edition workspace supports it, and to fall back to Postgres + pgvector in D
 | Vector Search was renamed **AI Search**. The new Python client is `databricks-ai-search` (v0.78 on PyPI). Its REST paths are still `/api/2.0/vector-search/...` | [AI Search overview](https://docs.databricks.com/aws/en/ai-search/ai-search) (updated 2026-09-14); SDK source we inspected |
 | Free Edition allows **one AI Search endpoint with one search unit**. **Direct Vector Access indexes are not supported**, so Delta Sync is the only index type available | [Free Edition limitations](https://docs.databricks.com/aws/en/getting-started/free-edition-limitations) (updated 2026-09-29) |
 | Serverless only, max 5 concurrent job tasks, one 2X-Small SQL warehouse, no GPU serving, limited model-serving endpoints | same |
-| **Outbound internet is restricted to an unpublished allowlist of "trusted domains."** Community reports say pypi.org works, the allowlist differs by region, and github.com was reachable in one report after identity verification. Nobody reports on huggingface.co | same, plus [community thread](https://community.databricks.com/t5/databricks-free-edition-help/whitelist-for-outbound-network-access/td-p/146591) and [a GitHub issue](https://github.com/VirtueMe/stavangerparking/issues/121) |
+| **Outbound internet is restricted to an unpublished allowlist of "trusted domains."** Community reports say pypi.org works and the allowlist differs by region. One report (October 2026) lists "github.com, pypi.org" as "Already reachable" and says other hosts that had failed DNS after identity verification later resolved too. Nobody reports on huggingface.co. **Our own probes: see the evidence table** | same, plus [community thread](https://community.databricks.com/t5/databricks-free-edition-help/whitelist-for-outbound-network-access/td-p/146591) and [a GitHub issue](https://github.com/VirtueMe/stavangerparking/issues/121) (re-read 2026-10-15) |
 | Under the fair-use quota, compute is shut off for the rest of the day (or month) when exceeded. Accounts may be deleted after prolonged inactivity | Free Edition limitations |
 | A Delta Sync source table on a standard endpoint needs **Change Data Feed** enabled. The index schema is fixed at creation | [Create an index](https://docs.databricks.com/aws/en/ai-search/create-ai-search) (updated 2026-10-09) |
 | On standard endpoints, triggered and continuous syncs are both incremental: "only data that has changed since the last sync is processed" | Create an index (read 2026-10-15) |
@@ -48,14 +50,14 @@ identifiers redacted. Commands:
 
 | Question | Result | Evidence (`runs/`) |
 |---|---|---|
-| Is this Free Edition? | **Not proven through the API.** The tier probe refused `enableIpAccessLists` ("not available for your pricing tier"). On AWS that setting needs the Enterprise tier ([IP access lists](https://docs.databricks.com/aws/en/security/network/front-end/ip-access-list-workspace), updated 2026-10-08), so the probe only rules out Enterprise. The rest fits Free Edition but does not prove it: an AWS workspace (the brief's only other platform is an Azure free trial, which would be an Azure workspace), 0 clusters, one 2X-Small serverless warehouse. **The owner should confirm in the UI.** | `m0_workspace_inventory.json` |
+| Is this Free Edition? | **Not proven through the API.** The tier probe refused `enableIpAccessLists` ("not available for your pricing tier"). On AWS that setting needs the Enterprise tier ([IP access lists](https://docs.databricks.com/aws/en/security/network/front-end/ip-access-list-workspace), updated 2026-10-08), so the probe only rules out Enterprise. The rest fits Free Edition but does not prove it: the workspace is on AWS (serverless kernel `amzn2023`), while the brief's only other platform is an Azure free trial; it has 0 clusters and one 2X-Small serverless warehouse. **The owner should confirm in the UI.** | `m0_workspace_inventory.json`; `m0_smoke_test.json` → `compute.platform` |
 | Outbound network from serverless | All 8 probed hosts answered over HTTPS: pypi.org, files.pythonhosted.org, github.com, api.github.com, codeload.github.com, raw.githubusercontent.com, huggingface.co, download.pytorch.org | `m0_smoke_test.json` → `network` |
 | Package install | `%pip install databricks-ai-search==0.78 sentence-transformers==6.1.0` plus a Python restart took 127.1 s. torch was not preinstalled, so pip pulled the CUDA build `2.14.1+cu130`. pip printed a resolver ERROR about a protobuf conflict with the preinstalled `google-api-core` (cell 2). It did no harm in this run | `install`; `m0_smoke_test_cells.txt` |
 | Embedding models on CPU | Both models downloaded from huggingface.co and loaded. On 256 texts of 189 tokens (batch 32, one pass): all-MiniLM-L6-v2 ran at 10.6 texts/s and bge-small-en-v1.5 at 6.6 texts/s. Hardware: 4 vCPU aarch64 with 15.3 GiB (the notebook's `mem_total_gb` key is really GiB). Serverless "does not guarantee a specific CPU architecture" ([dependencies](https://docs.databricks.com/aws/en/compute/serverless/dependencies), updated 2026-09-29), so a later run may land on x86_64 | `embeddings`, `compute` |
 | Endpoint | `docs_rag_endpoint` (STANDARD) reported ONLINE 0.1 s after it was created. The first index then waited in `PROVISIONING_ENDPOINT` for at least 1043 s. Whether later index creations wait again is unknown | `endpoint`; `m0_smoke_test_cells.txt` cell 12 |
 | Delta Sync index (self-managed 384-d vectors, TRIGGERED) | Created and reported ready in 1138.3 s with 5 rows indexed. "Ready" came while the initial update was still running (`detailed_state` `ONLINE_TRIGGERED_UPDATE`; that update completed at 23:17:13.758Z). The test query's top-1 result was the expected row (a mechanics check, not a quality check) | `delta_sync`; `m0_sync_pipeline.json` |
 | Do UPDATE and DELETE propagate? | **Yes, measured.** We ran `DELETE` on c3, a `MERGE` update on c4, then `index.sync()`. After the sync's update completed, the index held exactly c1, c2, c4 and c5, with c4's new text, and `indexed_row_count` went from 5 to 4. **Confirmed independently** from outside the workspace with `scan()`, which lists every row by primary key; the notebook's own check used ANN search, which could in principle miss a row. The mutations were issued around the time the initial update finished, so these files cannot rule out that its tail applied part of them. Either way, no hand-written index call was needed | `delta_sync`; `m0_index_scan.json` |
-| Was `sync()` a separate update? Was it incremental? | **Separate: yes.** `sync()` started its own pipeline update 11.3 s after the initial update completed. It took 65.1 s, of which 49.0 s was start-up before it reached RUNNING; the initial update's start-up was 59.8 s. The notebook's 83.0 s "visible after" figure includes its 20 s polling interval. **Incremental: not measurable here.** `full_refresh=false` is also set on the initial full snapshot, and `num_output_rows` is 0 for both updates. That only changed rows are processed comes from the docs (see the docs table above) | `m0_sync_pipeline.json` |
+| Was `sync()` a separate update? Was it incremental? | **Separate: yes.** `sync()` started its own pipeline update 11.3 s after the initial update completed. It took 65.1 s, of which 49.0 s was start-up before it reached RUNNING; the initial update's start-up was 59.8 s. The notebook's 83.0 s "visible after" figure includes its 20 s polling interval (`time.sleep(20)` in the notebook). **Incremental: not measurable here.** `full_refresh=false` is also set on the initial full snapshot, and `num_output_rows` is 0 for both updates. That only changed rows are processed comes from the docs (see the docs table above) | `m0_sync_pipeline.json`; `m0_smoke_test.json` → `delta_sync` |
 
 **Fallback criteria check.** None was met.
 - *The index cannot be created or synced on Free Edition.* It was created and it synced.
@@ -79,7 +81,7 @@ identifiers redacted. Commands:
 - TRIGGERED sync fits a batch pipeline. CONTINUOUS sync provisions a streaming cluster, which costs
   more on paid tiers.
 
-**What the smoke test does not show.** These risks carry into M3, M5 and M7.
+**What the smoke test does not show.** These risks carry into M1, M3 and M5.
 - **Scale.** We tested 5 rows and one sync, so we know nothing yet about sync time at corpus size, or
   whether the sync really processes only changed rows.
 - **Capacity.** The docs say "Index capacity is provisioned based on the source table size at index creation
@@ -100,11 +102,13 @@ identifiers redacted. Commands:
   writing to gold or calling `sync()`, and as the success check after it, M5 waits for the pipeline update to
   reach COMPLETED (or for `ONLINE_NO_PENDING_UPDATE`).
 - **Quota.** The roughly 25-minute run hit no limit, but its quota use is not visible yet.
-  `system.billing.usage` had 0 rows when probed 74 min after the run (`m0_workspace_inventory.json`), and
-  "Records are typically available within 12 hours"
+  `system.billing.usage` had 0 rows when probed about 90 min after the run (`checked_utc` 00:49:17Z in
+  `m0_workspace_inventory.json` against `run_end_utc` 23:18:53Z in `m0_smoke_test_meta.json`). "Records are
+  typically available within 12 hours. Data delivery for new workspaces can take longer than this"
   ([billing system table](https://docs.databricks.com/aws/en/admin/system-tables/billing), updated
   2026-10-08). Whether Free Edition records usage there at all, and whether an idle endpoint that holds an
-  index counts against the quota, are unknown. Re-probe more than 24 h after a run and save the output.
+  index counts against the quota, are unknown. Re-probe more than 24 h after a run and save the output. Even a
+  0-row re-probe is not conclusive for a new workspace.
 - **Row counts.** The sync pipeline's `num_output_rows` is 0 for every update, including the initial 5-row
   sync, so it cannot tell us how many rows changed. The M3 run log must take add/change/delete counts from
   our own MERGE metrics.
@@ -115,8 +119,10 @@ identifiers redacted. Commands:
 
 **Consequences.**
 - Keep `docs_rag_endpoint`, because Free Edition allows only one endpoint. The smoke-test index, table and
-  schema can be dropped with the notebook's section 6 "Cleanup" (cell 16 in `m0_smoke_test_cells.txt`); that is
-  the owner's call. If the real index has to wait for provisioning again, budget about 20 min for it in M5.
+  schema can be dropped; that is the owner's call. The notebook's section 6 "Cleanup" (cell 16 in
+  `m0_smoke_test_cells.txt`) depends on variables from earlier cells, so use the names directly:
+  `AISearchClient().delete_index(endpoint_name="docs_rag_endpoint", index_name="workspace.docs_rag_smoke.smoke_idx")`,
+  then `DROP TABLE workspace.docs_rag_smoke.smoke_src` and `DROP SCHEMA workspace.docs_rag_smoke`. If the real index has to wait for provisioning again, budget about 20 min for it in M5.
 - Create the production index once, after `gold_chunk_embeddings` holds the full first backfill (v3.5.0),
   so its capacity is sized for the corpus. If capacity errors still appear, recreate the index rather than
   trying to grow it.
@@ -213,7 +219,7 @@ The brief lists DQ checks after embeddings and CI with deployment. Two changes:
   submitted with the Jobs API and no environment spec) ran on serverless environment `client.2.5` with
   Python **3.11.10** on aarch64 (`runs/m0_smoke_test.json` → `compute`). That matches
   [environment version 2](https://docs.databricks.com/aws/en/release-notes/serverless/environment-version/two)
-  ("Python : 3.11.10", updated 2026-09-11). Our `pyproject.toml` requires `>=3.12,<3.13`, so the package would
+  ("Python: 3.11.10", updated 2026-09-11). Our `pyproject.toml` requires `>=3.12,<3.13`, so the package would
   not even install there.
 - **Consequence: pin the environment from the first Databricks job (M1), not M7.** "Notebook tasks default to
   Notebook Environment, which uses the notebook's own configured base environment and dependencies", and a
