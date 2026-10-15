@@ -5,8 +5,10 @@ Run with:
     uv run --with databricks-sdk==0.152.0 --with databricks-ai-search==0.78 \
         python scripts/m0_collect_evidence.py --run-id <parent run id>
 
-Needs personal-access-token auth (DATABRICKS_HOST and DATABRICKS_TOKEN), because the AI Search client's
-scan() takes a PAT. Every file is gathered in memory and checked for identifiers before any is written.
+The smoke-test index was deleted on 2026-10-15 (scripts/m0_cleanup.py), so this only works again after a
+fresh submit. Needs personal-access-token auth (DATABRICKS_HOST and DATABRICKS_TOKEN), because the
+AI Search client's scan() takes a PAT. Every file is gathered in memory and checked for identifiers before
+any is written.
 
 Writes:
 - runs/m0_smoke_test.json        the notebook's summary JSON, verbatim (last code cell's output)

@@ -1,0 +1,62 @@
+{
+  "before": {
+    "checked_utc": "2026-10-15T09:44:39Z",
+    "endpoints": [
+      {
+        "name": "docs_rag_endpoint",
+        "num_indexes": 0,
+        "state": "ONLINE"
+      }
+    ],
+    "indexes": [],
+    "schema_exists": true,
+    "schema_objects": []
+  },
+  "actions": [
+    {
+      "utc": "2026-10-15T09:44:39Z",
+      "action": "delete_index workspace.docs_rag_smoke.smoke_idx: already gone"
+    },
+    {
+      "utc": "2026-10-15T09:44:39Z",
+      "action": "index no longer listed on the endpoint"
+    },
+    {
+      "utc": "2026-10-15T09:44:39Z",
+      "action": "drop table workspace.docs_rag_smoke.smoke_src: already gone"
+    },
+    {
+      "utc": "2026-10-15T09:44:41Z",
+      "action": "SHOW TABLES DROPPED (recoverable with UNDROP until purged)",
+      "result": [
+        {
+          "tableName": "smoke_idx",
+          "tableType": "foreign",
+          "deletedAt": "2026-10-15 AD at 09:43:04 UTC"
+        },
+        {
+          "tableName": "smoke_src",
+          "tableType": "managed",
+          "deletedAt": "2026-10-15 AD at 09:43:11 UTC"
+        }
+      ]
+    },
+    {
+      "utc": "2026-10-15T09:44:41Z",
+      "action": "drop schema workspace.docs_rag_smoke (force: purges the dropped tables)"
+    }
+  ],
+  "after": {
+    "checked_utc": "2026-10-15T09:44:41Z",
+    "endpoints": [
+      {
+        "name": "docs_rag_endpoint",
+        "num_indexes": 0,
+        "state": "ONLINE"
+      }
+    ],
+    "indexes": [],
+    "schema_exists": false,
+    "schema_objects": []
+  }
+}

@@ -68,21 +68,23 @@ uv run pytest                # unit tests
 uv run ruff check . && uv run ruff format --check .
 uv run mypy src
 
-# M0 smoke test (needs DATABRICKS_HOST / DATABRICKS_TOKEN): submit, then collect evidence into runs/
+# M0 smoke test (needs DATABRICKS_HOST / DATABRICKS_TOKEN): submit, collect evidence into runs/, clean up.
+# The smoke index was deleted on 2026-10-15, so collect_evidence only works after a fresh submit.
 uv run --with databricks-sdk==0.152.0 python scripts/m0_submit_smoke_test.py
 uv run --with databricks-sdk==0.152.0 --with databricks-ai-search==0.78 \
     python scripts/m0_collect_evidence.py --run-id <run id>
+uv run --with databricks-sdk==0.152.0 python scripts/m0_cleanup.py
 ```
 
 ## Next session: pick up here
 
 M0 is complete: the smoke test passed and D-001 is Accepted (see `runs/m0_*`). **Wait for the owner to
 say "start M1" before doing any M1 work.** Open items from M0:
-- **Owner confirms in the UI that the workspace is Free Edition.** The API probe only rules out the
-  Enterprise tier (D-001 tier row). If it is a paid workspace, the endpoint and index are billing: delete them.
-- The owner decides whether to drop the smoke-test index, table and schema (`workspace.docs_rag_smoke`;
-  exact commands in D-001 Consequences). Keep `docs_rag_endpoint`: Free Edition allows only one endpoint.
-- Re-probe `system.billing.usage` more than 24 h after a run and save the output under `runs/` (D-001 Quota).
+- Done 2026-10-15: the owner confirmed Free Edition in the UI. The smoke-test index, table and schema were
+  deleted (`runs/m0_cleanup.json`). Keep `docs_rag_endpoint` (ONLINE, 0 indexes): Free Edition allows only
+  one endpoint.
+- Re-probe `system.billing.usage` more than 24 h after a run (the M0 run ended 2026-10-14T23:19Z) and save
+  the output under `runs/` (D-001 Quota).
 - Carry into M1: pin the serverless environment version (3 or later, Python 3.12) in every job, and
   verify it with a run. The default was env 2 / Python 3.11, where our package does not install (D-005).
 - Carry into M3: the run log takes add/change/delete counts from our own MERGE metrics. The sync pipeline's

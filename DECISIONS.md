@@ -9,9 +9,8 @@ measured carry the exact command.
 
 ## D-001 — Vector index platform
 
-- **Date:** 2026-10-14 · **Status:** Accepted 2026-10-15 (workspace smoke test passed, no fallback criterion met),
-  **conditional on the owner confirming the workspace is Free Edition** (see the tier row below). On a paid
-  workspace the endpoint and index bill per hour, which would change the cost side of this decision.
+- **Date:** 2026-10-14 · **Status:** Accepted 2026-10-15 (workspace smoke test passed, no fallback criterion met;
+  the owner confirmed in the UI on 2026-10-15 that the workspace is Free Edition)
 
 **Context.** The brief says to prefer Databricks Vector Search synced from a Delta table if the
 Free Edition workspace supports it, and to fall back to Postgres + pgvector in Docker otherwise.
@@ -50,7 +49,7 @@ identifiers redacted. Commands:
 
 | Question | Result | Evidence (`runs/`) |
 |---|---|---|
-| Is this Free Edition? | **Not proven through the API.** The tier probe refused `enableIpAccessLists` ("not available for your pricing tier"). On AWS that setting needs the Enterprise tier ([IP access lists](https://docs.databricks.com/aws/en/security/network/front-end/ip-access-list-workspace), updated 2026-10-08), so the probe only rules out Enterprise. The rest fits Free Edition but does not prove it: the workspace is on AWS (serverless kernel `amzn2023`), while the brief's only other platform is an Azure free trial; it has 0 clusters and one 2X-Small serverless warehouse. **The owner should confirm in the UI.** | `m0_workspace_inventory.json`; `m0_smoke_test.json` → `compute.platform` |
+| Is this Free Edition? | **Not proven through the API.** The tier probe refused `enableIpAccessLists` ("not available for your pricing tier"). On AWS that setting needs the Enterprise tier ([IP access lists](https://docs.databricks.com/aws/en/security/network/front-end/ip-access-list-workspace), updated 2026-10-08), so the probe only rules out Enterprise. The rest fits Free Edition but does not prove it: the workspace is on AWS (serverless kernel `amzn2023`), while the brief's only other platform is an Azure free trial; it has 0 clusters and one 2X-Small serverless warehouse. **The owner confirmed Free Edition in the UI on 2026-10-15** (owner's statement, not an API result). | `m0_workspace_inventory.json`; `m0_smoke_test.json` → `compute.platform` |
 | Outbound network from serverless | All 8 probed hosts answered over HTTPS: pypi.org, files.pythonhosted.org, github.com, api.github.com, codeload.github.com, raw.githubusercontent.com, huggingface.co, download.pytorch.org | `m0_smoke_test.json` → `network` |
 | Package install | `%pip install databricks-ai-search==0.78 sentence-transformers==6.1.0` plus a Python restart took 127.1 s. torch was not preinstalled, so pip pulled the CUDA build `2.14.1+cu130`. pip printed a resolver ERROR about a protobuf conflict with the preinstalled `google-api-core` (cell 2). It did no harm in this run | `install`; `m0_smoke_test_cells.txt` |
 | Embedding models on CPU | Both models downloaded from huggingface.co and loaded. On 256 texts of 189 tokens (batch 32, one pass): all-MiniLM-L6-v2 ran at 10.6 texts/s and bge-small-en-v1.5 at 6.6 texts/s. Hardware: 4 vCPU aarch64 with 15.3 GiB (the notebook's `mem_total_gb` key is really GiB). Serverless "does not guarantee a specific CPU architecture" ([dependencies](https://docs.databricks.com/aws/en/compute/serverless/dependencies), updated 2026-09-29), so a later run may land on x86_64 | `embeddings`, `compute` |
@@ -118,11 +117,15 @@ identifiers redacted. Commands:
 - **Runtime.** The run got serverless environment `client.2.5` with Python 3.11.10, not 3.12 (see D-005).
 
 **Consequences.**
-- Keep `docs_rag_endpoint`, because Free Edition allows only one endpoint. The smoke-test index, table and
-  schema can be dropped; that is the owner's call. The notebook's section 6 "Cleanup" (cell 16 in
-  `m0_smoke_test_cells.txt`) depends on variables from earlier cells, so use the names directly:
-  `AISearchClient().delete_index(endpoint_name="docs_rag_endpoint", index_name="workspace.docs_rag_smoke.smoke_idx")`,
-  then `DROP TABLE workspace.docs_rag_smoke.smoke_src` and `DROP SCHEMA workspace.docs_rag_smoke`. If the real index has to wait for provisioning again, budget about 20 min for it in M5.
+- Keep `docs_rag_endpoint`, because Free Edition allows only one endpoint. **The smoke-test index, table and
+  schema were deleted on 2026-10-15 at the owner's request** with `scripts/m0_cleanup.py`
+  (`runs/m0_cleanup.json`). The endpoint remains, ONLINE, with 0 indexes. `scripts/m0_collect_evidence.py`
+  can no longer be re-run, so `runs/m0_*` is the record. If the real index has to wait for provisioning
+  again, budget about 20 min for it in M5.
+- Unity Catalog keeps dropped tables recoverable with `UNDROP` and counts them when checking whether a schema
+  is empty. A plain `DROP SCHEMA` therefore failed with "not empty" while `SHOW TABLES` returned nothing, and
+  the cleanup had to force-drop after checking `SHOW TABLES DROPPED` held only the two smoke-test objects
+  (`runs/m0_cleanup.json`). Tearing down a dev schema (M7) needs the same check.
 - Create the production index once, after `gold_chunk_embeddings` holds the full first backfill (v3.5.0),
   so its capacity is sized for the corpus. If capacity errors still appear, recreate the index rather than
   trying to grow it.
