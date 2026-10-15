@@ -7,6 +7,7 @@ from docs_rag.bronze import (
     StoredDoc,
     bronze_schema_ddl,
     check_against_stored,
+    invariant_violations,
     to_records,
 )
 from docs_rag.models import Snapshot, SourceDoc
@@ -26,7 +27,11 @@ def snap(docs: dict[str, str], commit: str = "c1") -> Snapshot:
 
 
 def stored(docs: dict[str, str], commit: str = "c1") -> list[StoredDoc]:
-    return [StoredDoc(path=p, content_sha256=h, commit_sha=commit) for p, h in docs.items()]
+    """Intact stored rows: the content still hashes to the stored hash."""
+    return [
+        StoredDoc(path=p, content_sha256=h, commit_sha=commit, content_sha256_actual=h)
+        for p, h in docs.items()
+    ]
 
 
 def test_record_fields_match_table_columns_in_order() -> None:
@@ -78,6 +83,57 @@ def test_a_moved_tag_is_a_conflict_even_with_identical_docs() -> None:
     check = check_against_stored(snap({"docs/a.md": "h1"}, commit="c2"), stored({"docs/a.md": "h1"}, "c1"))
     assert check.status == "conflict"
     assert "commit in bronze ['c1'] vs source c2" in check.describe()
+
+
+def test_stored_content_that_no_longer_matches_its_hash_is_a_conflict() -> None:
+    """The case the hash column alone cannot show: content edited, hash column untouched."""
+    rows = [StoredDoc("docs/a.md", "h1", "c1", content_sha256_actual="something-else")]
+    check = check_against_stored(snap({"docs/a.md": "h1"}), rows)
+    assert (check.status, check.corrupt, check.changed) == ("conflict", ("docs/a.md",), ())
+    assert "stored content does not match its stored hash: docs/a.md" in check.describe()
+
+
+def test_a_path_stored_twice_is_a_conflict_whatever_the_row_order() -> None:
+    same = stored({"docs/a.md": "h1"})
+    for rows in (same + same, same + stored({"docs/a.md": "h1"}, commit="c2")):
+        for ordered in (rows, rows[::-1]):
+            check = check_against_stored(snap({"docs/a.md": "h1"}), ordered)
+            assert (check.status, check.duplicated, check.stored_docs) == ("conflict", ("docs/a.md",), 2)
+
+
+def test_commits_are_taken_from_every_stored_row() -> None:
+    rows = stored({"docs/a.md": "h1"}) + stored({"docs/b.md": "h2"}, commit="c2")
+    check = check_against_stored(snap({"docs/a.md": "h1", "docs/b.md": "h2"}), rows)
+    assert (check.status, check.stored_commits) == ("conflict", ("c1", "c2"))
+
+
+HEALTHY = {"docs": 3, "distinct_paths": 3, "commits": 1, "hash_mismatches": 0, "size_mismatches": 0}
+
+
+def test_healthy_tag_has_no_violations() -> None:
+    assert invariant_violations("v1", HEALTHY, expected_docs=3) == []
+
+
+def test_invariant_violations_are_each_reported() -> None:
+    stats = {
+        "docs": "4",
+        "distinct_paths": "3",
+        "commits": "2",
+        "hash_mismatches": "1",
+        "size_mismatches": "1",
+    }
+    problems = invariant_violations("v1", stats, expected_docs=3)
+    assert problems == [
+        "v1: 4 rows but 3 distinct paths",
+        "v1: 2 distinct commits",
+        "v1: 1 rows where sha2(content, 256) <> content_sha256",
+        "v1: 1 rows where octet_length(content) <> size_bytes",
+        "v1: 4 rows but the source has 3 docs",
+    ]
+
+
+def test_row_count_is_only_compared_when_the_source_size_is_known() -> None:
+    assert invariant_violations("v1", HEALTHY) == []
 
 
 def test_describe_caps_long_path_lists() -> None:

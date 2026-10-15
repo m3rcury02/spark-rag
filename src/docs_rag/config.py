@@ -42,3 +42,7 @@ class Config:
     @property
     def bronze_table(self) -> str:
         return self.table("bronze_docs")
+
+    def volume(self, name: str) -> str:
+        """Path of a Unity Catalog Volume in this schema, e.g. '/Volumes/workspace/docs_rag_dev/artifacts'."""
+        return f"/Volumes/{self.catalog}/{self.schema}/{_check(_IDENTIFIER, name, 'volume name')}"

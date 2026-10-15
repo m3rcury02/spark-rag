@@ -30,9 +30,10 @@ from databricks.sdk.errors import NotFound
 from databricks.sdk.service import catalog, compute, jobs
 from redact import Redactor
 
+from docs_rag.config import Config
+
 REPO = pathlib.Path(__file__).resolve().parents[1]
-CATALOG, SCHEMA, VOLUME = "workspace", "docs_rag_dev", "artifacts"
-VOLUME_ROOT = f"/Volumes/{CATALOG}/{SCHEMA}/{VOLUME}"
+ARTIFACTS = "artifacts"  # Volume in the target schema: wheels, job scripts, run summaries
 # Every job runs on one environment. Versions 3-6 all ship Python 3.12.3; 4 is the most mature (D-005).
 ENVIRONMENT_VERSION = "4"
 TERMINAL = {"TERMINATED", "SKIPPED", "INTERNAL_ERROR"}
@@ -59,16 +60,20 @@ def build_wheel() -> pathlib.Path:
     return wheel
 
 
-def ensure_volume(w: WorkspaceClient) -> None:
+def ensure_volume(w: WorkspaceClient, config: Config) -> None:
     try:
-        w.schemas.get(f"{CATALOG}.{SCHEMA}")
+        w.schemas.get(f"{config.catalog}.{config.schema}")
     except NotFound:
-        w.schemas.create(name=SCHEMA, catalog_name=CATALOG, comment="docs_rag dev target")
+        w.schemas.create(name=config.schema, catalog_name=config.catalog, comment="docs_rag target")
     try:
-        w.volumes.read(f"{CATALOG}.{SCHEMA}.{VOLUME}")
+        w.volumes.read(f"{config.catalog}.{config.schema}.{ARTIFACTS}")
     except NotFound:
         w.volumes.create(
-            CATALOG, SCHEMA, VOLUME, catalog.VolumeType.MANAGED, comment="wheels, scripts, summaries"
+            config.catalog,
+            config.schema,
+            ARTIFACTS,
+            catalog.VolumeType.MANAGED,
+            comment="wheels, scripts, summaries",
         )
 
 
@@ -76,9 +81,15 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--script", required=True, help="job script, e.g. jobs/bronze_ingest.py")
     ap.add_argument("--label", required=True, help="output name: runs/<label>.json")
+    ap.add_argument("--catalog", default=Config.catalog)
+    ap.add_argument("--schema", default=Config.schema, help="target schema; also forwarded to the job")
     ap.add_argument("job_args", nargs=argparse.REMAINDER, help="arguments after -- go to the job script")
     args = ap.parse_args()
     job_args = [a for a in args.job_args if a != "--"]
+    if {"--catalog", "--schema"} & set(job_args):
+        sys.exit("pass --catalog/--schema to run_job.py itself, so artifacts and the job use the same target")
+    config = Config(catalog=args.catalog, schema=args.schema)
+    volume_root = config.volume(ARTIFACTS)
 
     if git("status", "--porcelain", "--", ".", ":(exclude)runs"):
         sys.exit(
@@ -89,15 +100,16 @@ def main() -> None:
     wheel_version = wheel.name.split("-")[1]
 
     w = WorkspaceClient()
-    ensure_volume(w)
-    folder = f"{VOLUME_ROOT}/code/{commit[:12]}"
+    ensure_volume(w, config)
+    folder = f"{volume_root}/code/{commit[:12]}"
     script = REPO / args.script
     w.files.upload(f"{folder}/{wheel.name}", io.BytesIO(wheel.read_bytes()), overwrite=True)
     w.files.upload(f"{folder}/{script.name}", io.BytesIO(script.read_bytes()), overwrite=True)
     run_id = str(uuid.uuid4())
-    summary_dir = f"{VOLUME_ROOT}/summaries"
+    summary_dir = f"{volume_root}/summaries"
     parameters = [
         *job_args,
+        *("--catalog", config.catalog, "--schema", config.schema),
         *("--run-id", run_id, "--summary-dir", summary_dir),
         *("--expect-env", ENVIRONMENT_VERSION, "--expect-version", wheel_version),
     ]
@@ -138,6 +150,7 @@ def main() -> None:
         "git_commit": commit,
         "script": args.script,
         "job_args": job_args,
+        "target": f"{config.catalog}.{config.schema}",
         "run_id": run_id,
         "environment_version": ENVIRONMENT_VERSION,
         "wheel": wheel.name,

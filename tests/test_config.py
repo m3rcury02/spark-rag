@@ -26,6 +26,10 @@ def test_rejects_values_that_could_break_sql_or_paths(field: str, value: str) ->
         Config(**{field: value})
 
 
+def test_volume_path_is_in_the_configured_schema() -> None:
+    assert Config(schema="docs_rag_prod").volume("artifacts") == "/Volumes/workspace/docs_rag_prod/artifacts"
+
+
 def test_table_name_is_validated() -> None:
     with pytest.raises(ValueError, match="invalid table name"):
         Config().table("bronze docs")

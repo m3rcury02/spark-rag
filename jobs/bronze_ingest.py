@@ -8,8 +8,9 @@ Runs as a serverless spark_python_task (see scripts/run_job.py). Steps:
    is already stored must match exactly; any difference stops the run before anything is written (D-006).
 4. Insert-only MERGE on (source_repo, version_tag, path). A tag already stored identically skips the MERGE,
    so a re-run writes no rows, no files and no table version.
-5. Record the MERGE result, the table commit it made (if any) and per-tag invariants, including
-   sha2(content) = content_sha256 for every row.
+5. Record the MERGE result and the table commit it made (if any), then check per-tag invariants for every tag
+   (one row per path, one commit, sha2(content) = content_sha256, octet_length(content) = size_bytes) and fail
+   the run if any is violated.
 
 The summary JSON is written to <summary-dir>/<run-id>.json whether the run succeeds or fails.
 """
@@ -26,7 +27,13 @@ from typing import Any
 
 from pyspark.sql import SparkSession
 
-from docs_rag.bronze import StoredDoc, bronze_schema_ddl, check_against_stored, to_records
+from docs_rag.bronze import (
+    StoredDoc,
+    bronze_schema_ddl,
+    check_against_stored,
+    invariant_violations,
+    to_records,
+)
 from docs_rag.config import Config, validate_tag
 from docs_rag.fetch import archive_url, download, read_snapshot
 
@@ -122,11 +129,14 @@ def ingest(args: argparse.Namespace, summary: dict[str, Any]) -> None:
     spark.sql(CREATE_BRONZE, args={"table": table})
 
     stored_rows = spark.sql(
-        "SELECT path, content_sha256, commit_sha FROM IDENTIFIER(:table) "
-        "WHERE source_repo = :repo AND version_tag = :tag",
+        "SELECT path, content_sha256, commit_sha, sha2(content, 256) AS content_sha256_actual "
+        "FROM IDENTIFIER(:table) WHERE source_repo = :repo AND version_tag = :tag",
         args={"table": table, "repo": config.source_repo, "tag": tag},
     ).collect()
-    stored = (StoredDoc(r["path"], r["content_sha256"], r["commit_sha"]) for r in stored_rows)
+    stored = (
+        StoredDoc(r["path"], r["content_sha256"], r["commit_sha"], r["content_sha256_actual"])
+        for r in stored_rows
+    )
     check = check_against_stored(snap, stored)
     summary["check"] = {"status": check.status, "stored": check.stored_docs, "source": check.source_docs}
     if check.status == "conflict":
@@ -164,6 +174,18 @@ def ingest(args: argparse.Namespace, summary: dict[str, Any]) -> None:
     summary["tags_after"] = {
         r["version_tag"]: {k: v for k, v in r.asDict().items() if k != "version_tag"} for r in rows
     }
+
+    # Fail the run (the summary is still written) if bronze is unhealthy anywhere; recording is not enough.
+    problems = []
+    for t, stats in summary["tags_after"].items():
+        problems += invariant_violations(t, stats, expected_docs=len(snap.docs) if t == tag else None)
+    if check.status == "new" and summary["merge"]["num_inserted_rows"] != len(snap.docs):
+        problems.append(
+            f"{tag}: MERGE inserted {summary['merge']['num_inserted_rows']}, expected {len(snap.docs)}"
+        )
+    summary["invariant_violations"] = problems
+    if problems:
+        raise RuntimeError("bronze invariants violated: " + "; ".join(problems))
 
 
 def main() -> None:

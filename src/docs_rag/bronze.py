@@ -1,16 +1,17 @@
 """Bronze layer contract: the bronze_docs columns, the records written to it, and the immutability check.
 
 Bronze holds one immutable snapshot per (source_repo, version_tag): one row per doc path (D-006). Loading a
-tag that is already stored must reproduce it exactly. Any difference (a doc added, removed or changed, or a
-different commit behind the tag) means the fetch is broken or the tag moved, and the load stops instead of
-rewriting history. Re-ingesting a changed tag is a deliberate, manual step.
+tag that is already stored must reproduce it exactly. Any difference (a doc added, removed or changed, a
+different commit behind the tag, a stored row whose content no longer matches its hash, or a path stored
+twice) means the fetch is broken, the tag moved or bronze was altered, and the load stops instead of
+rewriting history. Re-ingesting a changed tag is a deliberate, manual step, and only for unpublished tags.
 """
 
 import dataclasses
 import datetime as dt
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
-from typing import Literal
+from typing import Any, Literal
 
 from docs_rag.models import Snapshot
 
@@ -71,19 +72,22 @@ class StoredDoc:
     """What bronze already holds for one path of the tag being loaded."""
 
     path: str
-    content_sha256: str
+    content_sha256: str  # the hash column as stored
     commit_sha: str
+    content_sha256_actual: str  # sha2(content, 256) recomputed from the stored content when it was read
 
 
 @dataclass(frozen=True)
 class SnapshotCheck:
     status: Literal["new", "identical", "conflict"]
-    stored_docs: int
+    stored_docs: int  # stored rows, duplicates included
     source_docs: int
     only_stored: tuple[str, ...] = ()  # paths bronze has but the fetched snapshot does not
     only_source: tuple[str, ...] = ()  # paths the fetched snapshot has but bronze does not
     changed: tuple[str, ...] = ()  # same path, different content hash
-    stored_commits: tuple[str, ...] = ()  # distinct commit ids in bronze for this tag
+    corrupt: tuple[str, ...] = ()  # stored content no longer matches its own stored hash
+    duplicated: tuple[str, ...] = ()  # paths stored more than once
+    stored_commits: tuple[str, ...] = ()  # distinct commit ids across all stored rows
     source_commit: str = ""
 
     def describe(self) -> str:
@@ -92,44 +96,84 @@ class SnapshotCheck:
         def head(paths: tuple[str, ...]) -> str:
             return ", ".join(paths[:10]) + (f" (+{len(paths) - 10} more)" if len(paths) > 10 else "")
 
-        parts = [f"bronze holds {self.stored_docs} docs for this tag, the source has {self.source_docs}"]
-        if self.stored_commits != (self.source_commit,):
+        parts = [f"bronze holds {self.stored_docs} rows for this tag, the source has {self.source_docs} docs"]
+        if self.stored_commits and self.stored_commits != (self.source_commit,):
             parts.append(f"commit in bronze {list(self.stored_commits)} vs source {self.source_commit}")
-        for label, paths in (("only in bronze", self.only_stored), ("only in source", self.only_source)):
+        for label, paths in (
+            ("only in bronze", self.only_stored),
+            ("only in source", self.only_source),
+            ("content changed", self.changed),
+            ("stored content does not match its stored hash", self.corrupt),
+            ("stored more than once", self.duplicated),
+        ):
             if paths:
                 parts.append(f"{label}: {head(paths)}")
-        if self.changed:
-            parts.append(f"content changed: {head(self.changed)}")
         return "; ".join(parts)
 
 
 def check_against_stored(snapshot: Snapshot, stored: Iterable[StoredDoc]) -> SnapshotCheck:
-    """Compare a fetched snapshot with what bronze holds for the same (repo, tag)."""
-    stored_by_path = {s.path: s for s in stored}
+    """Compare a fetched snapshot with what bronze holds for the same (repo, tag).
+
+    "identical" requires every stored row to be intact (its content still hashes to its stored hash), each
+    path to be stored once, and paths, hashes and the commit to equal the snapshot's.
+    """
+    rows = list(stored)
     source_by_path = {d.path: d for d in snapshot.docs}
-    n_stored, n_source = len(stored_by_path), len(source_by_path)
-    if not stored_by_path:
-        return SnapshotCheck("new", n_stored, n_source, source_commit=snapshot.commit_sha)
-    only_stored = tuple(sorted(stored_by_path.keys() - source_by_path.keys()))
-    only_source = tuple(sorted(source_by_path.keys() - stored_by_path.keys()))
+    if not rows:
+        return SnapshotCheck("new", 0, len(source_by_path), source_commit=snapshot.commit_sha)
+    counts: dict[str, int] = {}
+    for r in rows:
+        counts[r.path] = counts.get(r.path, 0) + 1
+    stored_paths = counts.keys()
+    duplicated = tuple(sorted(p for p, n in counts.items() if n > 1))
+    corrupt = tuple(sorted({r.path for r in rows if r.content_sha256 != r.content_sha256_actual}))
+    only_stored = tuple(sorted(stored_paths - source_by_path.keys()))
+    only_source = tuple(sorted(source_by_path.keys() - stored_paths))
     changed = tuple(
         sorted(
-            p
-            for p in stored_by_path.keys() & source_by_path.keys()
-            if stored_by_path[p].content_sha256 != source_by_path[p].content_sha256
+            {
+                r.path
+                for r in rows
+                if r.path in source_by_path and r.content_sha256 != source_by_path[r.path].content_sha256
+            }
         )
     )
-    stored_commits = tuple(sorted({s.commit_sha for s in stored_by_path.values()}))
-    identical = (
-        not only_stored and not only_source and not changed and stored_commits == (snapshot.commit_sha,)
+    stored_commits = tuple(sorted({r.commit_sha for r in rows}))
+    identical = not (only_stored or only_source or changed or corrupt or duplicated) and stored_commits == (
+        snapshot.commit_sha,
     )
     return SnapshotCheck(
         "identical" if identical else "conflict",
-        n_stored,
-        n_source,
+        len(rows),
+        len(source_by_path),
         only_stored=only_stored,
         only_source=only_source,
         changed=changed,
+        corrupt=corrupt,
+        duplicated=duplicated,
         stored_commits=stored_commits,
         source_commit=snapshot.commit_sha,
     )
+
+
+def invariant_violations(tag: str, stats: Mapping[str, Any], expected_docs: int | None = None) -> list[str]:
+    """Problems in one tag's bronze rows, from the job's per-tag statistics query. Empty means healthy.
+
+    `stats` has docs, distinct_paths, commits, hash_mismatches, size_mismatches. `expected_docs` is the
+    fetched snapshot's size, when this tag was just loaded.
+    """
+    n = {
+        k: int(stats[k]) for k in ("docs", "distinct_paths", "commits", "hash_mismatches", "size_mismatches")
+    }
+    problems = []
+    if n["docs"] != n["distinct_paths"]:
+        problems.append(f"{tag}: {n['docs']} rows but {n['distinct_paths']} distinct paths")
+    if n["commits"] != 1:
+        problems.append(f"{tag}: {n['commits']} distinct commits")
+    if n["hash_mismatches"]:
+        problems.append(f"{tag}: {n['hash_mismatches']} rows where sha2(content, 256) <> content_sha256")
+    if n["size_mismatches"]:
+        problems.append(f"{tag}: {n['size_mismatches']} rows where octet_length(content) <> size_bytes")
+    if expected_docs is not None and n["docs"] != expected_docs:
+        problems.append(f"{tag}: {n['docs']} rows but the source has {expected_docs} docs")
+    return problems
