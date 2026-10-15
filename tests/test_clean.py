@@ -153,3 +153,20 @@ def test_residue_counts_markup_outside_code_only() -> None:
         "html_tags": 1,
         "markdown_links": 1,
     }
+
+
+def test_long_table_borders_are_shortened_inside_code_too() -> None:
+    text = "```\n+--------+-----+\n| a      | b   |\n+--------+-----+\n```\n\n|:-------|=====|\n\n---"
+    assert clean(text) == "```\n+---+---+\n| a      | b   |\n+---+---+\n```\n\n|:---|===|\n\n---"
+
+
+def test_text_lines_with_dashes_are_left_alone() -> None:
+    assert clean("```\n# ---------- section ----------\nx = a ---- b\n```") == (
+        "```\n# ---------- section ----------\nx = a ---- b\n```"
+    )
+
+
+def test_mathjax_macro_preamble_is_dropped() -> None:
+    preamble = "`\\[\n\\newcommand{\\R}{\\mathbb{R}}\n\\newcommand{\\x}{\\mathbf{x}}\n\\]`"
+    page = f"Intro.\n\n{preamble}\n\nBody `$\\R$`."
+    assert clean(page) == "Intro.\n\nBody `$\\R$`."

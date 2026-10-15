@@ -66,6 +66,7 @@ class Chunk:
     body: str
     embed_text: str
     n_tokens: int
+    occurrence: int  # how many earlier chunks of this doc have the same section path and embed text
     chunk_id: str
 
 
@@ -301,6 +302,7 @@ def chunk_document(path: str, raw_markdown: str, config: ChunkConfig) -> DocChun
                     body=body,
                     embed_text=embed_text,
                     n_tokens=n_tokens,
+                    occurrence=occurrence,
                     chunk_id=chunk_id(path, section.path, embed_text, occurrence),
                 )
             )

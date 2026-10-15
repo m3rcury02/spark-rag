@@ -3,6 +3,8 @@
 import re
 from dataclasses import dataclass
 
+from docs_rag.chunk import ChunkConfig
+
 _IDENTIFIER = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 _REPO = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+")
 _TAG = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*")
@@ -26,6 +28,10 @@ class Config:
     source_repo: str = "apache/spark"
     docs_dir: str = "docs"
     doc_suffix: str = ".md"
+    chunk: ChunkConfig = ChunkConfig()
+    # Docs that legitimately give no chunks: only headings plus generated includes (D-008). Any other doc
+    # with no chunks fails the silver run, so a cleaning bug that empties pages cannot pass silently.
+    zero_chunk_docs: frozenset[str] = frozenset({"docs/sql-ref-functions-builtin.md"})
 
     def __post_init__(self) -> None:
         _check(_IDENTIFIER, self.catalog, "catalog")
@@ -42,6 +48,10 @@ class Config:
     @property
     def bronze_table(self) -> str:
         return self.table("bronze_docs")
+
+    @property
+    def silver_table(self) -> str:
+        return self.table("silver_chunks")
 
     def volume(self, name: str) -> str:
         """Path of a Unity Catalog Volume in this schema, e.g. '/Volumes/workspace/docs_rag_dev/artifacts'."""

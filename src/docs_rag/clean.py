@@ -12,7 +12,12 @@ The order matters and is fixed (D-008):
    only an allowlist of real HTML tag names is stripped (text kept), then entities are unescaped;
 6. Markdown links keep their text, images and reference-link definitions go, kramdown `{:...}` lines and the
    table-of-contents bullet before `{:toc}` go, HTML comments go;
-7. code is restored and whitespace normalised.
+7. code is restored and whitespace normalised;
+8. on lines made only of table-border characters (`+---+---+`, `|:---|---|`), runs of 4 or more `-` or `=`
+   are shortened to 3, inside code too: BERT makes every `-` a token, so long borders filled chunks.
+
+A MathJax macro preamble (a `` `\[ \newcommand... \]` `` span holding only macro definitions) is dropped
+before step 4: it carries no content and repeats verbatim on several MLlib pages.
 
 `{{ site.X }}` variables are left literal on purpose: substituting the tag's version would make an unchanged
 page produce different text in every tag and change its chunk IDs (M3, M5).
@@ -223,6 +228,17 @@ def clean_inline(text: str) -> str:
     return " ".join(re.sub(r"\s*\{#[^}]*\}\s*$", "", text).split())
 
 
+# --- 8. table borders and macro preambles ----------------------------------------------------------------
+
+_BORDER_LINE = re.compile(r"[|+:= \t-]*")
+_LONG_RULE = re.compile(r"([-=])\1{3,}")
+_MATHJAX_PREAMBLE = re.compile(r"`\\\[\s*(?:\\newcommand\{[^}\n]*\}\{[^\n]*\}\s*)+\\\]`")
+
+
+def _shorten_borders(line: str) -> str:
+    return _LONG_RULE.sub(r"\1\1\1", line) if _BORDER_LINE.fullmatch(line) else line
+
+
 # --- the whole page ----------------------------------------------------------------------------------------
 
 
@@ -237,10 +253,11 @@ def clean_page(raw: str, fallback_title: str) -> CleanDoc:
     title = clean_inline(meta.get("displayTitle") or meta.get("title") or fallback_title)
     body = _liquid(body)
     body = _D_NONE.sub("", body)
+    body = _MATHJAX_PREAMBLE.sub("", body)
     masked, saved = _mask_code(body)
     masked = _markdown(_html(masked))
     text = _unmask(masked, saved)
-    text = "\n".join(line.rstrip() for line in text.split("\n"))
+    text = "\n".join(_shorten_borders(line.rstrip()) for line in text.split("\n"))
     text = re.sub(r"\n{3,}", "\n\n", text).strip()
     return CleanDoc(title=title, text=text)
 
