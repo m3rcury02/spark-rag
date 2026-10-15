@@ -5,7 +5,7 @@ description = "Incremental RAG ingestion pipeline over the Apache Spark docs, wi
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 dependencies = [
-    "tokenizers>=0.23.3,<0.24",  # WordPiece counts in the embedding models' units (docs_rag.tokens)
+    "tokenizers==0.23.3",  # WordPiece counts in the embedding models' units (docs_rag.tokens)
 ]
 
 [dependency-groups]

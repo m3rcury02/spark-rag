@@ -180,7 +180,9 @@ def _table(m: re.Match[str]) -> str:
         for cell in _CELL.findall(row):
             blocks += re.findall(r"\x01\d+\x01", cell)
             cells.append(" ".join(_inline_html(re.sub(r"\x01\d+\x01", " ", cell)).split()))
-        if any(cells):
+        while cells and not cells[-1]:  # e.g. the cell whose code block was lifted out
+            cells.pop()
+        if cells:
             rows.append(" | ".join(cells))
         rows += [f"\n{b}\n" for b in blocks]
     return "\n\n" + "\n".join(rows) + "\n\n"

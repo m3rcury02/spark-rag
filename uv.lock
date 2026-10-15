@@ -92,7 +92,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "tokenizers", specifier = ">=0.23.3,<0.24" }]
+requires-dist = [{ name = "tokenizers", specifier = "==0.23.3" }]
 
 [package.metadata.requires-dev]
 dev = [
