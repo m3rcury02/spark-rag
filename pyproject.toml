@@ -1,6 +1,6 @@
 [project]
 name = "docs-rag"
-version = "0.1.0"
+dynamic = ["version"]  # from git (hatch-vcs): every commit builds a distinct wheel version
 description = "Incremental RAG ingestion pipeline over the Apache Spark docs, with a retrieval eval harness"
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
@@ -10,8 +10,14 @@ dependencies = []
 dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.11"]
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs==0.5.0"]
 build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "vcs"
+# Serverless caches a custom package by version, so new code needs a new version (D-005). With no tags yet,
+# setuptools-scm gives 0.1.devN+g<sha>. The fallback covers checkouts without git metadata.
+raw-options = { fallback_version = "0.0.0" }
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/docs_rag"]

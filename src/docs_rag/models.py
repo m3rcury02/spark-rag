@@ -19,5 +19,5 @@ class Snapshot:
 
     source_repo: str
     version_tag: str
-    commit_sha: str | None  # from the archive's pax header; None if the archive has none
+    commit_sha: str  # from the archive's pax header (git archive writes the commit id there)
     docs: tuple[SourceDoc, ...]  # sorted by path

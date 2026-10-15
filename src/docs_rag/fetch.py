@@ -1,19 +1,24 @@
 """Fetch one tag of the source repo and read its docs out of the GitHub source archive.
 
-The archive is read as a stream and never extracted to disk. Only regular files under `<top>/<docs_dir>/`
-whose name ends in the doc suffix are kept, at any depth (4.x tags have nested folders such as
-docs/streaming/).
+Only regular files under `<top>/<docs_dir>/` whose name ends in the doc suffix are kept, at any depth (4.x
+tags have nested folders such as docs/streaming/). A snapshot must be complete, because loading a tag treats
+it as the whole tag: the archive is fully decompressed (gzip checks its CRC and length), the tar must end with
+its end-of-archive marker, and finding no docs is an error. A streaming read (`r|gz`) would instead stop
+silently at a truncation and return a partial snapshot.
 """
 
+import gzip
+import io
 import tarfile
 import urllib.parse
 import urllib.request
 from pathlib import PurePosixPath
-from typing import IO
 
 from docs_rag.config import Config, validate_tag
 from docs_rag.hashing import sha256_hex
 from docs_rag.models import Snapshot, SourceDoc
+
+_BLOCK = 512
 
 
 def archive_url(repo: str, tag: str) -> str:
@@ -28,25 +33,36 @@ def download(url: str, timeout_seconds: float = 300.0) -> bytes:  # pragma: no c
     return data
 
 
-def _repo_relative(member_name: str) -> str | None:
-    """Strip the archive's top-level folder ('spark-4.0.1/docs/x.md' -> 'docs/x.md')."""
+def _split_top(member_name: str) -> tuple[str, str]:
+    """'spark-4.0.1/docs/x.md' -> ('spark-4.0.1', 'docs/x.md'). Every member must sit under a top folder."""
     parts = PurePosixPath(member_name).parts
-    if any(p in ("..", "") for p in parts) or member_name.startswith("/"):
+    if member_name.startswith("/") or ".." in parts:
         raise ValueError(f"unsafe path in archive: {member_name!r}")
-    return "/".join(parts[1:]) if len(parts) > 1 else None
+    if not parts:
+        raise ValueError(f"empty path in archive: {member_name!r}")
+    return parts[0], "/".join(parts[1:])
 
 
-def read_snapshot(archive: IO[bytes], config: Config, tag: str) -> Snapshot:
-    """Read every doc of one tag from a gzipped tar stream (as produced by GitHub's codeload)."""
+def read_snapshot(archive_gz: bytes, config: Config, tag: str) -> Snapshot:
+    """Read every doc of one tag from a gzipped tar (as produced by GitHub's codeload, i.e. `git archive`)."""
+    try:
+        tar_bytes = gzip.decompress(archive_gz)
+    except (EOFError, OSError) as e:  # truncated stream, bad CRC or length, not gzip at all
+        raise ValueError(f"archive is not a complete gzip stream: {e}") from e
+
     docs: dict[str, SourceDoc] = {}
+    tops: set[str] = set()
     prefix = f"{config.docs_dir}/"
-    with tarfile.open(fileobj=archive, mode="r|gz") as tar:
+    with tarfile.open(fileobj=io.BytesIO(tar_bytes), mode="r:") as tar:
         for member in tar:
-            path = _repo_relative(member.name)
-            if path is None or not path.startswith(prefix) or not path.endswith(config.doc_suffix):
+            top, path = _split_top(member.name)
+            tops.add(top)
+            if not path:
+                if not member.isdir():
+                    raise ValueError(f"file at the archive root: {member.name!r}")
                 continue
-            if not member.isfile():  # directories, symlinks, hard links
-                continue
+            if not path.startswith(prefix) or not path.endswith(config.doc_suffix) or not member.isfile():
+                continue  # other files, directories, symlinks, hard links
             handle = tar.extractfile(member)
             if handle is None:  # pragma: no cover - isfile() members always have data
                 continue
@@ -60,7 +76,17 @@ def read_snapshot(archive: IO[bytes], config: Config, tag: str) -> Snapshot:
             docs[path] = SourceDoc(
                 path=path, content=content, content_sha256=sha256_hex(raw), size_bytes=len(raw)
             )
+        end_marker = tar_bytes[tar.offset : tar.offset + 2 * _BLOCK]
         commit_sha = tar.pax_headers.get("comment")
+
+    if end_marker != b"\0" * (2 * _BLOCK):
+        raise ValueError("archive ends without the tar end-of-archive marker (truncated?)")
+    if len(tops) != 1:
+        raise ValueError(f"expected one top-level folder, found {sorted(tops)}")
+    if not docs:
+        raise ValueError(f"no {config.doc_suffix} files under {config.docs_dir}/ in the archive")
+    if not commit_sha:
+        raise ValueError("archive has no commit id in its pax header")
     return Snapshot(
         source_repo=config.source_repo,
         version_tag=validate_tag(tag),
