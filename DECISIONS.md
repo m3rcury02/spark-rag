@@ -100,14 +100,19 @@ identifiers redacted. Commands:
 - **"Ready" is not "synced".** The index reported ready while its initial update was still running. Before
   writing to gold or calling `sync()`, and as the success check after it, M5 waits for the pipeline update to
   reach COMPLETED (or for `ONLINE_NO_PENDING_UPDATE`).
-- **Quota.** The roughly 25-minute run hit no limit, but its quota use is not visible yet.
-  `system.billing.usage` had 0 rows when probed about 90 min after the run (`checked_utc` 00:49:17Z in
-  `m0_workspace_inventory.json` against `run_end_utc` 23:18:53Z in `m0_smoke_test_meta.json`). "Records are
-  typically available within 12 hours. Data delivery for new workspaces can take longer than this"
-  ([billing system table](https://docs.databricks.com/aws/en/admin/system-tables/billing), updated
-  2026-10-08). Whether Free Edition records usage there at all, and whether an idle endpoint that holds an
-  index counts against the quota, are unknown. Re-probe more than 24 h after a run and save the output. Even a
-  0-row re-probe is not conclusive for a new workspace.
+- **Quota.** The roughly 25-minute run hit no limit. `system.billing.usage` had 0 rows when probed about
+  90 min after the run (`checked_utc` 00:49:17Z in `m0_workspace_inventory.json` against `run_end_utc`
+  23:18:53Z in `m0_smoke_test_meta.json`). **Re-probed on 2026-10-18 at 12:17Z** (`runs/m2_b_billing_usage_reprobe.json`):
+  Free Edition does record usage there (345 records, 2026-10-14 to 10-18). **The AI Search endpoint is
+  billed 4 DBU per hour while idle**: `VECTOR_SEARCH` / `PREMIUM_SERVERLESS_REAL_TIME_INFERENCE` shows exactly
+  96 DBU on each full day (10-15, 10-16, 10-17), with 0 indexes since the smoke index was deleted on 10-15.
+  Everything else is small beside it: on 10-15, the busiest pipeline day, jobs used 2.30 DBU, SQL 4.84 DBU and
+  predictive optimisation 0.31 DBU. Free Edition costs no money, but it has an undisclosed daily quota: "If
+  you exceed your quota, your workspace's compute resources will be shut down and unavailable for the rest of
+  the day (and in extreme cases, the rest of the month)"
+  ([Free Edition limitations](https://docs.databricks.com/aws/en/getting-started/free-edition-limitations),
+  updated 2026-09-29). Jobs and SQL kept running on 10-15 with the endpoint's 96 DBU on the books, so the
+  quota was not exceeded that day; whether endpoint usage counts towards it at all is unknown.
 - **Row counts.** The sync pipeline's `num_output_rows` is 0 for every update, including the initial 5-row
   sync, so it cannot tell us how many rows changed. The M3 run log must take add/change/delete counts from
   our own MERGE metrics.
@@ -117,7 +122,9 @@ identifiers redacted. Commands:
 - **Runtime.** The run got serverless environment `client.2.5` with Python 3.11.10, not 3.12 (see D-005).
 
 **Consequences.**
-- Keep `docs_rag_endpoint`, because Free Edition allows only one endpoint. **The smoke-test index, table and
+- Keep `docs_rag_endpoint`, because Free Edition allows only one endpoint. **Open for the owner (2026-10-18):**
+  the idle endpoint uses 96 DBU a day of an undisclosed quota (see Quota) and is not needed before M5; deleting
+  it now and re-creating it in M5 (about 20 min of provisioning) would remove that risk. **The smoke-test index, table and
   schema were deleted on 2026-10-15 at the owner's request** with `scripts/m0_cleanup.py`
   (`runs/m0_cleanup.json`). The endpoint remains, ONLINE, with 0 indexes. `scripts/m0_collect_evidence.py`
   can no longer be re-run, so `runs/m0_*` is the record. If the real index has to wait for provisioning
