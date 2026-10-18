@@ -1,21 +1,23 @@
 """Databricks job: chunk one bronze tag into silver_chunks under one chunk config.
 
 Runs as a serverless spark_python_task (see scripts/run_job.py). Steps:
-1. Check the environment (docs_rag.jobenv), then read the tag's bronze rows and check the snapshot is whole:
-   rows present, one commit, unique paths, every content hash matching (docs_rag.silver.bronze_violations).
+1. Check the environment (docs_rag.jobenv) and that the chunk config is one of Config.chunk_grid. Read the
+   tag's bronze rows and check the snapshot is whole: rows present, one commit, unique paths, every content
+   hash matching (docs_rag.silver.bronze_violations).
 2. Clean and chunk every doc (docs_rag.chunk) and check the result before writing: no chunk over max_tokens,
    no empty chunk, unique chunk_ids, no markup left after cleaning, and no doc without chunks unless it is in
    the expected-zero set (D-008, D-010).
 3. Read what silver holds for (config_id, tag), recompute every stored row's chunk_id and n_tokens from its
    own content, and compare with the fresh chunking. Stored and identical: the MERGE is skipped (no table
    version). Stored and different: the run fails before writing.
-4. Insert-only MERGE on (config_id, source_repo, version_tag, chunk_id); it must insert every row and touch
-   nothing else.
-5. Read the tag back and check it again, then compare docs whose content is byte-identical in other tags
-   chunked under the same config: they must have the same chunk_ids (determinism, no tag leaking into IDs).
+4. Re-chunk every other tag that silver holds under this config_id from its bronze rows; each must reproduce
+   its stored rows exactly. So code that changed without a CLEANER_VERSION/CHUNKER_VERSION bump fails here,
+   before it can add a tag chunked by different code under the same config_id.
+5. Insert-only MERGE on (config_id, source_repo, version_tag, chunk_id); it must insert every row and touch
+   nothing else. Then read the tag back and check it again.
 
-The summary holds a fingerprint of the (path, chunk_id) set, so a local recompute can prove the job and a
-laptop chunk identically (scripts/m2_verify_silver.py).
+The summary holds a fingerprint of the (path, chunk_id) set and the machine it ran on, so a local recompute
+can show the job and a laptop chunk identically (scripts/m2_verify_silver.py).
 """
 
 import argparse
@@ -25,17 +27,18 @@ from typing import Any
 
 from pyspark.sql import SparkSession
 
-from docs_rag.chunk import CHUNKER_VERSION, ChunkConfig
+from docs_rag.chunk import CHUNKER_VERSION, ChunkConfig, DocChunks
 from docs_rag.clean import CLEANER_VERSION
 from docs_rag.config import Config, validate_tag
 from docs_rag.jobenv import base_parser, check_environment, run_with_summary
 from docs_rag.silver import (
     BronzeDoc,
+    SilverRecord,
+    StoredCheck,
     StoredChunk,
     bronze_violations,
     check_against_stored,
     chunk_docs,
-    cross_tag_violations,
     fingerprint,
     record_violations,
     silver_schema_ddl,
@@ -93,6 +96,41 @@ def read_stored(spark: SparkSession, table: str, args: dict[str, str]) -> list[S
     ]
 
 
+def read_bronze(spark: SparkSession, config: Config, tag: str) -> list[BronzeDoc]:
+    rows = spark.sql(
+        "SELECT path, content, content_sha256, sha2(content, 256) AS content_sha256_actual, commit_sha "
+        "FROM IDENTIFIER(:table) WHERE source_repo = :repo AND version_tag = :tag",
+        args={"table": config.bronze_table, "repo": config.source_repo, "tag": tag},
+    ).collect()
+    docs = [BronzeDoc(**r.asDict()) for r in rows]
+    problems = bronze_violations(docs)
+    if problems:
+        raise RuntimeError(f"bronze snapshot of {tag} is not whole: " + "; ".join(problems))
+    return docs
+
+
+def compare_with_stored(
+    spark: SparkSession, config: Config, tag: str, records: list[SilverRecord]
+) -> tuple[StoredCheck, list[StoredChunk]]:
+    """Recheck the stored rows of (config_id, tag) and compare them with a fresh chunking."""
+    key = {"config_id": config.chunk.config_id, "repo": config.source_repo, "tag": tag}
+    stored = read_stored(spark, config.silver_table, key)
+    problems = stored_violations(stored, config.chunk)
+    if problems:
+        raise RuntimeError(f"stored silver rows of {tag} fail their recheck: " + "; ".join(problems))
+    return check_against_stored(records, stored), stored
+
+
+def chunk_bronze(
+    config: Config, tag: str, docs: list[BronzeDoc], run_id: str
+) -> tuple[list[DocChunks], list[SilverRecord]]:
+    chunked = chunk_docs(docs, config.chunk)
+    records = to_records(
+        docs, chunked, config.source_repo, tag, config.chunk, run_id, dt.datetime.now(dt.UTC)
+    )
+    return chunked, records
+
+
 def chunk_tag(args: argparse.Namespace, summary: dict[str, Any]) -> None:
     config = Config(
         catalog=args.catalog,
@@ -109,6 +147,8 @@ def chunk_tag(args: argparse.Namespace, summary: dict[str, Any]) -> None:
         "max_tokens": chunking.max_tokens,
         "overlap_tokens": chunking.overlap_tokens,
     }
+    if chunking not in config.chunk_grid:  # an off-grid chunking would stay in silver for good
+        raise ValueError(f"{chunking} is not one of Config.chunk_grid {config.chunk_grid}")
     summary["environment"] = check_environment(args.expect_env, args.expect_version)
 
     spark = SparkSession.builder.getOrCreate()
@@ -117,27 +157,12 @@ def chunk_tag(args: argparse.Namespace, summary: dict[str, Any]) -> None:
     spark.sql(CREATE_SILVER, args={"table": table})
 
     # 1. The bronze snapshot must be whole before anything is derived from it.
-    bronze_rows = spark.sql(
-        "SELECT path, content, content_sha256, sha2(content, 256) AS content_sha256_actual, commit_sha "
-        "FROM IDENTIFIER(:table) WHERE source_repo = :repo AND version_tag = :tag",
-        args={"table": config.bronze_table, "repo": config.source_repo, "tag": tag},
-    ).collect()
-    docs = [BronzeDoc(**r.asDict()) for r in bronze_rows]
-    problems = bronze_violations(docs)
-    summary["bronze"] = {
-        "docs": len(docs),
-        "commit_sha": docs[0].commit_sha if docs else None,
-        "violations": problems,
-    }
-    if problems:
-        raise RuntimeError("bronze snapshot is not whole: " + "; ".join(problems))
+    docs = read_bronze(spark, config, tag)
+    summary["bronze"] = {"docs": len(docs), "commit_sha": docs[0].commit_sha}
 
     # 2. Chunk, and check the chunking before writing anything.
     t0 = time.monotonic()
-    chunked = chunk_docs(docs, chunking)
-    records = to_records(
-        docs, chunked, config.source_repo, tag, chunking, args.run_id, dt.datetime.now(dt.UTC)
-    )
+    chunked, records = chunk_bronze(config, tag, docs, args.run_id)
     summary["chunking"] = {
         "seconds": round(time.monotonic() - t0, 1),
         "fingerprint": fingerprint((r.path, r.chunk_id) for r in records),
@@ -149,21 +174,35 @@ def chunk_tag(args: argparse.Namespace, summary: dict[str, Any]) -> None:
         raise RuntimeError("chunking failed its checks: " + "; ".join(problems))
 
     # 3. Compare with what silver already holds for this config and tag.
-    key = {"config_id": chunking.config_id, "repo": config.source_repo, "tag": tag}
-    stored = read_stored(spark, table, key)
-    problems = stored_violations(stored, chunking)
-    check = check_against_stored(records, stored)
-    summary["check"] = {**check.__dict__, "stored_row_violations": problems}
-    if problems:
-        raise RuntimeError("stored silver rows fail their recheck: " + "; ".join(problems))
+    check, _ = compare_with_stored(spark, config, tag, records)
+    summary["check"] = check.__dict__
     if check.status == "conflict":
         raise RuntimeError(
             f"{tag} is already chunked under config {chunking.config_id} and the fresh chunking differs "
-            f"({check.only_stored} rows only stored, {check.only_computed} only computed): the chunker "
-            "changed without a CHUNKER_VERSION bump, or bronze changed"
+            f"({check.only_stored} rows only stored, {check.only_computed} only computed): the cleaner or "
+            "chunker changed without a version bump, or bronze changed"
         )
 
-    # 4. Insert-only MERGE, skipped when silver already holds exactly this chunking.
+    # 4. The current code must reproduce every other tag stored under this config_id.
+    others = spark.sql(
+        "SELECT DISTINCT version_tag FROM IDENTIFIER(:table) "
+        "WHERE config_id = :config_id AND source_repo = :repo AND version_tag <> :tag ORDER BY version_tag",
+        args={"table": table, "config_id": chunking.config_id, "repo": config.source_repo, "tag": tag},
+    ).collect()
+    summary["other_tags_reproduced"] = {}
+    for row in others:
+        other = row["version_tag"]
+        _, other_records = chunk_bronze(config, other, read_bronze(spark, config, other), args.run_id)
+        other_check, _ = compare_with_stored(spark, config, other, other_records)
+        summary["other_tags_reproduced"][other] = other_check.__dict__
+        if other_check.status != "identical":
+            raise RuntimeError(
+                f"the current code does not reproduce {other} as stored under config {chunking.config_id} "
+                f"({other_check.only_stored} rows only stored, {other_check.only_computed} only computed): "
+                "bump CLEANER_VERSION or CHUNKER_VERSION"
+            )
+
+    # 5. Insert-only MERGE, skipped when silver already holds exactly this chunking; then read back.
     version_before = latest_version(spark, table)
     if check.status == "identical":
         summary["merge"] = "skipped: chunking identical to silver"
@@ -187,7 +226,6 @@ def chunk_tag(args: argparse.Namespace, summary: dict[str, Any]) -> None:
         "commits": commits,
     }
 
-    # 5. Read back and check again; then the cross-tag determinism check.
     problems = []
     if check.status == "new":
         merge = summary["merge"]
@@ -197,24 +235,11 @@ def chunk_tag(args: argparse.Namespace, summary: dict[str, Any]) -> None:
             0,
         ):
             problems.append(f"MERGE metrics {merge}, expected {len(records)} inserted and nothing else")
-    after = read_stored(spark, table, key)
-    problems += stored_violations(after, chunking)
-    reread = check_against_stored(records, after)
+    reread, after = compare_with_stored(spark, config, tag, records)
     if reread.status != "identical":
         problems.append(f"read-back differs from the chunking: {reread}")
-    stored_fingerprint = fingerprint((r.path, r.chunk_id) for r in after)
-    if stored_fingerprint != summary["chunking"]["fingerprint"]:
+    if fingerprint((r.path, r.chunk_id) for r in after) != summary["chunking"]["fingerprint"]:
         problems.append("read-back fingerprint differs from the computed one")
-
-    others = spark.sql(
-        "SELECT version_tag, path, doc_content_sha256, chunk_id FROM IDENTIFIER(:table) "
-        "WHERE config_id = :config_id AND source_repo = :repo AND version_tag <> :tag",
-        args={"table": table, **key},
-    ).collect()
-    compared, cross = cross_tag_violations(records, (tuple(r) for r in others))
-    summary["cross_tag"] = {"docs_compared": compared, "violations": cross}
-    problems += cross
-
     rows = spark.sql(
         TAGS_AFTER, args={"table": table, "config_id": chunking.config_id, "repo": config.source_repo}
     ).collect()

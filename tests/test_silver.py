@@ -11,7 +11,6 @@ from docs_rag.silver import (
     bronze_violations,
     check_against_stored,
     chunk_docs,
-    cross_tag_violations,
     fingerprint,
     record_violations,
     stored_violations,
@@ -148,17 +147,6 @@ def test_snapshot_comparison() -> None:
 def test_fingerprint_ignores_order() -> None:
     pairs = [("docs/a.md", "x"), ("docs/b.md", "y")]
     assert fingerprint(pairs) == fingerprint(reversed(pairs)) != fingerprint(pairs[:1])
-
-
-def test_cross_tag_check_compares_only_identical_docs() -> None:
-    recs = records()
-    same = [("v4.0.0", r.path, r.doc_content_sha256, r.chunk_id) for r in recs]
-    assert cross_tag_violations(recs, same) == (1, [])
-    edited = [("v4.0.0", "docs/a.md", "other-hash", "zzz")]
-    assert cross_tag_violations(recs, edited) == (0, [])  # different content: nothing to compare
-    drifted = [*same[:-1], ("v4.0.0", "docs/a.md", recs[0].doc_content_sha256, "zzz")]
-    compared, problems = cross_tag_violations(recs, drifted)
-    assert compared == 1 and problems == ["docs/a.md (same content in v4.0.0) has different chunk_ids"]
 
 
 def test_token_stats() -> None:

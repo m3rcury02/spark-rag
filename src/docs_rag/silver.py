@@ -12,7 +12,7 @@ occurrence, and its n_tokens from its embed text, on every run (bronze's sha2 re
 import dataclasses
 import datetime as dt
 import hashlib
-from collections import Counter, defaultdict
+from collections import Counter
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from typing import Literal
@@ -282,28 +282,6 @@ def fingerprint(pairs: Iterable[tuple[str, str]]) -> str:
     """sha256 of the sorted (path, chunk_id) lines: one value to compare a chunking across machines."""
     lines = sorted(f"{path}\t{cid}\n" for path, cid in pairs)
     return hashlib.sha256("".join(lines).encode()).hexdigest()
-
-
-def cross_tag_violations(
-    records: Sequence[SilverRecord], other_tags: Iterable[tuple[str, str, str, str]]
-) -> tuple[int, list[str]]:
-    """A doc whose content is byte-identical in another tag, chunked under the same config, must have the same
-    chunk_ids there: a determinism and no-tag-leak check. `other_tags` holds (version_tag, path,
-    doc_content_sha256, chunk_id) rows. Returns (docs compared, violations)."""
-    mine: dict[tuple[str, str], list[str]] = defaultdict(list)
-    for r in records:
-        mine[(r.path, r.doc_content_sha256)].append(r.chunk_id)
-    theirs: dict[tuple[str, str, str], list[str]] = defaultdict(list)
-    for tag, path, sha, cid in other_tags:
-        theirs[(tag, path, sha)].append(cid)
-    compared = 0
-    problems = []
-    for (tag, path, sha), ids in sorted(theirs.items()):
-        if (path, sha) in mine:
-            compared += 1
-            if sorted(ids) != sorted(mine[(path, sha)]):
-                problems.append(f"{path} (same content in {tag}) has different chunk_ids")
-    return compared, _capped(problems)
 
 
 def token_stats(records: Sequence[SilverRecord], chunked: Sequence[DocChunks]) -> dict[str, object]:
