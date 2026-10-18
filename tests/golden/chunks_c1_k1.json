@@ -694,13 +694,292 @@
    "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long word\n\nbcdfghjklmnpqrstvwxzbcdfghjklmnpqrstvwxzbcdfghjklmnpqrstvwxzbcdfghjklmnpqrst"
   },
   {
-   "chunk_id": "db755d1e87aa41a8061aafcca55b3166",
-   "n_tokens": 27,
+   "chunk_id": "8f3ef8edc6444d68c5a1f92cb78c088d",
+   "n_tokens": 61,
    "span": [
     7844,
-    7867
+    7976
    ],
-   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long word\n\nvwxzbcdfghjklmnpqrstvwx"
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long word\n\nvwxzbcdfghjklmnpqrstvwx\n\nShortened from Spark docs pages (v3.5.0-v4.0.1): one of each construct the cleaner and chunker must handle."
+  },
+  {
+   "chunk_id": "57c040a4023cc05fdff7b6ce0f62399f",
+   "n_tokens": 51,
+   "span": [
+    7940,
+    8061
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long word\n\nthe cleaner and chunker must handle.\nNon-ASCII text stays as it is: café, naïve, “quoted”, Ā, 中文, and a dash — like this."
+  },
+  {
+   "chunk_id": "51633687396894ac21b247a0833cb191",
+   "n_tokens": 38,
+   "span": [
+    8080,
+    8159
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Layout table\n\n```bash\n# TERMINAL 1:\n# Running Netcat\n\n$ nc -lk 9999\napache spark\n```\n\npython:"
+  },
+  {
+   "chunk_id": "48e5a7c6e026a41e835d62ad7c17bb70",
+   "n_tokens": 34,
+   "span": [
+    8169,
+    8222
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Layout table\n\n```bash\n# TERMINAL 2: RUNNING structured_network_wordcount.py\n```"
+  },
+  {
+   "chunk_id": "949b726b44808707e1d02d9fa0922bac",
+   "n_tokens": 55,
+   "span": [
+    8223,
+    8329
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Layout table\n\n```bash\n$ ./bin/spark-submit examples/src/main/python/sql/streaming/structured_network_wordcount.py localhost 9999\n```"
+  },
+  {
+   "chunk_id": "5ba2750c732434306637d0891e349330",
+   "n_tokens": 32,
+   "span": [
+    8410,
+    8459
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Spans and nesting\n\nLeft Input | Right Input | Join Type\nStream | Static | Inner | Supported, not stateful"
+  },
+  {
+   "chunk_id": "7429e8ebc5e0e962df2c5d2fde1152bf",
+   "n_tokens": 30,
+   "span": [
+    8460,
+    8505
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Spans and nesting\n\nLeft Input | Right Input | Join Type\nStream | Static | Right Outer | Not supported"
+  },
+  {
+   "chunk_id": "609b29d814fb5becbd1b27364face349",
+   "n_tokens": 37,
+   "span": [
+    8506,
+    8563
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Spans and nesting\n\nLeft Input | Right Input | Join Type\nOther queries |  | All types | Append mode.; Update mode."
+  },
+  {
+   "chunk_id": "7f9a1e8af01c24f97d06e8323bc877a2",
+   "n_tokens": 38,
+   "span": [
+    8564,
+    8630
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Spans and nesting\n\nLeft Input | Right Input | Join Type\nArrayType | Element type, PG Array; IntegerType, integer[] | array"
+  },
+  {
+   "chunk_id": "380d1cb0c635f4b500da232286e4a40a",
+   "n_tokens": 54,
+   "span": [
+    8684,
+    8779
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Code in cells\n\nProperty Name | Meaning\n`rowTag` | For example, in this xml: `<books><book></book>...</books>` the value would be book."
+  },
+  {
+   "chunk_id": "dd0f6836112fd3535e6f6c4c80941747",
+   "n_tokens": 34,
+   "span": [
+    8780,
+    8829
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Code in cells\n\nProperty Name | Meaning\n`cov` in `package:stats` | (code below the table)"
+  },
+  {
+   "chunk_id": "ae6197dd42f11fb8a611a6e57c80f7b6",
+   "n_tokens": 35,
+   "span": [
+    8830,
+    8899
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Code in cells\n\nProperty Name | Meaning\n`samplingRatio` | Defines fraction of rows used for schema inferring."
+  },
+  {
+   "chunk_id": "6c8ce03668d14f9d15942815686acd25",
+   "n_tokens": 55,
+   "span": [
+    8901,
+    9009
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Code in cells\n\n```\nstats::cov(x, y = NULL, use = \"everything\",\n           method = c(\"pearson\", \"kendall\", \"spearman\"))\n```"
+  },
+  {
+   "chunk_id": "9005667728386f2c83550c6ee8481c2d",
+   "n_tokens": 48,
+   "span": [
+    9111,
+    9155
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Pipe tables\n\n|Keyword|Spark SQL ANSI Mode|Spark SQL NonANSI Mode|SQL-2016|\n|ADD|non-reserved|non-reserved|non-reserved|"
+  },
+  {
+   "chunk_id": "9a985b4f2c1dcc27a76db496e8ae98db",
+   "n_tokens": 56,
+   "span": [
+    9156,
+    9219
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Pipe tables\n\n|Keyword|Spark SQL ANSI Mode|Spark SQL NonANSI Mode|SQL-2016|\n|**explode_outer**   ( *expr* )|reserved|non-reserved|reserved|"
+  },
+  {
+   "chunk_id": "435eee9c8352f0e42fee8816f088a4a2",
+   "n_tokens": 29,
+   "span": [
+    9253,
+    9323
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Footnotes, rules and styles\n\nMLlib uses linear algebra packages for optimised numerical processing."
+  },
+  {
+   "chunk_id": "4ffaaa2de78e1645ac9a514325769015",
+   "n_tokens": 63,
+   "span": [
+    9279,
+    9501
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Footnotes, rules and styles\n\npackages for optimised numerical processing.\n\nNote: To learn more about the benefits and background of system optimised natives, you may wish to watch Sam Halliday's ScalaX talk on High Performance Linear Algebra in Scala."
+  },
+  {
+   "chunk_id": "79d9a723bf15601148313c1ed8293a97",
+   "n_tokens": 53,
+   "span": [
+    9457,
+    9641
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Footnotes, rules and styles\n\non High Performance Linear Algebra in Scala.\n\n**TABLE: person** with Ctrl and small print.\n\nSee Advanced Dependency Management and\n\"Improve Apache Spark write performance\"\nfor details."
+  },
+  {
+   "chunk_id": "620524cd884a2426a97c786ece071527",
+   "n_tokens": 56,
+   "span": [
+    9684,
+    9757
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Borders and preformatted text\n\n```sql\nSELECT * FROM person WHERE name LIKE 'M%';\n+---+---+---+\n| id|  name|age|\n```"
+  },
+  {
+   "chunk_id": "319e33c9c0c66721b4b0bf5c613305ae",
+   "n_tokens": 64,
+   "span": [
+    9741,
+    9802
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Borders and preformatted text\n\n```sql\n| id|  name|age|\n+---+---+---+\n|300|  Mike| 80|\n+---+---+---+\n```"
+  },
+  {
+   "chunk_id": "13ef7ee17f99f656c5cc2cb18ea8e216",
+   "n_tokens": 37,
+   "span": [
+    9808,
+    9848
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Borders and preformatted text\n\n```\n\nssh <driver-node> jstack <pid>\n\n```"
+  },
+  {
+   "chunk_id": "090143f5a2e2dc805d7a9e3e3affd6bf",
+   "n_tokens": 63,
+   "span": [
+    9879,
+    10088
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nSpark's scheduler is fully thread-safe and supports this use case to enable applications that serve\nmultiple requests (e.g. queries for multiple users). By default, Spark's scheduler runs jobs in FIFO\nfashion."
+  },
+  {
+   "chunk_id": "d2d4e41d5e3f1c2ed5408fba0c23c312",
+   "n_tokens": 63,
+   "span": [
+    10062,
+    10275
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nruns jobs in FIFO\nfashion. Each job is divided into \"stages\" (e.g. map and reduce phases), and the first job gets\npriority on all available resources while its stages have tasks to launch, then the second job gets"
+  },
+  {
+   "chunk_id": "7715a5869a1556fbb7f9fe351cc3db1a",
+   "n_tokens": 47,
+   "span": [
+    10240,
+    10375
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nto launch, then the second job gets\npriority, etc. If the jobs at the head of the queue don't need to use the whole cluster, later jobs"
+  },
+  {
+   "chunk_id": "95c438c0100a8fddec28d863b04dcb86",
+   "n_tokens": 64,
+   "span": [
+    10339,
+    10545
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nto use the whole cluster, later jobs\ncan start to run right away, but if the jobs at the head of the queue are large, then later jobs may be\ndelayed significantly. `spark.scheduler.mode` can be set to FAIR."
+  },
+  {
+   "chunk_id": "02743989263110c853f494151b22428e",
+   "n_tokens": 52,
+   "span": [
+    10526,
+    10670
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\ncan be set to FAIR. (This is useful for multi-user\nsettings.) Starting in Spark 0.8, it is also possible to configure fair sharing between jobs."
+  },
+  {
+   "chunk_id": "a9b26c1c69da2831bb8ed9769dd843fa",
+   "n_tokens": 49,
+   "span": [
+    10644,
+    10816
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nfair sharing between jobs. Under\nfair sharing, Spark assigns tasks between jobs in a \"round robin\" fashion, so that all jobs get a\nroughly equal share of cluster resources."
+  },
+  {
+   "chunk_id": "6aa4a9ac2886c15c5b14a2fe8ebf3875",
+   "n_tokens": 56,
+   "span": [
+    10773,
+    11001
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\na\nroughly equal share of cluster resources. This means that short jobs submitted while a long job is\nrunning can start receiving resources right away and still get good response times, without waiting\nfor the long job to finish."
+  },
+  {
+   "chunk_id": "d06883dccc67b33a6c0e50ee47af4818",
+   "n_tokens": 58,
+   "span": [
+    10966,
+    11139
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nwaiting\nfor the long job to finish. This mode is best for multi-user settings.\n\n- `spark.scheduler.allocation.file`: the path of the pool file, which can be local or remote."
+  },
+  {
+   "chunk_id": "60482f2ae1ecee9d28f8e812d0c7aeb4",
+   "n_tokens": 50,
+   "span": [
+    11110,
+    11241
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nwhich can be local or remote.\n- `spark.scheduler.pool`: the pool a thread's jobs go to; each thread can set its own local property."
+  },
+  {
+   "chunk_id": "6136babd7da03591c7b5266c9d0522a6",
+   "n_tokens": 49,
+   "span": [
+    11203,
+    11342
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nthread can set its own local property.\n- `spark.scheduler.mode`: FIFO or FAIR; FAIR shares the cluster between jobs in round-robin fashion."
+  },
+  {
+   "chunk_id": "84c5ae3cae10e17e18268d0633470ce7",
+   "n_tokens": 39,
+   "span": [
+    11306,
+    11381
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nbetween jobs in round-robin fashion.\n\n[example: datasource.py, csv_dataset]"
   }
  ],
  "4f60fb29417d0af5": [
@@ -1036,6 +1315,114 @@
     7867
    ],
    "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long word\n\nbcdfghjklmnpqrstvwxzbcdfghjklmnpqrstvwxzbcdfghjklmnpqrstvwxzbcdfghjklmnpqrstvwxzbcdfghjklmnpqrstvwx"
+  },
+  {
+   "chunk_id": "7159c1c3d07233c96f5d2194d89d8ee2",
+   "n_tokens": 77,
+   "span": [
+    7869,
+    8061
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long word\n\nShortened from Spark docs pages (v3.5.0-v4.0.1): one of each construct the cleaner and chunker must handle.\nNon-ASCII text stays as it is: café, naïve, “quoted”, Ā, 中文, and a dash — like this."
+  },
+  {
+   "chunk_id": "677fb686325aefe25b6e7bccaf27d04d",
+   "n_tokens": 96,
+   "span": [
+    8080,
+    8333
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Layout table\n\n```bash\n# TERMINAL 1:\n# Running Netcat\n\n$ nc -lk 9999\napache spark\n```\n\npython:\n\n```bash\n# TERMINAL 2: RUNNING structured_network_wordcount.py\n$ ./bin/spark-submit examples/src/main/python/sql/streaming/structured_network_wordcount.py localhost 9999\n```"
+  },
+  {
+   "chunk_id": "2f0b59f1af89bdd55b229ef64741c801",
+   "n_tokens": 85,
+   "span": [
+    8357,
+    8630
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Spans and nesting\n\nLeft Input | Right Input | Join Type\n--- | --- | ---\nStream | Static | Inner | Supported, not stateful\nStream | Static | Right Outer | Not supported\nOther queries |  | All types | Append mode.; Update mode.\nArrayType | Element type, PG Array; IntegerType, integer[] | array"
+  },
+  {
+   "chunk_id": "031b65b6e6cde27e287bca1e74b5a5c5",
+   "n_tokens": 96,
+   "span": [
+    8650,
+    8899
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Code in cells\n\nProperty Name | Meaning\n--- | ---\n`rowTag` | For example, in this xml: `<books><book></book>...</books>` the value would be book.\n`cov` in `package:stats` | (code below the table)\n`samplingRatio` | Defines fraction of rows used for schema inferring."
+  },
+  {
+   "chunk_id": "100c95e5aa76668cc31c4c96fbbd79d7",
+   "n_tokens": 68,
+   "span": [
+    8846,
+    9009
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Code in cells\n\n| Defines fraction of rows used for schema inferring.\n\n```\nstats::cov(x, y = NULL, use = \"everything\",\n           method = c(\"pearson\", \"kendall\", \"spearman\"))\n```"
+  },
+  {
+   "chunk_id": "c9124988670d73239ba77f4131deb78b",
+   "n_tokens": 92,
+   "span": [
+    9027,
+    9219
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Pipe tables\n\n|Keyword|Spark SQL ANSI Mode|Spark SQL NonANSI Mode|SQL-2016|\n|:---|:---:|---:|---|\n|ADD|non-reserved|non-reserved|non-reserved|\n|**explode_outer**   ( *expr* )|reserved|non-reserved|reserved|"
+  },
+  {
+   "chunk_id": "0a395408ee335b7f35faa1b4c77d2623",
+   "n_tokens": 97,
+   "span": [
+    9253,
+    9641
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Footnotes, rules and styles\n\nMLlib uses linear algebra packages for optimised numerical processing.\n\nNote: To learn more about the benefits and background of system optimised natives, you may wish to watch Sam Halliday's ScalaX talk on High Performance Linear Algebra in Scala.\n\n**TABLE: person** with Ctrl and small print.\n\nSee Advanced Dependency Management and\n\"Improve Apache Spark write performance\"\nfor details."
+  },
+  {
+   "chunk_id": "25ec66c9ff86e5174787144f9c0ce33e",
+   "n_tokens": 109,
+   "span": [
+    9677,
+    9848
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Borders and preformatted text\n\n```sql\nSELECT * FROM person WHERE name LIKE 'M%';\n+---+---+---+\n| id|  name|age|\n+---+---+---+\n|300|  Mike| 80|\n+---+---+---+\n```\n\n```\n\nssh <driver-node> jstack <pid>\n\n```"
+  },
+  {
+   "chunk_id": "939980aacb4de8f488825fc5c114162d",
+   "n_tokens": 109,
+   "span": [
+    9879,
+    10290
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nSpark's scheduler is fully thread-safe and supports this use case to enable applications that serve\nmultiple requests (e.g. queries for multiple users). By default, Spark's scheduler runs jobs in FIFO\nfashion. Each job is divided into \"stages\" (e.g. map and reduce phases), and the first job gets\npriority on all available resources while its stages have tasks to launch, then the second job gets\npriority, etc."
+  },
+  {
+   "chunk_id": "7e31cccabda6b1bc3e247efeb85c12d9",
+   "n_tokens": 125,
+   "span": [
+    10218,
+    10670
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nits stages have tasks to launch, then the second job gets\npriority, etc. If the jobs at the head of the queue don't need to use the whole cluster, later jobs\ncan start to run right away, but if the jobs at the head of the queue are large, then later jobs may be\ndelayed significantly. `spark.scheduler.mode` can be set to FAIR. (This is useful for multi-user\nsettings.) Starting in Spark 0.8, it is also possible to configure fair sharing between jobs."
+  },
+  {
+   "chunk_id": "afa2ffa33f9042dd45102cadf896b5dd",
+   "n_tokens": 102,
+   "span": [
+    10611,
+    11044
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nit is also possible to configure fair sharing between jobs. Under\nfair sharing, Spark assigns tasks between jobs in a \"round robin\" fashion, so that all jobs get a\nroughly equal share of cluster resources. This means that short jobs submitted while a long job is\nrunning can start receiving resources right away and still get good response times, without waiting\nfor the long job to finish. This mode is best for multi-user settings."
+  },
+  {
+   "chunk_id": "bcb49fd595de42bfcb6d29eb04ba7396",
+   "n_tokens": 123,
+   "span": [
+    11002,
+    11381
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nThis mode is best for multi-user settings.\n\n- `spark.scheduler.allocation.file`: the path of the pool file, which can be local or remote.\n- `spark.scheduler.pool`: the pool a thread's jobs go to; each thread can set its own local property.\n- `spark.scheduler.mode`: FIFO or FAIR; FAIR shares the cluster between jobs in round-robin fashion.\n\n[example: datasource.py, csv_dataset]"
   }
  ],
  "ccbd80f05e15c8dd": [
@@ -1256,13 +1643,85 @@
    "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option11` | 110 | Sets how many tasks a shuffle stage runs. | 3.0.0"
   },
   {
-   "chunk_id": "2daffb1dd7dd684fbee18f7ba5b49961",
-   "n_tokens": 71,
+   "chunk_id": "2fe172f96971e3a45a3bdd9e03f32ad0",
+   "n_tokens": 136,
    "span": [
     7768,
-    7867
+    8061
    ],
-   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long word\n\nbcdfghjklmnpqrstvwxzbcdfghjklmnpqrstvwxzbcdfghjklmnpqrstvwxzbcdfghjklmnpqrstvwxzbcdfghjklmnpqrstvwx"
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long word\n\nbcdfghjklmnpqrstvwxzbcdfghjklmnpqrstvwxzbcdfghjklmnpqrstvwxzbcdfghjklmnpqrstvwxzbcdfghjklmnpqrstvwx\n\nShortened from Spark docs pages (v3.5.0-v4.0.1): one of each construct the cleaner and chunker must handle.\nNon-ASCII text stays as it is: café, naïve, “quoted”, Ā, 中文, and a dash — like this."
+  },
+  {
+   "chunk_id": "677fb686325aefe25b6e7bccaf27d04d",
+   "n_tokens": 96,
+   "span": [
+    8080,
+    8333
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Layout table\n\n```bash\n# TERMINAL 1:\n# Running Netcat\n\n$ nc -lk 9999\napache spark\n```\n\npython:\n\n```bash\n# TERMINAL 2: RUNNING structured_network_wordcount.py\n$ ./bin/spark-submit examples/src/main/python/sql/streaming/structured_network_wordcount.py localhost 9999\n```"
+  },
+  {
+   "chunk_id": "2f0b59f1af89bdd55b229ef64741c801",
+   "n_tokens": 85,
+   "span": [
+    8357,
+    8630
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Spans and nesting\n\nLeft Input | Right Input | Join Type\n--- | --- | ---\nStream | Static | Inner | Supported, not stateful\nStream | Static | Right Outer | Not supported\nOther queries |  | All types | Append mode.; Update mode.\nArrayType | Element type, PG Array; IntegerType, integer[] | array"
+  },
+  {
+   "chunk_id": "e761d972085d16e8ecf9218ad0ece525",
+   "n_tokens": 138,
+   "span": [
+    8650,
+    9009
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Code in cells\n\nProperty Name | Meaning\n--- | ---\n`rowTag` | For example, in this xml: `<books><book></book>...</books>` the value would be book.\n`cov` in `package:stats` | (code below the table)\n`samplingRatio` | Defines fraction of rows used for schema inferring.\n\n```\nstats::cov(x, y = NULL, use = \"everything\",\n           method = c(\"pearson\", \"kendall\", \"spearman\"))\n```"
+  },
+  {
+   "chunk_id": "c9124988670d73239ba77f4131deb78b",
+   "n_tokens": 92,
+   "span": [
+    9027,
+    9219
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Pipe tables\n\n|Keyword|Spark SQL ANSI Mode|Spark SQL NonANSI Mode|SQL-2016|\n|:---|:---:|---:|---|\n|ADD|non-reserved|non-reserved|non-reserved|\n|**explode_outer**   ( *expr* )|reserved|non-reserved|reserved|"
+  },
+  {
+   "chunk_id": "0a395408ee335b7f35faa1b4c77d2623",
+   "n_tokens": 97,
+   "span": [
+    9253,
+    9641
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Footnotes, rules and styles\n\nMLlib uses linear algebra packages for optimised numerical processing.\n\nNote: To learn more about the benefits and background of system optimised natives, you may wish to watch Sam Halliday's ScalaX talk on High Performance Linear Algebra in Scala.\n\n**TABLE: person** with Ctrl and small print.\n\nSee Advanced Dependency Management and\n\"Improve Apache Spark write performance\"\nfor details."
+  },
+  {
+   "chunk_id": "25ec66c9ff86e5174787144f9c0ce33e",
+   "n_tokens": 109,
+   "span": [
+    9677,
+    9848
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Borders and preformatted text\n\n```sql\nSELECT * FROM person WHERE name LIKE 'M%';\n+---+---+---+\n| id|  name|age|\n+---+---+---+\n|300|  Mike| 80|\n+---+---+---+\n```\n\n```\n\nssh <driver-node> jstack <pid>\n\n```"
+  },
+  {
+   "chunk_id": "4bae6d989921385ee8f16793d37bdd55",
+   "n_tokens": 234,
+   "span": [
+    9879,
+    10816
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nSpark's scheduler is fully thread-safe and supports this use case to enable applications that serve\nmultiple requests (e.g. queries for multiple users). By default, Spark's scheduler runs jobs in FIFO\nfashion. Each job is divided into \"stages\" (e.g. map and reduce phases), and the first job gets\npriority on all available resources while its stages have tasks to launch, then the second job gets\npriority, etc. If the jobs at the head of the queue don't need to use the whole cluster, later jobs\ncan start to run right away, but if the jobs at the head of the queue are large, then later jobs may be\ndelayed significantly. `spark.scheduler.mode` can be set to FAIR. (This is useful for multi-user\nsettings.) Starting in Spark 0.8, it is also possible to configure fair sharing between jobs. Under\nfair sharing, Spark assigns tasks between jobs in a \"round robin\" fashion, so that all jobs get a\nroughly equal share of cluster resources."
+  },
+  {
+   "chunk_id": "e82e7ee084c9de7bfac3b06d8dfdd293",
+   "n_tokens": 187,
+   "span": [
+    10671,
+    11381
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nUnder\nfair sharing, Spark assigns tasks between jobs in a \"round robin\" fashion, so that all jobs get a\nroughly equal share of cluster resources. This means that short jobs submitted while a long job is\nrunning can start receiving resources right away and still get good response times, without waiting\nfor the long job to finish. This mode is best for multi-user settings.\n\n- `spark.scheduler.allocation.file`: the path of the pool file, which can be local or remote.\n- `spark.scheduler.pool`: the pool a thread's jobs go to; each thread can set its own local property.\n- `spark.scheduler.mode`: FIFO or FAIR; FAIR shares the cluster between jobs in round-robin fashion.\n\n[example: datasource.py, csv_dataset]"
   }
  ]
 }

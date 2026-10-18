@@ -25,6 +25,7 @@ import time
 import uuid
 from typing import Any
 
+import corpus_fingerprint
 from databricks.sdk import WorkspaceClient
 from databricks.sdk.errors import NotFound
 from databricks.sdk.service import catalog, compute, jobs
@@ -98,6 +99,14 @@ def main() -> None:
             "uncommitted code changes (runs/ excepted): commit first, so the run can be traced to a commit"
         )
     commit = git("rev-parse", "HEAD")
+    if pathlib.Path(args.script).name == "silver_chunk.py":
+        # Silver rows are immutable per (config_id, tag): the code must reproduce the committed corpus golden,
+        # or a changed chunking would be stored under the old version's config_id.
+        problems = corpus_fingerprint.check()
+        if problems:
+            sys.exit(
+                "corpus golden differs (bump CLEANER_VERSION or CHUNKER_VERSION):\n" + "\n".join(problems)
+            )
     wheel = build_wheel()
     wheel_version = wheel.name.split("-")[1]
 

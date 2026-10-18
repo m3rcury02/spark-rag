@@ -1,6 +1,12 @@
-"""The page both golden tests run on: the fixture page plus sections that force every split path."""
+"""The page both golden tests run on: the fixture pages plus sections that force every split path, and the
+rule for regenerating a golden file."""
 
+import json
+import os
 from pathlib import Path
+from typing import Any
+
+import pytest
 
 HERE = Path(__file__).parent
 ROWS = "\n".join(
@@ -31,4 +37,23 @@ EXTRA = (
 
 
 def page() -> str:
-    return (HERE / "fixtures" / "spark_page.md").read_text() + EXTRA
+    fixtures = HERE / "fixtures"
+    return (
+        (fixtures / "spark_page.md").read_text(encoding="utf-8")
+        + EXTRA
+        + "\n\n"
+        + (fixtures / "spark_constructs.md").read_text(encoding="utf-8").split("---\n", 2)[2]
+    )
+
+
+def check_golden(path: Path, current: Any, bump: str) -> None:
+    """Compare with the golden file. UPDATE_GOLDEN=1 may only create a missing file: an existing golden is
+    the output its version promised, so a change needs a new version (or, for a version that was never
+    published to silver, deleting its golden file on purpose)."""
+    if os.environ.get("UPDATE_GOLDEN") and not path.exists():
+        path.parent.mkdir(exist_ok=True)
+        path.write_text(json.dumps(current, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+    if not path.exists():
+        pytest.fail(f"no golden file {path.name}; run with UPDATE_GOLDEN=1 to create it")
+    if json.loads(path.read_text(encoding="utf-8")) != current:
+        pytest.fail(f"output changed for an existing golden ({path.name}): bump {bump}")

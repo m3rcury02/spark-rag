@@ -34,26 +34,46 @@ def base_parser() -> argparse.ArgumentParser:
     return ap
 
 
+def _version(package: str) -> str | None:
+    try:
+        return importlib.metadata.version(package)
+    except importlib.metadata.PackageNotFoundError:
+        return None
+
+
+def pinned_version(package: str, of: str = "docs-rag") -> str | None:
+    """The exact version `of` pins for `package` (its `package==X` requirement), if any."""
+    for req in importlib.metadata.requires(of) or []:
+        name, sep, version = req.partition("==")
+        if sep and name.strip().lower() == package and ";" not in version:
+            return version.strip()
+    return None
+
+
 def check_environment(expect_env: str, expect_version: str) -> dict[str, Any]:
-    """Fail unless the job runs on the pinned environment with the exact wheel built for this run (D-005)."""
+    """Fail unless the job runs on the pinned environment with the exact wheel built for this run (D-005),
+    and with the tokenizers version the wheel pins (it shapes every token count and cut point)."""
     env: dict[str, Any] = {
         "python": platform.python_version(),
         "databricks_runtime_version": os.environ.get("DATABRICKS_RUNTIME_VERSION"),
-        "databricks_connect": importlib.metadata.version("databricks-connect"),
-        "docs_rag": importlib.metadata.version("docs-rag"),
-        "tokenizers": importlib.metadata.version("tokenizers"),
+        "databricks_connect": _version("databricks-connect"),
+        "docs_rag": _version("docs-rag"),
+        "tokenizers": _version("tokenizers"),
         "machine": platform.machine(),
     }
     want_connect = DBCONNECT_MAJOR.get(expect_env)
+    want_tokenizers = pinned_version("tokenizers")
     problems = []
     if sys.version_info[:2] != (3, 12):
         problems.append(f"Python {env['python']}, expected 3.12")
     if not str(env["databricks_runtime_version"]).startswith(f"client.{expect_env}."):
         problems.append(f"runtime {env['databricks_runtime_version']}, expected client.{expect_env}.*")
-    if env["databricks_connect"].split(".")[0] != want_connect:
+    if str(env["databricks_connect"]).split(".")[0] != want_connect:
         problems.append(f"databricks-connect {env['databricks_connect']}, expected {want_connect}.x")
     if env["docs_rag"] != expect_version:
         problems.append(f"docs_rag {env['docs_rag']} installed, expected {expect_version} (stale cache?)")
+    if want_tokenizers is None or env["tokenizers"] != want_tokenizers:
+        problems.append(f"tokenizers {env['tokenizers']}, the wheel pins {want_tokenizers}")
     if problems:
         raise RuntimeError("environment check failed: " + "; ".join(problems))
     return env

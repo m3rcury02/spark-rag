@@ -98,8 +98,12 @@ uv run --with databricks-sdk==0.152.0 python scripts/m2_stability.py --label <la
 uv run --with databricks-sdk==0.152.0 --with sentence-transformers==6.1.0 --with transformers==5.19.0 \
     --with torch==2.14.1 --index https://download.pytorch.org/whl/cpu --index-strategy unsafe-best-match \
     python scripts/m2_tokenizer_parity.py --label <label> --tags v3.5.0 v4.0.0 v4.0.1
+# The real corpus as a golden (git only, ~1 min; also in CI and before every silver job in run_job.py):
+uv run python scripts/corpus_fingerprint.py
 # After a deliberate cleaner/chunker change: bump CLEANER_VERSION (clean.py) or CHUNKER_VERSION (chunk.py), then
+# create the new versions' goldens. Existing goldens are never overwritten.
 UPDATE_GOLDEN=1 uv run pytest tests/test_clean_golden.py tests/test_chunk_golden.py
+uv run python scripts/corpus_fingerprint.py --update
 ```
 
 ## Next session: pick up here

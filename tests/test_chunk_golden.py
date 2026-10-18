@@ -4,13 +4,12 @@ CHUNKER_VERSION (or CLEANER_VERSION, when tests/test_clean_golden.py fails too).
 Silver rows are keyed by config_id, which includes both versions, so a change that ships without a bump would
 mix two chunkings under one key. This also catches a tokenizer or vocab change. To regenerate after a
 deliberate change: bump the version, then run
-`UPDATE_GOLDEN=1 uv run pytest tests/test_clean_golden.py tests/test_chunk_golden.py`.
+`UPDATE_GOLDEN=1 uv run pytest tests/test_clean_golden.py tests/test_chunk_golden.py`. An existing golden file
+is never overwritten. The fixtures cannot hold every real page; scripts/corpus_fingerprint.py checks the
+real corpus the same way (in CI, and before every silver job).
 """
 
-import json
-import os
-
-from golden_inputs import HERE, page
+from golden_inputs import HERE, check_golden, page
 
 from docs_rag.chunk import CHUNKER_VERSION, ChunkConfig, chunk_document
 from docs_rag.clean import CLEANER_VERSION
@@ -39,11 +38,4 @@ def current() -> dict[str, list[dict[str, object]]]:
 
 
 def test_chunker_output_matches_the_golden_file_for_this_version() -> None:
-    if os.environ.get("UPDATE_GOLDEN"):
-        GOLDEN.parent.mkdir(exist_ok=True)
-        GOLDEN.write_text(json.dumps(current(), indent=1, ensure_ascii=False) + "\n")
-    assert GOLDEN.exists(), "no golden file for these versions; see the module docstring"
-    expected = json.loads(GOLDEN.read_text())
-    assert current() == expected, (
-        "chunker output changed: bump CHUNKER_VERSION and regenerate the golden file"
-    )
+    check_golden(GOLDEN, current(), "CHUNKER_VERSION (or CLEANER_VERSION if the cleaned text changed)")
