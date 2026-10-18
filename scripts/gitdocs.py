@@ -41,10 +41,11 @@ def read_tags(tags: list[str], docs_dir: str = "docs", suffix: str = ".md") -> d
                 f"refs/tags/{tag}:refs/tags/{tag}",
             )
             _git(d, "checkout", "-q", "--detach", tag)  # fetches the sparse paths' blobs in one batch
-            listing = _git(d, "ls-tree", "-r", tag, "--", docs_dir).decode().splitlines()
+            # -z: NUL-separated and unquoted, so a path with non-ASCII characters still passes the filter.
+            listing = _git(d, "ls-tree", "-r", "-z", tag, "--", docs_dir).decode().split("\0")
             blobs = []
-            for line in listing:
-                meta, path = line.split("\t", 1)
+            for entry in filter(None, listing):
+                meta, path = entry.split("\t", 1)
                 _mode, kind, blob_id = meta.split()
                 if kind == "blob" and path.endswith(suffix):
                     blobs.append((path, blob_id))

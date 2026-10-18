@@ -16,20 +16,18 @@ import importlib.metadata
 import json
 import pathlib
 import platform
-import subprocess
-import sys
 from typing import Any
 
 from databricks.sdk import WorkspaceClient
 from gitdocs import read_tags
 from huggingface_hub import snapshot_download
 from redact import Redactor
+from runguard import REPO, committed_head
 from sentence_transformers import SentenceTransformer
 
 from docs_rag.chunk import chunk_document
 from docs_rag.config import Config, validate_tag
 
-REPO = pathlib.Path(__file__).resolve().parents[1]
 MODELS = ("sentence-transformers/all-MiniLM-L6-v2", "BAAI/bge-small-en-v1.5")
 BATCH = 256
 
@@ -39,9 +37,7 @@ def main() -> None:
     ap.add_argument("--label", required=True)
     ap.add_argument("--tags", nargs="+", required=True)
     args = ap.parse_args()
-    dirty = ["git", "-C", str(REPO), "status", "--porcelain", "--", ".", ":(exclude)runs"]
-    if subprocess.run(dirty, capture_output=True, text=True).stdout:
-        sys.exit("uncommitted code changes (runs/ excepted): commit first, so the result can be traced")
+    head = committed_head()
     tags = [validate_tag(t) for t in args.tags]
     grid = Config().chunk_grid
     source = read_tags(tags)
@@ -70,11 +66,14 @@ def main() -> None:
             "mismatch_examples": [{"expected": e, "model": s, "text": t[:200]} for t, e, s in mismatches[:5]],
             "longest_input_positions": max(seen),
             "texts_at_max_seq_length": sum(s >= limit for s in seen),
+            "texts_longer_than_the_model_accepts": sum(counts[t] + 2 > limit for t in texts),
+            # encode() resolves its prompt from these; documents must get none
+            "prompts": model.prompts,
+            "default_prompt_name": model.default_prompt_name,
         }
-    head = ["git", "-C", str(REPO), "rev-parse", "HEAD"]
     out = {
         "label": args.label,
-        "git_commit": subprocess.run(head, capture_output=True, text=True).stdout.strip(),
+        "git_commit": head,
         "chunk_configs": [{**c.__dict__, "config_id": c.config_id} for c in grid],
         "source_commits": {t: source[t].commit_sha for t in tags},
         "packages": {
@@ -83,10 +82,8 @@ def main() -> None:
         },
         "machine": platform.machine(),
         "models": models,
-        "all_pass": all(
-            m["mismatches"] == 0 and m["longest_input_positions"] <= m["max_seq_length"]
-            for m in models.values()
-        ),
+        # A truncated text shows up as a mismatch (fewer positions than n_tokens + 2): the whole check.
+        "all_pass": all(m["mismatches"] == 0 for m in models.values()),
     }
     (REPO / "runs" / f"{args.label}.json").write_text(Redactor(WorkspaceClient()).dump(out))
     print(json.dumps(out, indent=2))

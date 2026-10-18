@@ -14,18 +14,16 @@ Each check is labelled "vs git" (compared with git) or "invariant" (bronze check
 
 import argparse
 import json
-import pathlib
 import subprocess
-import sys
 import tempfile
 from typing import Any
 
 from databricks.sdk import WorkspaceClient
 from redact import Redactor
+from runguard import REPO, committed_head
 
 from docs_rag.config import Config, validate_tag
 
-REPO = pathlib.Path(__file__).resolve().parents[1]
 SOURCE = "https://github.com/apache/spark"
 
 # git's blob id of the stored content: sha1("blob " + <byte length> + NUL + <bytes>).
@@ -148,11 +146,7 @@ def main() -> None:
     ap.add_argument("--catalog", default=Config.catalog)
     ap.add_argument("--schema", default=Config.schema)
     args = ap.parse_args()
-    dirty = ["git", "-C", str(REPO), "status", "--porcelain", "--", ".", ":(exclude)runs"]
-    if subprocess.run(dirty, capture_output=True, text=True).stdout:
-        sys.exit(
-            "uncommitted code changes (runs/ excepted): commit first, so the result can be traced to a commit"
-        )
+    commit = committed_head()
     tags = [validate_tag(t) for t in args.tags]
     table = Config(catalog=args.catalog, schema=args.schema).bronze_table
 
@@ -161,10 +155,9 @@ def main() -> None:
     checks = compare(tags, g, bronze_side(w, table, tags))
     vs_git = [c for c in checks if c["kind"] == "vs git"]
     invariants = [c for c in checks if c["kind"] == "invariant"]
-    head = ["git", "-C", str(REPO), "rev-parse", "HEAD"]
     out = {
         "label": args.label,
-        "git_commit": subprocess.run(head, capture_output=True, text=True).stdout.strip(),
+        "git_commit": commit,
         "table": table,
         "all_pass": all(c["pass"] for c in checks),
         "summary": {
