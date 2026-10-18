@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from docs_rag.chunk import ChunkConfig, chunk_document, chunk_id, chunk_section
+from docs_rag.chunk import ChunkConfig, chunk_document, chunk_id, chunk_section, frame_of
 from docs_rag.clean import clean_page
 from docs_rag.tokens import count_tokens
 
@@ -296,7 +296,44 @@ def test_offsets_point_at_each_chunks_verbatim_slice(seed: int) -> None:
     assert doc.clean_sha256 == hashlib.sha256(clean_text.encode()).hexdigest()
     for c in doc.chunks:
         piece = clean_text[c.char_start : c.char_end]
-        assert piece and piece.strip() == piece or piece.startswith(" ")  # code may keep its indentation
-        assert piece in c.body  # the body is the slice, or the slice inside its fences or under its header
-        if not c.body.startswith(("```", "~~~", "Property Name")):
-            assert piece == c.body
+        assert piece.strip()
+        # Exactly the slice, or exactly the slice inside its fences or under its table header.
+        assert frame_of(c.body, piece) is not None, (c.body[:80], piece[:80])
+
+
+def test_frame_of_rebuilds_bodies_exactly() -> None:
+    assert frame_of("abc", "abc") == "none"
+    assert frame_of("```py\nx = 1\n```", "x = 1") == "code"
+    assert frame_of("A | B\n`k` | v", "`k` | v") == "table"
+    assert frame_of("A | B\n`k` | rest of v", "rest of v") == "table"
+    assert frame_of("```py\nx = 1\n```", "= 1") is None  # a shifted offset
+    assert frame_of("abc", "bc") is None
+    assert frame_of("A | B\n`k` | v", "| v") is None
+
+
+# --- where long paragraphs are cut ---
+
+
+def test_a_hard_wrapped_paragraph_is_cut_at_sentence_ends() -> None:
+    sentences = [
+        f"Sentence {n} talks about shuffle partitions and executor memory in some detail." for n in range(12)
+    ]
+    wrapped = []
+    for sentence in sentences:  # wrap every sentence across two lines, as the Spark sources do
+        words = sentence.split()
+        wrapped.append(" ".join(words[:5]) + "\n" + " ".join(words[5:]))
+    pieces = bodies("# H\n\n" + " ".join(wrapped) + "\n", ChunkConfig(max_tokens=64, overlap_tokens=0))
+    assert len(pieces) > 2
+    assert all(p.endswith(".") for p in pieces)
+
+
+def test_a_list_is_cut_at_its_items() -> None:
+    items = "\n".join(f"- item {n} explains one setting. It has two sentences." for n in range(20))
+    pieces = bodies("# H\n\n" + items + "\n", ChunkConfig(max_tokens=64, overlap_tokens=0))
+    assert len(pieces) > 2 and all(p.startswith("- item") for p in pieces)
+
+
+def test_a_code_fence_that_alone_is_over_budget_raises() -> None:
+    fence = "```scala " + "word " * 120 + "\n```"
+    with pytest.raises(ValueError, match="code fence over budget"):
+        bodies(f"# H\n\n{fence}\n", ChunkConfig(max_tokens=128, overlap_tokens=16))

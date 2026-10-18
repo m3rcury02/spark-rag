@@ -191,14 +191,27 @@ def _cut_at_word_starts(body: str, start: int, end: int, budget: int) -> list[tu
 _SENTENCE_END = re.compile(r"(?<=[.!?])\s+(?=[A-Z`(\[])")
 
 
-def _split(body: str, start: int, end: int, budget: int) -> list[tuple[int, int]]:
-    """Slices of at most `budget` tokens: the whole text if it fits, else by lines, sentences, word starts."""
+# A line that starts a list item or a table row: such a paragraph is cut at its lines, not its sentences.
+_STRUCTURED_LINE = re.compile(r"\s*(?:[-*+]|\d+[.)])\s|\s*\|")
+
+
+def _split(body: str, start: int, end: int, budget: int, by_lines: bool = False) -> list[tuple[int, int]]:
+    """Slices of at most `budget` tokens: the whole text if it fits. Otherwise prose is cut at sentence ends
+    first (its line breaks are only the source's hard wrapping), while code, lists and tables are cut at their
+    lines first; then lines, sentences and finally word starts."""
     if count_tokens(body[start:end]) <= budget:
         return [(start, end)]
     lines = _lines(body, start, end)
+    a, b = (lines[0][0], lines[-1][1]) if lines else (start, end)
+    structured = by_lines or any(_STRUCTURED_LINE.match(body[x:y]) for x, y in lines[1:])
+    if not structured:
+        cuts = list(_SENTENCE_END.finditer(body, a, b))
+        if cuts:
+            bounds = [a, *(x for m in cuts for x in (m.start(), m.end())), b]
+            pairs = range(0, len(bounds), 2)
+            return [s for i in pairs for s in _split(body, bounds[i], bounds[i + 1], budget, by_lines=True)]
     if len(lines) > 1:
-        return [s for a, b in lines for s in _split(body, a, b, budget)]
-    a, b = lines[0] if lines else (start, end)
+        return [s for x, y in lines for s in _split(body, x, y, budget)]
     cuts = list(_SENTENCE_END.finditer(body, a, b))
     if cuts:
         bounds = [a, *(x for m in cuts for x in (m.start(), m.end())), b]
@@ -236,14 +249,15 @@ def _pieces(body: str, budget: int, overlap: int) -> list[_Piece]:
         if unit.code:
             lines = _lines(body, unit.start, unit.end)
             opener, closer = body[slice(*lines[0])].strip(), body[slice(*lines[-1])].strip()
-            if len(lines) <= 2:
-                continue  # an empty code block
+            if len(lines) <= 2:  # nothing inside the fences, so its opener alone is over budget
+                raise ValueError(f"code fence over budget: {opener[:60]!r}")
             groups += 1
             frame = _Frame(groups, lines[1][0], f"{opener}\n", f"{opener}\n", f"\n{closer}", code=True)
             room = budget - overlap - count_tokens(f"{opener}\n{closer}")
             if room < 8:
                 raise ValueError("max_tokens too small to hold a code fence")
-            out += [_Piece(a, b, True, frame) for a, b in _split(body, lines[1][0], lines[-2][1], room)]
+            inner = _split(body, lines[1][0], lines[-2][1], room, by_lines=True)
+            out += [_Piece(a, b, True, frame) for a, b in inner]
         elif table:
             header, rows = table
             for a, b in rows:
@@ -336,6 +350,24 @@ def chunk_section(
         text = _render(body, s, e, frame).strip()
         out.append(SectionChunk(text, f"{crumb}\n\n{text}", s, e))
     return out
+
+
+def frame_of(body: str, slice_text: str) -> str | None:
+    """How a chunk body is built from its verbatim slice: "none" (it is the slice), "code" (the slice wrapped
+    in its block's fences) or "table" (the slice under its table's header row, and for a long row's later
+    pieces also under its first cell). None when the body is none of these: an offset or framing bug."""
+    if body == slice_text:
+        return "none"
+    first, _, rest = body.partition("\n")
+    last = body.rsplit("\n", 1)[-1]
+    if _FENCE_LINE.match(first) and body == f"{first}\n{slice_text}\n{last}":
+        return "code"
+    if "|" in first and (rest == slice_text or (rest.endswith(f" | {slice_text}") and "\n" not in rest)):
+        return "table"
+    return None
+
+
+_FENCE_LINE = re.compile(r"\s*(?:>\s*)*(?:`{3,}|~{3,})")
 
 
 def chunk_document(path: str, raw_markdown: str, config: ChunkConfig) -> DocChunks:
