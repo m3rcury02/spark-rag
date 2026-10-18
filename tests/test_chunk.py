@@ -104,7 +104,7 @@ def test_empty_sections_and_generated_only_pages_give_no_chunks() -> None:
 
 def test_fixture_page() -> None:
     doc = chunk_document("docs/quick-start.md", FIXTURE.read_text(), ChunkConfig())
-    assert doc.residue == {"liquid_tags": 0, "html_tags": 0, "markdown_links": 0}
+    assert not any(doc.residue.values())
     assert [c.section_path[-1] for c in doc.chunks] == ["Quick Start", "Basics", "Spark Properties", "TF-IDF"]
     assert doc.chunks[2].embed_text.endswith("in the UI and in log data. | 0.9.0")
 

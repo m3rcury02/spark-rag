@@ -27,13 +27,14 @@ packages = ["src/docs_rag"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+filterwarnings = ["error::SyntaxWarning"]  # e.g. an invalid escape in a docstring fails the suite
 
 [tool.ruff]
 line-length = 110
 target-version = "py312"
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "UP", "B", "BLE", "SIM"]
+select = ["E", "W", "F", "I", "UP", "B", "BLE", "SIM"]
 
 [tool.ruff.lint.per-file-ignores]
 "notebooks/*" = ["E501", "F821", "E402", "I001"]

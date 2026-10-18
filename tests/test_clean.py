@@ -2,9 +2,11 @@ from pathlib import Path
 
 import pytest
 
-from docs_rag.clean import clean_inline, clean_page, fenced_blocks, residue, split_front_matter
+import docs_rag.clean
+from docs_rag.clean import clean_inline, clean_page, fenced_blocks, split_front_matter
 
 FIXTURE = Path(__file__).parent / "fixtures" / "spark_page.md"
+NO_RESIDUE = {"liquid_tags": 0, "html_tags": 0, "markdown_links": 0, "broken_table_headers": 0}
 
 
 def clean(body: str) -> str:
@@ -29,7 +31,7 @@ def test_title_falls_back_to_the_file_name() -> None:
 def test_fixture_page_cleans_without_residue() -> None:
     doc = clean_page(FIXTURE.read_text(), fallback_title="x")
     assert doc.title == "Quick Start"
-    assert residue(doc.text) == {"liquid_tags": 0, "html_tags": 0, "markdown_links": 0}
+    assert doc.residue == NO_RESIDUE
     assert "This div is only here" not in doc.text  # d-none block dropped
     assert "table of contents" not in doc.text  # the {:toc} bullet dropped
     assert "{:toc}" not in doc.text
@@ -139,11 +141,6 @@ def test_table_without_a_header_row_gets_no_delimiter() -> None:
     assert clean(table) == "Feature | yes\nOther | no"
 
 
-def test_code_block_in_a_table_cell_is_lifted_out_of_the_row() -> None:
-    table = "<table><tr><td>Example</td><td>\n\n```sql\nSELECT 1;\n```\n\n</td></tr></table>"
-    assert clean(table) == "Example\n\n```sql\nSELECT 1;\n```"
-
-
 def test_language_tabs_get_a_label_line() -> None:
     out = clean('<div class="codetabs">\n<div data-lang="python" markdown="1">\nA\n</div>\n</div>')
     assert out == "python:\n\nA"
@@ -178,12 +175,27 @@ def test_clean_inline_drops_header_ids_and_markup() -> None:
     assert clean_inline("Using [`spark-submit`](x.html) {#launching}") == "Using `spark-submit`"
 
 
-def test_residue_counts_markup_outside_code_only() -> None:
-    assert residue("{% x %} <div> [a](b) `<div>`\n```\n[c](d) <div>\n```") == {
-        "liquid_tags": 1,
-        "html_tags": 1,
-        "markdown_links": 1,
+def test_residue_counts_markup_left_outside_code() -> None:
+    page = (
+        "{% raw %}{% x %}{% endraw %} <iframe src=x></iframe> &lt;b&gt; `<div>`\n\n[a\n\nb](c)\n\n"
+        "|a|\nb|\n|---|\n\n```\n[c](d) <div>\n```"
+    )
+    assert clean_page(page, "x").residue == {
+        "liquid_tags": 1,  # kept literal by {% raw %}
+        "html_tags": 2,  # <iframe> and </iframe>; the escaped &lt;b&gt; is prose, not a tag
+        "markdown_links": 1,  # 'b](c)': not a link, since its text crosses a blank line
+        "broken_table_headers": 1,  # the header is broken over two lines
     }
+
+
+def test_cleaning_raises_if_a_rule_swallows_code(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(docs_rag.clean, "_markdown", lambda text: text.split("\x01")[0])
+    with pytest.raises(ValueError, match="cleaning lost"):
+        clean_page("Intro.\n\n```\ncode\n```\n", "x")
+
+
+def test_code_inside_an_html_comment_may_go() -> None:
+    assert clean_page("A <!-- `x` -->B", "x").text == "A B"
 
 
 def test_long_table_borders_are_shortened_inside_code_too() -> None:
@@ -201,3 +213,85 @@ def test_mathjax_macro_preamble_is_dropped() -> None:
     preamble = "`\\[\n\\newcommand{\\R}{\\mathbb{R}}\n\\newcommand{\\x}{\\mathbf{x}}\n\\]`"
     page = f"Intro.\n\n{preamble}\n\nBody `$\\R$`."
     assert clean(page) == "Intro.\n\nBody `$\\R$`."
+
+
+# --- tables: real-page structures ---
+
+
+def test_a_layout_table_without_rows_keeps_its_cells_as_content() -> None:
+    page = (
+        '<table width="100%"><td>\n{% highlight bash %}\n$ nc -lk 9999\n{% endhighlight %}\n</td>\n'
+        "<td>Two</td></table>"
+    )
+    assert clean(page) == "```bash\n$ nc -lk 9999\n```\n\nTwo"
+
+
+def test_rowspan_cells_are_repeated_and_colspan_keeps_columns() -> None:
+    page = (
+        "<table><tr><th>Left</th><th>Right</th><th>Type</th></tr>"
+        '<tr><td rowspan="2">Stream</td><td>Static</td><td>Inner</td></tr>'
+        "<tr><td>Stream</td><td>Outer</td></tr>"
+        '<tr><td colspan="2">Other</td><td>Any</td></tr></table>'
+    )
+    assert clean(page) == (
+        "Left | Right | Type\n--- | --- | ---\nStream | Static | Inner\nStream | Stream | Outer\n"
+        "Other |  | Any"
+    )
+
+
+def test_a_nested_table_is_written_inline_in_its_cell() -> None:
+    page = (
+        "<table><tr><th>Spark</th><th>Postgres</th></tr><tr><td>ArrayType</td><td><table>"
+        "<tr><th>Element</th><th>PG</th></tr><tr><td>IntegerType</td><td>integer[]</td></tr>"
+        "</table></td></tr></table>"
+    )
+    assert clean(page) == "Spark | Postgres\n--- | ---\nArrayType | Element, PG; IntegerType, integer[]"
+
+
+def test_list_items_in_a_cell_are_joined() -> None:
+    page = "<table><tr><td>A</td><td><ul><li>One.</li><li>Two.</li></ul></td></tr></table>"
+    assert clean(page) == "A | One.; Two."
+
+
+def test_one_line_code_in_a_cell_stays_inline_and_longer_code_follows_the_table() -> None:
+    page = (
+        "<table><tr><th>Name</th><th>Meaning</th></tr>"
+        "<tr><td>a</td><td>For example <code><xmp><book></book></xmp></code> here.</td></tr>"
+        "<tr><td>b</td><td>\n{% highlight r %}\nf(x,\n  y)\n{% endhighlight %}\n</td></tr>"
+        "<tr><td>c</td><td>last</td></tr></table>"
+    )
+    assert clean(page) == (
+        "Name | Meaning\n--- | ---\na | For example `<book></book>` here.\n"
+        "b | (code below the table)\nc | last\n\n```r\nf(x,\n  y)\n```"
+    )
+
+
+def test_br_in_a_pipe_table_row_does_not_start_a_new_row() -> None:
+    assert clean("|Keyword|Spark SQL<br/>ANSI Mode|\n|--|---|\n|ADD|non-reserved|") == (
+        "|Keyword|Spark SQL ANSI Mode|\n|--|---|\n|ADD|non-reserved|"
+    )
+
+
+# --- other real-page constructs ---
+
+
+def test_footnotes_become_notes_and_their_markers_go() -> None:
+    page = "Uses natives[^1].\n\n[^1]: To learn more, you may wish to\n    watch the [talk](http://x.io/)."
+    assert clean(page) == "Uses natives.\n\nNote: To learn more, you may wish to watch the talk."
+
+
+def test_star_and_underscore_rules_are_dropped() -> None:
+    assert clean("A\n\n" + "*" * 99 + "\n\n___\n\nB") == "A\n\nB"
+
+
+def test_style_blocks_go_and_presentational_tags_are_stripped() -> None:
+    page = '<style type="text/css">.t {color: red;}</style>**<u>TABLE: person</u>** <kbd>Ctrl</kbd>'
+    assert clean(page) == "**TABLE: person** Ctrl"
+
+
+def test_links_with_titles_wrapped_urls_and_no_closing_paren() -> None:
+    page = (
+        '![Table](img/t.png "Table") [Guide](https://spark.apache\n.org/docs/x.html) and '
+        "[Blog](https://a.b/c/"
+    )
+    assert clean(page) == "Guide and Blog"

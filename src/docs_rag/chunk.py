@@ -27,7 +27,7 @@ import json
 import re
 from dataclasses import dataclass
 
-from docs_rag.clean import CLEANER_VERSION, clean_page, fenced_blocks, residue
+from docs_rag.clean import CLEANER_VERSION, DELIMITER_ROW, clean_page, fenced_blocks
 from docs_rag.sections import split_sections
 from docs_rag.tokens import VOCAB_SHA256, count_tokens, token_spans
 
@@ -189,8 +189,6 @@ def _cut_at_word_starts(body: str, start: int, end: int, budget: int) -> list[tu
 
 
 _SENTENCE_END = re.compile(r"(?<=[.!?])\s+(?=[A-Z`(\[])")
-# A GFM table's delimiter row: cells of dashes (optionally colon-aligned) separated by pipes.
-_DELIMITER_ROW = re.compile(r"\s*\|?\s*:?-+:?\s*(?:\|\s*:?-+:?\s*)+\|?\s*|\s*\|\s*:?-+:?\s*\|\s*")
 
 
 def _split(body: str, start: int, end: int, budget: int) -> list[tuple[int, int]]:
@@ -214,7 +212,7 @@ def _table_rows(body: str, unit: _Piece) -> tuple[str, list[tuple[int, int]]] | 
     if (
         len(lines) < 3
         or "|" not in body[slice(*lines[0])]
-        or not _DELIMITER_ROW.fullmatch(body[slice(*lines[1])])
+        or not DELIMITER_ROW.fullmatch(body[slice(*lines[1])])
     ):
         return None
     return body[slice(*lines[0])].strip(), lines[2:]
@@ -373,6 +371,6 @@ def chunk_document(path: str, raw_markdown: str, config: ChunkConfig) -> DocChun
         chunks=tuple(chunks),
         sections=len(sections),
         empty_sections=sum(1 for s in sections if not s.body),
-        residue=residue(page.text),
+        residue=page.residue,
         clean_sha256=hashlib.sha256(page.text.encode()).hexdigest(),
     )

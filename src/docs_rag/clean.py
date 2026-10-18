@@ -1,4 +1,4 @@
-"""Turn one Spark docs page (Jekyll Markdown with Liquid and HTML) into clean Markdown text.
+r"""Turn one Spark docs page (Jekyll Markdown with Liquid and HTML) into clean Markdown text.
 
 The order matters and is fixed (D-008):
 1. split off the YAML front matter; the title comes from `displayTitle` (else `title`);
@@ -175,71 +175,172 @@ def _unmask(text: str, saved: list[str]) -> str:
 
 # --- 5. HTML outside code ----------------------------------------------------------------------------------
 
+# Tags stripped with their text kept. Anything else that looks like a tag is left alone, because outside code
+# it is usually prose such as `<driver-node>`; residue counts real HTML element names that survive.
 _ALLOWED_TAGS = "|".join(
     ["table", "thead", "tbody", "tfoot", "tr", "td", "th", "div", "p", "br", "b", "i", "em", "strong", "code"]
-    + ["a", "img", "ul", "ol", "li", "span", "sup", "sub", "h[1-6]", "hr", "dl", "dt", "dd"]
+    + ["a", "img", "ul", "ol", "li", "span", "sup", "sub", "h[1-6]", "hr", "dl", "dt", "dd", "u", "s"]
+    + ["small", "big", "kbd", "tt", "font", "center", "strike", "del", "ins", "mark", "abbr", "cite", "q"]
+    + ["var", "samp", "details", "summary", "caption", "figure", "figcaption", "col", "colgroup", "section"]
+    + ["header", "footer", "nav", "label", "blockquote", "nobr", "wbr"]
 )
 _TAG = re.compile(rf"</?(?:{_ALLOWED_TAGS})\b[^<>]*?/?>", re.I)
-_TABLE = re.compile(r"<table\b[^>]*>(.*?)</table>", re.S | re.I)
+# Every HTML element name: what the residue check looks for after stripping (before entities are unescaped,
+# so `&lt;U&gt;` in prose is not mistaken for a tag).
+_HTML_ELEMENTS = re.compile(
+    r"</?(?:a|abbr|address|area|article|aside|audio|b|base|bdi|bdo|big|blockquote|body|br|button|canvas"
+    r"|caption|center|cite|code|col|colgroup|data|datalist|dd|del|details|dfn|dialog|div|dl|dt|em|embed"
+    r"|fieldset|figcaption|figure|font|footer|form|h[1-6]|head|header|hr|html|i|iframe|img|input|ins|kbd"
+    r"|label|legend|li|link|main|map|mark|menu|meta|meter|nav|nobr|noscript|object|ol|optgroup|option"
+    r"|output|p|param|picture|pre|progress|q|rp|rt|ruby|s|samp|script|section|select|slot|small|source"
+    r"|span|strike|strong|style|sub|summary|sup|svg|table|tbody|td|template|textarea|tfoot|th|thead|time"
+    r"|title|tr|track|tt|u|ul|var|video|wbr|xmp)\b[^<>]*>",
+    re.I,
+)
+_INNER_TABLE = re.compile(r"<table\b[^>]*>((?:(?!<table\b).)*?)</table>", re.S | re.I)  # holds no table
 _ROW = re.compile(r"<tr\b[^>]*>(.*?)</tr>", re.S | re.I)
-_CELL = re.compile(r"<t[dh]\b[^>]*>(.*?)</t[dh]>", re.S | re.I)
+_CELL = re.compile(r"<(t[dh])\b([^>]*)>(.*?)</t[dh]>", re.S | re.I)
 _LANG_TAB = re.compile(r'<div\s+data-lang="([^"]+)"[^>]*>', re.I)
+_BLOCK_REF = re.compile(r"\x01(\d+)\x01")
 
 
 def _inline_html(fragment: str) -> str:
-    """Text of an HTML fragment: inline code kept as `code`, allowlisted tags removed, entities unescaped."""
+    """Text of an HTML fragment on one line: inline code kept as `code`, list items and paragraphs joined,
+    allowlisted tags removed. Entities are left escaped (the page is unescaped once, after the residue
+    count)."""
     fragment = re.sub(r"<code\b[^>]*>(.*?)</code>", r"`\1`", fragment, flags=re.S | re.I)
-    fragment = re.sub(r"<br\s*/?>", " ", fragment, flags=re.I)
+    fragment = re.sub(r"</li>\s*(?=<li\b)", "; ", fragment, flags=re.I)
+    fragment = re.sub(r"<br\s*/?>|</?p\b[^>]*>", " ", fragment, flags=re.I)
     fragment = re.sub(r"<img\b[^>]*>", "", fragment, flags=re.I)
-    return html.unescape(_TAG.sub("", fragment))
+    return _TAG.sub("", fragment)
 
 
-def _table(m: re.Match[str]) -> str:
-    """A GFM table: one ` | `-joined line per row and, when the first row is all `<th>` cells, a delimiter
-    row after it, so the chunker can repeat the header on every row it cuts out (D-009). A code block inside
-    a cell is lifted out onto its own lines after the row."""
-    rows = []
-    for n, row in enumerate(_ROW.findall(m.group(1))):
-        cells, blocks = [], []
-        for cell in _CELL.findall(row):
-            blocks += re.findall(r"\x01\d+\x01", cell)
-            cells.append(" ".join(_inline_html(re.sub(r"\x01\d+\x01", " ", cell)).split()))
-        while cells and not cells[-1]:  # e.g. the cell whose code block was lifted out
-            cells.pop()
-        if cells:
-            rows.append(" | ".join(cells))
+def _span(attrs: str, name: str) -> int:
+    m = re.search(rf"\b{name}\s*=\s*[\"']?(\d+)", attrs, re.I)
+    return max(int(m.group(1)), 1) if m else 1
+
+
+def _fill_spans(cells: list[str], pending: dict[int, tuple[int, str]]) -> None:
+    """Repeat the cells of earlier rows whose rowspan still covers the next column(s) of this row."""
+    while len(cells) in pending:
+        left, text = pending.pop(len(cells))
+        if left > 1:
+            pending[len(cells)] = (left - 1, text)
+        cells.append(text)
+
+
+class _Tables:
+    """Renders the page's HTML tables, innermost first. Code blocks found in cells are either turned into
+    inline code (one line) or moved after the whole table (longer); `consumed` records the blocks turned
+    into inline code, so the conservation check in clean_page knows they were not lost."""
+
+    def __init__(self, saved: list[str]) -> None:
+        self.saved = saved
+        self.consumed: set[int] = set()
+
+    def render(self, text: str) -> str:
+        while m := _INNER_TABLE.search(text):
+            nested = text[: m.start()].lower().count("<table") > text[: m.start()].lower().count("</table")
+            text = text[: m.start()] + self._table(m.group(1), nested) + text[m.end() :]
+        return text
+
+    def _cell(self, content: str, lifted: list[str]) -> str:
+        def block(m: re.Match[str]) -> str:
+            code = self.saved[int(m.group(1))]
+            lines = code.split("\n")
+            inner = [line for line in lines[1:-1] if line.strip()]
+            if len(inner) == 1 and "`" not in inner[0]:  # one line of code: keep it in its cell
+                self.consumed.add(int(m.group(1)))
+                self.saved.append(f"`{inner[0].strip()}`")
+                return _INLINE_MASK.format(len(self.saved) - 1)
+            lifted.append(m.group(0))
+            return "(code below the table)"
+
+        content = _BLOCK_REF.sub(block, content)
+        # <code><xmp>...</xmp></code>: the placeholder is already code, so drop the <code> around it.
+        content = re.sub(r"<code\b[^>]*>\s*(\x00\d+\x00|\(code below the table\))\s*</code>", r"\1", content)
+        return " ".join(_inline_html(content).split())
+
+    def _table(self, body: str, nested: bool) -> str:
+        rows = _ROW.findall(body)
+        if (
+            not rows
+        ):  # a layout table (no rows, as on the streaming pages): keep its cells as ordinary content
+            return (
+                "\n\n" + re.sub(r"</?(?:t[dh]|thead|tbody|tfoot)\b[^>]*>", "\n\n", body, flags=re.I) + "\n\n"
+            )
+        lines: list[str] = []
+        lifted: list[str] = []
+        pending: dict[int, tuple[int, str]] = {}  # column -> (rows still covered, text) of a rowspan cell
+        for n, row in enumerate(rows):
+            cells: list[str] = []
+            for _tag, attrs, content in _CELL.findall(row):
+                _fill_spans(cells, pending)
+                text = self._cell(content, lifted)
+                if _span(attrs, "rowspan") > 1:
+                    pending[len(cells)] = (_span(attrs, "rowspan") - 1, text)
+                cells += [text] + [""] * (_span(attrs, "colspan") - 1)
+            _fill_spans(cells, pending)
+            while cells and not cells[-1]:
+                cells.pop()
+            if not cells:
+                continue
+            if nested:
+                lines.append(", ".join(c for c in cells if c))
+                continue
+            lines.append(" | ".join(cells))
             if n == 0 and re.search(r"<th\b", row, re.I) and not re.search(r"<td\b", row, re.I):
-                rows.append(" | ".join("---" for _ in cells))
-        rows += [f"\n{b}\n" for b in blocks]
-    return "\n\n" + "\n".join(rows) + "\n\n"
+                lines.append(" | ".join("---" for _ in cells))
+        if nested:  # a table inside a cell: one line, rows separated by semicolons
+            return "; ".join(lines) + "".join(f" {b}" for b in lifted)
+        return "\n\n" + "\n".join(lines) + "\n\n" + "".join(f"{b}\n\n" for b in lifted)
 
 
-def _html(text: str) -> str:
-    text = _TABLE.sub(_table, text)
+def _html(text: str, tables: _Tables) -> str:
+    """HTML outside code to text. Entities stay escaped; clean_page unescapes after counting residue."""
+    text = re.sub(r"<(style|script)\b[^>]*>.*?</\1\s*>", "", text, flags=re.S | re.I)
+    text = tables.render(text)
     text = _LANG_TAB.sub(lambda m: f"\n\n{m.group(1)}:\n\n", text)
     text = re.sub(r"<li\b[^>]*>", "\n- ", text, flags=re.I)
+    # In a Markdown pipe-table row a <br> is a line break inside a cell, not a new row.
+    text = re.sub(r"(?m)^[ \t]*\|.*$", lambda m: re.sub(r"<br\s*/?>", " ", m.group(0), flags=re.I), text)
     text = re.sub(r"<br\s*/?>", "\n", text, flags=re.I)
     text = re.sub(r"</?(p|div|ul|ol|dl|hr)\b[^>]*>", "\n\n", text, flags=re.I)
     text = re.sub(r"<code\b[^>]*>(.*?)</code>", r"`\1`", text, flags=re.S | re.I)
     text = re.sub(r"<img\b[^>]*>", "", text, flags=re.I)
-    return html.unescape(_TAG.sub("", text))
+    return _TAG.sub("", text)
 
 
 # --- 6. Markdown and kramdown leftovers --------------------------------------------------------------------
+
+
+# A link destination: no spaces, one level of parentheses (wiki/Lasso_(statistics), Dataset.html#f():D[T]),
+# possibly wrapped onto the next line, and an optional "title".
+_LINK_URL = r"\((?:[^()\s]|\n|\([^()\s]*\))*(?:[ \t]+\"[^\"\n]*\")?\)"
+_LINK_LEFT = re.compile(rf"\]{_LINK_URL}|\]\((?:https?://|/)[^\s()]*(?=\s|$)")
+
+
+def _footnote(m: re.Match[str]) -> str:
+    return "Note: " + " ".join(m.group(1).split())
 
 
 def _markdown(text: str) -> str:
     text = re.sub(r"<!--.*?-->", "", text, flags=re.S)
     text = re.sub(r"^.*\n(?=\{:toc\}\s*$)", "", text, flags=re.M)  # the bullet line before {:toc}
     text = re.sub(r"^\s*\{:[^}\n]*\}\s*$", "", text, flags=re.M)
+    # kramdown footnotes: the definition (with its indented continuation lines) becomes a plain note, the
+    # markers in the text go.
+    text = re.sub(r"(?m)^ {0,3}\[\^[^\]\n]+\]:[ \t]*(.*(?:\n(?:[ \t]{2,}|\t)\S.*)*)", _footnote, text)
+    text = re.sub(r"[ \t]?\[\^[^\]\n]+\]", "", text)
     text = re.sub(r"^ {0,3}\[[^\]\n]+\]:[ \t]+\S+.*$", "", text, flags=re.M)  # reference-link definitions
-    # A URL may hold one level of parentheses: wiki/Lasso_(statistics), Dataset.html#f():Dataset[T]
-    url = r"\((?:[^()\n]|\([^()\n]*\))*\)"
+    text = re.sub(r"(?m)^ {0,3}([*_])(?:[ \t]*\1){2,}[ \t]*$", "", text)  # *** and ___ horizontal rules
+    url = _LINK_URL
     text = re.sub(rf"!\[[^\]\n]*\]{url}", "", text)  # images
     # Link text may hold one level of brackets ("[[SPARK-1]](url)") and wrap onto the next line, but not
     # cross a blank line.
     link_text = r"((?:\[[^\]\n]*\]|[^\[\]\n]|\n(?!\s*\n))+)"
     text = re.sub(rf"\[{link_text}\]{url}", r"\1", text)  # [text](url) -> text
+    text = re.sub(rf"\[{link_text}\]\((?:https?://|/)[^\s()]*(?=\s|$)", r"\1", text)  # never closed
     text = re.sub(rf"\[{link_text}\]\[[^\]\n]*\]", r"\1", text)  # [text][ref] -> text
     return text
 
@@ -247,7 +348,7 @@ def _markdown(text: str) -> str:
 def clean_inline(text: str) -> str:
     """Clean a single line such as a heading or title: markup removed, whitespace collapsed."""
     masked, saved = _mask_code(text)
-    text = _unmask(_markdown(_inline_html(masked)), saved)
+    text = _unmask(_markdown(html.unescape(_inline_html(masked))), saved)
     return " ".join(re.sub(r"\s*\{#[^}]*\}\s*$", "", text).split())
 
 
@@ -265,10 +366,31 @@ def _shorten_borders(line: str) -> str:
 # --- the whole page ----------------------------------------------------------------------------------------
 
 
+# A GFM table's delimiter row: cells of dashes (optionally colon-aligned) separated by pipes.
+DELIMITER_ROW = re.compile(r"\s*\|?\s*:?-+:?\s*(?:\|\s*:?-+:?\s*)+\|?\s*|\s*\|\s*:?-+:?\s*\|\s*")
+
+
 @dataclass(frozen=True)
 class CleanDoc:
     title: str
     text: str
+    residue: dict[str, int]  # markup left after cleaning, counted outside code; the silver run fails if > 0
+
+
+def _mask_ids(text: str) -> set[int]:
+    return {int(i) for i in re.findall(r"[\x00\x01](\d+)[\x00\x01]", text)}
+
+
+def _broken_tables(lines: list[str]) -> int:
+    """Delimiter rows that do not sit right under a one-line header that opens its paragraph: the chunker
+    could not repeat that table's header (a header broken over lines, or a table glued to a paragraph)."""
+    return sum(
+        1
+        for i, line in enumerate(lines)
+        if "|" in line
+        and DELIMITER_ROW.fullmatch(line)
+        and not (i >= 1 and "|" in lines[i - 1] and (i == 1 or not lines[i - 2].strip()))
+    )
 
 
 def clean_page(raw: str, fallback_title: str) -> CleanDoc:
@@ -278,18 +400,25 @@ def clean_page(raw: str, fallback_title: str) -> CleanDoc:
     body = _D_NONE.sub("", body)
     body = _MATHJAX_PREAMBLE.sub("", body)
     masked, saved = _mask_code(body)
-    masked = _markdown(_html(masked))
+    every_mask = set(range(len(saved)))
+    tables = _Tables(saved)
+    masked = _html(masked, tables)
+    html_tags = len(_HTML_ELEMENTS.findall(masked))
+    masked = html.unescape(masked)
+    in_comments = {i for c in re.findall(r"<!--.*?-->", masked, flags=re.S) for i in _mask_ids(c)}
+    masked = _markdown(masked)
+    lost = every_mask - _mask_ids(masked) - tables.consumed - in_comments
+    if lost:  # code is never dropped by cleaning, only moved; losing it means a rule swallowed it
+        examples = [saved[i][:60] for i in sorted(lost)[:3]]
+        raise ValueError(f"cleaning lost {len(lost)} code spans or blocks, e.g. {examples}")
+    final_lines = [line.rstrip() for line in masked.split("\n")]
+    found = {
+        "liquid_tags": len(re.findall(r"\{%", masked)),
+        "html_tags": html_tags,
+        "markdown_links": len(_LINK_LEFT.findall(masked)),  # link syntax only; "[a](b c)" is literal text
+        "broken_table_headers": _broken_tables(final_lines),
+    }
     text = _unmask(masked, saved)
     text = "\n".join(_shorten_borders(line.rstrip()) for line in text.split("\n"))
     text = re.sub(r"\n{3,}", "\n\n", text).strip()
-    return CleanDoc(title=title, text=text)
-
-
-def residue(text: str) -> dict[str, int]:
-    """Markup that should never survive cleaning, counted outside code. The silver job fails if any is > 0."""
-    masked, _ = _mask_code(text)
-    return {
-        "liquid_tags": len(re.findall(r"\{%", masked)),
-        "html_tags": len(_TAG.findall(masked)),
-        "markdown_links": len(re.findall(r"\]\([^)\n]*\)", masked)),
-    }
+    return CleanDoc(title=title, text=text, residue=found)
