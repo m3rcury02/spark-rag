@@ -1,0 +1,23 @@
+{
+  "label": "m3_w3_run_log_update_refused",
+  "git_commit": "2edb18a54abb1d53a0f57d00d79a37ef95b837ff",
+  "statements": [
+    {
+      "sql": "SELECT count(*) AS rows FROM workspace.docs_rag_dev.ops_run_log",
+      "params": {},
+      "columns": [
+        "rows"
+      ],
+      "rows": [
+        [
+          "12"
+        ]
+      ]
+    }
+  ],
+  "error": {
+    "sql": "UPDATE workspace.docs_rag_dev.ops_run_log SET error = error WHERE false",
+    "refused_utc": "2026-10-19T22:19:35Z",
+    "error": "StatementFailed: statement FAILED: [DELTA_CANNOT_MODIFY_APPEND_ONLY] This table is configured to only allow appends. If you would like to permit updates or deletes, use 'ALTER TABLE null SET TBLPROPERTIES (delta.appendOnly=false)'."
+  }
+}
