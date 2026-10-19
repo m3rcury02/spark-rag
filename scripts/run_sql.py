@@ -21,6 +21,10 @@ from redact import Redactor
 REPO = pathlib.Path(__file__).resolve().parents[1]
 
 
+class StatementFailed(RuntimeError):
+    """The warehouse ran the statement and it failed (a SQL error, a refused UPDATE): worth recording too."""
+
+
 def run_statement(
     w: WorkspaceClient, warehouse_id: str, sql: str, params: dict[str, str] | None = None
 ) -> dict[str, Any]:
@@ -37,7 +41,7 @@ def run_statement(
     state = r.status.state.value if r.status and r.status.state else None
     if state != "SUCCEEDED":
         message = r.status.error.message if r.status and r.status.error else None
-        raise SystemExit(f"statement {state}: {message}\n{sql}")
+        raise StatementFailed(f"statement {state}: {message}")
     cols = [c.name for c in (r.manifest.schema.columns or [])] if r.manifest and r.manifest.schema else []
     rows = list((r.result.data_array if r.result else None) or [])
     chunks = (r.manifest.total_chunk_count if r.manifest else None) or 1
@@ -74,7 +78,7 @@ def main() -> None:
     for sql in args.sql:
         try:
             results.append(run_statement(w, warehouse_id, sql))
-        except DatabricksError as e:  # e.g. the warehouse refusing work once Free Edition's quota is used up
+        except (DatabricksError, StatementFailed) as e:  # a refused request, or a statement that failed
             error = {"sql": sql, "refused_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
             error["error"] = f"{type(e).__name__}: {e}"
             break

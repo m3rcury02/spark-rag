@@ -1,0 +1,17 @@
+{
+  "label": "m3_w_tables_untouched_and_log_append_only",
+  "git_commit": "9492b42af941c0abdcda065fd6a22ca8ad14e8e5",
+  "statements": [
+    {
+      "sql": "SELECT version, timestamp, operation FROM (DESCRIBE HISTORY workspace.docs_rag_dev.bronze_docs) WHERE timestamp >= '2026-10-19T21:50:00Z' ORDER BY version",
+      "params": {},
+      "columns": [
+        "version",
+        "timestamp",
+        "operation"
+      ],
+      "rows": []
+    }
+  ],
+  "error": null
+}
