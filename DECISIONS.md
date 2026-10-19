@@ -608,12 +608,115 @@ The corpus golden closes those cases, and it fails in CI, before any Databricks 
 **Consequences.**
 - M3: the diff baseline is the last *published* (tag, commit) per config (D-006). Chunk-level change = added
   and removed chunk_ids; there is no chunk-level "changed".
-- M5: gold and the index carry only chunk-determined columns (path, section_path, embed_text, n_tokens,
-  offsets, vector, model); the gold MERGE is insert/delete only and asserts numUpdatedRows = 0; what to embed =
-  chunk_ids not yet in gold.
+- M5: gold and the index carry only chunk_id-determined columns (path, section_path, embed_text, n_tokens,
+  vector, model); positions (`chunk_index`, offsets) are read from silver of the published tag, because kept
+  chunks move (D-011: 2,038 of 3,563 for 3.5 → 4.0). The gold MERGE is insert/delete only and asserts
+  numUpdatedRows = 0; what to embed and delete is the chunk diff (D-011).
 - M6: label answers as (path, section_path, verbatim quote), resolve the quote to every occurrence in the
   cleaned text (the offsets name its coordinate system, `CLEANER_VERSION`), and count a chunk relevant if its
   slice overlaps any occurrence.
+
+## D-011 — Change detection and the run log
+
+- **Date:** 2026-10-20 · **Status:** Accepted (evidence: `runs/m3_*`)
+
+**Context.** Brief item 3: "detect added, changed and deleted documents by hash. Re-embed only changed chunks
+and remove chunks for deleted docs. Log the counts for every run." The milestone adds "v1 → v2 → re-run", and
+D-002 fixes the sequence v3.5.0 → v4.0.0 → v4.0.0 again → v4.0.1, with git's counts as the oracle. D-006 says
+the diff baseline is the last *published* snapshot, never "the latest tag in bronze". D-010 makes chunk
+change a set difference of chunk_ids. A design review by three independent critics (2026-10-19) rejected the
+first draft on the points marked "review" below.
+
+**Options.**
+- *Where the baseline comes from.* (1) The latest bronze tag or `ingested_at`: rejected by D-006, since bronze
+  can be ahead of what was published. (2) A pointer table updated by every run: a second write that can
+  disagree with the log after a crash. (3) The latest committed run-log row by `finished_at` (first draft):
+  rejected in review, because timestamps can tie, an edited row goes unnoticed, and an emptied log looks like a
+  first run. (4) **Chained rows** (chosen): each row names the run it diffed against, and the baseline is the
+  head of that chain.
+- *How changes are captured.* Delta Change Data Feed on bronze would only show the inserts of a whole new tag,
+  since bronze holds insert-only snapshots per tag (D-006); it cannot say which path changed. A snapshot diff
+  by path and content hash (chosen) can, and it reproduces D-002 from bronze alone (`runs/m1_h`).
+- *Trust silver or check it.* The first draft read silver's chunk IDs as they were; a tampered `embed_text`
+  with its ID untouched (M2's tamper, `runs/m2_d8a`) would have passed (review). Chosen: re-chunk both sides
+  from bronze and require silver to match row for row, the M2 recheck.
+- *Detail.* Doc paths as arrays in the run-log row (at most a few hundred strings, written in the same
+  insert) rather than a separate per-doc table; chunk changes as counts, since silver holds the IDs.
+
+**Decision.** `jobs/change_detect.py` (logic in `docs_rag.changes`, Spark I/O in `docs_rag.lake`):
+- It runs for the published chunk config (`Config.chunk`, 254/32); M6's 128/16 config is never published.
+- **Baseline:** the head of the chain of `committed` rows for `(source_repo, sink)` in `ops_run_log`. Zero or
+  several heads, a dangling link or a second initial run fail the run (`pick_baseline`). With no chain the run
+  needs `--initial`; a target older than the baseline (release-number order), or one that cannot be ordered,
+  needs `--allow-backwards`. Every row records its `direction`.
+- **Both sides are verified first.** The target tag's bronze is whole and silver holds exactly its chunking
+  (re-chunked and compared). The baseline's bronze still holds the commit and docs fingerprint its run logged,
+  and silver still holds its chunking under the baseline's config, with the logged chunk fingerprint.
+- **Diff:** docs added / changed / deleted / unchanged by content hash (a rename is a delete plus an add, and
+  is counted as `docs_moved`); chunks added / removed / kept by chunk_id, split by the kind of doc they belong
+  to, which maps the brief's sentence onto columns (`chunks_added_changed_docs` is "re-embed only changed
+  chunks", `chunks_removed_deleted_docs` is "remove chunks for deleted docs"). The chunk diff must fit the doc
+  diff: under the same config an unchanged doc has exactly the same chunk IDs; a doc may lack chunks only if
+  it is in `Config.zero_chunk_docs`. `tokens_to_embed` and the target's total tokens are logged.
+- **Status.** A row is `committed` or `failed`. Only `committed` makes a baseline, and the job writes it as
+  its last write, after every check; M4's DQ gate and M5's gold write and index sync go before it in the same
+  job. A failure after the Spark session started appends a `failed` row (no counts, never a baseline). A
+  failure before that (environment check, a refused submit) is recorded only in `runs/`.
+- **Sink.** The chain is per sink, the thing a committed run published to: `none` in M3 and M4, the gold
+  table from M5. So M5's first run finds no chain and is an explicit `--initial` load into an empty gold, and
+  M3's rows never become a baseline for gold.
+- `ops_run_log` is created with `delta.appendOnly = true`: rows are only ever inserted, so unlike bronze this
+  costs nothing. Its columns are checked against `RUN_LOG_COLUMNS` on every run.
+
+**Evidence** (2026-10-19, `runs/m3_*`; each detect run is a serverless job via `scripts/run_job.py`):
+
+| Run | What happened | File |
+|---|---|---|
+| a | v3.5.0 without `--initial`: refused, "no committed run for sink 'none'"; logged `failed` | `m3_a_*` |
+| b | v3.5.0 `--initial`: 244 docs added, 5,589 chunks, 667,028 tokens; `committed` (chain start) | `m3_b_*` |
+| c | v3.5.0 → v4.0.0: docs 19 added / 96 changed / 51 deleted / 97 unchanged (= D-002); chunks 607 added in new docs + 1,279 in changed docs, 1,500 removed from changed docs + 526 from deleted docs, 3,563 kept; 215,764 of 689,988 tokens to embed (31%) | `m3_c_*` |
+| d | v4.0.0 again: 0 / 0 / 0, all 5,449 chunks kept, 0 tokens to embed; a `committed` row of zeros | `m3_d_*` |
+| e | v4.1.0 (not in bronze): failed, "no bronze rows for the tag"; logged `failed` | `m3_e_*` |
+| f | v4.0.0 → v4.0.1: the baseline skipped the failed run (e); docs 1 / 4 / 0 (= D-002); chunks 13 + 8 added, 8 removed, 5,441 kept; 3,538 of 692,251 tokens to embed (0.51%) | `m3_f_*` |
+| g | v4.0.0 after v4.0.1, no flag: refused as backward; logged `failed` | `m3_g_*` |
+| h | silver v4.0.1 again after moving its Spark I/O into `docs_rag.lake`: identical, nothing written | `m3_h_*` |
+| i | g again after turning retries off: one task attempt, one `failed` row | `m3_i_*` |
+| j | v4.0.1 again on the final code: 0 / 0 / 0, `committed` | `m3_j_*` |
+
+- **Independent check** (`m3_v2_changes_vs_git.json`, 102 checks, all pass): for every committed row, the path
+  lists equal a plain comparison of git's files at both tags, the doc counts equal D-002, the chunk counts per
+  doc kind equal set arithmetic over a local chunking, and for 3.5 → 4.0 and 4.0 → 4.0.1 the chunk counts and
+  tokens equal `runs/m2_e` (computed by separate code); the five committed rows form one chain from one
+  initial run; failed rows carry no counts; every job summary has its row. The verifier does not import
+  `docs_rag.changes`. Its first run (`m3_v_*`) failed 50 of 83 checks on a verifier bug, the statement API returning
+  numbers as strings; the data were right.
+- **Retries found in the log.** Serverless retried every failed task once with the same parameters (task
+  attempts 0 and 1, `m3_k_task_attempts.json`), so runs a, e and g each left two `failed` rows, 39–56 s
+  apart; the runs took 120, 83 and 77 s against 40 s for run i with one attempt. Harmless here (a failed row
+  is never a baseline), but a retry after a commit would have committed the same run twice. Now
+  `run_job.py` submits with `max_retries=0` and serverless auto-optimization (its automatic retry) off, and
+  detect writes nothing if its run_id is already committed. M1's and M2's failing runs were retried too
+  (`m3_k`), without effect, since they write nothing on failure.
+- **Read-only on the data:** bronze and silver have no history entry from the start of the sequence on
+  (`m3_w_*`, `m3_w2_*`); `ops_run_log` has one WRITE per row (12). An `UPDATE` of the log is refused with
+  `DELTA_CANNOT_MODIFY_APPEND_ONLY` (`m3_w3_*`).
+- **Cost.** A detect run took 52–65 s of job time, including re-chunking two tags (`run_duration_seconds`).
+  The re-embedding it spares is the point: a patch release changes 0.5% of the tokens to embed.
+- Kept chunks move: 2,038 of the 3,563 chunks kept from 3.5 to 4.0 have a new `chunk_index` or offsets
+  (`chunks_kept_relocated`), and 0 from 4.0 to 4.0.1. 17 of the 96 changed docs (3 of 4 in 4.0.1) changed
+  no chunk at all (`docs_changed_same_chunks`; m2_e's 18 also counts the zero-chunk doc). No rename was
+  detected as a move (`docs_moved` 0).
+
+**Consequences.**
+- M4: the gate runs inside this job, before the commit; a failed gate leaves the baseline where it was. The
+  row has before/after totals for the drift check.
+- M5: gold carries only chunk_id-determined columns. Positions (`chunk_index`, offsets) come from silver of
+  the published tag, because kept chunks move (`chunks_kept_relocated`: 2,038 of 3,563 for 3.5 → 4.0). What to
+  embed and delete is the chunk diff against the published state; M5 asserts that gold equals the baseline's
+  chunk set (by fingerprint) before applying it, and that the MERGE counts equal the diff.
+- M7: one concurrent run per job. Two concurrent runs can both read the same head; the second insert forks
+  the chain, which the read-back and every later run detect (`ChainError`), but nothing prevents it before
+  M7. Retries need a per-attempt key if task retries are turned on.
 
 ## Open questions (decide in the milestone noted)
 
