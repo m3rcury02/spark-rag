@@ -384,8 +384,8 @@ tests now cover both truncation kinds and a real `git archive`.
 
 ## D-008 — Cleaning: Jekyll pages to plain Markdown text
 
-- **Date:** 2026-10-19 · **Status:** Accepted (local evidence in `runs/m2_e_stability.json`; the silver-job
-  residue figures are pending, see D-010 Status)
+- **Date:** 2026-10-19 · **Status:** Accepted (evidence: `runs/m2_e_stability.json`, the silver runs
+  `runs/m2_d1`..`m2_d6`)
 
 **Context.** The Spark docs are Jekyll pages: YAML front matter, Liquid tags, raw HTML (config tables, language
 tabs, layout tables, hidden divs), kramdown extras and Markdown links. A chunk is both what the model embeds and
@@ -418,8 +418,10 @@ token, so a 99-character table border costs 99 tokens.
   (counted before entities are unescaped, so `&lt;U&gt;` in prose is not a tag); link syntax; table delimiter
   rows without a one-line header row (the chunker could not repeat that header).
 
-**Evidence** (`runs/m2_e_stability.json`, 254/32, v4.0.1; the `ablations` key reruns the corpus with one rule
-off):
+**Evidence** (`runs/m2_e_stability.json`, 254/32, v4.0.1, unless noted; the `ablations` key reruns the
+corpus with one rule off):
+- The residue gate passed on the real corpus: all six silver runs (3 tags × 2 configs, `runs/m2_d1`..`m2_d6`)
+  report `chunking.violations: []`, and that check includes "no doc with markup left after cleaning".
 - Border shortening removes 25,485 of 601,105 cleaned tokens (4.2%): tokens on border-only lines drop from
   41,250 to 15,765. Embedded tokens drop from 720,005 to 692,251 (3.9%), chunks from 5,609 to 5,462.
 - An implementation review (2026-10-18) and a fix-verification pass (2026-10-19) found real-page constructs the
@@ -514,8 +516,8 @@ not ID stability or embedding cost. If M6 shows no gain, the whole-page baseline
 
 ## D-010 — Chunk identity and the silver contract
 
-- **Date:** 2026-10-19 · **Status:** Accepted for the design. **The silver-job evidence is pending:** Databricks
-  refused every job submit and SQL statement on 2026-10-19 from 05:27Z (`runs/m2_d0*`; see D-001 Quota)
+- **Date:** 2026-10-19 · **Status:** Accepted (evidence: `runs/m2_d1`..`m2_d8d`, `runs/m2_g_silver_vs_local.json`;
+  the runs waited out a compute refusal, `runs/m2_d0*`, D-001 Quota)
 
 **Decision.**
 - `chunk_id = sha256(json[path, section_path, embed_text, occurrence])[:32]`: content-addressed, with nothing
@@ -532,6 +534,25 @@ not ID stability or embedding cost. If M6 shows no gain, the whole-page baseline
   (`tests/golden/corpus_c<cleaner>_k<chunker>.json`, checked in CI and by `run_job.py` before every silver job).
   Changed output needs a version bump, which gives a new config_id and new rows; a new grid config or tag only
   adds entries. Version 1's goldens were recreated during M2 before anything was published to silver.
+
+**Evidence** (2026-10-19, `workspace.docs_rag_dev.silver_chunks`):
+- First runs (`m2_d1`..`m2_d6`): each inserted exactly the local chunk count (5,589 / 5,449 / 5,462 at 254/32,
+  8,701 / 8,822 / 8,845 at 128/16), with the MERGE's own metrics showing inserts only (`numTargetRowsInserted`
+  = `numSourceRows`, 0 updated, 0 deleted). Every later run of a config re-chunked the earlier tags from
+  bronze and found them identical (`other_tags_reproduced`).
+- Re-run (`m2_d7`, v4.0.1 at 254/32): identical, MERGE skipped, table version unchanged (7 → 7).
+- Tamper (`m2_d8a`..`m2_d8d`): one character appended to one stored v3.5.0 `embed_text`
+  (`docs/index.md` chunk 0). The next run, **of v4.0.1**, failed before writing: "stored silver rows of
+  v3.5.0 fail their recheck: … chunk_id does not match its content; … embed_text is not breadcrumb + body;
+  … n_tokens 227 is wrong". After the restore the same run was identical and wrote nothing (version 9 → 9).
+- Silver vs a local chunking of git (`m2_g`): all six (tag, config) agree row for row on path, chunk_id,
+  chunk_index, n_tokens, occurrence, offsets, section_path, the sha256 of body and embed text, the doc hashes,
+  commit and versions; every local body rebuilds from its offsets; and each job's fingerprint, computed on
+  serverless aarch64, equals this machine's (x86_64). Chunk IDs do not depend on the machine.
+- **Table versions are not only ours.** Version 6 is an `OPTIMIZE` with `auto: true` (34 files into 1) that
+  Databricks ran at 08:11:02Z between runs 5 and 6 (`runs/m2_h_silver_table_history.json`; `runs/m2_d6`
+  starts from `version_before_merge: 6`). Our runs read the version right before their MERGE, so it did no harm; M3 must
+  never infer "we wrote" from a version bump.
 
 **Why the corpus golden.** A cleaner or chunker change that passes every unit test can still change silver
 rows (the last cleaner round did, D-008). Silver keys by config_id, so without the check a changed chunking
