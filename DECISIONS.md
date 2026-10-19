@@ -550,9 +550,11 @@ not ID stability or embedding cost. If M6 shows no gain, the whole-page baseline
   commit and versions; every local body rebuilds from its offsets; and each job's fingerprint, computed on
   serverless aarch64, equals this machine's (x86_64). Chunk IDs do not depend on the machine.
 - **Table versions are not only ours.** Version 6 is an `OPTIMIZE` with `auto: true` (34 files into 1) that
-  Databricks ran at 08:11:02Z between runs 5 and 6 (`runs/m2_h_silver_table_history.json`; `runs/m2_d6`
-  starts from `version_before_merge: 6`). Our runs read the version right before their MERGE, so it did no harm; M3 must
-  never infer "we wrote" from a version bump.
+  Databricks ran at 08:11:02Z between runs 5 and 6, and version 10 another `OPTIMIZE` (`auto: false`) at
+  08:27:24Z after our last run (`runs/m2_h_silver_table_history.json`). We never run OPTIMIZE; that the second
+  one is predictive optimization (a `PREDICTIVE_OPTIMIZATION` line also shows in billing on 10-15) is
+  inference. Our runs read the version right before their MERGE (`runs/m2_d6` starts from
+  `version_before_merge: 6`), so neither did harm; M3 must never infer "we wrote" from a version bump.
 
 **Why the corpus golden.** A cleaner or chunker change that passes every unit test can still change silver
 rows (the last cleaner round did, D-008). Silver keys by config_id, so without the check a changed chunking

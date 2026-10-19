@@ -129,7 +129,8 @@ D-001 Quota), so the silver runs have not happened. When compute is back, in thi
 - Carry into M3: the diff baseline is the last *published* (version_tag, commit_sha) per config, never "latest
   in bronze" (D-006, D-010). Chunk-level change = added and removed chunk_ids. The run log takes counts from
   our own MERGE metrics; the sync pipeline's row metrics are always 0 (D-001). On Databricks a no-op MERGE
-  still writes an empty table version (D-006 run b).
+  still writes an empty table version (D-006 run b), and Databricks commits its own `OPTIMIZE` versions (D-010):
+  never read "we wrote" from a version bump.
 - Carry into M5: create the endpoint again first (~20 min of provisioning) and delete it when the index is not
   needed. Create the real index only after the full gold backfill, because capacity is sized from the source
   table at creation and a small start limits growth. Re-test insert, update and delete with the real MERGE.
