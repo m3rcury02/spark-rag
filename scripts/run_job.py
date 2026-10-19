@@ -27,7 +27,7 @@ from typing import Any
 
 import corpus_fingerprint
 from databricks.sdk import WorkspaceClient
-from databricks.sdk.errors import NotFound
+from databricks.sdk.errors import DatabricksError, NotFound
 from databricks.sdk.service import catalog, compute, jobs
 from redact import Redactor
 
@@ -125,30 +125,36 @@ def main() -> None:
         *("--expect-env", ENVIRONMENT_VERSION, "--expect-version", wheel_version),
     ]
 
-    submitted = w.jobs.submit(
-        run_name=f"docs_rag {args.label}",
-        timeout_seconds=2 * 3600,
-        environments=[
-            jobs.JobEnvironment(
-                environment_key="default",
-                spec=compute.Environment(
-                    environment_version=ENVIRONMENT_VERSION, dependencies=[f"{folder}/{wheel.name}"]
-                ),
-            )
-        ],
-        tasks=[
-            jobs.SubmitTask(
-                task_key="main",
-                environment_key="default",
-                spark_python_task=jobs.SparkPythonTask(
-                    # A script in a Volume needs the dbfs: URI form; a bare /Volumes/... path is looked up
-                    # in the workspace file tree: "Cannot read the python file" (runs/m1_a0_*.json).
-                    python_file=f"dbfs:{folder}/{script.name}",
-                    parameters=parameters,
-                ),
-            )
-        ],
-    )
+    try:
+        submitted = w.jobs.submit(
+            run_name=f"docs_rag {args.label}",
+            timeout_seconds=2 * 3600,
+            environments=[
+                jobs.JobEnvironment(
+                    environment_key="default",
+                    spec=compute.Environment(
+                        environment_version=ENVIRONMENT_VERSION, dependencies=[f"{folder}/{wheel.name}"]
+                    ),
+                )
+            ],
+            tasks=[
+                jobs.SubmitTask(
+                    task_key="main",
+                    environment_key="default",
+                    spark_python_task=jobs.SparkPythonTask(
+                        # A script in a Volume needs the dbfs: URI form; a bare /Volumes/... path is looked up
+                        # in the workspace file tree: "Cannot read the python file" (runs/m1_a0_*.json).
+                        python_file=f"dbfs:{folder}/{script.name}",
+                        parameters=parameters,
+                    ),
+                )
+            ],
+        )
+    except DatabricksError as e:  # e.g. Free Edition refusing new runs once its quota is used up (D-001)
+        record = {"label": args.label, "git_commit": commit, "script": args.script, "job_args": job_args}
+        record |= {"submit_refused_utc": iso(int(time.time() * 1000)), "error": f"{type(e).__name__}: {e}"}
+        (REPO / "runs" / f"{args.label}.json").write_text(Redactor(w).dump(record))
+        sys.exit(f"submit refused, recorded in runs/{args.label}.json: {e}")
     while True:  # poll rather than .result(), which raises on failure and would lose the error output
         run = w.jobs.get_run(submitted.run_id)
         if run.state and run.state.life_cycle_state and run.state.life_cycle_state.value in TERMINAL:

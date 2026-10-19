@@ -14,6 +14,7 @@ import time
 from typing import Any
 
 from databricks.sdk import WorkspaceClient
+from databricks.sdk.errors import DatabricksError
 from databricks.sdk.service.sql import StatementParameterListItem
 from redact import Redactor
 
@@ -66,17 +67,28 @@ def main() -> None:
 
     w = WorkspaceClient()
     warehouse_id = next(iter(w.warehouses.list())).id or ""
-    results = [run_statement(w, warehouse_id, sql) for sql in args.sql]
+    results: list[dict[str, Any]] = []
+    error = None
+    for sql in args.sql:
+        try:
+            results.append(run_statement(w, warehouse_id, sql))
+        except DatabricksError as e:  # e.g. the warehouse refusing work once Free Edition's quota is used up
+            error = {"sql": sql, "refused_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+            error["error"] = f"{type(e).__name__}: {e}"
+            break
     out = {
         "label": args.label,
         "git_commit": subprocess.run(
             [*git, "rev-parse", "HEAD"], capture_output=True, text=True
         ).stdout.strip(),
         "statements": results,
+        "error": error,
     }
     text = Redactor(w).dump(out)
     (REPO / "runs" / f"{args.label}.json").write_text(text)
     print(text)
+    if error:
+        sys.exit(f"statement failed, recorded in runs/{args.label}.json")
 
 
 if __name__ == "__main__":
