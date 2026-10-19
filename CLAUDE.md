@@ -117,8 +117,8 @@ D-001 Quota), so the silver runs have not happened. When compute is back, in thi
    `--max-tokens 128 --overlap-tokens 16`: labels `m2_d1`..`m2_d6`. Each later run re-chunks the earlier tags.
 2. Re-run one (identical: MERGE skipped). Tamper test with `run_sql.py`: change one stored `embed_text`,
    re-run (must fail), restore, re-run (identical).
-3. `m2_verify_silver.py --job-runs runs/m2_d*.json`; then fill the pending silver evidence into D-008 and D-010,
-   tick M2 and give the owner the M2 report (how to run, what to measure, 5 interview questions).
+3. `m2_verify_silver.py --job-runs runs/m2_d[1-9]_*.json`; then fill the pending silver evidence into D-008
+   and D-010, tick M2 and give the owner the M2 report (how to run, what to measure, 5 interview questions).
 
 **Do not start M3 until the owner says so.** Open items:
 - Remote branches `m0-smoke-test` (merged) and `claude/modest-archimedes-mp5zx3` (stale) are still on GitHub:

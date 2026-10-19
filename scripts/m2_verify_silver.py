@@ -1,7 +1,7 @@
 """Check silver_chunks against a local chunking of git's docs, and save the comparison to runs/.
 
     uv run --with databricks-sdk==0.152.0 python scripts/m2_verify_silver.py --label m2_x_silver_vs_local \
-        --tags v3.5.0 v4.0.0 v4.0.1 --job-runs runs/m2_c_*.json
+        --tags v3.5.0 v4.0.0 v4.0.1 --job-runs runs/m2_d[1-9]_*.json
 
 Local side: every tag's docs read straight from git (scripts/gitdocs.py), cleaned and chunked here with every
 config of the chunk grid. Silver side: every row of those configs, read on the starter warehouse. Per (tag,
