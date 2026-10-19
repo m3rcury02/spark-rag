@@ -1,0 +1,109 @@
+{
+  "label": "m2_d8c_restore_v3.5.0_embed_text",
+  "git_commit": "0681d241efac36e7d38c5dc1ac2e0fbd2caede88",
+  "statements": [
+    {
+      "sql": "UPDATE workspace.docs_rag_dev.silver_chunks SET embed_text = substr(embed_text, 1, length(embed_text) - 1) WHERE config_id = 'ccbd80f05e15c8dd' AND source_repo = 'apache/spark' AND version_tag = 'v3.5.0' AND chunk_id = '8671aa6681209fb927671f5ca820d8fb' AND embed_text LIKE '%!'",
+      "params": {},
+      "columns": [
+        "num_affected_rows"
+      ],
+      "rows": [
+        [
+          "1"
+        ]
+      ]
+    },
+    {
+      "sql": "SELECT path, chunk_index, n_tokens, length(embed_text) AS len, right(embed_text, 20) AS tail FROM workspace.docs_rag_dev.silver_chunks WHERE config_id = 'ccbd80f05e15c8dd' AND source_repo = 'apache/spark' AND version_tag = 'v3.5.0' AND chunk_id = '8671aa6681209fb927671f5ca820d8fb'",
+      "params": {},
+      "columns": [
+        "path",
+        "chunk_index",
+        "n_tokens",
+        "len",
+        "tail"
+      ],
+      "rows": [
+        [
+          "docs/index.md",
+          "0",
+          "227",
+          "969",
+          "a Java installation."
+        ]
+      ]
+    },
+    {
+      "sql": "SELECT config_id, version_tag, count(*) AS chunks, count(DISTINCT chunk_id) AS ids FROM workspace.docs_rag_dev.silver_chunks GROUP BY ALL ORDER BY ALL",
+      "params": {},
+      "columns": [
+        "config_id",
+        "version_tag",
+        "chunks",
+        "ids"
+      ],
+      "rows": [
+        [
+          "4f60fb29417d0af5",
+          "v3.5.0",
+          "8701",
+          "8701"
+        ],
+        [
+          "4f60fb29417d0af5",
+          "v4.0.0",
+          "8822",
+          "8822"
+        ],
+        [
+          "4f60fb29417d0af5",
+          "v4.0.1",
+          "8845",
+          "8845"
+        ],
+        [
+          "ccbd80f05e15c8dd",
+          "v3.5.0",
+          "5589",
+          "5589"
+        ],
+        [
+          "ccbd80f05e15c8dd",
+          "v4.0.0",
+          "5449",
+          "5449"
+        ],
+        [
+          "ccbd80f05e15c8dd",
+          "v4.0.1",
+          "5462",
+          "5462"
+        ]
+      ]
+    },
+    {
+      "sql": "SELECT version, operation FROM (DESCRIBE HISTORY workspace.docs_rag_dev.silver_chunks) ORDER BY version DESC LIMIT 3",
+      "params": {},
+      "columns": [
+        "version",
+        "operation"
+      ],
+      "rows": [
+        [
+          "9",
+          "UPDATE"
+        ],
+        [
+          "8",
+          "UPDATE"
+        ],
+        [
+          "7",
+          "MERGE"
+        ]
+      ]
+    }
+  ],
+  "error": null
+}
