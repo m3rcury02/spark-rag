@@ -1,0 +1,54 @@
+{
+  "meta": {
+    "label": "m3_e_detect_v4.1.0_not_in_bronze",
+    "git_commit": "c5732629d12f2b8e5308640aa844fa19f067caae",
+    "script": "jobs/change_detect.py",
+    "job_args": [
+      "--tag",
+      "v4.1.0"
+    ],
+    "target": "workspace.docs_rag_dev",
+    "run_id": "68536c58-5f86-4071-b7fc-62640714cc2f",
+    "environment_version": "4",
+    "wheel": "docs_rag-0.0.1.dev65+gc5732629d-py3-none-any.whl",
+    "parent_run_id": 946183558206406,
+    "task_run_id": 998115416066626,
+    "result_state": "FAILED",
+    "state_message": "Task main failed with message: Workload failed, see run output for details.",
+    "run_start_utc": "2026-10-19T22:03:31Z",
+    "run_end_utc": "2026-10-19T22:04:54Z",
+    "run_duration_seconds": 83.0
+  },
+  "summary": {
+    "run_id": "68536c58-5f86-4071-b7fc-62640714cc2f",
+    "started_utc": "2026-10-19T22:04:44Z",
+    "tag": "v4.1.0",
+    "sink": "none",
+    "config_id": "ccbd80f05e15c8dd",
+    "environment": {
+      "python": "3.12.3",
+      "databricks_runtime_version": "client.4.10",
+      "databricks_connect": "17.3.14",
+      "docs_rag": "0.0.1.dev65+gc5732629d",
+      "tokenizers": "0.23.3",
+      "machine": "aarch64",
+      "spark": "4.2.0"
+    },
+    "baseline": {
+      "run_id": "b762b472-c6cb-4cbc-93ce-da63e5c392f2",
+      "baseline_run_id": "f2dc0c3b-9876-4d2b-a2ab-ab98087278f9",
+      "status": "committed",
+      "to_version_tag": "v4.0.0",
+      "to_commit_sha": "fa33ea000a0bda9e5a3fa1af98e8e85b8cc5e4d4",
+      "to_config_id": "ccbd80f05e15c8dd",
+      "to_docs_fingerprint": "10f1f12191520dc32e683b7704fd40bb2ee4bcc8d2c2e534e4a27f884d766c9e",
+      "to_chunks_fingerprint": "877e692076c81b6d824a8ade6bc821481a45b23aeea271778de2aa2594c875d6"
+    },
+    "logged": "failed",
+    "status": "failed",
+    "error": "RuntimeError: bronze snapshot of v4.1.0 is not whole: no bronze rows for the tag",
+    "finished_utc": "2026-10-19T22:04:49Z"
+  },
+  "error": "RuntimeError: bronze snapshot of v4.1.0 is not whole: no bronze rows for the tag",
+  "error_trace": "9m\u001b[38;5;124m--allow-backwards\u001b[39m\u001b[38;5;124m\"\u001b[39m, action\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstore_true\u001b[39m\u001b[38;5;124m\"\u001b[39m, help\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mallow a target older than the baseline\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m    273\u001b[0m )\n\u001b[0;32m--> 274\u001b[0m run_with_summary(detect, parser)\n\nFile \u001b[0;32m/local_disk0/.ephemeral_nfs/envs/pythonEnv-ca23d55f-81fe-4c6f-9a7d-da23ff904a5a/lib/python3.12/site-packages/docs_rag/jobenv.py:94\u001b[0m, in \u001b[0;36mrun_with_summary\u001b[0;34m(job, parser)\u001b[0m\n\u001b[1;32m     92\u001b[0m summary: \u001b[38;5;28mdict\u001b[39m[\u001b[38;5;28mstr\u001b[39m, Any] \u001b[38;5;241m=\u001b[39m {\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mrun_id\u001b[39m\u001b[38;5;124m\"\u001b[39m: args\u001b[38;5;241m.\u001b[39mrun_id, \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstarted_utc\u001b[39m\u001b[38;5;124m\"\u001b[39m: utc_now()}\n\u001b[1;32m     93\u001b[0m \u001b[38;5;28;01mtry\u001b[39;00m:\n\u001b[0;32m---> 94\u001b[0m     job(args, summary)\n\u001b[1;32m     95\u001b[0m     summary[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstatus\u001b[39m\u001b[38;5;124m\"\u001b[39m] \u001b[38;5;241m=\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124msucceeded\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m     96\u001b[0m \u001b[38;5;28;01mexcept\u001b[39;00m \u001b[38;5;167;01mException\u001b[39;00m \u001b[38;5;28;01mas\u001b[39;00m e:\n\nFile \u001b[0;32m/tmp/tmp6tyb_802.py:146\u001b[0m, in \u001b[0;36mdetect\u001b[0;34m(args, summary)\u001b[0m\n\u001b[1;32m    141\u001b[0m     \u001b[38;5;28;01mraise\u001b[39;00m \u001b[38;5;167;01mRuntimeError\u001b[39;00m(\n\u001b[1;32m    142\u001b[0m         \u001b[38;5;124mf\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;132;01m{\u001b[39;00mtag\u001b[38;5;132;01m}\u001b[39;00m\u001b[38;5;124m is \u001b[39m\u001b[38;5;132;01m{\u001b[39;00mway\u001b[38;5;132;01m}\u001b[39;00m\u001b[38;5;124m of the baseline \u001b[39m\u001b[38;5;132;01m{\u001b[39;00mfrom_tag\u001b[38;5;132;01m}\u001b[39;00m\u001b[38;5;124m: pass --allow-backwards if intended\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m    143\u001b[0m     )\n\u001b[1;32m    145\u001b[0m \u001b[38;5;66;03m# 3. The target: bronze whole, silver exactly its chunking under the published config.\u001b[39;00m\n\u001b[0;32m--> 146\u001b[0m target_docs, target_commit, target_records \u001b[38;5;241m=\u001b[39m verified_chunking(\n\u001b[1;32m    147\u001b[0m     spark, config, chunking, tag, args\u001b[38;5;241m.\u001b[39mrun_id\n\u001b[1;32m    148\u001b[0m )\n\u001b[1;32m    149\u001b[0m known\u001b[38;5;241m.\u001b[39mupdate(to_commit_sha\u001b[38;5;241m=\u001b[39mtarget_commit)\n\u001b[1;32m    151\u001b[0m \u001b[38;5;66;03m# 4. The baseline side, pinned by what the baseline run logged.\u001b[39;00m\n\nFile \u001b[0;32m/tmp/tmp6tyb_802.py:92\u001b[0m, in \u001b[0;36mverified_chunking\u001b[0;34m(spark, config, chunking, tag, run_id)\u001b[0m\n\u001b[1;32m     88\u001b[0m \u001b[38;5;28;01mdef\u001b[39;00m \u001b[38;5;21mverified_chunking\u001b[39m(\n\u001b[1;32m     89\u001b[0m     spark: SparkSession, config: Config, chunking: ChunkConfig, tag: \u001b[38;5;28mstr\u001b[39m, run_id: \u001b[38;5;28mstr\u001b[39m\n\u001b[1;32m     90\u001b[0m ) \u001b[38;5;241m-\u001b[39m\u001b[38;5;241m>\u001b[39m \u001b[38;5;28mtuple\u001b[39m[\u001b[38;5;28mdict\u001b[39m[\u001b[38;5;28mstr\u001b[39m, \u001b[38;5;28mstr\u001b[39m], \u001b[38;5;28mstr\u001b[39m, \u001b[38;5;28mlist\u001b[39m[SilverRecord]]:\n\u001b[1;32m     91\u001b[0m \u001b[38;5;250m    \u001b[39m\u001b[38;5;124;03m\"\"\"Bronze hashes and commit of the tag, and its chunking, after checking that silver holds exactly it.\"\"\"\u001b[39;00m\n\u001b[0;32m---> 92\u001b[0m     docs \u001b[38;5;241m=\u001b[39m read_bronze(spark, config, tag)\n\u001b[1;32m     93\u001b[0m     _, records \u001b[38;5;241m=\u001b[39m chunk_bronze(config, chunking, tag, docs, run_id)\n\u001b[1;32m     94\u001b[0m     check, stored \u001b[38;5;241m=\u001b[39m compare_with_stored(spark, config, chunking, tag, records)\n\nFile \u001b[0;32m/local_disk0/.ephemeral_nfs/envs/pythonEnv-ca23d55f-81fe-4c6f-9a7d-da23ff904a5a/lib/python3.12/site-packages/docs_rag/lake.py:54\u001b[0m, in \u001b[0;36mread_bronze\u001b[0;34m(spark, config, tag)\u001b[0m\n\u001b[1;32m     52\u001b[0m problems \u001b[38;5;241m=\u001b[39m bronze_violations(docs)\n\u001b[1;32m     53\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m problems:\n\u001b[0;32m---> 54\u001b[0m     \u001b[38;5;28;01mraise\u001b[39;00m \u001b[38;5;167;01mRuntimeError\u001b[39;00m(\u001b[38;5;124mf\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mbronze snapshot of \u001b[39m\u001b[38;5;132;01m{\u001b[39;00mtag\u001b[38;5;132;01m}\u001b[39;00m\u001b[38;5;124m is not whole: \u001b[39m\u001b[38;5;124m\"\u001b[39m \u001b[38;5;241m+\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m; \u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;241m.\u001b[39mjoin(problems))\n\u001b[1;32m     55\u001b[0m \u001b[38;5;28;01mreturn\u001b[39;00m docs\n\n\u001b[0;31mRuntimeError\u001b[0m: bronze snapshot of v4.1.0 is not whole: no bronze rows for the tag"
+}
