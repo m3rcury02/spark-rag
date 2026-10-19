@@ -1,6 +1,6 @@
 {
   "label": "m2_g_silver_vs_local",
-  "git_commit": "b36baef51adef4c691e1f6c79a6e693c4aca2949",
+  "git_commit": "32e7b12270f3fce67a89b8e4c824da9d264cb9f3",
   "table": "workspace.docs_rag_dev.silver_chunks",
   "chunk_configs": [
     {
@@ -27,10 +27,13 @@
   "job_runs_compared": [
     "m2_d1_silver_v3.5.0_254.json",
     "m2_d2_silver_v4.0.0_254.json",
+    "m2_d3_silver_v4.0.1_254.json",
     "m2_d4_silver_v3.5.0_128.json",
     "m2_d5_silver_v4.0.0_128.json",
     "m2_d6_silver_v4.0.1_128.json",
-    "m2_d7_silver_v4.0.1_254_rerun.json"
+    "m2_d7_silver_v4.0.1_254_rerun.json",
+    "m2_d8b_silver_v4.0.1_254_after_tamper.json",
+    "m2_d8d_silver_v4.0.1_254_after_restore.json"
   ],
   "all_pass": true,
   "checks": [
@@ -1499,7 +1502,28 @@
     },
     {
       "scope": "v4.0.1 @ 254/32",
+      "check": "fingerprint: job on aarch64 (m2_d3_silver_v4.0.1_254.json) vs here on x86_64",
+      "local": "ad300f7ddb87b42718cd0e0aab40e948e5f509124cc0c64224ede897805cb827",
+      "silver": "ad300f7ddb87b42718cd0e0aab40e948e5f509124cc0c64224ede897805cb827",
+      "pass": true
+    },
+    {
+      "scope": "v4.0.1 @ 254/32",
       "check": "fingerprint: job on aarch64 (m2_d7_silver_v4.0.1_254_rerun.json) vs here on x86_64",
+      "local": "ad300f7ddb87b42718cd0e0aab40e948e5f509124cc0c64224ede897805cb827",
+      "silver": "ad300f7ddb87b42718cd0e0aab40e948e5f509124cc0c64224ede897805cb827",
+      "pass": true
+    },
+    {
+      "scope": "v4.0.1 @ 254/32",
+      "check": "fingerprint: job on aarch64 (m2_d8b_silver_v4.0.1_254_after_tamper.json) vs here on x86_64",
+      "local": "ad300f7ddb87b42718cd0e0aab40e948e5f509124cc0c64224ede897805cb827",
+      "silver": "ad300f7ddb87b42718cd0e0aab40e948e5f509124cc0c64224ede897805cb827",
+      "pass": true
+    },
+    {
+      "scope": "v4.0.1 @ 254/32",
+      "check": "fingerprint: job on aarch64 (m2_d8d_silver_v4.0.1_254_after_restore.json) vs here on x86_64",
       "local": "ad300f7ddb87b42718cd0e0aab40e948e5f509124cc0c64224ede897805cb827",
       "silver": "ad300f7ddb87b42718cd0e0aab40e948e5f509124cc0c64224ede897805cb827",
       "pass": true

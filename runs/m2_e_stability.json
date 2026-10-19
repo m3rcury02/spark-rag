@@ -1,6 +1,6 @@
 {
   "label": "m2_e_stability",
-  "git_commit": "31a3763aa55ca56f4bb7f0f61837f0680af3ee9f",
+  "git_commit": "32e7b12270f3fce67a89b8e4c824da9d264cb9f3",
   "machine": "x86_64",
   "python": "3.12.3",
   "source": {
@@ -63,13 +63,18 @@
               "prose: own text edited": 196,
               "prose: section removed or rewritten": 590,
               "prose: breadcrumb rename: section unchanged under a new heading path": 17,
-              "framed (table row / code piece): own text edited": 114,
-              "framed (table row / code piece): breadcrumb rename: section unchanged under a new heading path": 10,
+              "table row: own text edited": 92,
+              "table row: breadcrumb rename: section unchanged under a new heading path": 6,
               "prose: boundary shift": 40,
               "prose: moved under another heading": 7,
-              "framed (table row / code piece): moved under another heading": 26,
-              "framed (table row / code piece): section removed or rewritten": 162,
-              "framed (table row / code piece): own text unchanged, frame edited": 338
+              "table row: moved under another heading": 13,
+              "code piece: own text edited": 22,
+              "code piece: section removed or rewritten": 62,
+              "table row: section removed or rewritten": 100,
+              "code piece: boundary shift": 9,
+              "table row: own text unchanged, frame edited": 329,
+              "code piece: breadcrumb rename: section unchanged under a new heading path": 4,
+              "code piece: moved under another heading": 13
             },
             "locality": {
               "section_aware_chunks_inside_unchanged_sections": 1725,
@@ -116,7 +121,7 @@
             "lost_section_aware_ids_by_cause": {
               "prose: section removed or rewritten": 1,
               "prose: breadcrumb rename: section unchanged under a new heading path": 3,
-              "framed (table row / code piece): breadcrumb rename: section unchanged under a new heading path": 3,
+              "code piece: breadcrumb rename: section unchanged under a new heading path": 3,
               "prose: moved under another heading": 1
             },
             "locality": {
@@ -149,7 +154,8 @@
             "continuations": 3307,
             "prose_with_overlap": 965,
             "at_a_whole_code_block": 125,
-            "at_a_split_code_block_or_table_row": 2199,
+            "at_a_split_code_block_or_table_row_without_overlap": 1943,
+            "at_a_split_code_block_or_table_row_with_overlap": 256,
             "prose_no_overlap_at_paragraph_break": 17,
             "prose_no_overlap_inside_paragraph": 1
           }
@@ -174,7 +180,8 @@
             "continuations": 3716,
             "at_a_whole_code_block": 127,
             "prose_with_overlap": 1024,
-            "at_a_split_code_block_or_table_row": 2546,
+            "at_a_split_code_block_or_table_row_without_overlap": 2270,
+            "at_a_split_code_block_or_table_row_with_overlap": 276,
             "prose_no_overlap_at_paragraph_break": 18,
             "prose_no_overlap_inside_paragraph": 1
           }
@@ -199,7 +206,8 @@
             "continuations": 3721,
             "at_a_whole_code_block": 127,
             "prose_with_overlap": 1027,
-            "at_a_split_code_block_or_table_row": 2548,
+            "at_a_split_code_block_or_table_row_without_overlap": 2270,
+            "at_a_split_code_block_or_table_row_with_overlap": 278,
             "prose_no_overlap_at_paragraph_break": 18,
             "prose_no_overlap_inside_paragraph": 1
           }
@@ -357,12 +365,17 @@
               "prose: section removed or rewritten": 788,
               "prose: boundary shift": 28,
               "prose: breadcrumb rename: section unchanged under a new heading path": 25,
-              "framed (table row / code piece): own text edited": 151,
-              "framed (table row / code piece): breadcrumb rename: section unchanged under a new heading path": 20,
-              "framed (table row / code piece): section removed or rewritten": 448,
+              "table row: own text edited": 110,
+              "table row: breadcrumb rename: section unchanged under a new heading path": 8,
+              "table row: section removed or rewritten": 160,
+              "code piece: own text edited": 41,
               "prose: moved under another heading": 4,
-              "framed (table row / code piece): moved under another heading": 54,
-              "framed (table row / code piece): own text unchanged, frame edited": 340
+              "table row: moved under another heading": 16,
+              "code piece: section removed or rewritten": 288,
+              "code piece: moved under another heading": 38,
+              "code piece: breadcrumb rename: section unchanged under a new heading path": 12,
+              "code piece: boundary shift": 11,
+              "table row: own text unchanged, frame edited": 329
             },
             "locality": {
               "section_aware_chunks_inside_unchanged_sections": 3124,
@@ -409,7 +422,7 @@
             "lost_section_aware_ids_by_cause": {
               "prose: section removed or rewritten": 1,
               "prose: breadcrumb rename: section unchanged under a new heading path": 6,
-              "framed (table row / code piece): breadcrumb rename: section unchanged under a new heading path": 6,
+              "code piece: breadcrumb rename: section unchanged under a new heading path": 6,
               "prose: moved under another heading": 1
             },
             "locality": {
@@ -441,10 +454,11 @@
           "behaviour": {
             "continuations": 6419,
             "at_a_whole_code_block": 188,
-            "at_a_split_code_block_or_table_row": 3641,
+            "at_a_split_code_block_or_table_row_without_overlap": 2686,
             "prose_with_overlap": 2462,
             "prose_no_overlap_inside_paragraph": 20,
-            "prose_no_overlap_at_paragraph_break": 108
+            "prose_no_overlap_at_paragraph_break": 108,
+            "at_a_split_code_block_or_table_row_with_overlap": 955
           }
         },
         "v4.0.0": {
@@ -466,8 +480,9 @@
           "behaviour": {
             "continuations": 7089,
             "prose_with_overlap": 2595,
-            "at_a_split_code_block_or_table_row": 4172,
+            "at_a_split_code_block_or_table_row_without_overlap": 3175,
             "prose_no_overlap_at_paragraph_break": 106,
+            "at_a_split_code_block_or_table_row_with_overlap": 997,
             "at_a_whole_code_block": 196,
             "prose_no_overlap_inside_paragraph": 20
           }
@@ -491,8 +506,9 @@
           "behaviour": {
             "continuations": 7104,
             "prose_with_overlap": 2603,
-            "at_a_split_code_block_or_table_row": 4178,
+            "at_a_split_code_block_or_table_row_without_overlap": 3175,
             "prose_no_overlap_at_paragraph_break": 107,
+            "at_a_split_code_block_or_table_row_with_overlap": 1003,
             "at_a_whole_code_block": 196,
             "prose_no_overlap_inside_paragraph": 20
           }
