@@ -1,0 +1,61 @@
+{
+  "label": "m2_f_tokenizer_parity",
+  "git_commit": "31a3763aa55ca56f4bb7f0f61837f0680af3ee9f",
+  "chunk_configs": [
+    {
+      "max_tokens": 254,
+      "overlap_tokens": 32,
+      "config_id": "ccbd80f05e15c8dd"
+    },
+    {
+      "max_tokens": 128,
+      "overlap_tokens": 16,
+      "config_id": "4f60fb29417d0af5"
+    }
+  ],
+  "source_commits": {
+    "v3.5.0": "ce5ddad990373636e94071e7cef2f31021add07b",
+    "v4.0.0": "fa33ea000a0bda9e5a3fa1af98e8e85b8cc5e4d4",
+    "v4.0.1": "29434ea766b0fc3c3bf6eaadb43a8f931133649e"
+  },
+  "packages": {
+    "sentence-transformers": "6.1.0",
+    "transformers": "5.19.0",
+    "tokenizers": "0.23.3",
+    "torch": "2.14.1+cpu"
+  },
+  "machine": "x86_64",
+  "models": {
+    "sentence-transformers/all-MiniLM-L6-v2": {
+      "max_seq_length": 256,
+      "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "texts": 13655,
+      "mismatches": 0,
+      "mismatch_examples": [],
+      "longest_input_positions": 256,
+      "texts_at_max_seq_length": 72,
+      "texts_longer_than_the_model_accepts": 0,
+      "prompts": {
+        "query": "",
+        "document": ""
+      },
+      "default_prompt_name": null
+    },
+    "BAAI/bge-small-en-v1.5": {
+      "max_seq_length": 512,
+      "revision": "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
+      "texts": 13655,
+      "mismatches": 0,
+      "mismatch_examples": [],
+      "longest_input_positions": 256,
+      "texts_at_max_seq_length": 0,
+      "texts_longer_than_the_model_accepts": 0,
+      "prompts": {
+        "query": "",
+        "document": ""
+      },
+      "default_prompt_name": null
+    }
+  },
+  "all_pass": true
+}

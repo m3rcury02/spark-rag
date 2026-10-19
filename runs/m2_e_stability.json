@@ -1,0 +1,608 @@
+{
+  "label": "m2_e_stability",
+  "git_commit": "31a3763aa55ca56f4bb7f0f61837f0680af3ee9f",
+  "machine": "x86_64",
+  "python": "3.12.3",
+  "source": {
+    "v3.5.0": {
+      "commit_sha": "ce5ddad990373636e94071e7cef2f31021add07b",
+      "docs": 244
+    },
+    "v4.0.0": {
+      "commit_sha": "fa33ea000a0bda9e5a3fa1af98e8e85b8cc5e4d4",
+      "docs": 212
+    },
+    "v4.0.1": {
+      "commit_sha": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+      "docs": 213
+    }
+  },
+  "configs": {
+    "254/32": {
+      "chunk_config": {
+        "max_tokens": 254,
+        "overlap_tokens": 32,
+        "config_id": "ccbd80f05e15c8dd"
+      },
+      "transitions": {
+        "v3.5.0->v4.0.0": {
+          "docs": {
+            "added": 19,
+            "deleted": 51,
+            "modified": 96,
+            "unchanged": 97
+          },
+          "section_aware": {
+            "chunks_in_a_for_common_docs": 5063,
+            "kept": 3563,
+            "removed": 1500,
+            "kept_share": 0.7037,
+            "kept_token_share": 0.7425,
+            "new_ids_in_b_to_embed": 1886,
+            "new_tokens_in_b_to_embed": 215764,
+            "chunks_in_b": 5449,
+            "tokens_in_b": 689988,
+            "modified_docs_with_unchanged_chunk_set": 18,
+            "unchanged_docs_with_identical_chunk_ids": "97/97"
+          },
+          "whole_page_baseline": {
+            "chunks_in_a_for_common_docs": 4194,
+            "kept": 2993,
+            "removed": 1201,
+            "kept_share": 0.7136,
+            "kept_token_share": 0.7295,
+            "new_ids_in_b_to_embed": 1780,
+            "new_tokens_in_b_to_embed": 210243,
+            "chunks_in_b": 4773,
+            "tokens_in_b": 656688,
+            "modified_docs_with_unchanged_chunk_set": 17,
+            "unchanged_docs_with_identical_chunk_ids": "97/97"
+          },
+          "modified_docs": {
+            "lost_section_aware_ids_by_cause": {
+              "prose: own text edited": 196,
+              "prose: section removed or rewritten": 590,
+              "prose: breadcrumb rename: section unchanged under a new heading path": 17,
+              "framed (table row / code piece): own text edited": 114,
+              "framed (table row / code piece): breadcrumb rename: section unchanged under a new heading path": 10,
+              "prose: boundary shift": 40,
+              "prose: moved under another heading": 7,
+              "framed (table row / code piece): moved under another heading": 26,
+              "framed (table row / code piece): section removed or rewritten": 162,
+              "framed (table row / code piece): own text unchanged, frame edited": 338
+            },
+            "locality": {
+              "section_aware_chunks_inside_unchanged_sections": 1725,
+              "section_aware_kept": 1725,
+              "baseline_chunks_inside_unchanged_sections": 764,
+              "baseline_kept": 756
+            }
+          }
+        },
+        "v4.0.0->v4.0.1": {
+          "docs": {
+            "added": 1,
+            "deleted": 0,
+            "modified": 4,
+            "unchanged": 208
+          },
+          "section_aware": {
+            "chunks_in_a_for_common_docs": 5449,
+            "kept": 5441,
+            "removed": 8,
+            "kept_share": 0.9985,
+            "kept_token_share": 0.9982,
+            "new_ids_in_b_to_embed": 21,
+            "new_tokens_in_b_to_embed": 3538,
+            "chunks_in_b": 5462,
+            "tokens_in_b": 692251,
+            "modified_docs_with_unchanged_chunk_set": 3,
+            "unchanged_docs_with_identical_chunk_ids": "208/208"
+          },
+          "whole_page_baseline": {
+            "chunks_in_a_for_common_docs": 4773,
+            "kept": 4766,
+            "removed": 7,
+            "kept_share": 0.9985,
+            "kept_token_share": 0.9981,
+            "new_ids_in_b_to_embed": 19,
+            "new_tokens_in_b_to_embed": 3518,
+            "chunks_in_b": 4785,
+            "tokens_in_b": 658926,
+            "modified_docs_with_unchanged_chunk_set": 3,
+            "unchanged_docs_with_identical_chunk_ids": "208/208"
+          },
+          "modified_docs": {
+            "lost_section_aware_ids_by_cause": {
+              "prose: section removed or rewritten": 1,
+              "prose: breadcrumb rename: section unchanged under a new heading path": 3,
+              "framed (table row / code piece): breadcrumb rename: section unchanged under a new heading path": 3,
+              "prose: moved under another heading": 1
+            },
+            "locality": {
+              "section_aware_chunks_inside_unchanged_sections": 54,
+              "section_aware_kept": 54,
+              "baseline_chunks_inside_unchanged_sections": 36,
+              "baseline_kept": 36
+            }
+          }
+        }
+      },
+      "tags": {
+        "v3.5.0": {
+          "docs": 244,
+          "chunks": 5589,
+          "chunks_by_frame": {
+            "none": 3387,
+            "table": 1825,
+            "code": 377
+          },
+          "embedded_tokens": 667028,
+          "n_tokens_median": 97,
+          "n_tokens_max": 254,
+          "cleaned_tokens": 560928,
+          "tokens_on_border_only_lines": 14553,
+          "docs_with_no_chunks": [
+            "docs/sql-ref-functions-builtin.md"
+          ],
+          "behaviour": {
+            "continuations": 3307,
+            "prose_with_overlap": 965,
+            "at_a_whole_code_block": 125,
+            "at_a_split_code_block_or_table_row": 2199,
+            "prose_no_overlap_at_paragraph_break": 17,
+            "prose_no_overlap_inside_paragraph": 1
+          }
+        },
+        "v4.0.0": {
+          "docs": 212,
+          "chunks": 5449,
+          "chunks_by_frame": {
+            "none": 2917,
+            "code": 408,
+            "table": 2124
+          },
+          "embedded_tokens": 689988,
+          "n_tokens_median": 108,
+          "n_tokens_max": 254,
+          "cleaned_tokens": 573539,
+          "tokens_on_border_only_lines": 15765,
+          "docs_with_no_chunks": [
+            "docs/sql-ref-functions-builtin.md"
+          ],
+          "behaviour": {
+            "continuations": 3716,
+            "at_a_whole_code_block": 127,
+            "prose_with_overlap": 1024,
+            "at_a_split_code_block_or_table_row": 2546,
+            "prose_no_overlap_at_paragraph_break": 18,
+            "prose_no_overlap_inside_paragraph": 1
+          }
+        },
+        "v4.0.1": {
+          "docs": 213,
+          "chunks": 5462,
+          "chunks_by_frame": {
+            "none": 2926,
+            "code": 412,
+            "table": 2124
+          },
+          "embedded_tokens": 692251,
+          "n_tokens_median": 108.0,
+          "n_tokens_max": 254,
+          "cleaned_tokens": 575620,
+          "tokens_on_border_only_lines": 15765,
+          "docs_with_no_chunks": [
+            "docs/sql-ref-functions-builtin.md"
+          ],
+          "behaviour": {
+            "continuations": 3721,
+            "at_a_whole_code_block": 127,
+            "prose_with_overlap": 1027,
+            "at_a_split_code_block_or_table_row": 2548,
+            "prose_no_overlap_at_paragraph_break": 18,
+            "prose_no_overlap_inside_paragraph": 1
+          }
+        }
+      },
+      "ablations": {
+        "border_shortening_off": {
+          "v3.5.0": {
+            "docs": 244,
+            "chunks": 5724,
+            "chunks_by_frame": {
+              "none": 3378,
+              "table": 1841,
+              "code": 505
+            },
+            "embedded_tokens": 693097,
+            "n_tokens_median": 99.0,
+            "n_tokens_max": 254,
+            "cleaned_tokens": 585598,
+            "tokens_on_border_only_lines": 39223,
+            "docs_with_no_chunks": [
+              "docs/sql-ref-functions-builtin.md"
+            ]
+          },
+          "v4.0.0": {
+            "docs": 212,
+            "chunks": 5596,
+            "chunks_by_frame": {
+              "none": 2910,
+              "code": 541,
+              "table": 2145
+            },
+            "embedded_tokens": 717736,
+            "n_tokens_median": 110.0,
+            "n_tokens_max": 254,
+            "cleaned_tokens": 599024,
+            "tokens_on_border_only_lines": 41250,
+            "docs_with_no_chunks": [
+              "docs/sql-ref-functions-builtin.md"
+            ]
+          },
+          "v4.0.1": {
+            "docs": 213,
+            "chunks": 5609,
+            "chunks_by_frame": {
+              "none": 2919,
+              "code": 545,
+              "table": 2145
+            },
+            "embedded_tokens": 720005,
+            "n_tokens_median": 110,
+            "n_tokens_max": 254,
+            "cleaned_tokens": 601105,
+            "tokens_on_border_only_lines": 41250,
+            "docs_with_no_chunks": [
+              "docs/sql-ref-functions-builtin.md"
+            ]
+          }
+        },
+        "table_rows_off": {
+          "v3.5.0": {
+            "docs": 244,
+            "chunks": 4289,
+            "chunks_by_frame": {
+              "none": 3912,
+              "code": 377
+            },
+            "embedded_tokens": 643042,
+            "n_tokens_median": 168,
+            "n_tokens_max": 254,
+            "cleaned_tokens": 560928,
+            "tokens_on_border_only_lines": 14553,
+            "docs_with_no_chunks": [
+              "docs/sql-ref-functions-builtin.md"
+            ]
+          },
+          "v4.0.0": {
+            "docs": 212,
+            "chunks": 3895,
+            "chunks_by_frame": {
+              "none": 3487,
+              "code": 408
+            },
+            "embedded_tokens": 658927,
+            "n_tokens_median": 192,
+            "n_tokens_max": 254,
+            "cleaned_tokens": 573539,
+            "tokens_on_border_only_lines": 15765,
+            "docs_with_no_chunks": [
+              "docs/sql-ref-functions-builtin.md"
+            ]
+          },
+          "v4.0.1": {
+            "docs": 213,
+            "chunks": 3908,
+            "chunks_by_frame": {
+              "none": 3496,
+              "code": 412
+            },
+            "embedded_tokens": 661190,
+            "n_tokens_median": 192.0,
+            "n_tokens_max": 254,
+            "cleaned_tokens": 575620,
+            "tokens_on_border_only_lines": 15765,
+            "docs_with_no_chunks": [
+              "docs/sql-ref-functions-builtin.md"
+            ]
+          }
+        }
+      }
+    },
+    "128/16": {
+      "chunk_config": {
+        "max_tokens": 128,
+        "overlap_tokens": 16,
+        "config_id": "4f60fb29417d0af5"
+      },
+      "transitions": {
+        "v3.5.0->v4.0.0": {
+          "docs": {
+            "added": 19,
+            "deleted": 51,
+            "modified": 96,
+            "unchanged": 97
+          },
+          "section_aware": {
+            "chunks_in_a_for_common_docs": 8119,
+            "kept": 6005,
+            "removed": 2114,
+            "kept_share": 0.7396,
+            "kept_token_share": 0.7606,
+            "new_ids_in_b_to_embed": 2817,
+            "new_tokens_in_b_to_embed": 231382,
+            "chunks_in_b": 8822,
+            "tokens_in_b": 778501,
+            "modified_docs_with_unchanged_chunk_set": 18,
+            "unchanged_docs_with_identical_chunk_ids": "97/97"
+          },
+          "whole_page_baseline": {
+            "chunks_in_a_for_common_docs": 7161,
+            "kept": 5428,
+            "removed": 1733,
+            "kept_share": 0.758,
+            "kept_token_share": 0.7734,
+            "new_ids_in_b_to_embed": 2560,
+            "new_tokens_in_b_to_embed": 194390,
+            "chunks_in_b": 7988,
+            "tokens_in_b": 695803,
+            "modified_docs_with_unchanged_chunk_set": 17,
+            "unchanged_docs_with_identical_chunk_ids": "97/97"
+          },
+          "modified_docs": {
+            "lost_section_aware_ids_by_cause": {
+              "prose: own text edited": 256,
+              "prose: section removed or rewritten": 788,
+              "prose: boundary shift": 28,
+              "prose: breadcrumb rename: section unchanged under a new heading path": 25,
+              "framed (table row / code piece): own text edited": 151,
+              "framed (table row / code piece): breadcrumb rename: section unchanged under a new heading path": 20,
+              "framed (table row / code piece): section removed or rewritten": 448,
+              "prose: moved under another heading": 4,
+              "framed (table row / code piece): moved under another heading": 54,
+              "framed (table row / code piece): own text unchanged, frame edited": 340
+            },
+            "locality": {
+              "section_aware_chunks_inside_unchanged_sections": 3124,
+              "section_aware_kept": 3124,
+              "baseline_chunks_inside_unchanged_sections": 1893,
+              "baseline_kept": 1881
+            }
+          }
+        },
+        "v4.0.0->v4.0.1": {
+          "docs": {
+            "added": 1,
+            "deleted": 0,
+            "modified": 4,
+            "unchanged": 208
+          },
+          "section_aware": {
+            "chunks_in_a_for_common_docs": 8822,
+            "kept": 8808,
+            "removed": 14,
+            "kept_share": 0.9984,
+            "kept_token_share": 0.9983,
+            "new_ids_in_b_to_embed": 37,
+            "new_tokens_in_b_to_embed": 3810,
+            "chunks_in_b": 8845,
+            "tokens_in_b": 780970,
+            "modified_docs_with_unchanged_chunk_set": 3,
+            "unchanged_docs_with_identical_chunk_ids": "208/208"
+          },
+          "whole_page_baseline": {
+            "chunks_in_a_for_common_docs": 7988,
+            "kept": 7975,
+            "removed": 13,
+            "kept_share": 0.9984,
+            "kept_token_share": 0.9981,
+            "new_ids_in_b_to_embed": 36,
+            "new_tokens_in_b_to_embed": 3764,
+            "chunks_in_b": 8011,
+            "tokens_in_b": 698234,
+            "modified_docs_with_unchanged_chunk_set": 3,
+            "unchanged_docs_with_identical_chunk_ids": "208/208"
+          },
+          "modified_docs": {
+            "lost_section_aware_ids_by_cause": {
+              "prose: section removed or rewritten": 1,
+              "prose: breadcrumb rename: section unchanged under a new heading path": 6,
+              "framed (table row / code piece): breadcrumb rename: section unchanged under a new heading path": 6,
+              "prose: moved under another heading": 1
+            },
+            "locality": {
+              "section_aware_chunks_inside_unchanged_sections": 98,
+              "section_aware_kept": 98,
+              "baseline_chunks_inside_unchanged_sections": 75,
+              "baseline_kept": 75
+            }
+          }
+        }
+      },
+      "tags": {
+        "v3.5.0": {
+          "docs": 244,
+          "chunks": 8701,
+          "chunks_by_frame": {
+            "none": 5181,
+            "code": 1226,
+            "table": 2294
+          },
+          "embedded_tokens": 750439,
+          "n_tokens_median": 93,
+          "n_tokens_max": 128,
+          "cleaned_tokens": 560928,
+          "tokens_on_border_only_lines": 14553,
+          "docs_with_no_chunks": [
+            "docs/sql-ref-functions-builtin.md"
+          ],
+          "behaviour": {
+            "continuations": 6419,
+            "at_a_whole_code_block": 188,
+            "at_a_split_code_block_or_table_row": 3641,
+            "prose_with_overlap": 2462,
+            "prose_no_overlap_inside_paragraph": 20,
+            "prose_no_overlap_at_paragraph_break": 108
+          }
+        },
+        "v4.0.0": {
+          "docs": 212,
+          "chunks": 8822,
+          "chunks_by_frame": {
+            "none": 4804,
+            "code": 1326,
+            "table": 2692
+          },
+          "embedded_tokens": 778501,
+          "n_tokens_median": 95.0,
+          "n_tokens_max": 128,
+          "cleaned_tokens": 573539,
+          "tokens_on_border_only_lines": 15765,
+          "docs_with_no_chunks": [
+            "docs/sql-ref-functions-builtin.md"
+          ],
+          "behaviour": {
+            "continuations": 7089,
+            "prose_with_overlap": 2595,
+            "at_a_split_code_block_or_table_row": 4172,
+            "prose_no_overlap_at_paragraph_break": 106,
+            "at_a_whole_code_block": 196,
+            "prose_no_overlap_inside_paragraph": 20
+          }
+        },
+        "v4.0.1": {
+          "docs": 213,
+          "chunks": 8845,
+          "chunks_by_frame": {
+            "none": 4818,
+            "code": 1335,
+            "table": 2692
+          },
+          "embedded_tokens": 780970,
+          "n_tokens_median": 95,
+          "n_tokens_max": 128,
+          "cleaned_tokens": 575620,
+          "tokens_on_border_only_lines": 15765,
+          "docs_with_no_chunks": [
+            "docs/sql-ref-functions-builtin.md"
+          ],
+          "behaviour": {
+            "continuations": 7104,
+            "prose_with_overlap": 2603,
+            "at_a_split_code_block_or_table_row": 4178,
+            "prose_no_overlap_at_paragraph_break": 107,
+            "at_a_whole_code_block": 196,
+            "prose_no_overlap_inside_paragraph": 20
+          }
+        }
+      },
+      "ablations": {
+        "border_shortening_off": {
+          "v3.5.0": {
+            "docs": 244,
+            "chunks": 8992,
+            "chunks_by_frame": {
+              "none": 5173,
+              "code": 1516,
+              "table": 2303
+            },
+            "embedded_tokens": 778563,
+            "n_tokens_median": 94.0,
+            "n_tokens_max": 128,
+            "cleaned_tokens": 585598,
+            "tokens_on_border_only_lines": 39223,
+            "docs_with_no_chunks": [
+              "docs/sql-ref-functions-builtin.md"
+            ]
+          },
+          "v4.0.0": {
+            "docs": 212,
+            "chunks": 9132,
+            "chunks_by_frame": {
+              "none": 4797,
+              "code": 1634,
+              "table": 2701
+            },
+            "embedded_tokens": 808369,
+            "n_tokens_median": 95.0,
+            "n_tokens_max": 128,
+            "cleaned_tokens": 599024,
+            "tokens_on_border_only_lines": 41250,
+            "docs_with_no_chunks": [
+              "docs/sql-ref-functions-builtin.md"
+            ]
+          },
+          "v4.0.1": {
+            "docs": 213,
+            "chunks": 9155,
+            "chunks_by_frame": {
+              "none": 4811,
+              "code": 1643,
+              "table": 2701
+            },
+            "embedded_tokens": 810834,
+            "n_tokens_median": 96,
+            "n_tokens_max": 128,
+            "cleaned_tokens": 601105,
+            "tokens_on_border_only_lines": 41250,
+            "docs_with_no_chunks": [
+              "docs/sql-ref-functions-builtin.md"
+            ]
+          }
+        },
+        "table_rows_off": {
+          "v3.5.0": {
+            "docs": 244,
+            "chunks": 7756,
+            "chunks_by_frame": {
+              "none": 6530,
+              "code": 1226
+            },
+            "embedded_tokens": 723399,
+            "n_tokens_median": 103.5,
+            "n_tokens_max": 128,
+            "cleaned_tokens": 560928,
+            "tokens_on_border_only_lines": 14553,
+            "docs_with_no_chunks": [
+              "docs/sql-ref-functions-builtin.md"
+            ]
+          },
+          "v4.0.0": {
+            "docs": 212,
+            "chunks": 7615,
+            "chunks_by_frame": {
+              "none": 6289,
+              "code": 1326
+            },
+            "embedded_tokens": 745199,
+            "n_tokens_median": 106,
+            "n_tokens_max": 128,
+            "cleaned_tokens": 573539,
+            "tokens_on_border_only_lines": 15765,
+            "docs_with_no_chunks": [
+              "docs/sql-ref-functions-builtin.md"
+            ]
+          },
+          "v4.0.1": {
+            "docs": 213,
+            "chunks": 7638,
+            "chunks_by_frame": {
+              "none": 6303,
+              "code": 1335
+            },
+            "embedded_tokens": 747668,
+            "n_tokens_median": 106.0,
+            "n_tokens_max": 128,
+            "cleaned_tokens": 575620,
+            "tokens_on_border_only_lines": 15765,
+            "docs_with_no_chunks": [
+              "docs/sql-ref-functions-builtin.md"
+            ]
+          }
+        }
+      }
+    }
+  }
+}
