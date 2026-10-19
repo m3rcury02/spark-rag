@@ -1,0 +1,11 @@
+{
+  "label": "m2_d0b_silver_v3.5.0_254_attempt1",
+  "git_commit": "c02baefb7e28c62b39ec70c03d35f4479626bd8c",
+  "script": "jobs/silver_chunk.py",
+  "job_args": [
+    "--tag",
+    "v3.5.0"
+  ],
+  "submit_refused_utc": "2026-10-19T05:31:49Z",
+  "error": "NotFound: Triggering new runs for organization <workspace-id> is currently disabled temporarily."
+}

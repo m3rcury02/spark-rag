@@ -1,0 +1,10 @@
+{
+  "label": "m2_d0_billing_probe_while_compute_refused",
+  "git_commit": "c02baefb7e28c62b39ec70c03d35f4479626bd8c",
+  "statements": [],
+  "error": {
+    "sql": "SELECT count(*), min(usage_date), max(usage_date), max(usage_end_time), current_timestamp() AS checked_utc FROM system.billing.usage",
+    "refused_utc": "2026-10-19T05:30:43Z",
+    "error": "BadRequest: The request could not be processed by the warehouse."
+  }
+}
