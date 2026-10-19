@@ -33,7 +33,7 @@ from gitdocs import TagDocs, read_tags
 from redact import Redactor
 from runguard import REPO, committed_head
 
-from docs_rag.chunk import Chunk, ChunkConfig, DocChunks, chunk_document, chunk_id, chunk_section, frame_of
+from docs_rag.chunk import Chunk, ChunkConfig, DocChunks, chunk_document, chunk_id, chunk_section, rebuilds
 from docs_rag.clean import clean_page
 from docs_rag.config import Config, validate_tag
 from docs_rag.sections import Section, split_sections
@@ -78,9 +78,9 @@ def inside(sections: list[Section], start: int, end: int) -> Section | None:
     return next((s for s in sections if s.start <= start and end <= s.start + len(s.body)), None)
 
 
-def framed(path: str, content: str, c: Chunk) -> bool:
+def framed(c: Chunk) -> bool:
     """A re-fenced code piece or a table row under its header: the body is not the bare slice."""
-    return frame_of(c.body, clean_text(path, content)[c.char_start : c.char_end]) != "none"
+    return c.frame != "none"
 
 
 def whole_lines_in(text: str, body: str) -> bool:
@@ -174,7 +174,7 @@ def transition(a: TagDocs, b: TagDocs, config: ChunkConfig, chunked: dict[str, d
                 continue
             own = text_a[c.char_start : c.char_end]  # the chunk's own text: no breadcrumb, no frame
             same_path = [s.body for s in sb if s.path == c.section_path]
-            kind = "framed (table row / code piece)" if framed(p, a.files[p], c) else "prose"
+            kind = "framed (table row / code piece)" if framed(c) else "prose"
             if (section.path, section.body) in unchanged_b:
                 cause = "section unchanged (should not happen)"
             elif any(whole_lines_in(own, body) for body in same_path):
@@ -207,7 +207,7 @@ def chunker_behaviour(tag: TagDocs, chunked: dict[str, DocChunks]) -> Any:
             if left.section_path != right.section_path:
                 continue
             stats["continuations"] += 1
-            if framed(p, tag.files[p], left) or framed(p, tag.files[p], right):
+            if framed(left) or framed(right):
                 stats["at_a_split_code_block_or_table_row"] += 1
             elif left.body.endswith(("```", "~~~")) or right.body.startswith(("```", "~~~")):
                 stats["at_a_whole_code_block"] += 1
@@ -231,7 +231,7 @@ def corpus_numbers(tag: TagDocs, config: ChunkConfig) -> dict[str, Any]:
         border_tokens += sum(
             count_tokens(line) for line in text.split("\n") if line.strip() and set(line) <= set("|+:=- \t")
         )
-        frames.update(str(frame_of(c.body, text[c.char_start : c.char_end])) for c in docs[p].chunks)
+        frames.update(c.frame if rebuilds(c, text) else "mismatch" for c in docs[p].chunks)
     return {
         "docs": len(docs),
         "chunks": len(n),

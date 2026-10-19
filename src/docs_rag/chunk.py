@@ -4,13 +4,15 @@
   being the section path joined by " > "; `max_tokens` bounds that whole string, so the model sees exactly
   what was sized. Token counts are WordPiece counts in both embedding models' own units (docs_rag.tokens).
 - A section's body is cut into units (paragraphs, GFM tables, code blocks), units are packed greedily, and a
-  unit that does not fit is split by lines, then sentences, then at word-start tokens. Cuts land inside a
-  word only when one word alone is over budget.
+  unit that does not fit is split: prose at sentence ends first (its line breaks are only the source's hard
+  wrapping), a list at its item starts, code at its lines; then at lines, sentences and finally word-start
+  tokens. Cuts land inside a word only when one word alone is over budget.
 - Every chunk body is a verbatim slice of the cleaned section text, so no whitespace is invented at a cut,
   except inside a *frame*: a code block that has to be split gives slices of its inner lines, each wrapped in
   the block's own fences; a table that has to be split gives one chunk per row, each under the table's
   header row (and a long row's later pieces also under the row's first cell, its property name). A table row
-  is never packed with anything else.
+  is never packed with anything else. Each chunk carries its frame, so `body == frame_head + slice +
+  frame_tail` exactly.
 - `overlap_tokens` of the previous chunk's tail (after whitespace; at a line start in code) open the next
   chunk, when they fit. Pieces of a split unit are sized to leave room for that tail. There is no overlap
   out of a whole code block, or from one frame (code block, table row) into anything else. Every chunk's
@@ -31,7 +33,8 @@ from docs_rag.clean import CLEANER_VERSION, DELIMITER_ROW, clean_page, fenced_bl
 from docs_rag.sections import split_sections
 from docs_rag.tokens import VOCAB_SHA256, count_tokens, token_spans
 
-# Bump when chunk output changes for the same input; tests/test_chunk_golden.py enforces it.
+# Bump when chunk output changes for the same input. The goldens (tests/test_chunk_golden.py on fixtures,
+# scripts/corpus_fingerprint.py on the real corpus) fail on any change and are never overwritten.
 CHUNKER_VERSION = "1"
 BREADCRUMB_SEPARATOR = " > "
 
@@ -74,6 +77,14 @@ class Chunk:
     chunk_id: str
     char_start: int  # the chunk's verbatim slice is clean_text[char_start:char_end] (without any frame)
     char_end: int
+    frame: str  # "none" (the body is the slice), "code" (inside its block's fences), "table" (under a header)
+    frame_head: str  # body == frame_head + clean_text[char_start:char_end] + frame_tail; not stored in silver
+    frame_tail: str
+
+
+def rebuilds(chunk: Chunk, clean_text: str) -> bool:
+    """Whether the chunk's body is exactly its frame around its slice of the cleaned page text."""
+    return chunk.frame_head + clean_text[chunk.char_start : chunk.char_end] + chunk.frame_tail == chunk.body
 
 
 @dataclass(frozen=True)
@@ -188,7 +199,8 @@ def _cut_at_word_starts(body: str, start: int, end: int, budget: int) -> list[tu
     return out
 
 
-_SENTENCE_END = re.compile(r"(?<=[.!?])\s+(?=[A-Z`(\[])")
+# A sentence ends at . ! or ? before whitespace and a capital, code or bracket, but not after "e.g." / "i.e.".
+_SENTENCE_END = re.compile(r"(?<=[.!?])(?<!\b[eE]\.g\.)(?<!\b[iI]\.e\.)\s+(?=[A-Z`(\[])")
 
 
 # A line that starts a list item or a table row: such a paragraph is cut at its lines, not its sentences.
@@ -197,19 +209,24 @@ _STRUCTURED_LINE = re.compile(r"\s*(?:[-*+]|\d+[.)])\s|\s*\|")
 
 def _split(body: str, start: int, end: int, budget: int, by_lines: bool = False) -> list[tuple[int, int]]:
     """Slices of at most `budget` tokens: the whole text if it fits. Otherwise prose is cut at sentence ends
-    first (its line breaks are only the source's hard wrapping), while code, lists and tables are cut at their
-    lines first; then lines, sentences and finally word starts."""
+    first (its line breaks are only the source's hard wrapping), a list or a table-like paragraph at the lines
+    that start an item (a hard-wrapped item stays together), code (`by_lines`) at its lines; then lines,
+    sentences and finally word starts."""
     if count_tokens(body[start:end]) <= budget:
         return [(start, end)]
     lines = _lines(body, start, end)
     a, b = (lines[0][0], lines[-1][1]) if lines else (start, end)
-    structured = by_lines or any(_STRUCTURED_LINE.match(body[x:y]) for x, y in lines[1:])
-    if not structured:
+    items = [k for k, (x, y) in enumerate(lines) if k and _STRUCTURED_LINE.match(body[x:y])]
+    if not by_lines and not items:
         cuts = list(_SENTENCE_END.finditer(body, a, b))
         if cuts:
             bounds = [a, *(x for m in cuts for x in (m.start(), m.end())), b]
             pairs = range(0, len(bounds), 2)
             return [s for i in pairs for s in _split(body, bounds[i], bounds[i + 1], budget, by_lines=True)]
+    if not by_lines and items:
+        starts = [0, *items, len(lines)]
+        spans = [(lines[i][0], lines[j - 1][1]) for i, j in zip(starts, starts[1:], strict=False)]
+        return [s for x, y in spans for s in _split(body, x, y, budget)]
     if len(lines) > 1:
         return [s for x, y in lines for s in _split(body, x, y, budget)]
     cuts = list(_SENTENCE_END.finditer(body, a, b))
@@ -231,14 +248,18 @@ def _table_rows(body: str, unit: _Piece) -> tuple[str, list[tuple[int, int]]] | 
     return body[slice(*lines[0])].strip(), lines[2:]
 
 
-def _first_cell(row: str) -> str:
-    return re.split(r"\s*\|\s*", row.strip().strip("|").strip(), maxsplit=1)[0]
+def _first_cell(row: str, header: str) -> str:
+    """The row's first cell ("" when empty); a leading pipe is a border when the header has one."""
+    text = row.strip()
+    if header.startswith("|"):
+        text = text.removeprefix("|")
+    return text.split("|", 1)[0].strip()
 
 
 def _pieces(body: str, budget: int, overlap: int) -> list[_Piece]:
     """Units that fit stay whole. A unit that has to be split is cut into slices that leave room for the
     overlap tail: a code block into its inner lines (re-fenced), a table into its rows (each under the
-    header), anything else by lines, sentences and word starts."""
+    header), anything else by `_split`."""
     out: list[_Piece] = []
     groups = 0
     for unit in _units(body):
@@ -262,7 +283,8 @@ def _pieces(body: str, budget: int, overlap: int) -> list[_Piece]:
             header, rows = table
             for a, b in rows:
                 groups += 1
-                cont = f"{header}\n{_first_cell(body[a:b])} | "
+                cell = _first_cell(body[a:b], header)
+                cont = f"{header}\n{cell} | " if cell else f"{header}\n"
                 frame = _Frame(groups, a, f"{header}\n", cont, "", code=False)
                 if count_tokens(f"{header}\n{body[a:b]}") <= budget:
                     out.append(_Piece(a, b, False, frame))
@@ -279,10 +301,16 @@ def _pieces(body: str, budget: int, overlap: int) -> list[_Piece]:
 # --- packing -----------------------------------------------------------------------------------------------
 
 
-def _render(body: str, start: int, end: int, frame: _Frame | None) -> str:
+def _around(start: int, frame: _Frame | None) -> tuple[str, str]:
+    """The (head, tail) a slice starting at `start` is wrapped in."""
     if frame is None:
-        return body[start:end]
-    return (frame.head if start == frame.start else frame.head_cont) + body[start:end] + frame.tail
+        return "", ""
+    return (frame.head if start == frame.start else frame.head_cont), frame.tail
+
+
+def _render(body: str, start: int, end: int, frame: _Frame | None) -> str:
+    head, tail = _around(start, frame)
+    return head + body[start:end] + tail
 
 
 def _tail_start(body: str, last: _Piece, chunk_start: int, overlap: int) -> int | None:
@@ -305,10 +333,13 @@ def _tail_start(body: str, last: _Piece, chunk_start: int, overlap: int) -> int 
 
 @dataclass(frozen=True)
 class SectionChunk:
-    body: str
+    body: str  # == frame_head + section_body[start:end] + frame_tail
     embed_text: str
-    start: int  # the verbatim slice is section_body[start:end]
+    start: int
     end: int
+    frame: str  # "none", "code" or "table"
+    frame_head: str
+    frame_tail: str
 
 
 def chunk_section(
@@ -347,27 +378,13 @@ def chunk_section(
         if frame is None:  # trim the slice itself, so its offsets match the body exactly
             s += len(body[s:e]) - len(body[s:e].lstrip())
             e -= len(body[s:e]) - len(body[s:e].rstrip())
-        text = _render(body, s, e, frame).strip()
-        out.append(SectionChunk(text, f"{crumb}\n\n{text}", s, e))
+        frame_head, frame_tail = _around(
+            s, frame
+        )  # a framed slice keeps its edges: code indentation is content
+        text = frame_head + body[s:e] + frame_tail
+        kind = "none" if frame is None else "code" if frame.code else "table"
+        out.append(SectionChunk(text, f"{crumb}\n\n{text}", s, e, kind, frame_head, frame_tail))
     return out
-
-
-def frame_of(body: str, slice_text: str) -> str | None:
-    """How a chunk body is built from its verbatim slice: "none" (it is the slice), "code" (the slice wrapped
-    in its block's fences) or "table" (the slice under its table's header row, and for a long row's later
-    pieces also under its first cell). None when the body is none of these: an offset or framing bug."""
-    if body == slice_text:
-        return "none"
-    first, _, rest = body.partition("\n")
-    last = body.rsplit("\n", 1)[-1]
-    if _FENCE_LINE.match(first) and body == f"{first}\n{slice_text}\n{last}":
-        return "code"
-    if "|" in first and (rest == slice_text or (rest.endswith(f" | {slice_text}") and "\n" not in rest)):
-        return "table"
-    return None
-
-
-_FENCE_LINE = re.compile(r"\s*(?:>\s*)*(?:`{3,}|~{3,})")
 
 
 def chunk_document(path: str, raw_markdown: str, config: ChunkConfig) -> DocChunks:
@@ -395,6 +412,9 @@ def chunk_document(path: str, raw_markdown: str, config: ChunkConfig) -> DocChun
                     chunk_id=chunk_id(path, section.path, sc.embed_text, occurrence),
                     char_start=section.start + sc.start,
                     char_end=section.start + sc.end,
+                    frame=sc.frame,
+                    frame_head=sc.frame_head,
+                    frame_tail=sc.frame_tail,
                 )
             )
     return DocChunks(

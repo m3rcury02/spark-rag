@@ -278,6 +278,23 @@ def check_against_stored(records: Sequence[SilverRecord], stored: Sequence[Store
     )
 
 
+def conflict_reason(
+    docs: Sequence[BronzeDoc], stored: Sequence[StoredChunk], zero_chunk: frozenset[str]
+) -> str:
+    """Why a fresh chunking of a stored tag differs: bronze moved under the stored rows (a doc's commit or
+    content hash differs, or a doc was added or removed), or else the code changed without a version bump."""
+    now = {d.path: (d.commit_sha, d.content_sha256) for d in docs}
+    then = {r.path: (r.commit_sha, r.doc_content_sha256) for r in stored}
+    expected_absent = {p for p in zero_chunk if p not in then}  # no rows to compare with
+    moved = sorted(p for p in (now.keys() | then.keys()) - expected_absent if now.get(p) != then.get(p))
+    if moved:
+        return (
+            f"bronze changed under the stored rows ({len(moved)} docs, e.g. {', '.join(moved[:3])}); "
+            "bronze is insert-only per tag, so find out how before anything else (a bump would not fix it)"
+        )
+    return "the cleaner or chunker changed without a version bump: bump CLEANER_VERSION or CHUNKER_VERSION"
+
+
 def fingerprint(pairs: Iterable[tuple[str, str]]) -> str:
     """sha256 of the sorted (path, chunk_id) lines: one value to compare a chunking across machines."""
     lines = sorted(f"{path}\t{cid}\n" for path, cid in pairs)

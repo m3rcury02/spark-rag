@@ -8,7 +8,8 @@ config of the chunk grid. Silver side: every row of those configs, read on the s
 config), the two must agree row for row on path, chunk_id, chunk_index, n_tokens, occurrence, offsets,
 section_path, sha256 of body and of embed_text, doc_clean_sha256, commit_sha (git's), doc_content_sha256
 (sha256 of git's bytes) and the version and size columns. The docs silver holds plus the expected-zero docs
-must be exactly git's docs, and locally every chunk body must rebuild exactly from its offsets (frame_of).
+must be exactly git's docs, and locally every chunk body must be exactly its frame around its offsets'
+slice (chunk.rebuilds).
 
 --job-runs: the silver jobs' saved summaries. Each job chunked on serverless and recorded its machine and
 the fingerprint of its (path, chunk_id) set; each must equal the fingerprint of the local chunking, so the
@@ -29,7 +30,7 @@ from redact import Redactor
 from run_sql import run_statement
 from runguard import REPO, committed_head
 
-from docs_rag.chunk import CHUNKER_VERSION, chunk_document, frame_of
+from docs_rag.chunk import CHUNKER_VERSION, chunk_document, rebuilds
 from docs_rag.clean import CLEANER_VERSION, clean_page
 from docs_rag.config import Config, validate_tag
 from docs_rag.silver import fingerprint
@@ -121,7 +122,7 @@ def main() -> None:
                 doc = chunk_document(path, content, chunking)
                 text = clean_page(content, fallback_title=path.rsplit("/", 1)[-1].removesuffix(".md")).text
                 for c in doc.chunks:
-                    if frame_of(c.body, text[c.char_start : c.char_end]) is None:
+                    if not rebuilds(c, text):
                         misframed.append(f"{path} #{c.chunk_index}")
                     local.append(
                         (path, c.chunk_id, c.chunk_index, c.n_tokens, c.occurrence, c.char_start, c.char_end)

@@ -90,3 +90,8 @@ def test_each_wrong_environment_is_named(
 
 def test_the_wheel_pins_tokenizers_exactly() -> None:
     assert pinned_version("tokenizers") == "0.23.3"
+
+
+def test_a_missing_distribution_pins_nothing() -> None:
+    assert pinned_version("tokenizers", of="no-such-distribution") is None
+    assert pinned_version("no-such-package") is None

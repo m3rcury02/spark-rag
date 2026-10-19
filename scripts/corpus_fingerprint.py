@@ -1,13 +1,14 @@
 """The real corpus as a golden test: per (chunk config, tag), a fingerprint of every chunk-determined column.
 
     uv run python scripts/corpus_fingerprint.py            # check (CI, and run_job.py before a silver job)
-    uv run python scripts/corpus_fingerprint.py --update   # create the file for new versions
+    uv run python scripts/corpus_fingerprint.py --update   # add entries for new versions, configs or tags
 
 The unit-test fixtures cannot hold every construct of the real pages, so a cleaner or chunker change can pass
 pytest and still change silver rows. This script reads the tags from git (scripts/gitdocs.py, so it needs
 network but no Databricks), chunks them with every config of Config.chunk_grid, and compares the fingerprints
-with tests/golden/corpus_c<CLEANER_VERSION>_k<CHUNKER_VERSION>.json. A difference means: bump a version. Like
-the other goldens, an existing file is never overwritten.
+with tests/golden/corpus_c<CLEANER_VERSION>_k<CHUNKER_VERSION>.json. A changed entry means: bump a version.
+Like the other goldens, an existing entry is never overwritten; --update only adds the (config, tag) entries
+the file lacks, so a config added to the grid, or a new tag, does not need a version bump.
 """
 
 import argparse
@@ -55,42 +56,63 @@ def fingerprints(tags: tuple[str, ...], grid: tuple[ChunkConfig, ...]) -> dict[s
     return out
 
 
-def check() -> list[str]:
-    """Differences between the committed corpus golden and the current code ([] when they agree)."""
-    if not GOLDEN.exists():
-        return [f"no {GOLDEN.name}: new versions need `scripts/corpus_fingerprint.py --update`"]
-    golden = json.loads(GOLDEN.read_text(encoding="utf-8"))
-    current = fingerprints(TAGS, Config().chunk_grid)
-    problems = []
-    for config_id, tags in current.items():
-        for tag, now in tags.items():
+def compare(golden: dict[str, Any], current: dict[str, Any]) -> tuple[list[str], list[str]]:
+    """(missing, changed): (config, tag) entries the golden lacks, and entries that differ from it."""
+    missing, changed = [], []
+    for config_id, entry in current.items():
+        for tag, now in entry.items():
             if not isinstance(now, dict):
                 continue
             was = golden.get(config_id, {}).get(tag)
-            if was != now:
-                problems.append(f"{config_id} {tag}: committed {was}, now {now}")
-    return problems
+            if was is None:
+                missing.append(f"{config_id} ({entry['max_tokens']}/{entry['overlap_tokens']}) {tag}")
+            elif was != now:
+                changed.append(f"{config_id} {tag}: committed {was}, now {now}")
+    return missing, changed
+
+
+def merged(golden: dict[str, Any], current: dict[str, Any]) -> dict[str, Any]:
+    """The golden with the current entries it lacks added; existing entries are kept as they are."""
+    out = {config_id: dict(entry) for config_id, entry in golden.items()}
+    for config_id, entry in current.items():
+        out.setdefault(config_id, {}).update({k: v for k, v in entry.items() if k not in out[config_id]})
+    return out
+
+
+def check() -> list[str]:
+    """Why the committed corpus golden and the current code disagree ([] when they agree)."""
+    if not GOLDEN.exists():
+        return [f"no {GOLDEN.name}: new versions need `scripts/corpus_fingerprint.py --update`"]
+    missing, changed = compare(
+        json.loads(GOLDEN.read_text(encoding="utf-8")), fingerprints(TAGS, Config().chunk_grid)
+    )
+    return [f"changed (bump CLEANER_VERSION or CHUNKER_VERSION): {c}" for c in changed] + [
+        f"not in {GOLDEN.name} (a new grid config or tag: run --update to add it): {m}" for m in missing
+    ]
 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--update", action="store_true", help="create the golden file for the current versions")
+    ap.add_argument(
+        "--update", action="store_true", help="add the entries the golden lacks (never changes one)"
+    )
     args = ap.parse_args()
     t0 = time.monotonic()
     if args.update:
-        if GOLDEN.exists():
-            sys.exit(f"{GOLDEN.name} exists and is never overwritten; bump a version if the output changed")
-        GOLDEN.write_text(
-            json.dumps(fingerprints(TAGS, Config().chunk_grid), indent=1) + "\n", encoding="utf-8"
-        )
-        print(f"wrote {GOLDEN.relative_to(REPO)} in {time.monotonic() - t0:.0f} s")
+        golden = json.loads(GOLDEN.read_text(encoding="utf-8")) if GOLDEN.exists() else {}
+        current = fingerprints(TAGS, Config().chunk_grid)
+        missing, changed = compare(golden, current)
+        if changed:
+            sys.exit(
+                f"{GOLDEN.name} is never overwritten; output changed, so bump a version:\n"
+                + "\n".join(changed)
+            )
+        GOLDEN.write_text(json.dumps(merged(golden, current), indent=1) + "\n", encoding="utf-8")
+        print(f"added {len(missing)} entries to {GOLDEN.relative_to(REPO)} in {time.monotonic() - t0:.0f} s")
         return
     problems = check()
     if problems:
-        sys.exit(
-            "corpus output differs from the committed golden: bump CLEANER_VERSION or CHUNKER_VERSION\n"
-            + "\n".join(problems)
-        )
+        sys.exit("corpus output differs from the committed golden:\n" + "\n".join(problems))
     print(f"corpus fingerprints match {GOLDEN.name} ({time.monotonic() - t0:.0f} s)")
 
 

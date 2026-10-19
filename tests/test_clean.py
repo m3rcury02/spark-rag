@@ -295,3 +295,41 @@ def test_links_with_titles_wrapped_urls_and_no_closing_paren() -> None:
         "[Blog](https://a.b/c/"
     )
     assert clean(page) == "Guide and Blog"
+
+
+def test_link_title_forms_and_angle_bracket_urls() -> None:
+    assert clean("[a](u 't') [b](u (t)) [c](<u v>) [d](u \"t\") end") == "a b c d end"
+
+
+def test_unknown_tag_like_words_are_kept_and_block_tags_do_not_glue_words() -> None:
+    assert clean("Set <col-name> and <s3-bucket> or <q>") == "Set <col-name> and <s3-bucket> or <q>"
+    assert clean("one<p>two</p><div>three</div>four") == "one\n\ntwo\n\nthree\n\nfour"
+
+
+def test_a_commented_out_table_does_not_nest_the_real_one() -> None:
+    page = (
+        "<!-- <table><tr><td>x</td></tr></table> -->\n<table><tr><th>A</th></tr><tr><td>`b`</td></tr></table>"
+    )
+    assert clean(page) == "| A |\n| --- |\n| `b` |"  # one column keeps its pipes
+
+
+def test_code_in_dropped_markup_does_not_trip_the_conservation_check() -> None:
+    assert clean("<script>var x = `y`;</script>A") == "A"
+    assert clean("![the `code` alt](x.png) B") == "B"
+
+
+def test_markup_inside_code_spans_is_code_and_escaped_markup_is_prose() -> None:
+    assert clean("Use `<pre>` here.\n\n```\nx\n```") == "Use `<pre>` here.\n\n```\nx\n```"
+    page = "Write &lt;!-- in HTML, then `code` and more --&gt; end"
+    assert clean(page) == "Write <!-- in HTML, then `code` and more --> end"
+
+
+def test_whitespace_entities_in_cells_become_spaces() -> None:
+    page = "<table><tr><th>A&nbsp;B</th><th>C</th></tr><tr><td>&nbsp;x&#160;y</td><td>z</td></tr></table>"
+    assert clean(page) == "A B | C\n--- | ---\nx y | z"
+
+
+@pytest.mark.parametrize("opener", ["## Head", "```\nx\n```"])
+def test_a_table_directly_under_a_heading_or_fence_is_not_broken(opener: str) -> None:
+    page = f"{opener}\n| a | b |\n| --- | --- |\n| 1 | 2 |"
+    assert clean_page(page, "x").residue == NO_RESIDUE

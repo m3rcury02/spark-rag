@@ -1,3 +1,4 @@
+import dataclasses
 import hashlib
 import json
 import os
@@ -9,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from docs_rag.chunk import ChunkConfig, chunk_document, chunk_id, chunk_section, frame_of
+from docs_rag.chunk import ChunkConfig, chunk_document, chunk_id, chunk_section, rebuilds
 from docs_rag.clean import clean_page
 from docs_rag.tokens import count_tokens
 
@@ -295,20 +296,21 @@ def test_offsets_point_at_each_chunks_verbatim_slice(seed: int) -> None:
     doc = chunk_document("docs/x.md", raw, config)
     assert doc.clean_sha256 == hashlib.sha256(clean_text.encode()).hexdigest()
     for c in doc.chunks:
-        piece = clean_text[c.char_start : c.char_end]
-        assert piece.strip()
+        assert clean_text[c.char_start : c.char_end].strip()
         # Exactly the slice, or exactly the slice inside its fences or under its table header.
-        assert frame_of(c.body, piece) is not None, (c.body[:80], piece[:80])
+        assert rebuilds(c, clean_text), (c.frame, c.body[:80])
+        assert (c.frame == "none") == (c.frame_head == c.frame_tail == "")
 
 
-def test_frame_of_rebuilds_bodies_exactly() -> None:
-    assert frame_of("abc", "abc") == "none"
-    assert frame_of("```py\nx = 1\n```", "x = 1") == "code"
-    assert frame_of("A | B\n`k` | v", "`k` | v") == "table"
-    assert frame_of("A | B\n`k` | rest of v", "rest of v") == "table"
-    assert frame_of("```py\nx = 1\n```", "= 1") is None  # a shifted offset
-    assert frame_of("abc", "bc") is None
-    assert frame_of("A | B\n`k` | v", "| v") is None
+def test_a_shifted_offset_or_a_wrong_frame_does_not_rebuild() -> None:
+    raw = "# H\n\n" + table(4, long_row=2) + "\n\n```py\n" + "x = 1\n" * 80 + "```\n"
+    clean_text = clean_page(raw, fallback_title="x").text
+    chunks = chunk_document("docs/x.md", raw, ChunkConfig(max_tokens=64, overlap_tokens=8)).chunks
+    assert {c.frame for c in chunks} == {"table", "code"} and all(rebuilds(c, clean_text) for c in chunks)
+    for c in chunks:
+        assert not rebuilds(dataclasses.replace(c, char_start=c.char_start + 1), clean_text)
+        assert not rebuilds(dataclasses.replace(c, char_end=c.char_end - 1), clean_text)
+        assert not rebuilds(dataclasses.replace(c, frame_head=""), clean_text)
 
 
 # --- where long paragraphs are cut ---
@@ -331,6 +333,29 @@ def test_a_list_is_cut_at_its_items() -> None:
     items = "\n".join(f"- item {n} explains one setting. It has two sentences." for n in range(20))
     pieces = bodies("# H\n\n" + items + "\n", ChunkConfig(max_tokens=64, overlap_tokens=0))
     assert len(pieces) > 2 and all(p.startswith("- item") for p in pieces)
+
+
+def test_a_hard_wrapped_list_item_stays_together() -> None:
+    items = "\n".join(
+        f"- item {n} sets{' one more' * (n % 4)} shuffle option\n  across two lines. It ends here."
+        for n in range(20)
+    )
+    pieces = bodies("# H\n\n" + items + "\n", ChunkConfig(max_tokens=64, overlap_tokens=0))
+    assert len(pieces) > 2 and all(p.startswith("- item") and p.endswith("ends here.") for p in pieces)
+
+
+def test_e_g_and_i_e_do_not_end_a_sentence() -> None:
+    text = " ".join(f"Set option {n} first, e.g. `spark.x{n}`, or a default, i.e. None." for n in range(12))
+    pieces = bodies(f"# H\n\n{text}\n", ChunkConfig(max_tokens=64, overlap_tokens=0))
+    assert len(pieces) > 2 and all(p.startswith("Set option") and p.endswith("None.") for p in pieces)
+
+
+def test_a_long_row_with_an_empty_first_cell_repeats_only_the_header() -> None:
+    meaning = "Sets the number of shuffle partitions. " * 10
+    page = f"# H\n\nName | Meaning\n--- | ---\n | {meaning.strip()}\n"
+    pieces = bodies(page, ChunkConfig(max_tokens=64, overlap_tokens=8))
+    assert len(pieces) > 1 and all(p.startswith("Name | Meaning\n") for p in pieces)
+    assert not any(p.startswith("Name | Meaning\nSets the number of shuffle partitions. | ") for p in pieces)
 
 
 def test_a_code_fence_that_alone_is_over_budget_raises() -> None:

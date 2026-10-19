@@ -11,6 +11,7 @@ from docs_rag.silver import (
     bronze_violations,
     check_against_stored,
     chunk_docs,
+    conflict_reason,
     fingerprint,
     record_violations,
     stored_violations,
@@ -139,6 +140,20 @@ def test_snapshot_comparison() -> None:
     assert (check.status, check.only_stored, check.only_computed) == ("conflict", 2, 2)
     moved = records(bronze(commit="c2"))
     assert check_against_stored(moved, stored(recs)).status == "conflict"  # same text, another commit
+
+
+def test_a_conflict_names_moved_bronze_before_a_missing_bump() -> None:
+    recs = stored(records())
+    zero = frozenset({"docs/gen.md"})
+    assert "bump CLEANER_VERSION" in conflict_reason(bronze(), recs, zero)  # bronze as stored: the code moved
+    for moved in (
+        bronze(commit="c2"),
+        bronze({**PAGES, "docs/a.md": PAGES["docs/a.md"].replace("First", "1st")}),
+        bronze({**PAGES, "docs/new.md": "# New\n\nText.\n"}),
+        bronze({"docs/gen.md": PAGES["docs/gen.md"]}),  # docs/a.md removed
+    ):
+        reason = conflict_reason(moved, recs, zero)
+        assert reason.startswith("bronze changed") and "docs/gen.md" not in reason, reason
 
 
 # --- determinism ---

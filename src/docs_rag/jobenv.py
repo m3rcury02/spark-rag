@@ -42,8 +42,13 @@ def _version(package: str) -> str | None:
 
 
 def pinned_version(package: str, of: str = "docs-rag") -> str | None:
-    """The exact version `of` pins for `package` (its `package==X` requirement), if any."""
-    for req in importlib.metadata.requires(of) or []:
+    """The exact version `of` pins for `package` (its `package==X` requirement), if any. None also when `of`
+    is not installed, so the environment check reports it instead of crashing before the summary."""
+    try:
+        requirements = importlib.metadata.requires(of) or []
+    except importlib.metadata.PackageNotFoundError:
+        return None
+    for req in requirements:
         name, sep, version = req.partition("==")
         if sep and name.strip().lower() == package and ";" not in version:
             return version.strip()

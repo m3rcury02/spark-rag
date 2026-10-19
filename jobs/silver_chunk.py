@@ -39,6 +39,7 @@ from docs_rag.silver import (
     bronze_violations,
     check_against_stored,
     chunk_docs,
+    conflict_reason,
     fingerprint,
     record_violations,
     silver_schema_ddl,
@@ -174,13 +175,13 @@ def chunk_tag(args: argparse.Namespace, summary: dict[str, Any]) -> None:
         raise RuntimeError("chunking failed its checks: " + "; ".join(problems))
 
     # 3. Compare with what silver already holds for this config and tag.
-    check, _ = compare_with_stored(spark, config, tag, records)
+    check, stored = compare_with_stored(spark, config, tag, records)
     summary["check"] = check.__dict__
     if check.status == "conflict":
         raise RuntimeError(
             f"{tag} is already chunked under config {chunking.config_id} and the fresh chunking differs "
-            f"({check.only_stored} rows only stored, {check.only_computed} only computed): the cleaner or "
-            "chunker changed without a version bump, or bronze changed"
+            f"({check.only_stored} rows only stored, {check.only_computed} only computed): "
+            + conflict_reason(docs, stored, config.zero_chunk_docs)
         )
 
     # 4. The current code must reproduce every other tag stored under this config_id.
@@ -192,14 +193,15 @@ def chunk_tag(args: argparse.Namespace, summary: dict[str, Any]) -> None:
     summary["other_tags_reproduced"] = {}
     for row in others:
         other = row["version_tag"]
-        _, other_records = chunk_bronze(config, other, read_bronze(spark, config, other), args.run_id)
-        other_check, _ = compare_with_stored(spark, config, other, other_records)
+        other_docs = read_bronze(spark, config, other)
+        _, other_records = chunk_bronze(config, other, other_docs, args.run_id)
+        other_check, other_stored = compare_with_stored(spark, config, other, other_records)
         summary["other_tags_reproduced"][other] = other_check.__dict__
         if other_check.status != "identical":
             raise RuntimeError(
                 f"the current code does not reproduce {other} as stored under config {chunking.config_id} "
                 f"({other_check.only_stored} rows only stored, {other_check.only_computed} only computed): "
-                "bump CLEANER_VERSION or CHUNKER_VERSION"
+                + conflict_reason(other_docs, other_stored, config.zero_chunk_docs)
             )
 
     # 5. Insert-only MERGE, skipped when silver already holds exactly this chunking; then read back.
