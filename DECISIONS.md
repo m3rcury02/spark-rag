@@ -122,13 +122,16 @@ identifiers redacted. Commands:
 - **Runtime.** The run got serverless environment `client.2.5` with Python 3.11.10, not 3.12 (see D-005).
 
 **Consequences.**
-- Keep `docs_rag_endpoint`, because Free Edition allows only one endpoint. **Open for the owner (2026-10-18):**
-  the idle endpoint uses 96 DBU a day of an undisclosed quota (see Quota) and is not needed before M5; deleting
-  it now and re-creating it in M5 (about 20 min of provisioning) would remove that risk. **The smoke-test index, table and
-  schema were deleted on 2026-10-15 at the owner's request** with `scripts/m0_cleanup.py`
-  (`runs/m0_cleanup.json`). The endpoint remains, ONLINE, with 0 indexes. `scripts/m0_collect_evidence.py`
-  can no longer be re-run, so `runs/m0_*` is the record. If the real index has to wait for provisioning
-  again, budget about 20 min for it in M5.
+- **The smoke-test index, table and schema were deleted on 2026-10-15 at the owner's request** with
+  `scripts/m0_cleanup.py` (`runs/m0_cleanup.json`). `scripts/m0_collect_evidence.py` can no longer be re-run,
+  so `runs/m0_*` is the record.
+- **The endpoint was deleted on 2026-10-19 at the owner's request** (`scripts/delete_endpoint.py`,
+  `runs/m2_c_delete_idle_endpoint.json`: ONLINE with 0 indexes before, no endpoint listed 0.2 s after the
+  delete). It was kept at first because Free Edition allows only one, but idle it cost 96 DBU a day of an
+  undisclosed quota (see Quota) and nothing needs it before M5. M5 creates it again (STANDARD, same name)
+  right before the real index; budget about 20 min, since the M0 index waited at least 1043 s in
+  `PROVISIONING_ENDPOINT`. Not yet checked: that the 96 DBU a day actually stopped (re-probe
+  `system.billing.usage` more than 24 h after the deletion).
 - Unity Catalog keeps dropped tables recoverable with `UNDROP` and counts them when checking whether a schema
   is empty. A plain `DROP SCHEMA` therefore failed with "not empty" while `SHOW TABLES` returned nothing, and
   the cleanup had to force-drop after checking `SHOW TABLES DROPPED` held only the two smoke-test objects

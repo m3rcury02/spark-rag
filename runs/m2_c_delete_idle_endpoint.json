@@ -1,0 +1,29 @@
+{
+  "label": "m2_c_delete_idle_endpoint",
+  "git_commit": "9b48bdf63bafe86213ad5b5a382dda3deacc5937",
+  "endpoint": "docs_rag_endpoint",
+  "before": {
+    "utc": "2026-10-19T05:26:11Z",
+    "endpoints": [
+      {
+        "name": "docs_rag_endpoint",
+        "type": "STANDARD",
+        "state": "ONLINE",
+        "num_indexes": 0,
+        "created_utc": "2026-10-14T22:57:43.427000+00:00"
+      }
+    ],
+    "indexes_on_endpoint": []
+  },
+  "delete_requested_utc": "2026-10-19T05:26:12Z",
+  "polls": [
+    {
+      "after_s": 0.2,
+      "listed": []
+    }
+  ],
+  "after": {
+    "utc": "2026-10-19T05:26:14Z",
+    "endpoints": []
+  }
+}

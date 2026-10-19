@@ -29,7 +29,8 @@ Read both before starting any milestone.
 
 - Platform: Databricks Free Edition (serverless only), Unity Catalog, Delta.
   Vector index: Databricks **AI Search** (renamed from Vector Search in 2026) —
-  Delta Sync index with self-managed embeddings, on the single endpoint `docs_rag_endpoint`.
+  Delta Sync index with self-managed embeddings, on the single endpoint `docs_rag_endpoint` (deleted while idle
+  on 2026-10-19; M5 creates it again).
   **Status: accepted 2026-10-15** after the workspace smoke test (D-001, evidence in `runs/m0_*`).
 - Python 3.12, managed with `uv`. Every Databricks job pins **serverless environment version 4** (Python
   3.12.3) and asserts it at start-up; with no spec a job got env 2 / Python 3.11 (D-005). The package version
@@ -115,15 +116,16 @@ any M2 work.** Open items:
 - Remote branches `m0-smoke-test` (merged) and `claude/modest-archimedes-mp5zx3` (stale) are still on GitHub:
   the owner approved deleting them, but the session's permission classifier blocked `git push --delete`.
   The owner can delete them in the GitHub UI.
-- Re-probe `system.billing.usage` more than 24 h after a run and save the output under `runs/` (D-001 Quota).
-- Keep `docs_rag_endpoint` (ONLINE, 0 indexes): Free Edition allows only one endpoint.
+- `docs_rag_endpoint` was deleted on 2026-10-19 (idle, 96 DBU/day; D-001). Re-probe `system.billing.usage` more
+  than 24 h later to confirm the endpoint's usage stopped, and save the output under `runs/`.
 - Carry into M2: chunk IDs must be stable across tags (content-addressed within heading sections, see Open
   questions). Silver reads bronze per (version_tag, commit_sha).
 - Carry into M3: the diff baseline is the last *published* (version_tag, commit_sha), never "latest in bronze"
   (D-006). The run log takes add/change/delete counts from our own MERGE metrics; the sync pipeline's row
   metrics are always 0 (D-001). On Databricks a no-op MERGE still writes an empty table version (D-006 run b).
-- Carry into M5: create the real index only after the full gold backfill, because capacity is sized from the
-  source table at creation and a small start limits growth. Re-test insert, update and delete with the real
+- Carry into M5: create the endpoint again first (~20 min of provisioning). Create the real index only after
+  the full gold backfill, because capacity is sized from the source table at creation and a small start limits
+  growth. Re-test insert, update and delete with the real
   MERGE. Sync right after each MERGE and wait for the update to complete ("ready" is not "synced") (D-001).
 
 ## Milestones (status)
