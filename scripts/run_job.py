@@ -27,7 +27,8 @@ from typing import Any
 
 import corpus_fingerprint
 from databricks.sdk import WorkspaceClient
-from databricks.sdk.errors import DatabricksError, NotFound
+from databricks.sdk.errors import NotFound
+from databricks.sdk.errors.base import DatabricksError
 from databricks.sdk.service import catalog, compute, jobs
 from redact import Redactor
 
@@ -143,6 +144,10 @@ def main() -> None:
                 jobs.SubmitTask(
                     task_key="main",
                     environment_key="default",
+                    # Serverless retried every failed task once with the same parameters (runs/m3_a: attempts
+                    # 0 and 1), so a failing job ran twice and logged twice. One run is one attempt here.
+                    max_retries=0,
+                    disable_auto_optimization=True,
                     spark_python_task=jobs.SparkPythonTask(
                         # A script in a Volume needs the dbfs: URI form; a bare /Volumes/... path is looked up
                         # in the workspace file tree: "Cannot read the python file" (runs/m1_a0_*.json).

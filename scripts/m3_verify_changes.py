@@ -85,10 +85,27 @@ def main() -> None:
         {"table": config.run_log_table, "repo": config.source_repo, "sink": config.sink},
     )
     rows = [dict(zip(result["columns"], r, strict=True)) for r in result["rows"]]
-    for r in rows:
-        for name in ("added_paths", "changed_paths", "deleted_paths"):
-            if isinstance(r[name], str):
-                r[name] = json.loads(r[name])
+    for r in rows:  # the statement API returns every value as a string
+        for name, value in r.items():
+            if name.endswith("_paths") and isinstance(value, str):
+                r[name] = json.loads(value)
+            elif (
+                name.startswith(
+                    (
+                        "docs_",
+                        "chunks_",
+                        "from_docs",
+                        "to_docs",
+                        "from_chunks",
+                        "to_chunks",
+                        "tokens_",
+                        "to_tokens",
+                    )
+                )
+                and isinstance(value, str)
+                and value.isdigit()
+            ):
+                r[name] = int(value)
     checks: list[dict[str, Any]] = []
 
     def add(scope: str, name: str, want: Any, got: Any) -> None:
@@ -97,6 +114,8 @@ def main() -> None:
     committed = [r for r in rows if r["status"] == "committed"]
     failed = [r for r in rows if r["status"] == "failed"]
     by_id = {r["run_id"]: r for r in committed}
+    add("log", "run_ids with more than one committed row", 0, len(committed) - len(by_id))
+    attempts = {i: sum(r["run_id"] == i for r in rows) for i in {r["run_id"] for r in rows}}
 
     # The chain: one initial run, each later committed run names the previous one, one head.
     initial = [r for r in committed if r["baseline_run_id"] is None]
@@ -196,6 +215,7 @@ def main() -> None:
         "committed": len(committed),
         "failed": len(failed),
         "chain": [f"{r['from_version_tag'] or '-'} -> {r['to_version_tag']}" for r in order],
+        "rows_per_run_id": {i: n for i, n in sorted(attempts.items()) if n > 1},  # attempts of retried runs
         "checks": checks,
         "all_pass": all(c["pass"] for c in checks),
     }

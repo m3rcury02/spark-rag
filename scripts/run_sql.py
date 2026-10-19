@@ -14,7 +14,7 @@ import time
 from typing import Any
 
 from databricks.sdk import WorkspaceClient
-from databricks.sdk.errors import DatabricksError
+from databricks.sdk.errors.base import DatabricksError
 from databricks.sdk.service.sql import StatementParameterListItem
 from redact import Redactor
 
@@ -38,7 +38,7 @@ def run_statement(
     if state != "SUCCEEDED":
         message = r.status.error.message if r.status and r.status.error else None
         raise SystemExit(f"statement {state}: {message}\n{sql}")
-    cols = [c.name for c in r.manifest.schema.columns] if r.manifest and r.manifest.schema else []
+    cols = [c.name for c in (r.manifest.schema.columns or [])] if r.manifest and r.manifest.schema else []
     rows = list((r.result.data_array if r.result else None) or [])
     chunks = (r.manifest.total_chunk_count if r.manifest else None) or 1
     for n in range(1, chunks):

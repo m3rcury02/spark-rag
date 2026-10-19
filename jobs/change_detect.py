@@ -13,7 +13,8 @@ Steps:
 5. Diff docs (by hash) and chunks (by chunk_id), check that they fit together, and build the row.
 6. Append the row with status 'committed': the job's last write, so a baseline exists only for a run whose
    every step passed. A failure after the Spark session started appends a 'failed' row instead (never a
-   baseline) and re-raises. This job reads bronze and silver and writes only ops_run_log.
+   baseline) and re-raises; a retried attempt of a failed run appends its own row. A retry of a run that
+   already committed writes nothing. This job reads bronze and silver and writes only ops_run_log.
 """
 
 import argparse
@@ -117,6 +118,14 @@ def detect(args: argparse.Namespace, summary: dict[str, Any]) -> None:
     summary["environment"]["spark"] = spark.version
     table = config.run_log_table
     ensure_run_log(spark, table)
+    earlier = spark.sql(
+        "SELECT status FROM IDENTIFIER(:table) WHERE run_id = :run_id",
+        args={"table": table, "run_id": args.run_id},
+    ).collect()
+    summary["earlier_attempts"] = [r["status"] for r in earlier]
+    if any(r["status"] == COMMITTED for r in earlier):  # a retry of a run that already committed: do nothing
+        summary["logged"] = "nothing: an earlier attempt of this run already committed"
+        return
     known: dict[str, Any] = {}  # what a failed row can still record
     try:
         # 2. The baseline: head of the committed chain for this sink.
