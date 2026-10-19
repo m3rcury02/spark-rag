@@ -92,7 +92,7 @@ uv run --with databricks-sdk==0.152.0 python scripts/m1_verify_bronze.py \
 uv run --with databricks-sdk==0.152.0 python scripts/run_job.py \
     --script jobs/silver_chunk.py --label <label> -- --tag v3.5.0 [--max-tokens 128 --overlap-tokens 16]
 uv run --with databricks-sdk==0.152.0 python scripts/m2_verify_silver.py \
-    --label <label> --tags v3.5.0 v4.0.0 v4.0.1
+    --label <label> --tags v3.5.0 v4.0.0 v4.0.1 --job-runs runs/m2_d[1-9]*.json
 # M2 local evidence (git only; Databricks just for redaction): ID stability, corpus numbers, ablation.
 uv run --with databricks-sdk==0.152.0 python scripts/m2_stability.py --label <label> --tags v3.5.0 v4.0.0 v4.0.1
 # Token counts vs the models' own preprocessing (CPU torch from the PyTorch index; ~1 min).
@@ -109,16 +109,11 @@ uv run python scripts/corpus_fingerprint.py --update
 
 ## Next session: pick up here
 
-M2 is in progress on branch `m2-silver` (the owner said "proceed"; M1 is merged). Code, tests, goldens and the
-local evidence are done (D-008, D-009, D-010; `runs/m2_e_stability.json`, `runs/m2_f_tokenizer_parity.json`).
-**Blocked:** since 2026-10-19 05:27Z Databricks refuses every job submit and SQL statement (`runs/m2_d0*`,
-D-001 Quota), so the silver runs have not happened. When compute is back, in this order:
-1. `jobs/silver_chunk.py` for v3.5.0, v4.0.0, v4.0.1 at 254/32 (default), then the same at
-   `--max-tokens 128 --overlap-tokens 16`: labels `m2_d1`..`m2_d6`. Each later run re-chunks the earlier tags.
-2. Re-run one (identical: MERGE skipped). Tamper test with `run_sql.py`: change one stored `embed_text`,
-   re-run (must fail), restore, re-run (identical).
-3. `m2_verify_silver.py --job-runs runs/m2_d[1-9]_*.json`; then fill the pending silver evidence into D-008
-   and D-010, tick M2 and give the owner the M2 report (how to run, what to measure, 5 interview questions).
+M2 is complete on branch `m2-silver` (D-008, D-009, D-010; M2 report given to the owner on 2026-10-19).
+`workspace.docs_rag_dev.silver_chunks` holds 3 tags × 2 configs (254/32 and 128/16). Evidence: silver runs
+`runs/m2_d1`..`m2_d7`, tamper test `m2_d8a`..`m2_d8d`, silver vs git `m2_g`, table history `m2_h`, corpus
+numbers `m2_e`, tokenizer parity `m2_f`; compute refusals and billing `m2_d0*` (D-001 Quota). Do not re-run
+the `m2_d*` labels: they are the record (`run_job.py`/`run_sql.py` now refuse an existing label).
 
 **Do not start M3 until the owner says so.** Open items:
 - Remote branches `m0-smoke-test` (merged) and `claude/modest-archimedes-mp5zx3` (stale) are still on GitHub:
@@ -131,8 +126,10 @@ D-001 Quota), so the silver runs have not happened. When compute is back, in thi
   our own MERGE metrics; the sync pipeline's row metrics are always 0 (D-001). On Databricks a no-op MERGE
   still writes an empty table version (D-006 run b), and Databricks commits its own `OPTIMIZE` versions (D-010):
   never read "we wrote" from a version bump.
+- Owner decides whether to merge `m2-silver` into `main`.
 - Carry into M5: create the endpoint again first (~20 min of provisioning) and delete it when the index is not
-  needed. Create the real index only after the full gold backfill, because capacity is sized from the source
+  needed (idle it bills 4 DBU/h even with no index, against the docs, and likely drains the daily quota:
+  D-001). Create the real index only after the full gold backfill, because capacity is sized from the source
   table at creation and a small start limits growth. Re-test insert, update and delete with the real MERGE.
   Sync right after each MERGE and wait for the update to complete ("ready" is not "synced") (D-001).
 
@@ -140,7 +137,7 @@ D-001 Quota), so the silver runs have not happened. When compute is back, in thi
 
 - [x] M0 — Platform research, scaffold, workspace smoke test (passed 2026-10-14; D-001 accepted)
 - [x] M1 — Bronze ingestion: fetch tag → `bronze_docs`, content hash, idempotent MERGE, tests, CI (2026-10-15; D-006, D-007)
-- [ ] M2 — Silver: Markdown cleaning + section-aware chunking, stable chunk IDs, tests
+- [x] M2 — Silver: Markdown cleaning + section-aware chunking, stable chunk IDs, tests (2026-10-19; D-008, D-009, D-010)
 - [ ] M3 — Change detection (doc + chunk level) and run log; v1 → v2 → re-run
 - [ ] M4 — DQ checks as a gate between silver and gold
 - [ ] M5 — Embeddings + AI Search index sync (only changed chunks embedded)

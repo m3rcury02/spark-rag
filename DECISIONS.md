@@ -111,17 +111,45 @@ identifiers redacted. Commands:
   you exceed your quota, your workspace's compute resources will be shut down and unavailable for the rest of
   the day (and in extreme cases, the rest of the month)"
   ([Free Edition limitations](https://docs.databricks.com/aws/en/getting-started/free-edition-limitations),
-  updated 2026-09-29). Jobs and SQL kept running on 10-15 with the endpoint's 96 DBU on the books, so the
-  quota was not exceeded that day; whether endpoint usage counts towards it at all is unknown.
-  **On 2026-10-19 the workspace refused all compute**, from 05:27Z: a job submit got "Triggering new runs for
-  organization <workspace-id> is currently disabled temporarily" (`runs/m2_d0b_*`) and a SQL statement "The
-  request could not be processed by the warehouse" (`runs/m2_d0_*`), while the status page showed all
-  services operational. Nothing of ours had run that day; the endpoint had been billed about 96 DBU a day
-  since 10-15. A community answer (not Databricks documentation) reads this message as the Free Edition quota
-  being used up. If so, the quota is not simply per day, since 10-15 and 10-18 ran after more endpoint usage
-  than 10-19 had by 05:27Z. Inference, not proof: the quota is not visible. The endpoint was deleted at
-  05:26Z, a minute before the first refusal; that the deletion caused the refusal is unlikely but not ruled
-  out. Lesson for M5–M6: create the endpoint only for the hours an index is needed, then delete it.
+  updated 2026-09-29). The amount, the metric, the day boundary and the reset time are not published, and no
+  banner, meter or warning is documented (same page; Free Edition has no account console, where the Usage
+  page lives).
+  **An idle endpoint is billed even with no index**, against the
+  [cost guide](https://docs.databricks.com/aws/en/ai-search/cost-management) (read 2026-10-19), which says an
+  endpoint stops incurring charges 24 h after its last index is deleted. The smoke index was gone by
+  2026-10-15 09:44:39Z (`runs/m0_cleanup.json`), yet the endpoint billed 4.0000 DBU in every hour through
+  the 10-19 03:00Z hour (`runs/m2_d0d_billing_hourly.json`), until we deleted the endpoint itself.
+  **On 2026-10-19 the workspace refused all compute for a while.** A job submit at about 05:27Z was refused
+  (seen in the terminal, not saved: refusals were recorded only from 05:30Z). The saved refusals are a SQL
+  statement at 05:30:43Z, "The request could not be processed by the warehouse" (`runs/m2_d0_*`), and a job
+  submit at 05:31:49Z, "Triggering new runs for organization <workspace-id> is currently disabled
+  temporarily" (`runs/m2_d0b_*`). The next attempt, a SQL probe at 07:57:55Z, succeeded (`runs/m2_d0c_*`),
+  and the silver jobs ran from 08:00Z. When compute came back between those times is unknown. The status
+  page showed all services operational (observed, not saved). The endpoint had been deleted at 05:26:12Z,
+  about 4.5 min before the first saved refusal (`runs/m2_d0b`, `runs/m2_c`). That the deletion caused the
+  refusal is unlikely, but it is not ruled out.
+  - *What the message means (reported, not documented).* A Databricks employee answering this exact jobs
+    message on Free Edition
+    ([forum, 2026-10-14](https://community.databricks.com/t5/administration-architecture/can-i-run-jobs-continuously-without-interruption-on-a-permanent/td-p/168057))
+    says it "doesn't say why"; the fair-usage quota is the most likely cause, and a block that outlasts the
+    daily reset is a workspace or account issue. Users who hit the quota in the UI report an explicit
+    "you have hit your free daily limit" message
+    ([forum](https://community.databricks.com/t5/administration-architecture/you-have-hit-your-free-daily-limit/td-p/159849)),
+    and the same jobs string also hit a paid Azure workspace
+    ([Microsoft Q&A](https://learn.microsoft.com/en-us/answers/questions/5509182/unable-to-start-job-runs-and-start-cluster-in-azur)).
+    So the quota is the likely cause, not a proven one.
+  - *Which quota model fits (inference from one event, hourly billing in `runs/m2_d0d`).* Counted on the UTC
+    day, a job was accepted on 10-15 at 21:25Z after at least 91.2 DBU, yet refused on 10-19 after about
+    21.8 DBU (16.0 billed through the 03:00Z hour plus the unbilled endpoint hours). A fixed daily threshold
+    on the UTC day fits only if enforcement lags by hours. Counted on the US Pacific day (midnight = 07:00Z
+    under PDT), the 10-15 job came after about 63.3 DBU (61.58 billed through the 20:00Z hour) and the
+    refusal after about 90.5 DBU (84.73 billed through the 03:00Z hour, plus about 5.7 unbilled), and compute
+    was back after the next 07:00Z. A daily quota of roughly 63–90 DBU on the Pacific day fits every
+    observation, but only if endpoint DBUs count: without them, nothing but 0.73 DBU of SQL had run in the
+    window. That makes the idle endpoint the likely trigger, but it rests on one event.
+  - *Consequence.* An idle endpoint (4 DBU/h, about 96 DBU a day) is enough to plausibly exhaust the daily
+    quota on its own. M5–M6 create the endpoint only for the hours an index is needed and delete it after;
+    `run_job.py` records a refused submit in `runs/`, and the run is retried later by hand.
 - **Row counts.** The sync pipeline's `num_output_rows` is 0 for every update, including the initial 5-row
   sync, so it cannot tell us how many rows changed. The M3 run log must take add/change/delete counts from
   our own MERGE metrics.
@@ -136,8 +164,8 @@ identifiers redacted. Commands:
   so `runs/m0_*` is the record.
 - **The endpoint was deleted on 2026-10-19 at the owner's request** (`scripts/delete_endpoint.py`,
   `runs/m2_c_delete_idle_endpoint.json`: ONLINE with 0 indexes before, no endpoint listed 0.2 s after the
-  delete). It was kept at first because Free Edition allows only one, but idle it cost 96 DBU a day of an
-  undisclosed quota (see Quota) and nothing needs it before M5. M5 creates it again (STANDARD, same name)
+  delete). It was kept at first because Free Edition allows only one, but idle it billed 96 DBU a day, which
+  likely counts against the undisclosed quota (see Quota), and nothing needs it before M5. M5 creates it again (STANDARD, same name)
   right before the real index; budget about 20 min, since the M0 index waited at least 1043 s in
   `PROVISIONING_ENDPOINT`. Not yet checked: that the 96 DBU a day actually stopped (re-probe
   `system.billing.usage` more than 24 h after the deletion).
@@ -398,14 +426,16 @@ token, so a 99-character table border costs 99 tokens.
   `include_example` becomes `[example: <file>(, <label>)]`; the example code is not loaded (bronze holds `docs/`
   only). `{{ site.X }}` stays literal: substituting the release version would change every page that mentions
   it, in every release, and so its chunk IDs.
-- **Code is masked first** (CommonMark fences, `<pre>`/`<xmp>`, inline spans), because code is full of `<...>`
-  that is not HTML. A **conservation check** raises if masked code is missing from the output, except code
+- **Code is masked before any HTML or Markdown rule** (CommonMark fences, `<pre>`/`<xmp>`, inline spans),
+  because code is full of `<...>` that is not HTML. Liquid, hidden `d-none` blocks and the MathJax preamble are
+  handled on the raw page before that, as Jekyll does, so Liquid inside code is processed too. A **conservation check** raises if masked code is missing from the output, except code
   inside markup that is dropped on purpose (HTML comments, `<style>`/`<script>`, image alt text, reference
   definitions). Cleaning may move code, never lose it.
 - **HTML.** Only real tag names are stripped (an allowlist, matched to a name boundary, so `<col-name>` in prose
   stays). `<style>`/`<script>` go with their content. Tables are rendered innermost first as GFM tables (header
   and `---` delimiter when the first row is all `<th>`): `rowspan` cells are repeated into the rows they cover,
-  `colspan` keeps the column count, a caption becomes a line above, list items in a cell are joined, a nested
+  `colspan` keeps the column count unless the spanning cell ends its row (trailing empty cells are dropped, so
+  such a row has fewer cells), a caption becomes a line above, list items in a cell are joined, a nested
   table is written inline in its cell, one-line code in a cell stays inline and longer code follows the table, a
   one-column table keeps its pipes. A table with no `<tr>` is a layout table and is unwrapped. Language tabs
   become a `<lang>:` label line.
@@ -442,8 +472,9 @@ of the Scala tab, because tabs become plain label lines.
 - **Date:** 2026-10-19 · **Status:** Accepted (evidence: `runs/m2_e_stability.json`,
   `runs/m2_f_tokenizer_parity.json`)
 
-**Context.** The brief asks for section-aware chunking with overlap and stable chunk IDs; M6 compares 2 chunk
-sizes × 2 models. all-MiniLM-L6-v2 truncates at 256 word-pieces and bge-small-en-v1.5 at 512
+**Context.** The brief asks for stable chunk IDs, section-heading metadata and configurable size and overlap;
+chunking *within* sections is our choice (the M2 milestone line in CLAUDE.md), tested below against a
+whole-page baseline. M6 compares 2 chunk sizes × 2 models. all-MiniLM-L6-v2 truncates at 256 word-pieces and bge-small-en-v1.5 at 512
 (`max_seq_length` in the parity run). Both ship the same vocab.txt (sha256 `07eced37…`, recorded per model in
 the parity run), vendored in `src/docs_rag/data/`.
 
@@ -466,8 +497,9 @@ packing within heading sections (chosen); (4) content-defined boundaries.
 - **Every chunk body is a verbatim slice of the cleaned page** (`char_start/char_end`), except inside a frame:
   a split code block gives slices of its inner lines inside the block's fences; a table too big for one chunk
   gives **one chunk per row under its header row** (a long row's later pieces also carry its first cell). Rows
-  never share a chunk. Each chunk carries its frame, and `body == frame_head + slice + frame_tail` is checked
-  exactly (`chunk.rebuilds`; the frames are not stored in silver).
+  never share a chunk. Each chunk carries its frame, and `chunk_document` raises unless
+  `body == frame_head + clean_text[char_start:char_end] + frame_tail` for every chunk, so every silver run
+  enforces it (the frames themselves are not stored in silver).
 - Overlap is best effort: the previous chunk's last ≤ overlap tokens, starting after whitespace (at a line start
   in code), never out of a whole code block and never from one frame into anything else.
 - No merging of tiny sections; headings with no body give no chunk.
@@ -490,8 +522,9 @@ packing within heading sections (chosen); (4) content-defined boundaries.
   692,251 embedded tokens instead of 661,190 (+4.7%), median chunk 108 tokens instead of 192. A cost paid for
   self-contained rows; M6 tells whether it buys retrieval quality.
 - Overlap (`behaviour`, 254/32, v4.0.1): of 3,721 places where one chunk follows another in the same section,
-  1,027 prose joins overlap, 18 meet at a paragraph break and 1 inside a paragraph without overlap; the other
-  2,675 are at code blocks or table rows, where no overlap is taken by design.
+  1,027 prose joins overlap, 18 meet at a paragraph break and 1 inside a paragraph without overlap; 127 are at
+  a whole code block (never overlapped); 2,548 involve a split code block or table row, of which 278 overlap
+  (inside one split block or one long row) and 2,270 do not (a new row, or across frames, by design).
 
 **What section-awareness does and does not buy (honest).** v3.5.0 → v4.0.0 (`transitions` key; 96 modified
 docs):
@@ -504,10 +537,15 @@ docs):
 | chunks wholly inside unchanged sections, kept (254 / 128) | 1,725/1,725 · 3,124/3,124 | 756/764 · 1,881/1,893 |
 
 - Section-awareness **does not reduce re-embedding cost**; at 128/16 it costs 19% more, because a doc gives more,
-  smaller chunks and each carries a longer breadcrumb. What it buys is locality: an edit never changes a chunk
-  in another section, while the baseline lost 8 and 12 such chunks.
-- Its largest single cost is tables: 338 lost IDs at 254/32 (340 at 128/16) are rows whose own text is
-  unchanged but whose header row changed, so every row of the table re-embeds.
+  smaller chunks and each carries a longer breadcrumb. What it buys is locality: an edit to a section's text
+  never changed a chunk of a section whose heading path and text are both unchanged (all kept), while the
+  baseline lost 8 and 12 such chunks. A heading or title rename does change every chunk beneath it, because the
+  breadcrumb is part of the ID: 27 lost IDs at 254/32 (45 at 128/16) for v3.5.0 → v4.0.0, and 6 of the 8 lost
+  at 254/32 for v4.0.0 → v4.0.1 (the `breadcrumb rename` buckets).
+- The largest cause of lost IDs whose own text did not change is table headers: 329 table rows at both sizes
+  lost their ID only because their header row changed (`table row: own text unchanged, frame edited`), so
+  every row of such a table re-embeds. The baseline shares this cost (same packer, same row rule). Split code
+  pieces that lost their ID with unchanged text (9 and 11) are boundary shifts, not fence edits.
 - v4.0.0 → v4.0.1 (a patch release, 4 modified docs) is almost the same for both: 21 vs 19 new IDs at 254/32.
 - Unchanged docs keep identical chunk IDs in both transitions (97/97 and 208/208).
 
@@ -526,9 +564,10 @@ not ID stability or embedding cost. If M6 shows no gain, the whole-page baseline
   vocab)[:16]` keys silver rows only.
 - `silver_chunks` is keyed `(config_id, source_repo, version_tag, chunk_id)`, with one immutable chunking per
   `(config_id, tag)`, the bronze pattern: identical → MERGE skipped; different → the run fails, and names
-  bronze moving under the stored rows before a missing version bump. Every run recomputes every stored row's
-  chunk_id, embed text, n_tokens and versions, and **re-chunks every other stored tag of the config from bronze,
-  which must reproduce exactly**, before writing. Off-grid configs are refused. A doc without chunks fails the
+  bronze moving under the stored rows before a missing version bump. Every run rechecks every stored row of its
+  config (chunk_id recomputed from path, section path, embed text and occurrence; embed text = breadcrumb +
+  body; n_tokens recounted; versions and sizes) and **re-chunks every other stored tag of the config from
+  bronze, which must reproduce exactly**, before writing. Rows of other configs are not rechecked. Off-grid configs are refused. A doc without chunks fails the
   run unless it is in `Config.zero_chunk_docs`.
 - **Version discipline.** Golden files are never overwritten: fixture text, fixture chunks, and the real corpus
   (`tests/golden/corpus_c<cleaner>_k<chunker>.json`, checked in CI and by `run_job.py` before every silver job).
@@ -544,21 +583,27 @@ not ID stability or embedding cost. If M6 shows no gain, the whole-page baseline
 - Tamper (`m2_d8a`..`m2_d8d`): one character appended to one stored v3.5.0 `embed_text`
   (`docs/index.md` chunk 0). The next run, **of v4.0.1**, failed before writing: "stored silver rows of
   v3.5.0 fail their recheck: … chunk_id does not match its content; … embed_text is not breadcrumb + body;
-  … n_tokens 227 is wrong". After the restore the same run was identical and wrote nothing (version 9 → 9).
+  … n_tokens 227 is wrong or over 254". After the restore the same run was identical and wrote nothing (version 9 → 9).
 - Silver vs a local chunking of git (`m2_g`): all six (tag, config) agree row for row on path, chunk_id,
   chunk_index, n_tokens, occurrence, offsets, section_path, the sha256 of body and embed text, the doc hashes,
-  commit and versions; every local body rebuilds from its offsets; and each job's fingerprint, computed on
-  serverless aarch64, equals this machine's (x86_64). Chunk IDs do not depend on the machine.
-- **Table versions are not only ours.** Version 6 is an `OPTIMIZE` with `auto: true` (34 files into 1) that
-  Databricks ran at 08:11:02Z between runs 5 and 6, and version 10 another `OPTIMIZE` (`auto: false`) at
+  commit and versions; every local body rebuilds from its offsets; and the fingerprint recorded by each of the
+  nine silver jobs (`job_runs_compared`, the failed tamper run included), computed on serverless aarch64,
+  equals this machine's (x86_64). So the chunk IDs did not depend on these two machines.
+- The runs span four wheel builds (0.0.1.dev46, dev47, dev49, dev51) because the version comes from git and
+  runs/ commits landed between runs. The code was the same: `git diff 2788b57 e841d54 -- src jobs
+  pyproject.toml uv.lock` is empty.
+- **Table versions are not only ours.** Version 6 is an `OPTIMIZE` with `auto: true` (34 files into 1,
+  exactly the files MERGEs 1-5 added) at 08:11:02Z, 5 s after run 5's MERGE and while run 5 was still running;
+  `auto: true` marks auto compaction, which our MERGE most likely triggered (inference). Version 10 another `OPTIMIZE` (`auto: false`) at
   08:27:24Z after our last run (`runs/m2_h_silver_table_history.json`). We never run OPTIMIZE; that the second
   one is predictive optimization (a `PREDICTIVE_OPTIMIZATION` line also shows in billing on 10-15) is
   inference. Our runs read the version right before their MERGE (`runs/m2_d6` starts from
   `version_before_merge: 6`), so neither did harm; M3 must never infer "we wrote" from a version bump.
 
 **Why the corpus golden.** A cleaner or chunker change that passes every unit test can still change silver
-rows (the last cleaner round did, D-008). Silver keys by config_id, so without the check a changed chunking
-would be stored under the old version's key and mixed with rows from the old code.
+rows (the last cleaner round did, D-008). The job's re-chunk of the other stored tags catches most such
+changes, but not for the first tag stored under a config or a change that touches only the new tag's pages.
+The corpus golden closes those cases, and it fails in CI, before any Databricks run.
 
 **Consequences.**
 - M3: the diff baseline is the last *published* (tag, commit) per config (D-006). Chunk-level change = added
@@ -576,8 +621,8 @@ would be stored under the old version's key and mixed with rows from the old cod
   WordPiece units, and the parity run shows no chunk of either config over either model's limit. M4 keeps the
   check as a DQ rule: a chunk is oversized when `n_tokens + 2` exceeds the embedding model's `max_seq_length`.
 - **M3 — chunk ID stability.** *Answered in M2 (D-009, D-010):* content-addressed IDs within heading sections
-  are local (an edit never changes a chunk in another section), but they do not cut re-embedding cost against
-  a whole-page baseline. M3 counts chunk-level change as added and removed chunk_ids.
+  are local (an edit to a section's text leaves other sections' chunks alone; a heading rename re-IDs the
+  chunks beneath it), but they do not cut re-embedding cost against a whole-page baseline. M3 counts chunk-level change as added and removed chunk_ids.
 - **M4 — row-count drift threshold.** v3.5.0 → v4.0.0 legitimately removes 32 net docs (−13%). A
   hard-fail drift check needs a threshold plus an explicit, logged override. Otherwise it fires on
   every major release and someone disables it.
