@@ -113,6 +113,15 @@ identifiers redacted. Commands:
   ([Free Edition limitations](https://docs.databricks.com/aws/en/getting-started/free-edition-limitations),
   updated 2026-09-29). Jobs and SQL kept running on 10-15 with the endpoint's 96 DBU on the books, so the
   quota was not exceeded that day; whether endpoint usage counts towards it at all is unknown.
+  **On 2026-10-19 the workspace refused all compute**, from 05:27Z: a job submit got "Triggering new runs for
+  organization <workspace-id> is currently disabled temporarily" (`runs/m2_d0b_*`) and a SQL statement "The
+  request could not be processed by the warehouse" (`runs/m2_d0_*`), while the status page showed all
+  services operational. Nothing of ours had run that day; the endpoint had been billed about 96 DBU a day
+  since 10-15. A community answer (not Databricks documentation) reads this message as the Free Edition quota
+  being used up. If so, the quota is not simply per day, since 10-15 and 10-18 ran after more endpoint usage
+  than 10-19 had by 05:27Z. Inference, not proof: the quota is not visible. The endpoint was deleted at
+  05:26Z, a minute before the first refusal; that the deletion caused the refusal is unlikely but not ruled
+  out. Lesson for M5–M6: create the endpoint only for the hours an index is needed, then delete it.
 - **Row counts.** The sync pipeline's `num_output_rows` is 0 for every update, including the initial 5-row
   sync, so it cannot tell us how many rows changed. The M3 run log must take add/change/delete counts from
   our own MERGE metrics.
@@ -373,20 +382,184 @@ tests now cover both truncation kinds and a real `git archive`.
 
 ---
 
+## D-008 — Cleaning: Jekyll pages to plain Markdown text
+
+- **Date:** 2026-10-19 · **Status:** Accepted (local evidence in `runs/m2_e_stability.json`; the silver-job
+  residue figures are pending, see D-010 Status)
+
+**Context.** The Spark docs are Jekyll pages: YAML front matter, Liquid tags, raw HTML (config tables, language
+tabs, layout tables, hidden divs), kramdown extras and Markdown links. A chunk is both what the model embeds and
+what an answer cites, so leftover markup costs twice. BERT's tokenizer makes every punctuation character a
+token, so a 99-character table border costs 99 tokens.
+
+**Decision.** `docs_rag.clean.clean_page`, a fixed sequence of steps (module docstring), versioned by
+`CLEANER_VERSION`:
+- **Liquid from an explicit table.** An unknown tag raises, so a new Spark tag fails the run instead of leaking.
+  `include_example` becomes `[example: <file>(, <label>)]`; the example code is not loaded (bronze holds `docs/`
+  only). `{{ site.X }}` stays literal: substituting the release version would change every page that mentions
+  it, in every release, and so its chunk IDs.
+- **Code is masked first** (CommonMark fences, `<pre>`/`<xmp>`, inline spans), because code is full of `<...>`
+  that is not HTML. A **conservation check** raises if masked code is missing from the output, except code
+  inside markup that is dropped on purpose (HTML comments, `<style>`/`<script>`, image alt text, reference
+  definitions). Cleaning may move code, never lose it.
+- **HTML.** Only real tag names are stripped (an allowlist, matched to a name boundary, so `<col-name>` in prose
+  stays). `<style>`/`<script>` go with their content. Tables are rendered innermost first as GFM tables (header
+  and `---` delimiter when the first row is all `<th>`): `rowspan` cells are repeated into the rows they cover,
+  `colspan` keeps the column count, a caption becomes a line above, list items in a cell are joined, a nested
+  table is written inline in its cell, one-line code in a cell stays inline and longer code follows the table, a
+  one-column table keeps its pipes. A table with no `<tr>` is a layout table and is unwrapped. Language tabs
+  become a `<lang>:` label line.
+- **Markdown.** Links keep their text (titles in all three forms, `<url>` targets, one level of parentheses,
+  wrapped and unterminated URLs); images, reference definitions, kramdown `{:...}` lines, the TOC bullet and
+  `***`/`___` rules go; footnotes become `Note: ...`; `<br>` inside a pipe-table row is a space.
+- **Borders.** Runs of 4+ `-`/`=` on border-only lines are shortened to 3, inside code too. A MathJax macro
+  preamble is dropped.
+- **Residue gate.** The silver run fails if any count is non-zero: Liquid outside code; real HTML element names
+  (counted before entities are unescaped, so `&lt;U&gt;` in prose is not a tag); link syntax; table delimiter
+  rows without a one-line header row (the chunker could not repeat that header).
+
+**Evidence** (`runs/m2_e_stability.json`, 254/32, v4.0.1; the `ablations` key reruns the corpus with one rule
+off):
+- Border shortening removes 25,485 of 601,105 cleaned tokens (4.2%): tokens on border-only lines drop from
+  41,250 to 15,765. Embedded tokens drop from 720,005 to 692,251 (3.9%), chunks from 5,609 to 5,462.
+- An implementation review (2026-10-18) and a fix-verification pass (2026-10-19) found real-page constructs the
+  first version mishandled. The worst was a layout table whose code was silently dropped; that led to the
+  conservation check. Each fix has a unit test, often on a quoted page structure (`tests/test_clean.py`).
+- The unit fixtures could not hold every construct: the last round of fixes changed the real corpus
+  (`scripts/corpus_fingerprint.py` failed) but not the fixture goldens (`git show --stat 6e5accf`: of the
+  goldens, only `corpus_c1_k1.json` changed). Hence the corpus golden (D-010).
+
+**Kept as is, on purpose (M6 questions, not M2 work).** Language tabs repeat near-identical prose; example
+pointers carry no code; stub pages ("This document has moved here.") are one small chunk each. Each is a
+retrieval-quality question for M6's recall@5/MRR, and changing one later is a version bump, not a redesign.
+Known limitation: on one page (spark-connect-overview.md) a heading inside the Python tab also heads the start
+of the Scala tab, because tabs become plain label lines.
+
+## D-009 — Chunking: section-aware, token-bounded, verbatim slices
+
+- **Date:** 2026-10-19 · **Status:** Accepted (evidence: `runs/m2_e_stability.json`,
+  `runs/m2_f_tokenizer_parity.json`)
+
+**Context.** The brief asks for section-aware chunking with overlap and stable chunk IDs; M6 compares 2 chunk
+sizes × 2 models. all-MiniLM-L6-v2 truncates at 256 word-pieces and bge-small-en-v1.5 at 512
+(`max_seq_length` in the parity run). Both ship the same vocab.txt (sha256 `07eced37…`, recorded per model in
+the parity run), vendored in `src/docs_rag/data/`.
+
+**Options.** (1) fixed-size windows over the page; (2) greedy packing over the whole page (the "whole-page
+baseline" below: same cleaner and packer, the page is one section, the breadcrumb is the title); (3) greedy
+packing within heading sections (chosen); (4) content-defined boundaries.
+
+**Decision.**
+- Sizes are in **the models' own units**: WordPiece counts from the vendored vocab (`tokenizers==0.23.3`, pinned
+  and checked by the job). `max_tokens` bounds the whole embed text `<breadcrumb>\n\n<body>`, with breadcrumb
+  `title > h1 > h2 ...`; every `n_tokens` is a recount. Grid for M6: **254/32 and 128/16**: both fit MiniLM's
+  256 positions with [CLS] and [SEP], with the same 12.5% overlap. 254 is beyond the 128 tokens MiniLM was
+  trained on ("The sequence length was limited to 128 tokens", its
+  [model card](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2), read 2026-10-19); whether that
+  hurts is what the 128 config tests.
+- Units are paragraphs, GFM tables and fenced code blocks. A unit that fits stays whole. One that does not is
+  split: prose at sentence ends first (its line breaks are the source's hard wrapping; "e.g."/"i.e." do not end
+  a sentence), a list at its item starts, code at its lines; then lines, sentences and word starts. Pieces
+  leave room for the overlap tail.
+- **Every chunk body is a verbatim slice of the cleaned page** (`char_start/char_end`), except inside a frame:
+  a split code block gives slices of its inner lines inside the block's fences; a table too big for one chunk
+  gives **one chunk per row under its header row** (a long row's later pieces also carry its first cell). Rows
+  never share a chunk. Each chunk carries its frame, and `body == frame_head + slice + frame_tail` is checked
+  exactly (`chunk.rebuilds`; the frames are not stored in silver).
+- Overlap is best effort: the previous chunk's last ≤ overlap tokens, starting after whitespace (at a line start
+  in code), never out of a whole code block and never from one frame into anything else.
+- No merging of tiny sections; headings with no body give no chunk.
+- **Tried and dropped:** moving a dangling lead-in line ("python:", "For example:") to the next chunk. In a dry
+  run the overlap already repeated most of them at the start of the next chunk (output not saved, so no figure
+  here); the rule was removed.
+
+**Evidence.**
+- Corpus (`tags` key; 254/32 then 128/16): 5,589 / 5,449 / 5,462 and 8,701 / 8,822 / 8,845 chunks for v3.5.0 /
+  v4.0.0 / v4.0.1. Every chunk rebuilds exactly from its offsets and frame (`chunks_by_frame` has no mismatch).
+  One doc has no chunks: `docs/sql-ref-functions-builtin.md`, which is only headings over generated
+  includes (`{% include_api_gen ... %}`, not in bronze; `Config.zero_chunk_docs`).
+- Token parity (`runs/m2_f_tokenizer_parity.json`): every distinct embed text of both configs and all three tags
+  (13,655) through each model's own `preprocess`: 0 mismatches against `n_tokens + 2`, for both models. The
+  longest input is 256 positions; 72 texts are exactly at MiniLM's limit and none is over it, so no chunk is
+  truncated.
+- Overhead: at 254/32 the model embeds 692,251 tokens for 575,620 cleaned tokens (v4.0.1), 20% more, from
+  breadcrumbs, overlap and frames; at 128/16, 780,970 (36% more).
+- One-chunk-per-row tables (`table_rows_off` ablation, 254/32, v4.0.1): 5,462 chunks instead of 3,908 and
+  692,251 embedded tokens instead of 661,190 (+4.7%), median chunk 108 tokens instead of 192. A cost paid for
+  self-contained rows; M6 tells whether it buys retrieval quality.
+- Overlap (`behaviour`, 254/32, v4.0.1): of 3,721 places where one chunk follows another in the same section,
+  1,027 prose joins overlap, 18 meet at a paragraph break and 1 inside a paragraph without overlap; the other
+  2,675 are at code blocks or table rows, where no overlap is taken by design.
+
+**What section-awareness does and does not buy (honest).** v3.5.0 → v4.0.0 (`transitions` key; 96 modified
+docs):
+| | section-aware | whole-page baseline |
+|---|---|---|
+| 254/32: share of a's tokens kept | 74.25% | 72.95% |
+| 254/32: new tokens to embed | 215,764 | 210,243 (2.6% fewer) |
+| 128/16: share of a's tokens kept | 76.06% | 77.34% |
+| 128/16: new tokens to embed | 231,382 | 194,390 (16% fewer) |
+| chunks wholly inside unchanged sections, kept (254 / 128) | 1,725/1,725 · 3,124/3,124 | 756/764 · 1,881/1,893 |
+
+- Section-awareness **does not reduce re-embedding cost**; at 128/16 it costs 19% more, because a doc gives more,
+  smaller chunks and each carries a longer breadcrumb. What it buys is locality: an edit never changes a chunk
+  in another section, while the baseline lost 8 and 12 such chunks.
+- Its largest single cost is tables: 338 lost IDs at 254/32 (340 at 128/16) are rows whose own text is
+  unchanged but whose header row changed, so every row of the table re-embeds.
+- v4.0.0 → v4.0.1 (a patch release, 4 modified docs) is almost the same for both: 21 vs 19 new IDs at 254/32.
+- Unchanged docs keep identical chunk IDs in both transitions (97/97 and 208/208).
+
+So the case for sections is retrieval quality (coherent chunks with a precise breadcrumb), which M6 measures,
+not ID stability or embedding cost. If M6 shows no gain, the whole-page baseline is the simpler choice.
+
+## D-010 — Chunk identity and the silver contract
+
+- **Date:** 2026-10-19 · **Status:** Accepted for the design. **The silver-job evidence is pending:** Databricks
+  refused every job submit and SQL statement on 2026-10-19 from 05:27Z (`runs/m2_d0*`; see D-001 Quota)
+
+**Decision.**
+- `chunk_id = sha256(json[path, section_path, embed_text, occurrence])[:32]`: content-addressed, with nothing
+  tag-, position- or config-specific. An unchanged section keeps its IDs in every tag; any change to the
+  embedded text, breadcrumb included, gives a new ID. `config_id = sha256(cleaner, chunker, max, overlap,
+  vocab)[:16]` keys silver rows only.
+- `silver_chunks` is keyed `(config_id, source_repo, version_tag, chunk_id)`, with one immutable chunking per
+  `(config_id, tag)`, the bronze pattern: identical → MERGE skipped; different → the run fails, and names
+  bronze moving under the stored rows before a missing version bump. Every run recomputes every stored row's
+  chunk_id, embed text, n_tokens and versions, and **re-chunks every other stored tag of the config from bronze,
+  which must reproduce exactly**, before writing. Off-grid configs are refused. A doc without chunks fails the
+  run unless it is in `Config.zero_chunk_docs`.
+- **Version discipline.** Golden files are never overwritten: fixture text, fixture chunks, and the real corpus
+  (`tests/golden/corpus_c<cleaner>_k<chunker>.json`, checked in CI and by `run_job.py` before every silver job).
+  Changed output needs a version bump, which gives a new config_id and new rows; a new grid config or tag only
+  adds entries. Version 1's goldens were recreated during M2 before anything was published to silver.
+
+**Why the corpus golden.** A cleaner or chunker change that passes every unit test can still change silver
+rows (the last cleaner round did, D-008). Silver keys by config_id, so without the check a changed chunking
+would be stored under the old version's key and mixed with rows from the old code.
+
+**Consequences.**
+- M3: the diff baseline is the last *published* (tag, commit) per config (D-006). Chunk-level change = added
+  and removed chunk_ids; there is no chunk-level "changed".
+- M5: gold and the index carry only chunk-determined columns (path, section_path, embed_text, n_tokens,
+  offsets, vector, model); the gold MERGE is insert/delete only and asserts numUpdatedRows = 0; what to embed =
+  chunk_ids not yet in gold.
+- M6: label answers as (path, section_path, verbatim quote), resolve the quote to every occurrence in the
+  cleaned text (the offsets name its coordinate system, `CLEANER_VERSION`), and count a chunk relevant if its
+  slice overlaps any occurrence.
+
 ## Open questions (decide in the milestone noted)
 
-- **M2/M5 — chunk size vs model context.** `all-MiniLM-L6-v2` truncates input at 256 word-pieces.
-  `bge-small-en-v1.5` truncates at 512. Any chunk longer than the model's limit is silently truncated,
-  which would confound the chunk-size × model comparison. "Oversized chunk" (DQ) should be defined as
-  *longer than the embedding model's max sequence length, in that model's tokenizer*.
-- **M3 — chunk ID stability.** Fixed-size windows shift when text is inserted upstream. Plan: chunk
-  within heading sections and use content-addressed chunk IDs, so an edit only re-embeds chunks in the
-  section it touches.
+- **M2/M5 — chunk size vs model context.** *Answered in M2 (D-009):* sizes are counted in the models' own
+  WordPiece units, and the parity run shows no chunk of either config over either model's limit. M4 keeps the
+  check as a DQ rule: a chunk is oversized when `n_tokens + 2` exceeds the embedding model's `max_seq_length`.
+- **M3 — chunk ID stability.** *Answered in M2 (D-009, D-010):* content-addressed IDs within heading sections
+  are local (an edit never changes a chunk in another section), but they do not cut re-embedding cost against
+  a whole-page baseline. M3 counts chunk-level change as added and removed chunk_ids.
 - **M4 — row-count drift threshold.** v3.5.0 → v4.0.0 legitimately removes 32 net docs (−13%). A
   hard-fail drift check needs a threshold plus an explicit, logged override. Otherwise it fires on
   every major release and someone disables it.
 - **M6 — relevance labels must not depend on chunking.** Gold answers are labelled as
-  (doc path, section) plus an answer span. A retrieved chunk counts as relevant if it overlaps the
-  span. Otherwise chunk sizes cannot be compared. With n=50, the 95% CI half-width on recall@5 is
+  (doc path, section) plus an answer span, given as a verbatim quote of the cleaned text (D-010). A retrieved
+  chunk counts as relevant if its slice overlaps an occurrence of the quote. Otherwise chunk sizes cannot be compared. With n=50, the 95% CI half-width on recall@5 is
   ±8.3 / ±11.1 / ±13.9 points at recall 0.9 / 0.8 / 0.5 (normal approximation, 1.96·√(p(1−p)/50)),
   so we report bootstrap CIs and paired differences, not just point estimates.
