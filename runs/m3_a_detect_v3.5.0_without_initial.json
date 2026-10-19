@@ -1,0 +1,45 @@
+{
+  "meta": {
+    "label": "m3_a_detect_v3.5.0_without_initial",
+    "git_commit": "9cde444e837ac523b72598f2826d322500de6c66",
+    "script": "jobs/change_detect.py",
+    "job_args": [
+      "--tag",
+      "v3.5.0"
+    ],
+    "target": "workspace.docs_rag_dev",
+    "run_id": "0f67fa2e-383d-4ae4-bf6e-0a1b3bba50ea",
+    "environment_version": "4",
+    "wheel": "docs_rag-0.0.1.dev62+g9cde444e8-py3-none-any.whl",
+    "parent_run_id": 628567163954063,
+    "task_run_id": 305641715789411,
+    "result_state": "FAILED",
+    "state_message": "Task main failed with message: Workload failed, see run output for details.",
+    "run_start_utc": "2026-10-19T21:57:42Z",
+    "run_end_utc": "2026-10-19T21:59:41Z",
+    "run_duration_seconds": 119.5
+  },
+  "summary": {
+    "run_id": "0f67fa2e-383d-4ae4-bf6e-0a1b3bba50ea",
+    "started_utc": "2026-10-19T21:59:30Z",
+    "tag": "v3.5.0",
+    "sink": "none",
+    "config_id": "ccbd80f05e15c8dd",
+    "environment": {
+      "python": "3.12.3",
+      "databricks_runtime_version": "client.4.10",
+      "databricks_connect": "17.3.14",
+      "docs_rag": "0.0.1.dev62+g9cde444e8",
+      "tokenizers": "0.23.3",
+      "machine": "aarch64",
+      "spark": "4.2.0"
+    },
+    "baseline": null,
+    "logged": "failed",
+    "status": "failed",
+    "error": "RuntimeError: no committed run for sink 'none': pass --initial to start the chain",
+    "finished_utc": "2026-10-19T21:59:36Z"
+  },
+  "error": "RuntimeError: no committed run for sink 'none': pass --initial to start the chain",
+  "error_trace": "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m\n\u001b[0;31mRuntimeError\u001b[0m                              Traceback (most recent call last)\nFile \u001b[0;32m~/.ipykernel/34530/command--1-3777970064:14\u001b[0m\n\u001b[1;32m     11\u001b[0m \u001b[38;5;28;01mdel\u001b[39;00m sys\n\u001b[1;32m     13\u001b[0m \u001b[38;5;28;01mwith\u001b[39;00m \u001b[38;5;28mopen\u001b[39m(filename, \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mrb\u001b[39m\u001b[38;5;124m\"\u001b[39m) \u001b[38;5;28;01mas\u001b[39;00m f:\n\u001b[0;32m---> 14\u001b[0m   exec(\u001b[38;5;28mcompile\u001b[39m(f\u001b[38;5;241m.\u001b[39mread(), filename, \u001b[38;5;124m'\u001b[39m\u001b[38;5;124mexec\u001b[39m\u001b[38;5;124m'\u001b[39m))\n\nFile \u001b[0;32m/tmp/tmpzzyb7n_3.py:278\u001b[0m\n\u001b[1;32m    274\u001b[0m     run_with_summary(detect, parser)\n\u001b[1;32m    277\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m \u001b[38;5;18m__name__\u001b[39m \u001b[38;5;241m==\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m__main__\u001b[39m\u001b[38;5;124m\"\u001b[39m:\n\u001b[0;32m--> 278\u001b[0m     main()\n\nFile \u001b[0;32m/tmp/tmpzzyb7n_3.py:274\u001b[0m, in \u001b[0;36mmain\u001b[0;34m()\u001b[0m\n\u001b[1;32m    270\u001b[0m parser\u001b[38;5;241m.\u001b[39madd_argument(\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m--initial\u001b[39m\u001b[38;5;124m\"\u001b[39m, action\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstore_true\u001b[39m\u001b[38;5;124m\"\u001b[39m, help\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstart the chain (only when there is none)\u001b[39m\u001b[38;5;124m\"\u001b[39m)\n\u001b[1;32m    271\u001b[0m parser\u001b[38;5;241m.\u001b[39madd_argument(\n\u001b[1;32m    272\u001b[0m     \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m--allow-backwards\u001b[39m\u001b[38;5;124m\"\u001b[39m, action\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstore_true\u001b[39m\u001b[38;5;124m\"\u001b[39m, help\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mallow a target older than the baseline\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m    273\u001b[0m )\n\u001b[0;32m--> 274\u001b[0m run_with_summary(detect, parser)\n\nFile \u001b[0;32m/local_disk0/.ephemeral_nfs/envs/pythonEnv-f0b14a3e-7c3a-43c1-b7ce-cedf48c1d7aa/lib/python3.12/site-packages/docs_rag/jobenv.py:94\u001b[0m, in \u001b[0;36mrun_with_summary\u001b[0;34m(job, parser)\u001b[0m\n\u001b[1;32m     92\u001b[0m summary: \u001b[38;5;28mdict\u001b[39m[\u001b[38;5;28mstr\u001b[39m, Any] \u001b[38;5;241m=\u001b[39m {\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mrun_id\u001b[39m\u001b[38;5;124m\"\u001b[39m: args\u001b[38;5;241m.\u001b[39mrun_id, \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstarted_utc\u001b[39m\u001b[38;5;124m\"\u001b[39m: utc_now()}\n\u001b[1;32m     93\u001b[0m \u001b[38;5;28;01mtry\u001b[39;00m:\n\u001b[0;32m---> 94\u001b[0m     job(args, summary)\n\u001b[1;32m     95\u001b[0m     summary[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstatus\u001b[39m\u001b[38;5;124m\"\u001b[39m] \u001b[38;5;241m=\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124msucceeded\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m     96\u001b[0m \u001b[38;5;28;01mexcept\u001b[39;00m \u001b[38;5;167;01mException\u001b[39;00m \u001b[38;5;28;01mas\u001b[39;00m e:\n\nFile \u001b[0;32m/tmp/tmpzzyb7n_3.py:133\u001b[0m, in \u001b[0;36mdetect\u001b[0;34m(args, summary)\u001b[0m\n\u001b[1;32m    131\u001b[0m summary[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mbaseline\u001b[39m\u001b[38;5;124m\"\u001b[39m] \u001b[38;5;241m=\u001b[39m base\n\u001b[1;32m    132\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m base \u001b[38;5;129;01mis\u001b[39;00m \u001b[38;5;28;01mNone\u001b[39;00m \u001b[38;5;129;01mand\u001b[39;00m \u001b[38;5;129;01mnot\u001b[39;00m args\u001b[38;5;241m.\u001b[39minitial:\n\u001b[0;32m--> 133\u001b[0m     \u001b[38;5;28;01mraise\u001b[39;00m \u001b[38;5;167;01mRuntimeError\u001b[39;00m(\n\u001b[1;32m    134\u001b[0m         \u001b[38;5;124mf\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mno committed run for sink \u001b[39m\u001b[38;5;132;01m{\u001b[39;00mconfig\u001b[38;5;241m.\u001b[39msink\u001b[38;5;132;01m!r}\u001b[39;00m\u001b[38;5;124m: pass --initial to start the chain\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m    135\u001b[0m     )\n\u001b[1;32m    136\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m base \u001b[38;5;129;01mis\u001b[39;00m \u001b[38;5;129;01mnot\u001b[39;00m \u001b[38;5;28;01mNone\u001b[39;00m \u001b[38;5;129;01mand\u001b[39;00m args\u001b[38;5;241m.\u001b[39minitial:\n\u001b[1;32m    137\u001b[0m     \u001b[38;5;28;01mraise\u001b[39;00m \u001b[38;5;167;01mRuntimeError\u001b[39;00m(\n\u001b[1;32m    138\u001b[0m         \u001b[38;5;124mf\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124msink \u001b[39m\u001b[38;5;132;01m{\u001b[39;00mconfig\u001b[38;5;241m.\u001b[39msink\u001b[38;5;132;01m!r}\u001b[39;00m\u001b[38;5;124m already has a chain (head \u001b[39m\u001b[38;5;132;01m{\u001b[39;00mhead\u001b[38;5;132;01m}\u001b[39;00m\u001b[38;5;124m): --initial would fork it\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m    139\u001b[0m     )\n\n\u001b[0;31mRuntimeError\u001b[0m: no committed run for sink 'none': pass --initial to start the chain"
+}
