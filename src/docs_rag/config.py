@@ -30,11 +30,14 @@ class Config:
     doc_suffix: str = ".md"
     chunk: ChunkConfig = ChunkConfig()  # what gets embedded and published (M5)
     # The chunk configs M6 compares (D-009): 254 and 128 tokens, both within MiniLM's 256-token limit, with
-    # the same 12.5% overlap, so the two differ in size only. Silver holds both.
+    # overlap at about an eighth of the budget, so the two differ in size only. Silver holds both.
     chunk_grid: tuple[ChunkConfig, ...] = (ChunkConfig(254, 32), ChunkConfig(128, 16))
     # Docs that legitimately give no chunks: only headings plus generated includes (D-008). Any other doc
     # with no chunks fails the silver run, so a cleaning bug that empties pages cannot pass silently.
     zero_chunk_docs: frozenset[str] = frozenset({"docs/sql-ref-functions-builtin.md"})
+    # What a committed pipeline run publishes to; the baseline chain in ops_run_log is per sink (D-011). M5
+    # sets the gold table here. Until then the pipeline ends at change detection and publishes nothing.
+    sink: str = "none"
 
     def __post_init__(self) -> None:
         _check(_IDENTIFIER, self.catalog, "catalog")
@@ -55,6 +58,10 @@ class Config:
     @property
     def silver_table(self) -> str:
         return self.table("silver_chunks")
+
+    @property
+    def run_log_table(self) -> str:
+        return self.table("ops_run_log")
 
     def volume(self, name: str) -> str:
         """Path of a Unity Catalog Volume in this schema, e.g. '/Volumes/workspace/docs_rag_dev/artifacts'."""

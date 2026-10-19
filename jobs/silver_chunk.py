@@ -21,30 +21,21 @@ can show the job and a laptop chunk identically (scripts/m2_verify_silver.py).
 """
 
 import argparse
-import datetime as dt
 import time
 from typing import Any
 
 from pyspark.sql import SparkSession
 
-from docs_rag.chunk import CHUNKER_VERSION, ChunkConfig, DocChunks
+from docs_rag.chunk import CHUNKER_VERSION, ChunkConfig
 from docs_rag.clean import CLEANER_VERSION
 from docs_rag.config import Config, validate_tag
 from docs_rag.jobenv import base_parser, check_environment, run_with_summary
+from docs_rag.lake import chunk_bronze, compare_with_stored, latest_version, read_bronze
 from docs_rag.silver import (
-    BronzeDoc,
-    SilverRecord,
-    StoredCheck,
-    StoredChunk,
-    bronze_violations,
-    check_against_stored,
-    chunk_docs,
     conflict_reason,
     fingerprint,
     record_violations,
     silver_schema_ddl,
-    stored_violations,
-    to_records,
     token_stats,
 )
 
@@ -62,14 +53,6 @@ ON t.config_id = s.config_id AND t.source_repo = s.source_repo AND t.version_tag
 WHEN NOT MATCHED THEN INSERT *
 """
 
-STORED = """
-SELECT path, commit_sha, doc_content_sha256, doc_clean_sha256, chunk_id, occurrence, chunk_index,
-       section_path, body, embed_text, n_tokens, char_start, char_end, cleaner_version, chunker_version,
-       max_tokens, overlap_tokens
-FROM IDENTIFIER(:table)
-WHERE config_id = :config_id AND source_repo = :repo AND version_tag = :tag
-"""
-
 TAGS_AFTER = """
 SELECT version_tag,
        count(*) AS chunks,
@@ -83,53 +66,6 @@ WHERE config_id = :config_id AND source_repo = :repo
 GROUP BY version_tag
 ORDER BY version_tag
 """
-
-
-def latest_version(spark: SparkSession, table: str) -> int:
-    row = spark.sql("DESCRIBE HISTORY IDENTIFIER(:table) LIMIT 1", args={"table": table}).collect()[0]
-    return int(row["version"])
-
-
-def read_stored(spark: SparkSession, table: str, args: dict[str, str]) -> list[StoredChunk]:
-    return [
-        StoredChunk(**{**r.asDict(), "section_path": tuple(r["section_path"])})
-        for r in spark.sql(STORED, args={"table": table, **args}).collect()
-    ]
-
-
-def read_bronze(spark: SparkSession, config: Config, tag: str) -> list[BronzeDoc]:
-    rows = spark.sql(
-        "SELECT path, content, content_sha256, sha2(content, 256) AS content_sha256_actual, commit_sha "
-        "FROM IDENTIFIER(:table) WHERE source_repo = :repo AND version_tag = :tag",
-        args={"table": config.bronze_table, "repo": config.source_repo, "tag": tag},
-    ).collect()
-    docs = [BronzeDoc(**r.asDict()) for r in rows]
-    problems = bronze_violations(docs)
-    if problems:
-        raise RuntimeError(f"bronze snapshot of {tag} is not whole: " + "; ".join(problems))
-    return docs
-
-
-def compare_with_stored(
-    spark: SparkSession, config: Config, tag: str, records: list[SilverRecord]
-) -> tuple[StoredCheck, list[StoredChunk]]:
-    """Recheck the stored rows of (config_id, tag) and compare them with a fresh chunking."""
-    key = {"config_id": config.chunk.config_id, "repo": config.source_repo, "tag": tag}
-    stored = read_stored(spark, config.silver_table, key)
-    problems = stored_violations(stored, config.chunk)
-    if problems:
-        raise RuntimeError(f"stored silver rows of {tag} fail their recheck: " + "; ".join(problems))
-    return check_against_stored(records, stored), stored
-
-
-def chunk_bronze(
-    config: Config, tag: str, docs: list[BronzeDoc], run_id: str
-) -> tuple[list[DocChunks], list[SilverRecord]]:
-    chunked = chunk_docs(docs, config.chunk)
-    records = to_records(
-        docs, chunked, config.source_repo, tag, config.chunk, run_id, dt.datetime.now(dt.UTC)
-    )
-    return chunked, records
 
 
 def chunk_tag(args: argparse.Namespace, summary: dict[str, Any]) -> None:
@@ -163,7 +99,7 @@ def chunk_tag(args: argparse.Namespace, summary: dict[str, Any]) -> None:
 
     # 2. Chunk, and check the chunking before writing anything.
     t0 = time.monotonic()
-    chunked, records = chunk_bronze(config, tag, docs, args.run_id)
+    chunked, records = chunk_bronze(config, chunking, tag, docs, args.run_id)
     summary["chunking"] = {
         "seconds": round(time.monotonic() - t0, 1),
         "fingerprint": fingerprint((r.path, r.chunk_id) for r in records),
@@ -175,7 +111,7 @@ def chunk_tag(args: argparse.Namespace, summary: dict[str, Any]) -> None:
         raise RuntimeError("chunking failed its checks: " + "; ".join(problems))
 
     # 3. Compare with what silver already holds for this config and tag.
-    check, stored = compare_with_stored(spark, config, tag, records)
+    check, stored = compare_with_stored(spark, config, chunking, tag, records)
     summary["check"] = check.__dict__
     if check.status == "conflict":
         raise RuntimeError(
@@ -194,8 +130,8 @@ def chunk_tag(args: argparse.Namespace, summary: dict[str, Any]) -> None:
     for row in others:
         other = row["version_tag"]
         other_docs = read_bronze(spark, config, other)
-        _, other_records = chunk_bronze(config, other, other_docs, args.run_id)
-        other_check, other_stored = compare_with_stored(spark, config, other, other_records)
+        _, other_records = chunk_bronze(config, chunking, other, other_docs, args.run_id)
+        other_check, other_stored = compare_with_stored(spark, config, chunking, other, other_records)
         summary["other_tags_reproduced"][other] = other_check.__dict__
         if other_check.status != "identical":
             raise RuntimeError(
@@ -237,7 +173,7 @@ def chunk_tag(args: argparse.Namespace, summary: dict[str, Any]) -> None:
             0,
         ):
             problems.append(f"MERGE metrics {merge}, expected {len(records)} inserted and nothing else")
-    reread, after = compare_with_stored(spark, config, tag, records)
+    reread, after = compare_with_stored(spark, config, chunking, tag, records)
     if reread.status != "identical":
         problems.append(f"read-back differs from the chunking: {reread}")
     if fingerprint((r.path, r.chunk_id) for r in after) != summary["chunking"]["fingerprint"]:

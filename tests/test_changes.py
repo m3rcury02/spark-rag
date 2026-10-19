@@ -1,4 +1,5 @@
 import dataclasses
+import datetime as dt
 
 import pytest
 
@@ -198,6 +199,9 @@ def committed_row(**overrides: object) -> RunLogRow:
         to_config_id="cfg",
         max_tokens=254,
         overlap_tokens=32,
+        started_at=dt.datetime(2026, 10, 20, tzinfo=dt.UTC),
+        finished_at=dt.datetime(2026, 10, 20, tzinfo=dt.UTC),
+        code_version="0.0.1",
         **counts(DOCS, diff_chunks(BASE, TARGET, DOCS), from_chunks=len(BASE), to_tokens=51),  # type: ignore[arg-type]
     )
     return dataclasses.replace(base, **overrides)  # type: ignore[arg-type]
@@ -222,3 +226,6 @@ def test_rows_that_do_not_add_up_are_refused() -> None:
 def test_a_failed_row_needs_no_counts() -> None:
     assert row_violations(committed_row(status=FAILED, docs_added=None)) == []
     assert row_violations(committed_row(status="detected")) == ["unknown status 'detected'"]
+    assert row_violations(committed_row(code_version="")) == [
+        "started_at, finished_at and code_version are required"
+    ]

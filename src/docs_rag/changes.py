@@ -8,6 +8,7 @@ names the run it diffed against. No timestamps decide anything. Pure Python, so 
 it.
 """
 
+import datetime as dt
 import hashlib
 import re
 from collections.abc import Iterable, Mapping, Sequence
@@ -297,8 +298,8 @@ class RunLogRow:
     deleted_paths: tuple[str, ...] | None = None
     to_docs_fingerprint: str | None = None
     to_chunks_fingerprint: str | None = None
-    started_at: str = ""
-    finished_at: str = ""
+    started_at: dt.datetime | None = None
+    finished_at: dt.datetime | None = None
     code_version: str = ""
 
     def as_row(self) -> dict[str, object]:
@@ -345,6 +346,8 @@ _COUNT_COLUMNS = tuple(
 
 def row_violations(row: RunLogRow) -> list[str]:
     """What a row must satisfy before it is written; a committed row's counts must add up."""
+    if row.started_at is None or row.finished_at is None or not row.code_version:
+        return ["started_at, finished_at and code_version are required"]
     if row.status == FAILED:
         return []
     if row.status != COMMITTED:
