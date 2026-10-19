@@ -99,6 +99,14 @@ uv run --with databricks-sdk==0.152.0 python scripts/m2_stability.py --label <la
 uv run --with databricks-sdk==0.152.0 --with sentence-transformers==6.1.0 --with transformers==5.19.0 \
     --with torch==2.14.1 --index https://download.pytorch.org/whl/cpu --index-strategy unsafe-best-match \
     python scripts/m2_tokenizer_parity.py --label <label> --tags v3.5.0 v4.0.0 v4.0.1
+# M3 change detection (same credentials): diff a tag against the head of the committed chain in ops_run_log, for
+# Config.chunk; needs bronze and silver of the tag. The first run of a sink needs --initial; going back a release
+# needs --allow-backwards. Then check every logged run against git, D-002 and runs/m2_e.
+uv run --with databricks-sdk==0.152.0 python scripts/run_job.py \
+    --script jobs/change_detect.py --label <label> -- --tag v4.0.1 [--initial] [--allow-backwards]
+uv run --with databricks-sdk==0.152.0 python scripts/m3_verify_changes.py \
+    --label <label> --job-runs runs/m3_*_detect_*.json
+uv run --with databricks-sdk==0.152.0 python scripts/task_attempts.py --label <label> runs/<run files>
 # The real corpus as a golden (git only, ~1 min; also in CI and before every silver job in run_job.py):
 uv run python scripts/corpus_fingerprint.py
 # After a deliberate cleaner/chunker change: bump CLEANER_VERSION (clean.py) or CHUNKER_VERSION (chunk.py), then
@@ -109,26 +117,26 @@ uv run python scripts/corpus_fingerprint.py --update
 
 ## Next session: pick up here
 
-M2 is complete on branch `m2-silver` (D-008, D-009, D-010; M2 report given to the owner on 2026-10-19).
-`workspace.docs_rag_dev.silver_chunks` holds 3 tags × 2 configs (254/32 and 128/16). Evidence: silver runs
-`runs/m2_d1`..`m2_d7`, tamper test `m2_d8a`..`m2_d8d`, silver vs git `m2_g`, table history `m2_h`, corpus
-numbers `m2_e`, tokenizer parity `m2_f`; compute refusals and billing `m2_d0*` (D-001 Quota). Do not re-run
-the `m2_d*` labels: they are the record (`run_job.py`/`run_sql.py` now refuse an existing label).
+M3 is complete on branch `m3-change-detection` (D-011; M3 report given to the owner on 2026-10-20). M2 is merged
+into `main`. `workspace.docs_rag_dev.ops_run_log` (append-only) holds the D-002 sequence for sink `none`: a chain
+of 5 committed runs (v3.5.0 initial → v4.0.0 → v4.0.0 again → v4.0.1 → v4.0.1 again) plus failed runs. Evidence:
+`runs/m3_a`..`m3_k`, verified by `m3_v2` (102/102). Do not re-run the `m3_*` labels.
 
-**Do not start M3 until the owner says so.** Open items:
-- Remote branches `m0-smoke-test` (merged) and `claude/modest-archimedes-mp5zx3` (stale) are still on GitHub:
-  the owner approved deleting them, but the session's permission classifier blocked `git push --delete`.
-  The owner can delete them in the GitHub UI.
+**Do not start M4 until the owner says so.** Open items:
+- Owner decides whether to merge `m3-change-detection` into `main`. Remote branches `m0-smoke-test`, `m1-bronze`,
+  `m2-silver` (all merged) and `claude/modest-archimedes-mp5zx3` (stale) are still on GitHub: the session's git
+  proxy refuses branch deletion (HTTP 403), so the owner deletes them in the GitHub UI.
 - `docs_rag_endpoint` was deleted on 2026-10-19 (idle, 96 DBU/day; D-001). Re-probe `system.billing.usage` more
   than 24 h later to confirm the endpoint's usage stopped, and save the output under `runs/`.
-- Carry into M3: the diff baseline is the last *published* (version_tag, commit_sha) per config, never "latest
-  in bronze" (D-006, D-010). Chunk-level change = added and removed chunk_ids. The run log takes counts from
-  our own MERGE metrics; the sync pipeline's row metrics are always 0 (D-001). On Databricks a no-op MERGE
-  still writes an empty table version (D-006 run b), and Databricks commits its own `OPTIMIZE` versions (D-010):
-  never read "we wrote" from a version bump.
-- Owner decides whether to merge `m2-silver` into `main`.
-- Carry into M5: create the endpoint again first (~20 min of provisioning) and delete it when the index is not
-  needed (idle it bills 4 DBU/h even with no index, against the docs, and likely drains the daily quota:
+- For M5's gold writes (from M1/M2): take counts from our own MERGE metrics (the sync pipeline's row metrics are
+  always 0, D-001); on Databricks a no-op MERGE still writes an empty table version (D-006 run b), and
+  Databricks commits its own `OPTIMIZE` versions (D-010): never read "we wrote" from a version bump.
+- Carry into M4: the DQ gate runs inside `jobs/change_detect.py`, before the committed row (the job's last write),
+  so a failed gate leaves the baseline where it was. Row-count drift uses the row's from/to totals; the
+  threshold and a logged override are still open (Open questions).
+- Carry into M5: set `Config.sink` to the gold table: a new chain, so the first M5 run is an explicit `--initial`
+  load into an empty gold. Gold holds no positions (they come from silver; kept chunks move, D-011). Create the
+  endpoint again first (~20 min of provisioning) and delete it when the index is not needed (idle it bills 4 DBU/h even with no index, against the docs, and likely drains the daily quota:
   D-001). Create the real index only after the full gold backfill, because capacity is sized from the source
   table at creation and a small start limits growth. Re-test insert, update and delete with the real MERGE.
   Sync right after each MERGE and wait for the update to complete ("ready" is not "synced") (D-001).
@@ -138,7 +146,7 @@ the `m2_d*` labels: they are the record (`run_job.py`/`run_sql.py` now refuse an
 - [x] M0 — Platform research, scaffold, workspace smoke test (passed 2026-10-14; D-001 accepted)
 - [x] M1 — Bronze ingestion: fetch tag → `bronze_docs`, content hash, idempotent MERGE, tests, CI (2026-10-15; D-006, D-007)
 - [x] M2 — Silver: Markdown cleaning + section-aware chunking, stable chunk IDs, tests (2026-10-19; D-008, D-009, D-010)
-- [ ] M3 — Change detection (doc + chunk level) and run log; v1 → v2 → re-run
+- [x] M3 — Change detection (doc + chunk level) and run log; v1 → v2 → re-run (2026-10-20; D-011)
 - [ ] M4 — DQ checks as a gate between silver and gold
 - [ ] M5 — Embeddings + AI Search index sync (only changed chunks embedded)
 - [ ] M6 — Eval set (50 Q/A, owner reviews) + recall@5/MRR, 2 chunk sizes × 2 models

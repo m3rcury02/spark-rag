@@ -690,13 +690,14 @@ first draft on the points marked "review" below.
   initial run; failed rows carry no counts; every job summary has its row. The verifier does not import
   `docs_rag.changes`. Its first run (`m3_v_*`) failed 50 of 83 checks on a verifier bug, the statement API returning
   numbers as strings; the data were right.
-- **Retries found in the log.** Serverless retried every failed task once with the same parameters (task
-  attempts 0 and 1, `m3_k_task_attempts.json`), so runs a, e and g each left two `failed` rows, 39–56 s
+- **Retries found in the log.** Serverless retried every task whose script ran and failed, once, with the same
+  parameters (task attempts 0 and 1, `m3_k_task_attempts.json`; M1's run a0, which failed before its script
+  could be read, ran once), so runs a, e and g each left two `failed` rows, 39–56 s
   apart; the runs took 120, 83 and 77 s against 40 s for run i with one attempt. Harmless here (a failed row
   is never a baseline), but a retry after a commit would have committed the same run twice. Now
   `run_job.py` submits with `max_retries=0` and serverless auto-optimization (its automatic retry) off, and
-  detect writes nothing if its run_id is already committed. M1's and M2's failing runs were retried too
-  (`m3_k`), without effect, since they write nothing on failure.
+  detect writes nothing if its run_id is already committed. M1's tamper runs (c2, g2) and M2's (d8b) were
+  retried too (`m3_k`), without effect, since they write nothing on failure.
 - **Read-only on the data:** bronze and silver have no history entry from the start of the sequence on
   (`m3_w_*`, `m3_w2_*`); `ops_run_log` has one WRITE per row (12). An `UPDATE` of the log is refused with
   `DELTA_CANNOT_MODIFY_APPEND_ONLY` (`m3_w3_*`).
