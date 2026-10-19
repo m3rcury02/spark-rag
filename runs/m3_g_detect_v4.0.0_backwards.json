@@ -1,0 +1,54 @@
+{
+  "meta": {
+    "label": "m3_g_detect_v4.0.0_backwards",
+    "git_commit": "6e979b9a0324627c40afd3baae777117fc8d228e",
+    "script": "jobs/change_detect.py",
+    "job_args": [
+      "--tag",
+      "v4.0.0"
+    ],
+    "target": "workspace.docs_rag_dev",
+    "run_id": "036e5f8a-afde-4a7f-953b-565b768e2f01",
+    "environment_version": "4",
+    "wheel": "docs_rag-0.0.1.dev67+g6e979b9a0-py3-none-any.whl",
+    "parent_run_id": 1055957855859153,
+    "task_run_id": 289777408319816,
+    "result_state": "FAILED",
+    "state_message": "Task main failed with message: Workload failed, see run output for details.",
+    "run_start_utc": "2026-10-19T22:06:47Z",
+    "run_end_utc": "2026-10-19T22:08:04Z",
+    "run_duration_seconds": 77.1
+  },
+  "summary": {
+    "run_id": "036e5f8a-afde-4a7f-953b-565b768e2f01",
+    "started_utc": "2026-10-19T22:07:54Z",
+    "tag": "v4.0.0",
+    "sink": "none",
+    "config_id": "ccbd80f05e15c8dd",
+    "environment": {
+      "python": "3.12.3",
+      "databricks_runtime_version": "client.4.10",
+      "databricks_connect": "17.3.14",
+      "docs_rag": "0.0.1.dev67+g6e979b9a0",
+      "tokenizers": "0.23.3",
+      "machine": "aarch64",
+      "spark": "4.2.0"
+    },
+    "baseline": {
+      "run_id": "b2b5cba6-ab0e-43af-8d05-ce065c108778",
+      "baseline_run_id": "b762b472-c6cb-4cbc-93ce-da63e5c392f2",
+      "status": "committed",
+      "to_version_tag": "v4.0.1",
+      "to_commit_sha": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+      "to_config_id": "ccbd80f05e15c8dd",
+      "to_docs_fingerprint": "5b1534b24125aa7d7131d72727e2b28ff85b072262ed48dceedb3b40ba798c02",
+      "to_chunks_fingerprint": "ad300f7ddb87b42718cd0e0aab40e948e5f509124cc0c64224ede897805cb827"
+    },
+    "logged": "failed",
+    "status": "failed",
+    "error": "RuntimeError: v4.0.0 is backward of the baseline v4.0.1: pass --allow-backwards if intended",
+    "finished_utc": "2026-10-19T22:07:58Z"
+  },
+  "error": "RuntimeError: v4.0.0 is backward of the baseline v4.0.1: pass --allow-backwards if intended",
+  "error_trace": "      Traceback (most recent call last)\nFile \u001b[0;32m~/.ipykernel/24262/command--1-385006533:14\u001b[0m\n\u001b[1;32m     11\u001b[0m \u001b[38;5;28;01mdel\u001b[39;00m sys\n\u001b[1;32m     13\u001b[0m \u001b[38;5;28;01mwith\u001b[39;00m \u001b[38;5;28mopen\u001b[39m(filename, \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mrb\u001b[39m\u001b[38;5;124m\"\u001b[39m) \u001b[38;5;28;01mas\u001b[39;00m f:\n\u001b[0;32m---> 14\u001b[0m   exec(\u001b[38;5;28mcompile\u001b[39m(f\u001b[38;5;241m.\u001b[39mread(), filename, \u001b[38;5;124m'\u001b[39m\u001b[38;5;124mexec\u001b[39m\u001b[38;5;124m'\u001b[39m))\n\nFile \u001b[0;32m/tmp/tmp74nlkopa.py:278\u001b[0m\n\u001b[1;32m    274\u001b[0m     run_with_summary(detect, parser)\n\u001b[1;32m    277\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m \u001b[38;5;18m__name__\u001b[39m \u001b[38;5;241m==\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m__main__\u001b[39m\u001b[38;5;124m\"\u001b[39m:\n\u001b[0;32m--> 278\u001b[0m     main()\n\nFile \u001b[0;32m/tmp/tmp74nlkopa.py:274\u001b[0m, in \u001b[0;36mmain\u001b[0;34m()\u001b[0m\n\u001b[1;32m    270\u001b[0m parser\u001b[38;5;241m.\u001b[39madd_argument(\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m--initial\u001b[39m\u001b[38;5;124m\"\u001b[39m, action\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstore_true\u001b[39m\u001b[38;5;124m\"\u001b[39m, help\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstart the chain (only when there is none)\u001b[39m\u001b[38;5;124m\"\u001b[39m)\n\u001b[1;32m    271\u001b[0m parser\u001b[38;5;241m.\u001b[39madd_argument(\n\u001b[1;32m    272\u001b[0m     \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m--allow-backwards\u001b[39m\u001b[38;5;124m\"\u001b[39m, action\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstore_true\u001b[39m\u001b[38;5;124m\"\u001b[39m, help\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mallow a target older than the baseline\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m    273\u001b[0m )\n\u001b[0;32m--> 274\u001b[0m run_with_summary(detect, parser)\n\nFile \u001b[0;32m/local_disk0/.ephemeral_nfs/envs/pythonEnv-6025d8ef-157a-4550-82b6-443a60e839b3/lib/python3.12/site-packages/docs_rag/jobenv.py:94\u001b[0m, in \u001b[0;36mrun_with_summary\u001b[0;34m(job, parser)\u001b[0m\n\u001b[1;32m     92\u001b[0m summary: \u001b[38;5;28mdict\u001b[39m[\u001b[38;5;28mstr\u001b[39m, Any] \u001b[38;5;241m=\u001b[39m {\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mrun_id\u001b[39m\u001b[38;5;124m\"\u001b[39m: args\u001b[38;5;241m.\u001b[39mrun_id, \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstarted_utc\u001b[39m\u001b[38;5;124m\"\u001b[39m: utc_now()}\n\u001b[1;32m     93\u001b[0m \u001b[38;5;28;01mtry\u001b[39;00m:\n\u001b[0;32m---> 94\u001b[0m     job(args, summary)\n\u001b[1;32m     95\u001b[0m     summary[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstatus\u001b[39m\u001b[38;5;124m\"\u001b[39m] \u001b[38;5;241m=\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124msucceeded\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m     96\u001b[0m \u001b[38;5;28;01mexcept\u001b[39;00m \u001b[38;5;167;01mException\u001b[39;00m \u001b[38;5;28;01mas\u001b[39;00m e:\n\nFile \u001b[0;32m/tmp/tmp74nlkopa.py:141\u001b[0m, in \u001b[0;36mdetect\u001b[0;34m(args, summary)\u001b[0m\n\u001b[1;32m    137\u001b[0m     \u001b[38;5;28;01mraise\u001b[39;00m \u001b[38;5;167;01mRuntimeError\u001b[39;00m(\n\u001b[1;32m    138\u001b[0m         \u001b[38;5;124mf\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124msink \u001b[39m\u001b[38;5;132;01m{\u001b[39;00mconfig\u001b[38;5;241m.\u001b[39msink\u001b[38;5;132;01m!r}\u001b[39;00m\u001b[38;5;124m already has a chain (head \u001b[39m\u001b[38;5;132;01m{\u001b[39;00mhead\u001b[38;5;132;01m}\u001b[39;00m\u001b[38;5;124m): --initial would fork it\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m    139\u001b[0m     )\n\u001b[1;32m    140\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m way \u001b[38;5;129;01min\u001b[39;00m (\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mbackward\u001b[39m\u001b[38;5;124m\"\u001b[39m, \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124munordered\u001b[39m\u001b[38;5;124m\"\u001b[39m) \u001b[38;5;129;01mand\u001b[39;00m \u001b[38;5;129;01mnot\u001b[39;00m args\u001b[38;5;241m.\u001b[39mallow_backwards:\n\u001b[0;32m--> 141\u001b[0m     \u001b[38;5;28;01mraise\u001b[39;00m \u001b[38;5;167;01mRuntimeError\u001b[39;00m(\n\u001b[1;32m    142\u001b[0m         \u001b[38;5;124mf\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;132;01m{\u001b[39;00mtag\u001b[38;5;132;01m}\u001b[39;00m\u001b[38;5;124m is \u001b[39m\u001b[38;5;132;01m{\u001b[39;00mway\u001b[38;5;132;01m}\u001b[39;00m\u001b[38;5;124m of the baseline \u001b[39m\u001b[38;5;132;01m{\u001b[39;00mfrom_tag\u001b[38;5;132;01m}\u001b[39;00m\u001b[38;5;124m: pass --allow-backwards if intended\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m    143\u001b[0m     )\n\u001b[1;32m    145\u001b[0m \u001b[38;5;66;03m# 3. The target: bronze whole, silver exactly its chunking under the published config.\u001b[39;00m\n\u001b[1;32m    146\u001b[0m target_docs, target_commit, target_records \u001b[38;5;241m=\u001b[39m verified_chunking(\n\u001b[1;32m    147\u001b[0m     spark, config, chunking, tag, args\u001b[38;5;241m.\u001b[39mrun_id\n\u001b[1;32m    148\u001b[0m )\n\n\u001b[0;31mRuntimeError\u001b[0m: v4.0.0 is backward of the baseline v4.0.1: pass --allow-backwards if intended"
+}
