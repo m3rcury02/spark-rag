@@ -7,11 +7,12 @@
 Chunks every tag's docs (read from git) with every config of the chunk grid, then passes every distinct
 embed text through each model's own `SentenceTransformer.preprocess`, the call `encode` makes. For every text
 the number of attended positions must be n_tokens + 2 ([CLS] and [SEP]) and at most the model's
-max_seq_length: a smaller number would mean the model truncates the chunk. Package versions and model
-revisions are recorded.
+max_seq_length: a smaller number would mean the model truncates the chunk. Each model's vocab.txt must
+be the vendored one (same sha256). Package versions and model revisions are recorded.
 """
 
 import argparse
+import hashlib
 import importlib.metadata
 import json
 import pathlib
@@ -27,6 +28,7 @@ from sentence_transformers import SentenceTransformer
 
 from docs_rag.chunk import chunk_document
 from docs_rag.config import Config, validate_tag
+from docs_rag.tokens import VOCAB_SHA256
 
 MODELS = ("sentence-transformers/all-MiniLM-L6-v2", "BAAI/bge-small-en-v1.5")
 BATCH = 256
@@ -58,9 +60,13 @@ def main() -> None:
             features = model.preprocess(texts[i : i + BATCH])  # what encode() calls; documents get no prompt
             seen += [int(x) for x in features["attention_mask"].sum(dim=1)]
         mismatches = [(t, counts[t] + 2, s) for t, s in zip(texts, seen, strict=True) if s != counts[t] + 2]
+        snapshot = pathlib.Path(snapshot_download(name, local_files_only=True))
+        vocab = hashlib.sha256((snapshot / "vocab.txt").read_bytes()).hexdigest()
         models[name] = {
             "max_seq_length": limit,
-            "revision": pathlib.Path(snapshot_download(name, local_files_only=True)).name,
+            "revision": snapshot.name,
+            "vocab_sha256": vocab,
+            "vocab_is_the_vendored_one": vocab == VOCAB_SHA256,
             "texts": len(texts),
             "mismatches": len(mismatches),
             "mismatch_examples": [{"expected": e, "model": s, "text": t[:200]} for t, e, s in mismatches[:5]],
@@ -83,7 +89,7 @@ def main() -> None:
         "machine": platform.machine(),
         "models": models,
         # A truncated text shows up as a mismatch (fewer positions than n_tokens + 2): the whole check.
-        "all_pass": all(m["mismatches"] == 0 for m in models.values()),
+        "all_pass": all(m["mismatches"] == 0 and m["vocab_is_the_vendored_one"] for m in models.values()),
     }
     (REPO / "runs" / f"{args.label}.json").write_text(Redactor(WorkspaceClient()).dump(out))
     print(json.dumps(out, indent=2))
