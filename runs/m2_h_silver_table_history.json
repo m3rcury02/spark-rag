@@ -1,0 +1,97 @@
+{
+  "label": "m2_h_silver_table_history",
+  "git_commit": "52fc2078d9b90e8931c38462ab7d248c0d99b11e",
+  "statements": [
+    {
+      "sql": "SELECT version, timestamp, operation, operationParameters, operationMetrics FROM (DESCRIBE HISTORY workspace.docs_rag_dev.silver_chunks) ORDER BY version",
+      "params": {},
+      "columns": [
+        "version",
+        "timestamp",
+        "operation",
+        "operationParameters",
+        "operationMetrics"
+      ],
+      "rows": [
+        [
+          "0",
+          "2026-10-19T08:01:20.000Z",
+          "CREATE TABLE",
+          "{\"partitionBy\":\"[]\",\"clusterBy\":\"[]\",\"description\":\"Chunks of bronze docs: one immutable chunking per (config_id, source_repo, version_tag). See D-010.\",\"isManaged\":\"true\",\"properties\":\"{\\\"delta.parquet.compression.codec\\\":\\\"zstd\\\",\\\"delta.parquet.format.version.afe.internal\\\":\\\"2.12.0\\\",\\\"delta.enableDeletionVectors\\\":\\\"true\\\",\\\"delta.parquet.format.version\\\":\\\"2.12.0\\\",\\\"delta.enableRowTracking\\\":\\\"true\\\",\\\"io.unitycatalog.tableId\\\":\\\"d0f1ae78-324c-454c-840c-663bd0c80266\\\",\\\"delta.rowTracking.materializedRowCommitVersionColumnName\\\":\\\"_row-commit-version-col-40c251dd-f800-4ffd-81db-550048a17444\\\",\\\"delta.rowTracking.materializedRowIdColumnName\\\":\\\"_row-id-col-db80eb4b-e759-4d31-8125-85c435de0a09\\\"}\",\"statsOnLoad\":\"false\"}",
+          "{}"
+        ],
+        [
+          "1",
+          "2026-10-19T08:01:54.000Z",
+          "MERGE",
+          "{\"predicate\":\"[\\\"(((config_id#10811 = config_id#10765) AND (source_repo#10812 = source_repo#10766)) AND ((version_tag#10813 = version_tag#10767) AND (chunk_id#10818 = chunk_id#10772)))\\\"]\",\"clusterBy\":\"[]\",\"matchedPredicates\":\"[]\",\"statsOnLoad\":\"true\",\"notMatchedBySourcePredicates\":\"[]\",\"notMatchedPredicates\":\"[{\\\"actionType\\\":\\\"insert\\\"}]\"}",
+          "{\"numTargetRowsCopied\":\"0\",\"numTargetRowsDeleted\":\"0\",\"numTargetFilesAdded\":\"6\",\"numTargetBytesAdded\":\"1487381\",\"numTargetBytesRemoved\":\"0\",\"numTargetDeletionVectorsAdded\":\"0\",\"numTargetRowsMatchedUpdated\":\"0\",\"executionTimeMs\":\"4012\",\"materializeSourceTimeMs\":\"35\",\"numTargetRowsInserted\":\"5589\",\"numTargetRowsMatchedDeleted\":\"0\",\"numTargetDeletionVectorsUpdated\":\"0\",\"scanTimeMs\":\"0\",\"numTargetRowsUpdated\":\"0\",\"numOutputRows\":\"5589\",\"numTargetDeletionVectorsRemoved\":\"0\",\"numTargetRowsNotMatchedBySourceUpdated\":\"0\",\"numTargetChangeFilesAdded\":\"0\",\"numSourceRows\":\"5589\",\"numTargetFilesRemoved\":\"0\",\"numTargetRowsNotMatchedBySourceDeleted\":\"0\",\"rewriteTimeMs\":\"3859\"}"
+        ],
+        [
+          "2",
+          "2026-10-19T08:04:03.000Z",
+          "MERGE",
+          "{\"predicate\":\"[\\\"(((config_id#13193 = config_id#13147) AND (source_repo#13194 = source_repo#13148)) AND ((version_tag#13195 = version_tag#13149) AND (chunk_id#13200 = chunk_id#13154)))\\\"]\",\"clusterBy\":\"[]\",\"matchedPredicates\":\"[]\",\"statsOnLoad\":\"true\",\"notMatchedBySourcePredicates\":\"[]\",\"notMatchedPredicates\":\"[{\\\"actionType\\\":\\\"insert\\\"}]\"}",
+          "{\"numTargetRowsCopied\":\"0\",\"numTargetRowsDeleted\":\"0\",\"numTargetFilesAdded\":\"6\",\"numTargetBytesAdded\":\"1498391\",\"numTargetBytesRemoved\":\"0\",\"numTargetDeletionVectorsAdded\":\"0\",\"numTargetRowsMatchedUpdated\":\"0\",\"executionTimeMs\":\"2269\",\"materializeSourceTimeMs\":\"12\",\"numTargetRowsInserted\":\"5449\",\"numTargetRowsMatchedDeleted\":\"0\",\"numTargetDeletionVectorsUpdated\":\"0\",\"scanTimeMs\":\"0\",\"numTargetRowsUpdated\":\"0\",\"numOutputRows\":\"5449\",\"numTargetDeletionVectorsRemoved\":\"0\",\"numTargetRowsNotMatchedBySourceUpdated\":\"0\",\"numTargetChangeFilesAdded\":\"0\",\"numSourceRows\":\"5449\",\"numTargetFilesRemoved\":\"0\",\"numTargetRowsNotMatchedBySourceDeleted\":\"0\",\"rewriteTimeMs\":\"2205\"}"
+        ],
+        [
+          "3",
+          "2026-10-19T08:06:39.000Z",
+          "MERGE",
+          "{\"predicate\":\"[\\\"(((config_id#15772 = config_id#15726) AND (source_repo#15773 = source_repo#15727)) AND ((version_tag#15774 = version_tag#15728) AND (chunk_id#15779 = chunk_id#15733)))\\\"]\",\"clusterBy\":\"[]\",\"matchedPredicates\":\"[]\",\"statsOnLoad\":\"true\",\"notMatchedBySourcePredicates\":\"[]\",\"notMatchedPredicates\":\"[{\\\"actionType\\\":\\\"insert\\\"}]\"}",
+          "{\"numTargetRowsCopied\":\"0\",\"numTargetRowsDeleted\":\"0\",\"numTargetFilesAdded\":\"6\",\"numTargetBytesAdded\":\"1501938\",\"numTargetBytesRemoved\":\"0\",\"numTargetDeletionVectorsAdded\":\"0\",\"numTargetRowsMatchedUpdated\":\"0\",\"executionTimeMs\":\"2035\",\"materializeSourceTimeMs\":\"15\",\"numTargetRowsInserted\":\"5462\",\"numTargetRowsMatchedDeleted\":\"0\",\"numTargetDeletionVectorsUpdated\":\"0\",\"scanTimeMs\":\"0\",\"numTargetRowsUpdated\":\"0\",\"numOutputRows\":\"5462\",\"numTargetDeletionVectorsRemoved\":\"0\",\"numTargetRowsNotMatchedBySourceUpdated\":\"0\",\"numTargetChangeFilesAdded\":\"0\",\"numSourceRows\":\"5462\",\"numTargetFilesRemoved\":\"0\",\"numTargetRowsNotMatchedBySourceDeleted\":\"0\",\"rewriteTimeMs\":\"1981\"}"
+        ],
+        [
+          "4",
+          "2026-10-19T08:08:54.000Z",
+          "MERGE",
+          "{\"predicate\":\"[\\\"(((config_id#17946 = config_id#17900) AND (source_repo#17947 = source_repo#17901)) AND ((version_tag#17948 = version_tag#17902) AND (chunk_id#17953 = chunk_id#17907)))\\\"]\",\"clusterBy\":\"[]\",\"matchedPredicates\":\"[]\",\"statsOnLoad\":\"true\",\"notMatchedBySourcePredicates\":\"[]\",\"notMatchedPredicates\":\"[{\\\"actionType\\\":\\\"insert\\\"}]\"}",
+          "{\"numTargetRowsCopied\":\"0\",\"numTargetRowsDeleted\":\"0\",\"numTargetFilesAdded\":\"8\",\"numTargetBytesAdded\":\"1624612\",\"numTargetBytesRemoved\":\"0\",\"numTargetDeletionVectorsAdded\":\"0\",\"numTargetRowsMatchedUpdated\":\"0\",\"executionTimeMs\":\"2288\",\"materializeSourceTimeMs\":\"12\",\"numTargetRowsInserted\":\"8701\",\"numTargetRowsMatchedDeleted\":\"0\",\"numTargetDeletionVectorsUpdated\":\"0\",\"scanTimeMs\":\"0\",\"numTargetRowsUpdated\":\"0\",\"numOutputRows\":\"8701\",\"numTargetDeletionVectorsRemoved\":\"0\",\"numTargetRowsNotMatchedBySourceUpdated\":\"0\",\"numTargetChangeFilesAdded\":\"0\",\"numSourceRows\":\"8701\",\"numTargetFilesRemoved\":\"0\",\"numTargetRowsNotMatchedBySourceDeleted\":\"0\",\"rewriteTimeMs\":\"2230\"}"
+        ],
+        [
+          "5",
+          "2026-10-19T08:10:57.000Z",
+          "MERGE",
+          "{\"predicate\":\"[\\\"(((config_id#20400 = config_id#20354) AND (source_repo#20401 = source_repo#20355)) AND ((version_tag#20402 = version_tag#20356) AND (chunk_id#20407 = chunk_id#20361)))\\\"]\",\"clusterBy\":\"[]\",\"matchedPredicates\":\"[]\",\"statsOnLoad\":\"true\",\"notMatchedBySourcePredicates\":\"[]\",\"notMatchedPredicates\":\"[{\\\"actionType\\\":\\\"insert\\\"}]\"}",
+          "{\"numTargetRowsCopied\":\"0\",\"numTargetRowsDeleted\":\"0\",\"numTargetFilesAdded\":\"8\",\"numTargetBytesAdded\":\"1646601\",\"numTargetBytesRemoved\":\"0\",\"numTargetDeletionVectorsAdded\":\"0\",\"numTargetRowsMatchedUpdated\":\"0\",\"executionTimeMs\":\"2096\",\"materializeSourceTimeMs\":\"11\",\"numTargetRowsInserted\":\"8822\",\"numTargetRowsMatchedDeleted\":\"0\",\"numTargetDeletionVectorsUpdated\":\"0\",\"scanTimeMs\":\"0\",\"numTargetRowsUpdated\":\"0\",\"numOutputRows\":\"8822\",\"numTargetDeletionVectorsRemoved\":\"0\",\"numTargetRowsNotMatchedBySourceUpdated\":\"0\",\"numTargetChangeFilesAdded\":\"0\",\"numSourceRows\":\"8822\",\"numTargetFilesRemoved\":\"0\",\"numTargetRowsNotMatchedBySourceDeleted\":\"0\",\"rewriteTimeMs\":\"2052\"}"
+        ],
+        [
+          "6",
+          "2026-10-19T08:11:02.000Z",
+          "OPTIMIZE",
+          "{\"predicate\":\"[]\",\"auto\":\"true\",\"clusterBy\":\"[]\",\"zOrderBy\":\"[]\",\"batchId\":\"0\"}",
+          "{\"numRemovedFiles\":\"34\",\"numRemovedBytes\":\"7758923\",\"p25FileSize\":\"6840250\",\"numDeletionVectorsRemoved\":\"0\",\"minFileSize\":\"6840250\",\"numAddedFiles\":\"1\",\"maxFileSize\":\"6840250\",\"p75FileSize\":\"6840250\",\"p50FileSize\":\"6840250\",\"numAddedBytes\":\"6840250\"}"
+        ],
+        [
+          "7",
+          "2026-10-19T08:13:34.000Z",
+          "MERGE",
+          "{\"predicate\":\"[\\\"(((config_id#23561 = config_id#23515) AND (source_repo#23562 = source_repo#23516)) AND ((version_tag#23563 = version_tag#23517) AND (chunk_id#23568 = chunk_id#23522)))\\\"]\",\"clusterBy\":\"[]\",\"matchedPredicates\":\"[]\",\"statsOnLoad\":\"true\",\"notMatchedBySourcePredicates\":\"[]\",\"notMatchedPredicates\":\"[{\\\"actionType\\\":\\\"insert\\\"}]\"}",
+          "{\"numTargetRowsCopied\":\"0\",\"numTargetRowsDeleted\":\"0\",\"numTargetFilesAdded\":\"8\",\"numTargetBytesAdded\":\"1652776\",\"numTargetBytesRemoved\":\"0\",\"numTargetDeletionVectorsAdded\":\"0\",\"numTargetRowsMatchedUpdated\":\"0\",\"executionTimeMs\":\"2281\",\"materializeSourceTimeMs\":\"15\",\"numTargetRowsInserted\":\"8845\",\"numTargetRowsMatchedDeleted\":\"0\",\"numTargetDeletionVectorsUpdated\":\"0\",\"scanTimeMs\":\"0\",\"numTargetRowsUpdated\":\"0\",\"numOutputRows\":\"8845\",\"numTargetDeletionVectorsRemoved\":\"0\",\"numTargetRowsNotMatchedBySourceUpdated\":\"0\",\"numTargetChangeFilesAdded\":\"0\",\"numSourceRows\":\"8845\",\"numTargetFilesRemoved\":\"0\",\"numTargetRowsNotMatchedBySourceDeleted\":\"0\",\"rewriteTimeMs\":\"2232\"}"
+        ],
+        [
+          "8",
+          "2026-10-19T08:17:40.000Z",
+          "UPDATE",
+          "{\"predicate\":\"[\\\"(((config_id#14557 = ccbd80f05e15c8dd) AND (source_repo#14558 = apache/spark)) AND ((version_tag#14559 = v3.5.0) AND (chunk_id#14564 = 8671aa6681209fb927671f5ca820d8fb)))\\\"]\"}",
+          "{\"numRemovedFiles\":\"0\",\"numRemovedBytes\":\"0\",\"numCopiedRows\":\"0\",\"numDeletionVectorsAdded\":\"1\",\"numDeletionVectorsRemoved\":\"0\",\"numAddedChangeFiles\":\"0\",\"executionTimeMs\":\"5958\",\"numDeletionVectorsUpdated\":\"0\",\"scanTimeMs\":\"2029\",\"numAddedFiles\":\"1\",\"numUpdatedRows\":\"1\",\"numAddedBytes\":\"16211\",\"rewriteTimeMs\":\"3865\"}"
+        ],
+        [
+          "9",
+          "2026-10-19T08:21:26.000Z",
+          "UPDATE",
+          "{\"predicate\":\"[\\\"((((config_id#16054 = ccbd80f05e15c8dd) AND (source_repo#16055 = apache/spark)) AND (version_tag#16056 = v3.5.0)) AND ((chunk_id#16061 = 8671aa6681209fb927671f5ca820d8fb) AND EndsWith(embed_text#16066, !)))\\\"]\"}",
+          "{\"numRemovedFiles\":\"1\",\"numRemovedBytes\":\"16211\",\"numCopiedRows\":\"0\",\"numDeletionVectorsAdded\":\"0\",\"numDeletionVectorsRemoved\":\"0\",\"numAddedChangeFiles\":\"0\",\"executionTimeMs\":\"2100\",\"numDeletionVectorsUpdated\":\"0\",\"scanTimeMs\":\"671\",\"numAddedFiles\":\"1\",\"numUpdatedRows\":\"1\",\"numAddedBytes\":\"16206\",\"rewriteTimeMs\":\"1425\"}"
+        ],
+        [
+          "10",
+          "2026-10-19T08:27:24.000Z",
+          "OPTIMIZE",
+          "{\"predicate\":\"[]\",\"auto\":\"false\",\"clusterBy\":\"[]\",\"zOrderBy\":\"[]\",\"batchId\":\"0\"}",
+          "{\"numRemovedFiles\":\"10\",\"numRemovedBytes\":\"8509232\",\"p25FileSize\":\"8141184\",\"numDeletionVectorsRemoved\":\"1\",\"minFileSize\":\"8141184\",\"numAddedFiles\":\"1\",\"maxFileSize\":\"8141184\",\"p75FileSize\":\"8141184\",\"p50FileSize\":\"8141184\",\"numAddedBytes\":\"8141184\"}"
+        ]
+      ]
+    }
+  ],
+  "error": null
+}
