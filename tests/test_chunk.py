@@ -10,6 +10,7 @@ from pathlib import Path
 
 import pytest
 
+import docs_rag.chunk
 from docs_rag.chunk import ChunkConfig, chunk_document, chunk_id, chunk_section, rebuilds
 from docs_rag.clean import clean_page
 from docs_rag.tokens import count_tokens
@@ -362,3 +363,14 @@ def test_a_code_fence_that_alone_is_over_budget_raises() -> None:
     fence = "```scala " + "word " * 120 + "\n```"
     with pytest.raises(ValueError, match="code fence over budget"):
         bodies(f"# H\n\n{fence}\n", ChunkConfig(max_tokens=128, overlap_tokens=16))
+
+
+def test_chunk_document_refuses_a_body_that_does_not_rebuild(monkeypatch: pytest.MonkeyPatch) -> None:
+    real = docs_rag.chunk.chunk_section
+
+    def shifted(*args: object, **kwargs: object) -> list[docs_rag.chunk.SectionChunk]:
+        return [dataclasses.replace(sc, start=sc.start + 1) for sc in real(*args, **kwargs)]  # type: ignore[arg-type]
+
+    monkeypatch.setattr(docs_rag.chunk, "chunk_section", shifted)
+    with pytest.raises(AssertionError, match="does not rebuild"):
+        chunk_document("docs/x.md", "# H\n\nSome text here.\n", ChunkConfig(max_tokens=64, overlap_tokens=8))

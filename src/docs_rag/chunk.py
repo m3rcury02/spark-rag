@@ -398,6 +398,11 @@ def chunk_document(path: str, raw_markdown: str, config: ChunkConfig) -> DocChun
             n_tokens = count_tokens(sc.embed_text)
             if n_tokens > config.max_tokens:  # a bug, not a data problem: packing is supposed to prevent it
                 raise AssertionError(f"chunk of {n_tokens} tokens > max {config.max_tokens} in {path}")
+            start, end = section.start + sc.start, section.start + sc.end
+            if (
+                sc.frame_head + page.text[start:end] + sc.frame_tail != sc.body
+            ):  # the offsets contract, every run
+                raise AssertionError(f"chunk body does not rebuild from its offsets in {path}")
             occurrence = seen.get((section.path, sc.embed_text), 0)
             seen[(section.path, sc.embed_text)] = occurrence + 1
             chunks.append(
@@ -410,8 +415,8 @@ def chunk_document(path: str, raw_markdown: str, config: ChunkConfig) -> DocChun
                     n_tokens=n_tokens,
                     occurrence=occurrence,
                     chunk_id=chunk_id(path, section.path, sc.embed_text, occurrence),
-                    char_start=section.start + sc.start,
-                    char_end=section.start + sc.end,
+                    char_start=start,
+                    char_end=end,
                     frame=sc.frame,
                     frame_head=sc.frame_head,
                     frame_tail=sc.frame_tail,

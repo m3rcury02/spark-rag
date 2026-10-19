@@ -174,11 +174,17 @@ def transition(a: TagDocs, b: TagDocs, config: ChunkConfig, chunked: dict[str, d
                 continue
             own = text_a[c.char_start : c.char_end]  # the chunk's own text: no breadcrumb, no frame
             same_path = [s.body for s in sb if s.path == c.section_path]
-            kind = "framed (table row / code piece)" if framed(c) else "prose"
+            kind = {"none": "prose", "table": "table row", "code": "code piece"}[c.frame]
+            heads_b = {x.frame_head for x in chunked[b.tag][p].chunks if x.section_path == c.section_path}
             if (section.path, section.body) in unchanged_b:
                 cause = "section unchanged (should not happen)"
             elif any(whole_lines_in(own, body) for body in same_path):
-                cause = "own text unchanged, frame edited" if kind != "prose" else "boundary shift"
+                # Own text survives: its frame (table header, code fence) changed, or it is cut differently.
+                cause = (
+                    "own text unchanged, frame edited"
+                    if framed(c) and c.frame_head not in heads_b
+                    else "boundary shift"
+                )
             elif same_path:
                 cause = "own text edited"
             elif section.body in {s.body for s in sb}:
@@ -208,7 +214,8 @@ def chunker_behaviour(tag: TagDocs, chunked: dict[str, DocChunks]) -> Any:
                 continue
             stats["continuations"] += 1
             if framed(left) or framed(right):
-                stats["at_a_split_code_block_or_table_row"] += 1
+                overlap = right.char_start < left.char_end  # only within one split code block or one long row
+                stats[f"at_a_split_code_block_or_table_row_{'with' if overlap else 'without'}_overlap"] += 1
             elif left.body.endswith(("```", "~~~")) or right.body.startswith(("```", "~~~")):
                 stats["at_a_whole_code_block"] += 1
             elif right.char_start < left.char_end:

@@ -86,6 +86,8 @@ def main() -> None:
     ap.add_argument("--schema", default=Config.schema, help="target schema; also forwarded to the job")
     ap.add_argument("job_args", nargs=argparse.REMAINDER, help="arguments after -- go to the job script")
     args = ap.parse_args()
+    if (REPO / "runs" / f"{args.label}.json").exists():  # runs/ records what happened; never overwrite it
+        sys.exit(f"runs/{args.label}.json exists: choose a new label")
     job_args = [a for a in args.job_args if a != "--"]
     # Catch every spelling argparse would accept for these options: "--schema x", "--schema=x" and prefixes.
     names = {a.split("=", 1)[0] for a in job_args if a.startswith("--")}

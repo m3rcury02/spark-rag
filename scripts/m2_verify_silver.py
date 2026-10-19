@@ -1,7 +1,7 @@
 """Check silver_chunks against a local chunking of git's docs, and save the comparison to runs/.
 
     uv run --with databricks-sdk==0.152.0 python scripts/m2_verify_silver.py --label m2_x_silver_vs_local \
-        --tags v3.5.0 v4.0.0 v4.0.1 --job-runs runs/m2_d[1-9]_*.json
+        --tags v3.5.0 v4.0.0 v4.0.1 --job-runs runs/m2_d[1-9]*.json
 
 Local side: every tag's docs read straight from git (scripts/gitdocs.py), cleaned and chunked here with every
 config of the chunk grid. Silver side: every row of those configs, read on the starter warehouse. Per (tag,
@@ -76,18 +76,21 @@ def field(name: str, value: Any) -> Any:
     return value
 
 
-def job_fingerprints(paths: list[str]) -> dict[tuple[str, str], dict[str, Any]]:
-    """(tag, config_id) -> fingerprint and machine, from the silver jobs' saved runs/ files."""
-    out = {}
+def job_fingerprints(paths: list[str]) -> dict[tuple[str, str], list[dict[str, Any]]]:
+    """(tag, config_id) -> fingerprint and machine of every silver job that chunked it, from the saved runs/
+    files. A job that failed after chunking (a tamper run) recorded its fingerprint too, so it is included."""
+    out: dict[tuple[str, str], list[dict[str, Any]]] = {}
     for p in paths:
         summary = json.loads(pathlib.Path(p).read_text()).get("summary") or {}
-        if summary.get("status") == "succeeded":
+        if (summary.get("chunking") or {}).get("fingerprint"):
             key = (summary["tag"], summary["chunk_config"]["config_id"])
-            out[key] = {
-                "fingerprint": summary["chunking"]["fingerprint"],
-                "machine": summary["environment"]["machine"],
-                "file": pathlib.Path(p).name,
-            }
+            out.setdefault(key, []).append(
+                {
+                    "fingerprint": summary["chunking"]["fingerprint"],
+                    "machine": summary["environment"]["machine"],
+                    "file": pathlib.Path(p).name,
+                }
+            )
     return out
 
 
@@ -162,9 +165,8 @@ def main() -> None:
                 sorted(silver_docs),
             )
             add("local chunks whose body does not rebuild from its offsets", 0, len(misframed), misframed[:3])
-            job = jobs.get((tag, chunking.config_id))
-            if job:
-                local_fp = fingerprint((r[0], r[1]) for r in local)
+            local_fp = fingerprint((r[0], r[1]) for r in local)
+            for job in jobs.get((tag, chunking.config_id), []):
                 add(
                     f"fingerprint: job on {job['machine']} ({job['file']}) vs here on {platform.machine()}",
                     local_fp,
@@ -178,7 +180,7 @@ def main() -> None:
         "local_machine": {"machine": platform.machine(), "python": platform.python_version()},
         "source_commits": {t: source[t].commit_sha for t in tags},
         "silver_rows_read": rows_read,
-        "job_runs_compared": sorted(j["file"] for j in jobs.values()),
+        "job_runs_compared": sorted(j["file"] for js in jobs.values() for j in js),
         "all_pass": all(c["pass"] for c in checks),
         "checks": checks,
     }

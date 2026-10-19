@@ -54,6 +54,8 @@ def main() -> None:
     ap.add_argument("--label", required=True, help="output name: runs/<label>.json")
     ap.add_argument("--sql", action="append", required=True, help="statement to run (repeatable)")
     args = ap.parse_args()
+    if (REPO / "runs" / f"{args.label}.json").exists():  # runs/ records what happened; never overwrite it
+        sys.exit(f"runs/{args.label}.json exists: choose a new label")
     git = ["git", "-C", str(REPO)]
     if subprocess.run(
         [*git, "status", "--porcelain", "--", ".", ":(exclude)runs"],
