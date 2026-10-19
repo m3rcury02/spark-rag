@@ -1,0 +1,110 @@
+{
+  "meta": {
+    "label": "m2_d8b_silver_v4.0.1_254_after_tamper",
+    "git_commit": "557a1fda39cd8d20b127555716d1ca4031283d4f",
+    "script": "jobs/silver_chunk.py",
+    "job_args": [
+      "--tag",
+      "v4.0.1"
+    ],
+    "target": "workspace.docs_rag_dev",
+    "run_id": "735d25c8-0b90-4b9e-ac8a-2fc7d3dda6ca",
+    "environment_version": "4",
+    "wheel": "docs_rag-0.0.1.dev49+g557a1fda3-py3-none-any.whl",
+    "parent_run_id": 704347807231924,
+    "task_run_id": 21056832506155,
+    "result_state": "FAILED",
+    "state_message": "Task main failed with message: Workload failed, see run output for details.",
+    "run_start_utc": "2026-10-19T08:18:44Z",
+    "run_end_utc": "2026-10-19T08:20:50Z",
+    "run_duration_seconds": 126.2
+  },
+  "summary": {
+    "run_id": "735d25c8-0b90-4b9e-ac8a-2fc7d3dda6ca",
+    "started_utc": "2026-10-19T08:20:19Z",
+    "tag": "v4.0.1",
+    "chunk_config": {
+      "config_id": "ccbd80f05e15c8dd",
+      "cleaner_version": "1",
+      "chunker_version": "1",
+      "max_tokens": 254,
+      "overlap_tokens": 32
+    },
+    "environment": {
+      "python": "3.12.3",
+      "databricks_runtime_version": "client.4.10",
+      "databricks_connect": "17.3.14",
+      "docs_rag": "0.0.1.dev49+g557a1fda3",
+      "tokenizers": "0.23.3",
+      "machine": "aarch64",
+      "spark": "4.2.0"
+    },
+    "bronze": {
+      "docs": 213,
+      "commit_sha": "29434ea766b0fc3c3bf6eaadb43a8f931133649e"
+    },
+    "chunking": {
+      "seconds": 8.5,
+      "fingerprint": "ad300f7ddb87b42718cd0e0aab40e948e5f509124cc0c64224ede897805cb827",
+      "chunks": 5462,
+      "n_tokens_min": 6,
+      "n_tokens_median": 108,
+      "n_tokens_max": 254,
+      "n_tokens_histogram": {
+        "1-16": 71,
+        "17-32": 224,
+        "33-64": 1385,
+        "65-128": 1395,
+        "129-192": 877,
+        "193-224": 503,
+        "225-254": 1007
+      },
+      "body_tokens_under": {
+        "5": 46,
+        "10": 88,
+        "20": 304
+      },
+      "docs": 213,
+      "docs_with_no_chunks": [
+        "docs/sql-ref-functions-builtin.md"
+      ],
+      "sections": 1967,
+      "empty_sections": 226,
+      "single_small_chunk_docs": [
+        "docs/404.md",
+        "docs/ml-ann.md",
+        "docs/ml-decision-tree.md",
+        "docs/ml-ensembles.md",
+        "docs/ml-linear-methods.md",
+        "docs/ml-survival-regression.md",
+        "docs/programming-guide.md",
+        "docs/pyspark-migration-guide.md",
+        "docs/sql-error-conditions.md",
+        "docs/sql-pyspark-pandas-with-arrow.md",
+        "docs/sql-ref-syntax-aux-cache.md",
+        "docs/sql-ref-syntax-aux-conf-mgmt.md",
+        "docs/sql-ref-syntax-aux-describe.md",
+        "docs/sql-ref-syntax-aux-resource-mgmt.md",
+        "docs/sql-ref-syntax-aux-show.md",
+        "docs/sql-ref-syntax-qry-select-subqueries.md",
+        "docs/ss-migration-guide.md",
+        "docs/structured-streaming-kafka-integration.md",
+        "docs/structured-streaming-programming-guide.md"
+      ],
+      "violations": []
+    },
+    "check": {
+      "status": "identical",
+      "stored_chunks": 5462,
+      "computed_chunks": 5462,
+      "only_stored": 0,
+      "only_computed": 0
+    },
+    "other_tags_reproduced": {},
+    "status": "failed",
+    "error": "RuntimeError: stored silver rows of v3.5.0 fail their recheck: docs/index.md #0: chunk_id does not match its content; docs/index.md #0: embed_text is not breadcrumb + body; docs/index.md #0: n_tokens 227 is wrong or over 254",
+    "finished_utc": "2026-10-19T08:20:44Z"
+  },
+  "error": "RuntimeError: stored silver rows of v3.5.0 fail their recheck: docs/index.md #0: chunk_id does not match its content; docs/index.md #0: embed_text is not breadcrumb + body; docs/index.md #0: n_tokens 227 is wrong or over 254",
+  "error_trace": "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m\n\u001b[0;31mRuntimeError\u001b[0m                              Traceback (most recent call last)\nFile \u001b[0;32m~/.ipykernel/15907/command--1-2380377955:14\u001b[0m\n\u001b[1;32m     11\u001b[0m \u001b[38;5;28;01mdel\u001b[39;00m sys\n\u001b[1;32m     13\u001b[0m \u001b[38;5;28;01mwith\u001b[39;00m \u001b[38;5;28mopen\u001b[39m(filename, \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mrb\u001b[39m\u001b[38;5;124m\"\u001b[39m) \u001b[38;5;28;01mas\u001b[39;00m f:\n\u001b[0;32m---> 14\u001b[0m   exec(\u001b[38;5;28mcompile\u001b[39m(f\u001b[38;5;241m.\u001b[39mread(), filename, \u001b[38;5;124m'\u001b[39m\u001b[38;5;124mexec\u001b[39m\u001b[38;5;124m'\u001b[39m))\n\nFile \u001b[0;32m/tmp/tmpb2hjmbud.py:272\u001b[0m\n\u001b[1;32m    268\u001b[0m     run_with_summary(chunk_tag, parser)\n\u001b[1;32m    271\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m \u001b[38;5;18m__name__\u001b[39m \u001b[38;5;241m==\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m__main__\u001b[39m\u001b[38;5;124m\"\u001b[39m:\n\u001b[0;32m--> 272\u001b[0m     main()\n\nFile \u001b[0;32m/tmp/tmpb2hjmbud.py:268\u001b[0m, in \u001b[0;36mmain\u001b[0;34m()\u001b[0m\n\u001b[1;32m    266\u001b[0m parser\u001b[38;5;241m.\u001b[39madd_argument(\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m--max-tokens\u001b[39m\u001b[38;5;124m\"\u001b[39m, \u001b[38;5;28mtype\u001b[39m\u001b[38;5;241m=\u001b[39m\u001b[38;5;28mint\u001b[39m, default\u001b[38;5;241m=\u001b[39mChunkConfig\u001b[38;5;241m.\u001b[39mmax_tokens)\n\u001b[1;32m    267\u001b[0m parser\u001b[38;5;241m.\u001b[39madd_argument(\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m--overlap-tokens\u001b[39m\u001b[38;5;124m\"\u001b[39m, \u001b[38;5;28mtype\u001b[39m\u001b[38;5;241m=\u001b[39m\u001b[38;5;28mint\u001b[39m, default\u001b[38;5;241m=\u001b[39mChunkConfig\u001b[38;5;241m.\u001b[39moverlap_tokens)\n\u001b[0;32m--> 268\u001b[0m run_with_summary(chunk_tag, parser)\n\nFile \u001b[0;32m/local_disk0/.ephemeral_nfs/envs/pythonEnv-190716d4-fba6-4575-8e0b-8cbf9ca1d408/lib/python3.12/site-packages/docs_rag/jobenv.py:94\u001b[0m, in \u001b[0;36mrun_with_summary\u001b[0;34m(job, parser)\u001b[0m\n\u001b[1;32m     92\u001b[0m summary: \u001b[38;5;28mdict\u001b[39m[\u001b[38;5;28mstr\u001b[39m, Any] \u001b[38;5;241m=\u001b[39m {\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mrun_id\u001b[39m\u001b[38;5;124m\"\u001b[39m: args\u001b[38;5;241m.\u001b[39mrun_id, \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstarted_utc\u001b[39m\u001b[38;5;124m\"\u001b[39m: utc_now()}\n\u001b[1;32m     93\u001b[0m \u001b[38;5;28;01mtry\u001b[39;00m:\n\u001b[0;32m---> 94\u001b[0m     job(args, summary)\n\u001b[1;32m     95\u001b[0m     summary[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstatus\u001b[39m\u001b[38;5;124m\"\u001b[39m] \u001b[38;5;241m=\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124msucceeded\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m     96\u001b[0m \u001b[38;5;28;01mexcept\u001b[39;00m \u001b[38;5;167;01mException\u001b[39;00m \u001b[38;5;28;01mas\u001b[39;00m e:\n\nFile \u001b[0;32m/tmp/tmpb2hjmbud.py:198\u001b[0m, in \u001b[0;36mchunk_tag\u001b[0;34m(args, summary)\u001b[0m\n\u001b[1;32m    196\u001b[0m other_docs \u001b[38;5;241m=\u001b[39m read_bronze(spark, config, other)\n\u001b[1;32m    197\u001b[0m _, other_records \u001b[38;5;241m=\u001b[39m chunk_bronze(config, other, other_docs, args\u001b[38;5;241m.\u001b[39mrun_id)\n\u001b[0;32m--> 198\u001b[0m other_check, other_stored \u001b[38;5;241m=\u001b[39m compare_with_stored(spark, config, other, other_records)\n\u001b[1;32m    199\u001b[0m summary[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mother_tags_reproduced\u001b[39m\u001b[38;5;124m\"\u001b[39m][other] \u001b[38;5;241m=\u001b[39m other_check\u001b[38;5;241m.\u001b[39m\u001b[38;5;18m__dict__\u001b[39m\n\u001b[1;32m    200\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m other_check\u001b[38;5;241m.\u001b[39mstatus \u001b[38;5;241m!=\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124midentical\u001b[39m\u001b[38;5;124m\"\u001b[39m:\n\nFile \u001b[0;32m/tmp/tmpb2hjmbud.py:121\u001b[0m, in \u001b[0;36mcompare_with_stored\u001b[0;34m(spark, config, tag, records)\u001b[0m\n\u001b[1;32m    119\u001b[0m problems \u001b[38;5;241m=\u001b[39m stored_violations(stored, config\u001b[38;5;241m.\u001b[39mchunk)\n\u001b[1;32m    120\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m problems:\n\u001b[0;32m--> 121\u001b[0m     \u001b[38;5;28;01mraise\u001b[39;00m \u001b[38;5;167;01mRuntimeError\u001b[39;00m(\u001b[38;5;124mf\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstored silver rows of \u001b[39m\u001b[38;5;132;01m{\u001b[39;00mtag\u001b[38;5;132;01m}\u001b[39;00m\u001b[38;5;124m fail their recheck: \u001b[39m\u001b[38;5;124m\"\u001b[39m \u001b[38;5;241m+\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m; \u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;241m.\u001b[39mjoin(problems))\n\u001b[1;32m    122\u001b[0m \u001b[38;5;28;01mreturn\u001b[39;00m check_against_stored(records, stored), stored\n\n\u001b[0;31mRuntimeError\u001b[0m: stored silver rows of v3.5.0 fail their recheck: docs/index.md #0: chunk_id does not match its content; docs/index.md #0: embed_text is not breadcrumb + body; docs/index.md #0: n_tokens 227 is wrong or over 254"
+}
