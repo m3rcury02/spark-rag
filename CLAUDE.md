@@ -109,24 +109,31 @@ uv run python scripts/corpus_fingerprint.py --update
 
 ## Next session: pick up here
 
-M1 is complete on branch `m1-bronze` (D-006, D-007, evidence in `runs/m1_*`). `workspace.docs_rag_dev.bronze_docs`
-holds v3.5.0 (244 docs), v4.0.0 (212) and v4.0.1 (213). **Wait for the owner to say "start M2" before doing
-any M2 work.** Open items:
-- Owner decides whether to merge `m1-bronze` into `main`.
+M2 is in progress on branch `m2-silver` (the owner said "proceed"; M1 is merged). Code, tests, goldens and the
+local evidence are done (D-008, D-009, D-010; `runs/m2_e_stability.json`, `runs/m2_f_tokenizer_parity.json`).
+**Blocked:** since 2026-10-19 05:27Z Databricks refuses every job submit and SQL statement (`runs/m2_d0*`,
+D-001 Quota), so the silver runs have not happened. When compute is back, in this order:
+1. `jobs/silver_chunk.py` for v3.5.0, v4.0.0, v4.0.1 at 254/32 (default), then the same at
+   `--max-tokens 128 --overlap-tokens 16`: labels `m2_d1`..`m2_d6`. Each later run re-chunks the earlier tags.
+2. Re-run one (identical: MERGE skipped). Tamper test with `run_sql.py`: change one stored `embed_text`,
+   re-run (must fail), restore, re-run (identical).
+3. `m2_verify_silver.py --job-runs runs/m2_d*.json`; then fill the pending silver evidence into D-008 and D-010,
+   tick M2 and give the owner the M2 report (how to run, what to measure, 5 interview questions).
+
+**Do not start M3 until the owner says so.** Open items:
 - Remote branches `m0-smoke-test` (merged) and `claude/modest-archimedes-mp5zx3` (stale) are still on GitHub:
   the owner approved deleting them, but the session's permission classifier blocked `git push --delete`.
   The owner can delete them in the GitHub UI.
 - `docs_rag_endpoint` was deleted on 2026-10-19 (idle, 96 DBU/day; D-001). Re-probe `system.billing.usage` more
   than 24 h later to confirm the endpoint's usage stopped, and save the output under `runs/`.
-- Carry into M2: chunk IDs must be stable across tags (content-addressed within heading sections, see Open
-  questions). Silver reads bronze per (version_tag, commit_sha).
-- Carry into M3: the diff baseline is the last *published* (version_tag, commit_sha), never "latest in bronze"
-  (D-006). The run log takes add/change/delete counts from our own MERGE metrics; the sync pipeline's row
-  metrics are always 0 (D-001). On Databricks a no-op MERGE still writes an empty table version (D-006 run b).
-- Carry into M5: create the endpoint again first (~20 min of provisioning). Create the real index only after
-  the full gold backfill, because capacity is sized from the source table at creation and a small start limits
-  growth. Re-test insert, update and delete with the real
-  MERGE. Sync right after each MERGE and wait for the update to complete ("ready" is not "synced") (D-001).
+- Carry into M3: the diff baseline is the last *published* (version_tag, commit_sha) per config, never "latest
+  in bronze" (D-006, D-010). Chunk-level change = added and removed chunk_ids. The run log takes counts from
+  our own MERGE metrics; the sync pipeline's row metrics are always 0 (D-001). On Databricks a no-op MERGE
+  still writes an empty table version (D-006 run b).
+- Carry into M5: create the endpoint again first (~20 min of provisioning) and delete it when the index is not
+  needed. Create the real index only after the full gold backfill, because capacity is sized from the source
+  table at creation and a small start limits growth. Re-test insert, update and delete with the real MERGE.
+  Sync right after each MERGE and wait for the update to complete ("ready" is not "synced") (D-001).
 
 ## Milestones (status)
 

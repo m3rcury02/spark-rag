@@ -453,10 +453,10 @@ packing within heading sections (chosen); (4) content-defined boundaries.
 - Sizes are in **the models' own units**: WordPiece counts from the vendored vocab (`tokenizers==0.23.3`, pinned
   and checked by the job). `max_tokens` bounds the whole embed text `<breadcrumb>\n\n<body>`, with breadcrumb
   `title > h1 > h2 ...`; every `n_tokens` is a recount. Grid for M6: **254/32 and 128/16**: both fit MiniLM's
-  256 positions with [CLS] and [SEP], with the same 12.5% overlap. 254 is beyond the 128 tokens MiniLM was
-  trained on ("The sequence length was limited to 128 tokens", its
-  [model card](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2), read 2026-10-19); whether that
-  hurts is what the 128 config tests.
+  256 positions with [CLS] and [SEP], with overlap at about an eighth of the budget (32 of 254, 16 of 128). 254
+  is beyond the 128 tokens MiniLM was trained on ("The sequence length was limited to 128 tokens", its [model
+  card](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2), read 2026-10-19); whether that hurts is
+  what the 128 config tests.
 - Units are paragraphs, GFM tables and fenced code blocks. A unit that fits stays whole. One that does not is
   split: prose at sentence ends first (its line breaks are the source's hard wrapping; "e.g."/"i.e." do not end
   a sentence), a list at its item starts, code at its lines; then lines, sentences and word starts. Pieces
