@@ -1,0 +1,114 @@
+{
+  "meta": {
+    "label": "m3_f_detect_v4.0.1",
+    "git_commit": "d0ec8155b8dd35743907560e9bdbd0b0ae3c1703",
+    "script": "jobs/change_detect.py",
+    "job_args": [
+      "--tag",
+      "v4.0.1"
+    ],
+    "target": "workspace.docs_rag_dev",
+    "run_id": "b2b5cba6-ab0e-43af-8d05-ce065c108778",
+    "environment_version": "4",
+    "wheel": "docs_rag-0.0.1.dev66+gd0ec8155b-py3-none-any.whl",
+    "parent_run_id": 419466447371801,
+    "task_run_id": 744298623504832,
+    "result_state": "SUCCESS",
+    "state_message": "",
+    "run_start_utc": "2026-10-19T22:05:20Z",
+    "run_end_utc": "2026-10-19T22:06:25Z",
+    "run_duration_seconds": 64.9
+  },
+  "summary": {
+    "run_id": "b2b5cba6-ab0e-43af-8d05-ce065c108778",
+    "started_utc": "2026-10-19T22:05:49Z",
+    "tag": "v4.0.1",
+    "sink": "none",
+    "config_id": "ccbd80f05e15c8dd",
+    "environment": {
+      "python": "3.12.3",
+      "databricks_runtime_version": "client.4.10",
+      "databricks_connect": "17.3.14",
+      "docs_rag": "0.0.1.dev66+gd0ec8155b",
+      "tokenizers": "0.23.3",
+      "machine": "aarch64",
+      "spark": "4.2.0"
+    },
+    "baseline": {
+      "run_id": "b762b472-c6cb-4cbc-93ce-da63e5c392f2",
+      "baseline_run_id": "f2dc0c3b-9876-4d2b-a2ab-ab98087278f9",
+      "status": "committed",
+      "to_version_tag": "v4.0.0",
+      "to_commit_sha": "fa33ea000a0bda9e5a3fa1af98e8e85b8cc5e4d4",
+      "to_config_id": "ccbd80f05e15c8dd",
+      "to_docs_fingerprint": "10f1f12191520dc32e683b7704fd40bb2ee4bcc8d2c2e534e4a27f884d766c9e",
+      "to_chunks_fingerprint": "877e692076c81b6d824a8ade6bc821481a45b23aeea271778de2aa2594c875d6"
+    },
+    "row": {
+      "run_id": "b2b5cba6-ab0e-43af-8d05-ce065c108778",
+      "baseline_run_id": "b762b472-c6cb-4cbc-93ce-da63e5c392f2",
+      "job": "change_detect",
+      "source_repo": "apache/spark",
+      "sink": "none",
+      "status": "committed",
+      "error": null,
+      "direction": "forward",
+      "from_version_tag": "v4.0.0",
+      "from_commit_sha": "fa33ea000a0bda9e5a3fa1af98e8e85b8cc5e4d4",
+      "from_config_id": "ccbd80f05e15c8dd",
+      "to_version_tag": "v4.0.1",
+      "to_commit_sha": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+      "to_config_id": "ccbd80f05e15c8dd",
+      "max_tokens": 254,
+      "overlap_tokens": 32,
+      "from_docs": 212,
+      "to_docs": 213,
+      "docs_added": 1,
+      "docs_changed": 4,
+      "docs_deleted": 0,
+      "docs_unchanged": 208,
+      "docs_moved": 0,
+      "docs_changed_same_chunks": 3,
+      "from_chunks": 5449,
+      "to_chunks": 5462,
+      "chunks_added_new_docs": 13,
+      "chunks_added_changed_docs": 8,
+      "chunks_added_unchanged_docs": 0,
+      "chunks_removed_changed_docs": 8,
+      "chunks_removed_unchanged_docs": 0,
+      "chunks_removed_deleted_docs": 0,
+      "chunks_kept": 5441,
+      "chunks_kept_relocated": 0,
+      "tokens_to_embed": 3538,
+      "to_tokens": 692251,
+      "to_docs_fingerprint": "5b1534b24125aa7d7131d72727e2b28ff85b072262ed48dceedb3b40ba798c02",
+      "to_chunks_fingerprint": "ad300f7ddb87b42718cd0e0aab40e948e5f509124cc0c64224ede897805cb827",
+      "started_at": "2026-10-19 22:05:49.989902+00:00",
+      "finished_at": "2026-10-19 22:06:15.956218+00:00",
+      "code_version": "0.0.1.dev66+gd0ec8155b"
+    },
+    "paths": {
+      "added": [
+        "docs/sql-ref-syntax-ddl-create-sql-function.md"
+      ],
+      "changed": [
+        "docs/quick-start.md",
+        "docs/sql-ref-syntax-ddl-create-function.md",
+        "docs/structured-streaming-programming-guide.md",
+        "docs/submitting-applications.md"
+      ],
+      "deleted": []
+    },
+    "logged": "committed",
+    "read_back": {
+      "rows_with_this_run_id": 1,
+      "status": "committed",
+      "chain_head": "b2b5cba6-ab0e-43af-8d05-ce065c108778",
+      "committed_runs_in_chain": 4
+    },
+    "status": "succeeded",
+    "finished_utc": "2026-10-19T22:06:21Z"
+  },
+  "error": null,
+  "error_trace": null
+}
