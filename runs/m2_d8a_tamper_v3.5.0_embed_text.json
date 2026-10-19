@@ -1,0 +1,77 @@
+{
+  "label": "m2_d8a_tamper_v3.5.0_embed_text",
+  "git_commit": "c3b41ac5b133810968cad68656ebc7af39ce1f21",
+  "statements": [
+    {
+      "sql": "SELECT path, chunk_index, n_tokens, length(embed_text) AS len, right(embed_text, 20) AS tail FROM workspace.docs_rag_dev.silver_chunks WHERE config_id = 'ccbd80f05e15c8dd' AND source_repo = 'apache/spark' AND version_tag = 'v3.5.0' AND chunk_id = '8671aa6681209fb927671f5ca820d8fb'",
+      "params": {},
+      "columns": [
+        "path",
+        "chunk_index",
+        "n_tokens",
+        "len",
+        "tail"
+      ],
+      "rows": [
+        [
+          "docs/index.md",
+          "0",
+          "227",
+          "969",
+          "a Java installation."
+        ]
+      ]
+    },
+    {
+      "sql": "UPDATE workspace.docs_rag_dev.silver_chunks SET embed_text = embed_text || '!' WHERE config_id = 'ccbd80f05e15c8dd' AND source_repo = 'apache/spark' AND version_tag = 'v3.5.0' AND chunk_id = '8671aa6681209fb927671f5ca820d8fb'",
+      "params": {},
+      "columns": [
+        "num_affected_rows"
+      ],
+      "rows": [
+        [
+          "1"
+        ]
+      ]
+    },
+    {
+      "sql": "SELECT path, chunk_index, n_tokens, length(embed_text) AS len, right(embed_text, 20) AS tail FROM workspace.docs_rag_dev.silver_chunks WHERE config_id = 'ccbd80f05e15c8dd' AND source_repo = 'apache/spark' AND version_tag = 'v3.5.0' AND chunk_id = '8671aa6681209fb927671f5ca820d8fb'",
+      "params": {},
+      "columns": [
+        "path",
+        "chunk_index",
+        "n_tokens",
+        "len",
+        "tail"
+      ],
+      "rows": [
+        [
+          "docs/index.md",
+          "0",
+          "227",
+          "970",
+          " Java installation.!"
+        ]
+      ]
+    },
+    {
+      "sql": "SELECT version, operation FROM (DESCRIBE HISTORY workspace.docs_rag_dev.silver_chunks) ORDER BY version DESC LIMIT 2",
+      "params": {},
+      "columns": [
+        "version",
+        "operation"
+      ],
+      "rows": [
+        [
+          "8",
+          "UPDATE"
+        ],
+        [
+          "7",
+          "MERGE"
+        ]
+      ]
+    }
+  ],
+  "error": null
+}
