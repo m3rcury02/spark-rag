@@ -1,6 +1,6 @@
 {
   "label": "m2_f_tokenizer_parity",
-  "git_commit": "31a3763aa55ca56f4bb7f0f61837f0680af3ee9f",
+  "git_commit": "29f63b712018c94620dd787e47fd14c12d68d4d9",
   "chunk_configs": [
     {
       "max_tokens": 254,
@@ -29,6 +29,8 @@
     "sentence-transformers/all-MiniLM-L6-v2": {
       "max_seq_length": 256,
       "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "vocab_sha256": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3",
+      "vocab_is_the_vendored_one": true,
       "texts": 13655,
       "mismatches": 0,
       "mismatch_examples": [],
@@ -44,6 +46,8 @@
     "BAAI/bge-small-en-v1.5": {
       "max_seq_length": 512,
       "revision": "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
+      "vocab_sha256": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3",
+      "vocab_is_the_vendored_one": true,
       "texts": 13655,
       "mismatches": 0,
       "mismatch_examples": [],
