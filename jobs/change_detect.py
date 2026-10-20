@@ -18,16 +18,28 @@ Steps:
    over its threshold passes only with --accept-drift "<reason>" --accept-drift-of <run_id>, naming a run that
    failed the gate on exactly this drift (checked right after the baseline is known); the pair is checked for
    form before the Spark session starts.
-7. Append the row with status 'committed', which needs the gate's GatePassed: the job's last write, so a
-   baseline exists only for a run whose every step passed. A failure after the Spark session started appends
-   a 'failed' row instead (never a baseline) and re-raises; a retried attempt of a failed run appends its own
-   rows. A retry of a run that already committed writes nothing. This job reads bronze and silver and writes
-   only ops_run_log and ops_dq_results.
+With a sink (Config.sink, the gold table; D-014), three more steps publish the target:
+7. Gold state: gold holds exactly the chain head's chunks (its logged chunk fingerprint; nothing for an
+   initial run), all of the published model. Gold holding this run's target instead means an earlier attempt
+   merged but never committed: the run stops, and gold is repaired by hand (no automatic resume, D-014).
+8. Embed only the added chunks (docs_rag.embedder: the pinned model, CPU, normalized), plus the canary texts.
+   The vector checks (docs_rag.dq.vector_checks) go to ops_dq_results as the attempt's second insert, and
+   stop the run unless they all pass. Nothing added: no model, no vector rows.
+9. One MERGE into gold: insert the added chunks, delete the removed ones, never update; it needs both gates'
+   passes. Its own metrics and the table history's must equal the chunk diff, and afterwards gold must hold
+   exactly the target's chunks. No change: no MERGE (a no-op MERGE still writes a table version, D-006).
+   The AI Search index is synced from gold by jobs/sync_index.py, after the commit: the index is a replica.
+10. (7 without a sink) Append the row with status 'committed', which needs the gate's GatePassed: the job's
+   last write, so a baseline exists only for a run whose every step passed. A failure after the Spark session
+   started appends a 'failed' row instead (never a baseline; it records the gold version if the MERGE ran) and
+   re-raises; a retried attempt of a failed run appends its own rows. A retry of a run that already committed
+   writes nothing. This job reads bronze and silver and writes ops_run_log, ops_dq_results and gold.
 """
 
 import argparse
 import dataclasses
 import datetime as dt
+import time
 import uuid
 from collections.abc import Sequence
 from typing import Any
@@ -62,15 +74,33 @@ from docs_rag.dq import (
     GatePassed,
     LoggedCheck,
     Totals,
+    VectorsPassed,
     accept_failed_run,
     dq_results_ddl,
     evaluate,
     gate,
+    gate_vectors,
     result_rows,
     validate_override,
+    vector_checks,
 )
-from docs_rag.jobenv import base_parser, check_environment, run_with_summary
-from docs_rag.lake import chunk_bronze, compare_with_stored, read_bronze, stored_baseline
+from docs_rag.embedder import canary_cosines, encode, load_canary, load_model
+from docs_rag.gold import (
+    GOLD_COLUMNS,
+    MERGE_GOLD,
+    GoldRow,
+    check_gold_state,
+    check_merge_counts,
+    gold_ddl,
+    gold_fingerprint,
+    gold_rows,
+    history_merge_metrics,
+    merge_source_ddl,
+    merge_source_rows,
+    merge_version,
+)
+from docs_rag.jobenv import base_parser, check_environment, check_packages, run_with_summary
+from docs_rag.lake import chunk_bronze, compare_with_stored, latest_version, read_bronze, stored_baseline
 from docs_rag.silver import SilverRecord, StoredChunk, conflict_reason, fingerprint
 
 JOB = "change_detect"
@@ -85,6 +115,12 @@ CREATE_DQ_RESULTS = f"""
 CREATE TABLE IF NOT EXISTS IDENTIFIER(:table) ({dq_results_ddl()})
 COMMENT 'One row per DQ check per change-detection run attempt, pass or fail. See D-012.'
 TBLPROPERTIES ('delta.appendOnly' = 'true')
+"""
+
+CREATE_GOLD = f"""
+CREATE TABLE IF NOT EXISTS IDENTIFIER(:table) ({gold_ddl()})
+COMMENT 'One row per published chunk and its embedding: the source of the AI Search index. See D-014.'
+TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 """
 
 LOG_ROWS = """
@@ -130,7 +166,8 @@ def commit(spark: SparkSession, table: str, row: RunLogRow, passed: GatePassed) 
 
 
 def write_dq_results(spark: SparkSession, table: str, results: list[DqResult], context: DqRunContext) -> None:
-    """All of one attempt's checks in one insert, then read back: the gate decides only on logged results."""
+    """One gate's checks in one insert (an attempt has two with a sink: chunk checks, then vector checks),
+    then read back: the gate decides only on logged results."""
     spark.createDataFrame(result_rows(results, context), dq_results_ddl()).createOrReplaceTempView(
         "dq_results_incoming"
     )
@@ -139,8 +176,157 @@ def write_dq_results(spark: SparkSession, table: str, results: list[DqResult], c
         "SELECT check_name, status FROM IDENTIFIER(:table) WHERE run_id = :run_id AND attempt_id = :attempt",
         args={"table": table, "run_id": context.run_id, "attempt": context.attempt_id},
     ).collect()
-    if sorted((r["check_name"], r["status"]) for r in back) != sorted((r.check, r.status) for r in results):
-        raise RuntimeError(f"ops_dq_results read-back differs from the checks: {[tuple(r) for r in back]}")
+    names = {r.check for r in results}
+    got = sorted((r["check_name"], r["status"]) for r in back if r["check_name"] in names)
+    if got != sorted((r.check, r.status) for r in results):
+        raise RuntimeError(f"ops_dq_results read-back differs from the checks: {got}")
+
+
+def ensure_gold(spark: SparkSession, table: str) -> None:
+    ensure_table(spark, CREATE_GOLD, table, GOLD_COLUMNS)
+    # DESCRIBE DETAIL takes no parameter; the name is built from identifiers Config validated.
+    properties = spark.sql(f"DESCRIBE DETAIL {table}").collect()[0]["properties"] or {}
+    if properties.get("delta.enableChangeDataFeed") != "true":  # the Delta Sync index reads the change feed
+        raise RuntimeError(f"{table} has no change data feed: {dict(properties)}")
+
+
+def read_gold(spark: SparkSession, table: str) -> dict[str, Any]:
+    """What gold holds: its (path, chunk_id) fingerprint, row count and models."""
+    rows = spark.sql(
+        "SELECT path, chunk_id, embedding_model FROM IDENTIFIER(:table)", args={"table": table}
+    ).collect()
+    return {
+        "fingerprint": gold_fingerprint([(r["path"], r["chunk_id"]) for r in rows]),
+        "rows": len(rows),
+        "models": sorted({r["embedding_model"] for r in rows}),
+    }
+
+
+def merge_gold(
+    spark: SparkSession,
+    table: str,
+    inserts: list[GoldRow],
+    deletes: Sequence[str],
+    passed: GatePassed,
+    vectors: VectorsPassed,
+    known: dict[str, Any],
+) -> dict[str, Any]:
+    """The one write to gold: needs the DQ gate's pass and the vector gate's pass for exactly these rows. The
+    version it wrote goes into `known` at once, so a failure after it still records it."""
+    if not isinstance(passed, GatePassed) or vectors.checked != len(inserts):
+        raise RuntimeError("the gold MERGE needs the DQ gate's pass and vector checks of exactly its rows")
+    before = latest_version(spark, table)
+    spark.createDataFrame(merge_source_rows(inserts, deletes), merge_source_ddl()).createOrReplaceTempView(
+        "gold_changes"
+    )
+    metrics = {
+        k: int(v) for k, v in spark.sql(MERGE_GOLD, args={"table": table}).collect()[0].asDict().items()
+    }
+    history = (
+        spark.sql("DESCRIBE HISTORY IDENTIFIER(:table)", args={"table": table})
+        .where(f"version > {before}")
+        .collect()
+    )
+    version = merge_version([(int(r["version"]), r["operation"]) for r in history], before)
+    known.update(gold_version=version)
+    logged = next(r["operationMetrics"] for r in history if int(r["version"]) == version)
+    check_merge_counts(metrics, len(inserts), len(deletes))
+    check_merge_counts(history_merge_metrics(logged), len(inserts), len(deletes))
+    known.update(
+        gold_rows_inserted=metrics["num_inserted_rows"], gold_rows_deleted=metrics["num_deleted_rows"]
+    )
+    return {
+        "version_before": before,
+        "version": version,
+        "merge_metrics": metrics,
+        "history": [
+            {"version": r["version"], "operation": r["operation"], "metrics": r["operationMetrics"]}
+            for r in history
+        ],
+    }
+
+
+def publish(
+    spark: SparkSession,
+    config: Config,
+    table: str,
+    run_id: str,
+    base: dict[str, Any] | None,
+    target_records: Sequence[SilverRecord],
+    added: Sequence[str],
+    removed: Sequence[str],
+    passed: GatePassed,
+    context: DqRunContext,
+    summary: dict[str, Any],
+    known: dict[str, Any],
+) -> None:
+    """Steps 7-9: gold state, embed the added chunks and check the vectors, MERGE, check gold after. Fills
+    `known` with the run-log fields of what it published."""
+    embedding = config.embedding
+    target = fingerprint((r.path, r.chunk_id) for r in target_records)
+    # 7. Gold holds the chain head's chunks, all of the published model.
+    before = read_gold(spark, table)
+    summary["gold_before"] = before
+    if set(before["models"]) - {embedding.model_id}:
+        raise RuntimeError(
+            f"gold holds vectors of {before['models']}, the published model is {embedding.model_id}"
+        )
+    check_gold_state(before["fingerprint"], base["to_chunks_fingerprint"] if base else None, target)
+
+    # 8. Embed only what was added; the vector checks are logged, then gate.
+    wanted = set(added)
+    to_embed = sorted((r for r in target_records if r.chunk_id in wanted), key=lambda r: r.chunk_id)
+    vectors: list[list[float]] = []
+    results: list[DqResult] = []
+    if to_embed:
+        t0 = time.monotonic()
+        model = load_model(embedding)
+        t1 = time.monotonic()
+        vectors = encode(model, [r.embed_text for r in to_embed], embedding)
+        t2 = time.monotonic()
+        canary = load_canary()
+        cosines = canary_cosines(canary, embedding, encode(model, canary.texts, embedding))
+        summary["embedding"] = {
+            "model_id": embedding.model_id,
+            "chunks": len(to_embed),
+            "tokens": sum(r.n_tokens for r in to_embed),
+            "model_load_seconds": round(t1 - t0, 1),
+            "encode_seconds": round(t2 - t1, 1),
+            "chunks_per_second": round(len(to_embed) / max(t2 - t1, 1e-9), 1),
+            "canary_cosines": cosines,
+        }
+        results = vector_checks(
+            [r.chunk_id for r in to_embed], frozenset(added), vectors, embedding.dimension, cosines, config.dq
+        )
+        summary["vector_dq"] = [dataclasses.asdict(r) for r in results]
+        checked = dataclasses.replace(context, checked_at=dt.datetime.now(dt.UTC))
+        write_dq_results(spark, config.dq_results_table, results, checked)
+    vectors_passed = gate_vectors(results, len(added))
+    known.update(
+        embedding_model=embedding.model_id,
+        chunks_embedded=len(to_embed),
+        embedded_ids_fingerprint=fingerprint((r.path, r.chunk_id) for r in to_embed),
+    )
+
+    # 9. One MERGE (none when nothing changed), then gold must hold exactly the target.
+    if not added and not removed:
+        summary["gold_merge"] = "skipped: nothing added or removed"
+        known.update(gold_rows_inserted=0, gold_rows_deleted=0, gold_version=None)
+    else:
+        inserts = gold_rows(to_embed, vectors, embedding.model_id, run_id, dt.datetime.now(dt.UTC))
+        summary["gold_merge"] = merge_gold(spark, table, inserts, removed, passed, vectors_passed, known)
+    after = read_gold(spark, table)
+    by_run = spark.sql(
+        "SELECT count(*) AS n FROM IDENTIFIER(:table) WHERE embedded_by_run_id = :run_id",
+        args={"table": table, "run_id": run_id},
+    ).collect()[0]["n"]
+    summary["gold_after"] = {**after, "rows_of_this_run": by_run}
+    if (
+        after["fingerprint"] != target
+        or by_run != len(to_embed)
+        or set(after["models"]) - {embedding.model_id}
+    ):
+        raise RuntimeError(f"gold after the MERGE is not the target: {summary['gold_after']}")
 
 
 def read_acceptance(
@@ -246,12 +432,17 @@ def detect(args: argparse.Namespace, summary: dict[str, Any]) -> None:
     )
     summary["environment"] = check_environment(args.expect_env, args.expect_version)
     code_version = summary["environment"]["docs_rag"]
+    gold = config.gold_table
+    if gold is not None:  # the job's pins for embedding (scripts/run_job.py installs them)
+        summary["environment"]["embedding_packages"] = check_packages(config.embedding.packages)
 
     spark = SparkSession.builder.getOrCreate()
     summary["environment"]["spark"] = spark.version
     table = config.run_log_table
     ensure_table(spark, CREATE_RUN_LOG, table, RUN_LOG_COLUMNS)
     ensure_table(spark, CREATE_DQ_RESULTS, config.dq_results_table, DQ_RESULTS_COLUMNS)
+    if gold is not None:
+        ensure_gold(spark, gold)
     earlier = spark.sql(
         "SELECT status FROM IDENTIFIER(:table) WHERE run_id = :run_id",
         args={"table": table, "run_id": args.run_id},
@@ -380,6 +571,23 @@ def detect(args: argparse.Namespace, summary: dict[str, Any]) -> None:
             "override_of": passed.override_of,
         }
 
+        # 7-9. Publish to gold: embed the added chunks, check the vectors, MERGE.
+        if gold is not None:
+            publish(
+                spark,
+                config,
+                gold,
+                args.run_id,
+                base,
+                target_records,
+                chunks.added,
+                chunks.removed,
+                passed,
+                context,
+                summary,
+                known,
+            )
+
         row = RunLogRow(
             run_id=args.run_id,
             baseline_run_id=head,
@@ -405,12 +613,18 @@ def detect(args: argparse.Namespace, summary: dict[str, Any]) -> None:
             dq_override=passed.override_reason,
             dq_override_of=passed.override_of,
             baseline_check=known.get("baseline_check"),
+            embedding_model=known.get("embedding_model"),
+            chunks_embedded=known.get("chunks_embedded"),
+            embedded_ids_fingerprint=known.get("embedded_ids_fingerprint"),
+            gold_rows_inserted=known.get("gold_rows_inserted"),
+            gold_rows_deleted=known.get("gold_rows_deleted"),
+            gold_version=known.get("gold_version"),
             **counts(docs, chunks, len(base_records), sum(r.n_tokens for r in target_records)),
         )
         summary["row"] = {k: v for k, v in row.as_row().items() if not k.endswith("_paths")}
         summary["paths"] = {"added": docs.added, "changed": docs.changed, "deleted": docs.deleted}
 
-        # 7. Commit: the last write.
+        # 10. Commit: the last write.
         commit(spark, table, row, passed)
     except Exception as e:
         failed = RunLogRow(
@@ -434,6 +648,12 @@ def detect(args: argparse.Namespace, summary: dict[str, Any]) -> None:
             finished_at=dt.datetime.now(dt.UTC),
             code_version=code_version,
             baseline_check=known.get("baseline_check"),
+            embedding_model=known.get("embedding_model"),
+            chunks_embedded=known.get("chunks_embedded"),
+            embedded_ids_fingerprint=known.get("embedded_ids_fingerprint"),
+            gold_rows_inserted=known.get("gold_rows_inserted"),
+            gold_rows_deleted=known.get("gold_rows_deleted"),
+            gold_version=known.get("gold_version"),
         )
         try:
             log_failed(spark, table, failed)
