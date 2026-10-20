@@ -50,6 +50,23 @@ class DqConfig:
 
 
 @dataclass(frozen=True)
+class EmbeddingConfig:
+    """The model of the published index (D-014): a free sentence-transformers model pinned to a Hugging Face
+    revision (the one M2's tokenizer parity run checked, runs/m2_f), vectors normalized so that the index's L2
+    ranking orders like cosine similarity."""
+
+    model: str = "sentence-transformers/all-MiniLM-L6-v2"
+    revision: str = "1110a243fdf4706b3f48f1d95db1a4f5529b4d41"
+    dimension: int = 384
+    batch_size: int = 64
+
+    @property
+    def model_id(self) -> str:
+        """What every gold row and run-log row records: the model and its exact revision."""
+        return f"{self.model}@{self.revision}"
+
+
+@dataclass(frozen=True)
 class Config:
     catalog: str = "workspace"
     schema: str = "docs_rag_dev"
@@ -63,9 +80,12 @@ class Config:
     # Docs that legitimately give no chunks: only headings plus generated includes (D-008). Any other doc
     # with no chunks fails the silver run, so a cleaning bug that empties pages cannot pass silently.
     zero_chunk_docs: frozenset[str] = frozenset({"docs/sql-ref-functions-builtin.md"})
-    # What a committed pipeline run publishes to; the baseline chain in ops_run_log is per sink (D-011). M5
-    # sets the gold table here. Until then the pipeline ends at change detection and publishes nothing.
-    sink: str = "none"
+    # What a committed pipeline run publishes to; the baseline chain in ops_run_log is per sink (D-011): the
+    # gold table (D-014), or 'none', the chain of M3/M4, which ends at the gate and publishes nothing.
+    sink: str = "gold_chunk_embeddings"
+    embedding: EmbeddingConfig = EmbeddingConfig()
+    endpoint: str = "docs_rag_endpoint"  # the one AI Search endpoint Free Edition allows (D-001)
+    index_name: str = "gold_chunk_index"  # Delta Sync index over the gold table
     # The smaller input limit of the two embedding models (all-MiniLM-L6-v2 256, bge-small-en-v1.5 512), with
     # [CLS] and [SEP] included: every chunk config must fit it, so no chunk is truncated by the model.
     embedding_max_seq_length: int = 256
@@ -78,6 +98,9 @@ class Config:
         _check(_IDENTIFIER, self.docs_dir, "docs dir")
         if not self.doc_suffix.startswith("."):
             raise ValueError(f"invalid doc suffix: {self.doc_suffix!r}")
+        if self.sink != "none":
+            _check(_IDENTIFIER, self.sink, "sink")
+        _check(_IDENTIFIER, self.index_name, "index name")
         for c in (self.chunk, *self.chunk_grid):
             if c.max_tokens + SPECIAL_TOKENS > self.embedding_max_seq_length:
                 raise ValueError(
@@ -104,6 +127,15 @@ class Config:
     @property
     def dq_results_table(self) -> str:
         return self.table("ops_dq_results")
+
+    @property
+    def gold_table(self) -> str | None:
+        """The table a committed run publishes to, or None for the sink 'none'."""
+        return None if self.sink == "none" else self.table(self.sink)
+
+    @property
+    def index(self) -> str:
+        return self.table(self.index_name)
 
     def volume(self, name: str) -> str:
         """Path of a Unity Catalog Volume in this schema, e.g. '/Volumes/workspace/docs_rag_dev/artifacts'."""
