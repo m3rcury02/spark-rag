@@ -1,0 +1,410 @@
+{
+  "meta": {
+    "label": "m5_k_detect_v4.0.1",
+    "git_commit": "66516a9e8f19b7e335fe5db9a2da9c12279c660e",
+    "script": "jobs/change_detect.py",
+    "job_args": [
+      "--tag",
+      "v4.0.1"
+    ],
+    "target": "workspace.docs_rag_dev",
+    "run_id": "94970be9-6094-4ff0-85db-85b69f1aafbc",
+    "environment_version": "4",
+    "wheel": "docs_rag-0.0.1.dev150+g66516a9e8-py3-none-any.whl",
+    "dependencies": [
+      "/Volumes/workspace/docs_rag_dev/artifacts/code/66516a9e8f19/docs_rag-0.0.1.dev150+g66516a9e8-py3-none-any.whl",
+      "torch @ https://download.pytorch.org/whl/cpu/torch-2.14.1%2Bcpu-cp312-cp312-manylinux_2_28_x86_64.whl#sha256=5a6363570c753812540a05eb82380e329469cbe668643e88111414c12627711f ; platform_machine == \"x86_64\"",
+      "torch @ https://download.pytorch.org/whl/cpu/torch-2.14.1%2Bcpu-cp312-cp312-manylinux_2_28_aarch64.whl#sha256=2af649994b36dffc627175c3f306d9e513a309b58d4619ac7107577613336454 ; platform_machine == \"aarch64\"",
+      "sentence-transformers==6.1.0",
+      "transformers==5.19.0"
+    ],
+    "parent_run_id": 536388082023460,
+    "task_run_id": 595047337907520,
+    "result_state": "SUCCESS",
+    "state_message": "",
+    "run_start_utc": "2026-10-20T18:56:40Z",
+    "run_end_utc": "2026-10-20T18:58:48Z",
+    "run_duration_seconds": 128.0
+  },
+  "summary": {
+    "run_id": "94970be9-6094-4ff0-85db-85b69f1aafbc",
+    "started_utc": "2026-10-20T18:57:41Z",
+    "tag": "v4.0.1",
+    "sink": "gold_chunk_embeddings",
+    "config_id": "e70bf55c7cf1b856",
+    "accept_drift": null,
+    "accept_drift_of": null,
+    "attempt_id": "83a9df8b0bb54815ad6c6a999cf04672",
+    "environment": {
+      "python": "3.12.3",
+      "databricks_runtime_version": "client.4.10",
+      "databricks_connect": "17.3.14",
+      "docs_rag": "0.0.1.dev150+g66516a9e8",
+      "tokenizers": "0.23.3",
+      "machine": "aarch64",
+      "embedding_packages": {
+        "torch": "2.14.1+cpu",
+        "sentence-transformers": "6.1.0",
+        "transformers": "5.19.0"
+      },
+      "spark": "4.2.0"
+    },
+    "earlier_attempts": [],
+    "baseline": {
+      "run_id": "09cb979c-2baa-47dd-9938-c091d8e8b455",
+      "baseline_run_id": "700ad316-3830-43bd-a154-21904577c3a5",
+      "status": "committed",
+      "to_version_tag": "v4.0.0",
+      "to_commit_sha": "fa33ea000a0bda9e5a3fa1af98e8e85b8cc5e4d4",
+      "to_config_id": "e70bf55c7cf1b856",
+      "to_docs_fingerprint": "10f1f12191520dc32e683b7704fd40bb2ee4bcc8d2c2e534e4a27f884d766c9e",
+      "to_chunks_fingerprint": "66297a231aa89f4ea189a83700d1632144f53c2ec21439a8c62101618c80adcd"
+    },
+    "baseline_check": "rechunked",
+    "dq": [
+      {
+        "check": "empty_chunks",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 5436,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "body with no token (blank, or only characters the tokenizer drops), or blank embed text; fails if any",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "tiny_chunks",
+        "status": "pass",
+        "numerator": 20,
+        "denominator": 5436,
+        "observed": 0.003679175864606328,
+        "threshold": 0.02,
+        "rule": "body under 5 tokens; fails above 2% of chunks",
+        "examples": [
+          "docs/sql-ref-datatypes.md #82: 2 tokens 'r:'",
+          "docs/sql-ref-functions.md #4: 3 tokens '* Generator Functions'",
+          "docs/sql-ref-syntax-aux-conf-mgmt-reset.md #4: 2 tokens '* SET'",
+          "docs/sql-ref-syntax-aux-conf-mgmt-set-timezone.md #5: 2 tokens '* SET'",
+          "docs/sql-ref-syntax-aux-set-var.md #5: 2 tokens '* SET'",
+          "docs/sql-ref-syntax-aux-show-functions.md #5: 3 tokens '* DESCRIBE FUNCTION'",
+          "docs/sql-ref-syntax-ddl-alter-database.md #13: 3 tokens '* DESCRIBE DATABASE'",
+          "docs/sql-ref-syntax-ddl-drop-variable.md #4: 3 tokens '* DECLARE VARIABLE'",
+          "docs/sql-ref-syntax-ddl-repair-table.md #4: 3 tokens '* ALTER TABLE'",
+          "docs/sql-ref-syntax-dml-insert-overwrite-directory.md #7: 4 tokens '* INSERT TABLE statement'"
+        ],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "oversized_chunks",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 5436,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "embed text over 254 tokens (max_tokens 254; the embedding models' 256 less [CLS] and [SEP]); fails if any",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "duplicate_chunk_ids",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 5436,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "rows beyond the first of a repeated chunk_id; fails if any",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "duplicate_embed_text",
+        "status": "pass",
+        "numerator": 5,
+        "denominator": 5436,
+        "observed": 0.000919793966151582,
+        "threshold": 0.01,
+        "rule": "copies beyond the first of a repeated embed text; fails above 1% of chunks",
+        "examples": [
+          "3x in ['docs/streaming-programming-guide.md']: 'Spark Streaming Programming Guide > Basic Concepts > Accumulators, Broadcast Var'",
+          "2x in ['docs/sql-ref-syntax-ddl-alter-view.md']: 'ALTER VIEW > Description > Parameters\\n\\n* **view_identifier**\\n\\n    Specifies a vi'",
+          "2x in ['docs/sql-migration-guide.md']: 'Migration Guide: SQL, Datasets and DataFrame > Upgrading from Spark SQL 2.4 to 3'",
+          "2x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Shared Variables > Accumulators\\n\\nWhile this code used th'"
+        ],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "missing_metadata",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 5436,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "a docs/*.md path, non-blank section names (the title first), version_tag v4.0.1, a 40-hex commit_sha; fails if any row misses one",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "drift_docs",
+        "status": "pass",
+        "numerator": 213,
+        "denominator": 212,
+        "observed": 0.004716981132075526,
+        "threshold": 0.05,
+        "rule": "patch release: |to/from - 1| over 5% fails unless this run accepts the drift of a failed run with exactly these numbers; a loss over 50% fails anyway; not applicable without a baseline",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "drift_chunks",
+        "status": "pass",
+        "numerator": 5436,
+        "denominator": 5423,
+        "observed": 0.0023971971233633926,
+        "threshold": 0.05,
+        "rule": "patch release: |to/from - 1| over 5% fails unless this run accepts the drift of a failed run with exactly these numbers; a loss over 50% fails anyway; not applicable without a baseline",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "drift_tokens",
+        "status": "pass",
+        "numerator": 691882,
+        "denominator": 689619,
+        "observed": 0.0032815221158348784,
+        "threshold": 0.05,
+        "rule": "patch release: |to/from - 1| over 5% fails unless this run accepts the drift of a failed run with exactly these numbers; a loss over 50% fails anyway; not applicable without a baseline",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      }
+    ],
+    "gate": {
+      "overridden": [],
+      "override_reason": null,
+      "override_of": null
+    },
+    "gold_before": {
+      "fingerprint": "66297a231aa89f4ea189a83700d1632144f53c2ec21439a8c62101618c80adcd",
+      "rows": 5423,
+      "models": [
+        "sentence-transformers/all-MiniLM-L6-v2@1110a243fdf4706b3f48f1d95db1a4f5529b4d41"
+      ]
+    },
+    "canary_cosines": [
+      0.9999899692129313,
+      0.9999899589888839,
+      0.9999901528819344
+    ],
+    "embedding": {
+      "model_id": "sentence-transformers/all-MiniLM-L6-v2@1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "chunks": 21,
+      "tokens": 3538,
+      "model_load_seconds": 8.5,
+      "encode_seconds": 1.1,
+      "chunks_per_second": 18.7,
+      "canary_cosines": [
+        0.9999899692129313,
+        0.9999899589888839,
+        0.9999901528819344
+      ]
+    },
+    "vector_dq": [
+      {
+        "check": "vector_ids",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 21,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "exactly one vector per added chunk, by chunk_id; fails if any is missing, extra or repeated",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "vector_dimension",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 21,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "a vector not of 384 values; fails if any",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "vector_finite",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 21,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "a NaN or infinite value; fails if any",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "vector_norm",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 21,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "L2 norm off 1 by more than 0.001; fails if any",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "embedding_canary",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 3,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "cosine with the committed reference vector under 0.999; fails if any",
+        "examples": [
+          "0.999990",
+          "0.999990",
+          "0.999990"
+        ],
+        "override_reason": null,
+        "override_of": null
+      }
+    ],
+    "gold_merge": {
+      "version_before": 3,
+      "version": 4,
+      "merge_metrics": {
+        "num_affected_rows": 29,
+        "num_updated_rows": 0,
+        "num_deleted_rows": 8,
+        "num_inserted_rows": 21
+      },
+      "history": [
+        {
+          "version": 4,
+          "operation": "MERGE",
+          "metrics": {
+            "numTargetRowsCopied": "0",
+            "numTargetRowsDeleted": "8",
+            "numTargetBytesRemoved": "0",
+            "numTargetDeletionVectorsAdded": "1",
+            "numTargetRowsMatchedUpdated": "0",
+            "numTargetRowsMatchedDeleted": "8",
+            "numTargetRowsUpdated": "0",
+            "numTargetChangeFilesAdded": "1",
+            "numTargetRowsNotMatchedBySourceDeleted": "0",
+            "rewriteTimeMs": "3008",
+            "numTargetFilesAdded": "1",
+            "numTargetBytesAdded": "51923",
+            "executionTimeMs": "4604",
+            "materializeSourceTimeMs": "150",
+            "numTargetRowsInserted": "21",
+            "numTargetDeletionVectorsUpdated": "0",
+            "scanTimeMs": "1410",
+            "numOutputRows": "21",
+            "numTargetDeletionVectorsRemoved": "0",
+            "numTargetRowsNotMatchedBySourceUpdated": "0",
+            "numSourceRows": "29",
+            "numTargetFilesRemoved": "0"
+          }
+        }
+      ]
+    },
+    "gold_after": {
+      "fingerprint": "bdbdafdf9940d65f1d916659117ed92ef247ae3890a0b1b9a435f6fe520afb6f",
+      "rows": 5436,
+      "models": [
+        "sentence-transformers/all-MiniLM-L6-v2@1110a243fdf4706b3f48f1d95db1a4f5529b4d41"
+      ],
+      "rows_of_this_run": 21
+    },
+    "row": {
+      "run_id": "94970be9-6094-4ff0-85db-85b69f1aafbc",
+      "baseline_run_id": "09cb979c-2baa-47dd-9938-c091d8e8b455",
+      "job": "change_detect",
+      "source_repo": "apache/spark",
+      "sink": "gold_chunk_embeddings",
+      "status": "committed",
+      "error": null,
+      "direction": "forward",
+      "from_version_tag": "v4.0.0",
+      "from_commit_sha": "fa33ea000a0bda9e5a3fa1af98e8e85b8cc5e4d4",
+      "from_config_id": "e70bf55c7cf1b856",
+      "to_version_tag": "v4.0.1",
+      "to_commit_sha": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+      "to_config_id": "e70bf55c7cf1b856",
+      "max_tokens": 254,
+      "overlap_tokens": 32,
+      "from_docs": 212,
+      "to_docs": 213,
+      "docs_added": 1,
+      "docs_changed": 4,
+      "docs_deleted": 0,
+      "docs_unchanged": 208,
+      "docs_moved": 0,
+      "docs_changed_same_chunks": 3,
+      "from_chunks": 5423,
+      "to_chunks": 5436,
+      "chunks_added_new_docs": 13,
+      "chunks_added_changed_docs": 8,
+      "chunks_added_unchanged_docs": 0,
+      "chunks_removed_changed_docs": 8,
+      "chunks_removed_unchanged_docs": 0,
+      "chunks_removed_deleted_docs": 0,
+      "chunks_kept": 5415,
+      "chunks_kept_relocated": 0,
+      "tokens_to_embed": 3538,
+      "to_tokens": 691882,
+      "to_docs_fingerprint": "5b1534b24125aa7d7131d72727e2b28ff85b072262ed48dceedb3b40ba798c02",
+      "to_chunks_fingerprint": "bdbdafdf9940d65f1d916659117ed92ef247ae3890a0b1b9a435f6fe520afb6f",
+      "started_at": "2026-10-20 18:57:41.386413+00:00",
+      "finished_at": "2026-10-20 18:58:39.554981+00:00",
+      "code_version": "0.0.1.dev150+g66516a9e8",
+      "dq_override": null,
+      "dq_override_of": null,
+      "baseline_check": "rechunked",
+      "embedding_model": "sentence-transformers/all-MiniLM-L6-v2@1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "chunks_embedded": 21,
+      "embedded_ids_fingerprint": "b0b6fcf1487abe66b5c16f17574fee0ef6ffdc8ee732bee3fb23e156cdf35236",
+      "gold_rows_inserted": 21,
+      "gold_rows_deleted": 8,
+      "gold_version": 4
+    },
+    "paths": {
+      "added": [
+        "docs/sql-ref-syntax-ddl-create-sql-function.md"
+      ],
+      "changed": [
+        "docs/quick-start.md",
+        "docs/sql-ref-syntax-ddl-create-function.md",
+        "docs/structured-streaming-programming-guide.md",
+        "docs/submitting-applications.md"
+      ],
+      "deleted": []
+    },
+    "logged": "committed",
+    "read_back": {
+      "rows_with_this_run_id": 1,
+      "status": "committed",
+      "chain_head": "94970be9-6094-4ff0-85db-85b69f1aafbc",
+      "committed_runs_in_chain": 4
+    },
+    "status": "succeeded",
+    "finished_utc": "2026-10-20T18:58:44Z"
+  },
+  "error": null,
+  "error_trace": null
+}
