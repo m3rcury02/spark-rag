@@ -9,7 +9,8 @@ has the transition; the chunk counts per doc kind equal plain set arithmetic ove
 files (chunk_document, verified in M2; for a config today's code cannot reproduce, each side's own run's
 code, run from a git worktree by scripts/oldcode.py); a run with the re-baseline path logs the baseline
 check its code had to make (D-013); and, where
-runs/m2_e_stability.json has the transition, the chunk counts equal its independently coded numbers. For the
+runs/m2_e_stability.json has the transition under the run's config (m2_e chunked with cleaner 1), the chunk
+counts equal its independently coded numbers. For the
 log as a whole: the committed rows form one chain from one initial run, failed rows carry no counts and are
 never a baseline, and every job summary in --job-runs has exactly its row in the log (and the other way
 round). The log is read for one chain (--sink): 'none' for M3/M4, the gold table for M5.
@@ -168,7 +169,12 @@ def main() -> None:
         | {r["from_version_tag"] for r in committed if r["from_version_tag"]}
     )
     source = read_tags(tags)
-    m2e = json.loads(M2E.read_text())["configs"]
+    m2e_file = json.loads(M2E.read_text())
+    m2e = m2e_file["configs"]
+    # m2_e's numbers hold for the config its own code computed for each size (cleaner 1), not for a size alone
+    m2e_config_id = {
+        size: oldcode.chunk_at(m2e_file["git_commit"], {}, *map(int, size.split("/")))[0] for size in m2e
+    }
     grid = {c.config_id: c for c in config.chunk_grid}
     cache: dict[tuple[str, str, str], dict[str, dict[str, int]]] = {}
 
@@ -230,7 +236,8 @@ def main() -> None:
                 [r["docs_added"], r["docs_changed"], r["docs_deleted"]],
             )
         same_config = r["from_config_id"] in (None, r["to_config_id"])  # m2_e compares one config's tags
-        m2e_config = m2e.get(f"{max_tokens}/{overlap_tokens}", {}) if same_config else {}
+        size = f"{max_tokens}/{overlap_tokens}"
+        m2e_config = m2e.get(size, {}) if same_config and r["to_config_id"] == m2e_config_id.get(size) else {}
         t = m2e_config.get("transitions", {}).get(f"{a}->{b}")
         if t:
             sa = t["section_aware"]
@@ -275,6 +282,7 @@ def main() -> None:
         "label": args.label,
         "git_commit": head,
         "sink": config.sink,
+        "m2e_config_ids": m2e_config_id,
         "rows": len(rows),
         "committed": len(committed),
         "failed": len(failed),
