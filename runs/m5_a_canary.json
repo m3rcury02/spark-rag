@@ -1,0 +1,26 @@
+{
+  "label": "m5_a_canary",
+  "git_commit": "1bfeab03eea9f676c7ced9b2d82557fca6923c5a",
+  "model_id": "sentence-transformers/all-MiniLM-L6-v2@1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+  "resolved_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+  "packages": {
+    "torch": "2.14.1+cpu",
+    "sentence-transformers": "6.1.0",
+    "transformers": "5.19.0"
+  },
+  "machine": "x86_64",
+  "python": "3.12.3",
+  "canary_file": "src/docs_rag/data/embedding_canary.json",
+  "canary_sha256": "41380b458ba2011604d91fc176d2b7d248229debf1240e3908ef94eaeb481554",
+  "texts": 3,
+  "dimension": [
+    384,
+    384,
+    384
+  ],
+  "norms": [
+    1.0,
+    1.0,
+    1.0
+  ]
+}
