@@ -1,0 +1,280 @@
+{
+  "meta": {
+    "label": "m5_j_detect_v4.0.0_rerun",
+    "git_commit": "c6b15995ebf9e967b92a10b4ecb4669a4585ca08",
+    "script": "jobs/change_detect.py",
+    "job_args": [
+      "--tag",
+      "v4.0.0"
+    ],
+    "target": "workspace.docs_rag_dev",
+    "run_id": "09cb979c-2baa-47dd-9938-c091d8e8b455",
+    "environment_version": "4",
+    "wheel": "docs_rag-0.0.1.dev149+gc6b15995e-py3-none-any.whl",
+    "dependencies": [
+      "/Volumes/workspace/docs_rag_dev/artifacts/code/c6b15995ebf9/docs_rag-0.0.1.dev149+gc6b15995e-py3-none-any.whl",
+      "torch @ https://download.pytorch.org/whl/cpu/torch-2.14.1%2Bcpu-cp312-cp312-manylinux_2_28_x86_64.whl#sha256=5a6363570c753812540a05eb82380e329469cbe668643e88111414c12627711f ; platform_machine == \"x86_64\"",
+      "torch @ https://download.pytorch.org/whl/cpu/torch-2.14.1%2Bcpu-cp312-cp312-manylinux_2_28_aarch64.whl#sha256=2af649994b36dffc627175c3f306d9e513a309b58d4619ac7107577613336454 ; platform_machine == \"aarch64\"",
+      "sentence-transformers==6.1.0",
+      "transformers==5.19.0"
+    ],
+    "parent_run_id": 178519913550010,
+    "task_run_id": 810383929953389,
+    "result_state": "SUCCESS",
+    "state_message": "",
+    "run_start_utc": "2026-10-20T18:54:23Z",
+    "run_end_utc": "2026-10-20T18:56:05Z",
+    "run_duration_seconds": 101.6
+  },
+  "summary": {
+    "run_id": "09cb979c-2baa-47dd-9938-c091d8e8b455",
+    "started_utc": "2026-10-20T18:55:30Z",
+    "tag": "v4.0.0",
+    "sink": "gold_chunk_embeddings",
+    "config_id": "e70bf55c7cf1b856",
+    "accept_drift": null,
+    "accept_drift_of": null,
+    "attempt_id": "aef2d187b29e4fae9ee4d597ccb6e7a8",
+    "environment": {
+      "python": "3.12.3",
+      "databricks_runtime_version": "client.4.10",
+      "databricks_connect": "17.3.14",
+      "docs_rag": "0.0.1.dev149+gc6b15995e",
+      "tokenizers": "0.23.3",
+      "machine": "aarch64",
+      "embedding_packages": {
+        "torch": "2.14.1+cpu",
+        "sentence-transformers": "6.1.0",
+        "transformers": "5.19.0"
+      },
+      "spark": "4.2.0"
+    },
+    "earlier_attempts": [],
+    "baseline": {
+      "run_id": "700ad316-3830-43bd-a154-21904577c3a5",
+      "baseline_run_id": "c2d86236-8f54-486a-b509-9ab0d6046565",
+      "status": "committed",
+      "to_version_tag": "v4.0.0",
+      "to_commit_sha": "fa33ea000a0bda9e5a3fa1af98e8e85b8cc5e4d4",
+      "to_config_id": "e70bf55c7cf1b856",
+      "to_docs_fingerprint": "10f1f12191520dc32e683b7704fd40bb2ee4bcc8d2c2e534e4a27f884d766c9e",
+      "to_chunks_fingerprint": "66297a231aa89f4ea189a83700d1632144f53c2ec21439a8c62101618c80adcd"
+    },
+    "baseline_check": "rechunked",
+    "dq": [
+      {
+        "check": "empty_chunks",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 5423,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "body with no token (blank, or only characters the tokenizer drops), or blank embed text; fails if any",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "tiny_chunks",
+        "status": "pass",
+        "numerator": 20,
+        "denominator": 5423,
+        "observed": 0.0036879955744053105,
+        "threshold": 0.02,
+        "rule": "body under 5 tokens; fails above 2% of chunks",
+        "examples": [
+          "docs/sql-ref-datatypes.md #82: 2 tokens 'r:'",
+          "docs/sql-ref-functions.md #4: 3 tokens '* Generator Functions'",
+          "docs/sql-ref-syntax-aux-conf-mgmt-reset.md #4: 2 tokens '* SET'",
+          "docs/sql-ref-syntax-aux-conf-mgmt-set-timezone.md #5: 2 tokens '* SET'",
+          "docs/sql-ref-syntax-aux-set-var.md #5: 2 tokens '* SET'",
+          "docs/sql-ref-syntax-aux-show-functions.md #5: 3 tokens '* DESCRIBE FUNCTION'",
+          "docs/sql-ref-syntax-ddl-alter-database.md #13: 3 tokens '* DESCRIBE DATABASE'",
+          "docs/sql-ref-syntax-ddl-drop-variable.md #4: 3 tokens '* DECLARE VARIABLE'",
+          "docs/sql-ref-syntax-ddl-repair-table.md #4: 3 tokens '* ALTER TABLE'",
+          "docs/sql-ref-syntax-dml-insert-overwrite-directory.md #7: 4 tokens '* INSERT TABLE statement'"
+        ],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "oversized_chunks",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 5423,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "embed text over 254 tokens (max_tokens 254; the embedding models' 256 less [CLS] and [SEP]); fails if any",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "duplicate_chunk_ids",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 5423,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "rows beyond the first of a repeated chunk_id; fails if any",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "duplicate_embed_text",
+        "status": "pass",
+        "numerator": 5,
+        "denominator": 5423,
+        "observed": 0.0009219988936013276,
+        "threshold": 0.01,
+        "rule": "copies beyond the first of a repeated embed text; fails above 1% of chunks",
+        "examples": [
+          "3x in ['docs/streaming-programming-guide.md']: 'Spark Streaming Programming Guide > Basic Concepts > Accumulators, Broadcast Var'",
+          "2x in ['docs/sql-ref-syntax-ddl-alter-view.md']: 'ALTER VIEW > Description > Parameters\\n\\n* **view_identifier**\\n\\n    Specifies a vi'",
+          "2x in ['docs/sql-migration-guide.md']: 'Migration Guide: SQL, Datasets and DataFrame > Upgrading from Spark SQL 2.4 to 3'",
+          "2x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Shared Variables > Accumulators\\n\\nWhile this code used th'"
+        ],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "missing_metadata",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 5423,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "a docs/*.md path, non-blank section names (the title first), version_tag v4.0.0, a 40-hex commit_sha; fails if any row misses one",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "drift_docs",
+        "status": "pass",
+        "numerator": 212,
+        "denominator": 212,
+        "observed": 0.0,
+        "threshold": 0.05,
+        "rule": "patch release: |to/from - 1| over 5% fails unless this run accepts the drift of a failed run with exactly these numbers; a loss over 50% fails anyway; not applicable without a baseline",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "drift_chunks",
+        "status": "pass",
+        "numerator": 5423,
+        "denominator": 5423,
+        "observed": 0.0,
+        "threshold": 0.05,
+        "rule": "patch release: |to/from - 1| over 5% fails unless this run accepts the drift of a failed run with exactly these numbers; a loss over 50% fails anyway; not applicable without a baseline",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "drift_tokens",
+        "status": "pass",
+        "numerator": 689619,
+        "denominator": 689619,
+        "observed": 0.0,
+        "threshold": 0.05,
+        "rule": "patch release: |to/from - 1| over 5% fails unless this run accepts the drift of a failed run with exactly these numbers; a loss over 50% fails anyway; not applicable without a baseline",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      }
+    ],
+    "gate": {
+      "overridden": [],
+      "override_reason": null,
+      "override_of": null
+    },
+    "gold_before": {
+      "fingerprint": "66297a231aa89f4ea189a83700d1632144f53c2ec21439a8c62101618c80adcd",
+      "rows": 5423,
+      "models": [
+        "sentence-transformers/all-MiniLM-L6-v2@1110a243fdf4706b3f48f1d95db1a4f5529b4d41"
+      ]
+    },
+    "gold_merge": "skipped: nothing added or removed",
+    "gold_after": {
+      "fingerprint": "66297a231aa89f4ea189a83700d1632144f53c2ec21439a8c62101618c80adcd",
+      "rows": 5423,
+      "models": [
+        "sentence-transformers/all-MiniLM-L6-v2@1110a243fdf4706b3f48f1d95db1a4f5529b4d41"
+      ],
+      "rows_of_this_run": 0
+    },
+    "row": {
+      "run_id": "09cb979c-2baa-47dd-9938-c091d8e8b455",
+      "baseline_run_id": "700ad316-3830-43bd-a154-21904577c3a5",
+      "job": "change_detect",
+      "source_repo": "apache/spark",
+      "sink": "gold_chunk_embeddings",
+      "status": "committed",
+      "error": null,
+      "direction": "same",
+      "from_version_tag": "v4.0.0",
+      "from_commit_sha": "fa33ea000a0bda9e5a3fa1af98e8e85b8cc5e4d4",
+      "from_config_id": "e70bf55c7cf1b856",
+      "to_version_tag": "v4.0.0",
+      "to_commit_sha": "fa33ea000a0bda9e5a3fa1af98e8e85b8cc5e4d4",
+      "to_config_id": "e70bf55c7cf1b856",
+      "max_tokens": 254,
+      "overlap_tokens": 32,
+      "from_docs": 212,
+      "to_docs": 212,
+      "docs_added": 0,
+      "docs_changed": 0,
+      "docs_deleted": 0,
+      "docs_unchanged": 212,
+      "docs_moved": 0,
+      "docs_changed_same_chunks": 0,
+      "from_chunks": 5423,
+      "to_chunks": 5423,
+      "chunks_added_new_docs": 0,
+      "chunks_added_changed_docs": 0,
+      "chunks_added_unchanged_docs": 0,
+      "chunks_removed_changed_docs": 0,
+      "chunks_removed_unchanged_docs": 0,
+      "chunks_removed_deleted_docs": 0,
+      "chunks_kept": 5423,
+      "chunks_kept_relocated": 0,
+      "tokens_to_embed": 0,
+      "to_tokens": 689619,
+      "to_docs_fingerprint": "10f1f12191520dc32e683b7704fd40bb2ee4bcc8d2c2e534e4a27f884d766c9e",
+      "to_chunks_fingerprint": "66297a231aa89f4ea189a83700d1632144f53c2ec21439a8c62101618c80adcd",
+      "started_at": "2026-10-20 18:55:30.411746+00:00",
+      "finished_at": "2026-10-20 18:55:56.316627+00:00",
+      "code_version": "0.0.1.dev149+gc6b15995e",
+      "dq_override": null,
+      "dq_override_of": null,
+      "baseline_check": "rechunked",
+      "embedding_model": "sentence-transformers/all-MiniLM-L6-v2@1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "chunks_embedded": 0,
+      "embedded_ids_fingerprint": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gold_rows_inserted": 0,
+      "gold_rows_deleted": 0,
+      "gold_version": null
+    },
+    "paths": {
+      "added": [],
+      "changed": [],
+      "deleted": []
+    },
+    "logged": "committed",
+    "read_back": {
+      "rows_with_this_run_id": 1,
+      "status": "committed",
+      "chain_head": "09cb979c-2baa-47dd-9938-c091d8e8b455",
+      "committed_runs_in_chain": 3
+    },
+    "status": "succeeded",
+    "finished_utc": "2026-10-20T18:56:01Z"
+  },
+  "error": null,
+  "error_trace": null
+}
