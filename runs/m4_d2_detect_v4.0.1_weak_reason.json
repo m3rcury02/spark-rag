@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "label": "m4_d2_detect_v4.0.1_weak_reason",
+    "git_commit": "f6430e8ecb6bd232264f812fad18fe14d1db64e4",
+    "script": "jobs/change_detect.py",
+    "job_args": [
+      "--tag",
+      "v4.0.1",
+      "--accept-drift",
+      "ok"
+    ],
+    "target": "workspace.docs_rag_dev",
+    "run_id": "9dc9dbcf-ca7d-44cd-868d-5c7f8878bf2b",
+    "environment_version": "4",
+    "wheel": "docs_rag-0.0.1.dev86+gf6430e8ec-py3-none-any.whl",
+    "parent_run_id": 834561534600707,
+    "task_run_id": 402387793305285,
+    "result_state": "FAILED",
+    "state_message": "Task main failed with message: Workload failed, see run output for details.",
+    "run_start_utc": "2026-10-20T01:23:33Z",
+    "run_end_utc": "2026-10-20T01:24:09Z",
+    "run_duration_seconds": 36.2
+  },
+  "summary": {
+    "run_id": "9dc9dbcf-ca7d-44cd-868d-5c7f8878bf2b",
+    "started_utc": "2026-10-20T01:24:03Z",
+    "status": "failed",
+    "error": "ValueError: --accept-drift needs a reason of at least 20 characters and 4 words, got 'ok'",
+    "finished_utc": "2026-10-20T01:24:03Z"
+  },
+  "error": "ValueError: --accept-drift needs a reason of at least 20 characters and 4 words, got 'ok'",
+  "error_trace": "377\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m \u001b[38;5;18m__name__\u001b[39m \u001b[38;5;241m==\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m__main__\u001b[39m\u001b[38;5;124m\"\u001b[39m:\n\u001b[0;32m--> 378\u001b[0m     main()\n\nFile \u001b[0;32m/tmp/tmpr9m7g4j3.py:374\u001b[0m, in \u001b[0;36mmain\u001b[0;34m()\u001b[0m\n\u001b[1;32m    365\u001b[0m parser\u001b[38;5;241m.\u001b[39madd_argument(\n\u001b[1;32m    366\u001b[0m     \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m--allow-backwards\u001b[39m\u001b[38;5;124m\"\u001b[39m, action\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstore_true\u001b[39m\u001b[38;5;124m\"\u001b[39m, help\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mallow a target older than the baseline\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m    367\u001b[0m )\n\u001b[1;32m    368\u001b[0m parser\u001b[38;5;241m.\u001b[39madd_argument(\n\u001b[1;32m    369\u001b[0m     \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m--accept-drift\u001b[39m\u001b[38;5;124m\"\u001b[39m,\n\u001b[1;32m    370\u001b[0m     metavar\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mREASON\u001b[39m\u001b[38;5;124m\"\u001b[39m,\n\u001b[1;32m    371\u001b[0m     help\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124maccept, for this run only, drift over the DQ threshold (not a loss beyond the ceiling); \u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m    372\u001b[0m     \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mrefused when nothing drifted\u001b[39m\u001b[38;5;124m\"\u001b[39m,\n\u001b[1;32m    373\u001b[0m )\n\u001b[0;32m--> 374\u001b[0m run_with_summary(detect, parser)\n\nFile \u001b[0;32m/local_disk0/.ephemeral_nfs/envs/pythonEnv-d5b0d380-a387-4024-8331-985085e84435/lib/python3.12/site-packages/docs_rag/jobenv.py:94\u001b[0m, in \u001b[0;36mrun_with_summary\u001b[0;34m(job, parser)\u001b[0m\n\u001b[1;32m     92\u001b[0m summary: \u001b[38;5;28mdict\u001b[39m[\u001b[38;5;28mstr\u001b[39m, Any] \u001b[38;5;241m=\u001b[39m {\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mrun_id\u001b[39m\u001b[38;5;124m\"\u001b[39m: args\u001b[38;5;241m.\u001b[39mrun_id, \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstarted_utc\u001b[39m\u001b[38;5;124m\"\u001b[39m: utc_now()}\n\u001b[1;32m     93\u001b[0m \u001b[38;5;28;01mtry\u001b[39;00m:\n\u001b[0;32m---> 94\u001b[0m     job(args, summary)\n\u001b[1;32m     95\u001b[0m     summary[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstatus\u001b[39m\u001b[38;5;124m\"\u001b[39m] \u001b[38;5;241m=\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124msucceeded\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m     96\u001b[0m \u001b[38;5;28;01mexcept\u001b[39;00m \u001b[38;5;167;01mException\u001b[39;00m \u001b[38;5;28;01mas\u001b[39;00m e:\n\nFile \u001b[0;32m/tmp/tmpr9m7g4j3.py:164\u001b[0m, in \u001b[0;36mdetect\u001b[0;34m(args, summary)\u001b[0m\n\u001b[1;32m    162\u001b[0m chunking \u001b[38;5;241m=\u001b[39m config\u001b[38;5;241m.\u001b[39mchunk\n\u001b[1;32m    163\u001b[0m tag \u001b[38;5;241m=\u001b[39m validate_tag(args\u001b[38;5;241m.\u001b[39mtag)\n\u001b[0;32m--> 164\u001b[0m accept \u001b[38;5;241m=\u001b[39m validate_override(args\u001b[38;5;241m.\u001b[39maccept_drift, args\u001b[38;5;241m.\u001b[39minitial, config\u001b[38;5;241m.\u001b[39mdq)\n\u001b[1;32m    165\u001b[0m attempt_id \u001b[38;5;241m=\u001b[39m uuid\u001b[38;5;241m.\u001b[39muuid4()\u001b[38;5;241m.\u001b[39mhex\n\u001b[1;32m    166\u001b[0m summary\u001b[38;5;241m.\u001b[39mupdate(\n\u001b[1;32m    167\u001b[0m     {\n\u001b[1;32m    168\u001b[0m         \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mtag\u001b[39m\u001b[38;5;124m\"\u001b[39m: tag,\n\u001b[0;32m   (...)\u001b[0m\n\u001b[1;32m    173\u001b[0m     }\n\u001b[1;32m    174\u001b[0m )\n\nFile \u001b[0;32m/local_disk0/.ephemeral_nfs/envs/pythonEnv-d5b0d380-a387-4024-8331-985085e84435/lib/python3.12/site-packages/docs_rag/dq.py:97\u001b[0m, in \u001b[0;36mvalidate_override\u001b[0;34m(reason, initial, dq)\u001b[0m\n\u001b[1;32m     95\u001b[0m text \u001b[38;5;241m=\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m \u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;241m.\u001b[39mjoin(reason\u001b[38;5;241m.\u001b[39msplit())\n\u001b[1;32m     96\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m \u001b[38;5;28mlen\u001b[39m(text) \u001b[38;5;241m<\u001b[39m dq\u001b[38;5;241m.\u001b[39mmin_reason_chars \u001b[38;5;129;01mor\u001b[39;00m \u001b[38;5;28mlen\u001b[39m(text\u001b[38;5;241m.\u001b[39msplit()) \u001b[38;5;241m<\u001b[39m \u001b[38;5;241m4\u001b[39m:\n\u001b[0;32m---> 97\u001b[0m     \u001b[38;5;28;01mraise\u001b[39;00m \u001b[38;5;167;01mValueError\u001b[39;00m(\n\u001b[1;32m     98\u001b[0m         \u001b[38;5;124mf\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m--accept-drift needs a reason of at least \u001b[39m\u001b[38;5;132;01m{\u001b[39;00mdq\u001b[38;5;241m.\u001b[39mmin_reason_chars\u001b[38;5;132;01m}\u001b[39;00m\u001b[38;5;124m characters and 4 words, \u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m     99\u001b[0m         \u001b[38;5;124mf\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mgot \u001b[39m\u001b[38;5;132;01m{\u001b[39;00mreason\u001b[38;5;132;01m!r}\u001b[39;00m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m    100\u001b[0m     )\n\u001b[1;32m    101\u001b[0m \u001b[38;5;28;01mreturn\u001b[39;00m text\n\n\u001b[0;31mValueError\u001b[0m: --accept-drift needs a reason of at least 20 characters and 4 words, got 'ok'"
+}
