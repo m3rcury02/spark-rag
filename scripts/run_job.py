@@ -19,6 +19,7 @@ import datetime as dt
 import io
 import json
 import pathlib
+import re
 import subprocess
 import sys
 import time
@@ -112,6 +113,11 @@ def main() -> None:
             )
     wheel = build_wheel()
     wheel_version = wheel.name.split("-")[1]
+    # The wheel's version names the commit it was built from; another commit landing between the rev-parse
+    # above and the build (e.g. a runs/ file committed meanwhile) would make the recorded commit wrong.
+    built = re.search(r"\+g([0-9a-f]{7,40})", wheel_version)
+    if not built or not commit.startswith(built.group(1)) or git("rev-parse", "HEAD") != commit:
+        sys.exit(f"HEAD moved while building: recorded {commit[:9]}, wheel {wheel_version}; run again")
 
     w = WorkspaceClient()
     ensure_volume(w, config)

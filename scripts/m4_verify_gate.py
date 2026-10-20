@@ -5,10 +5,11 @@
 
 The rules are D-012's, written out again below (POLICY), in two versions chosen by the commit a run's code
 came from: v1 (M4: one 10% drift threshold, an override given by a reason alone) and v2 (from GATE_V2_COMMIT:
-5% for a patch release and 10% for a minor or major one, and an override valid only for the drift that a named
-failed run of the same config, tags and baseline failed on). For each job in --job-runs that reached the gate,
-the run's ops_dq_results rows must be one attempt (the job's), one row per check, with one config, tags and
-baseline that match its run log row and the published config, and the threshold POLICY states; each row's
+5% for a patch release and 10% for a minor or major one, and an override valid only for exactly the drift that
+a named failed run of the same config, tags and baseline failed on). Configs today's code cannot reproduce are
+re-chunked with each side's own run's code (scripts/oldcode.py). For each job in --job-runs that reached the
+gate, the run's ops_dq_results rows must be one attempt (the job's), one row per check, with one config, tags
+and baseline that match its run log row and the published config, and the threshold POLICY states; each row's
 counts must equal a recount over a local chunking of git's files at the run's tag (for drift, also at its
 baseline's tag under the baseline's config); each status must be what POLICY gives for those counts and the
 job's --accept-drift. The run must have the outcome the statuses imply (committed exactly when no check failed
@@ -209,31 +210,32 @@ def main() -> None:
             if r["from_version_tag"]:
                 tags_needed.add(r["from_version_tag"])
     source = read_tags(sorted(tags_needed))
-    chunk_cache: dict[tuple[str, str], list[Any]] = {}
+    chunk_cache: dict[tuple[str, str, str], list[Any]] = {}
     sizes = {c.config_id: (c.max_tokens, c.overlap_tokens) for c in config.chunk_grid}
 
-    def chunked(tag: str, config_id: str) -> list[Any]:
-        """The tag's chunks under a config: today's code when it can reproduce it, else the code of the first
-        committed run that logged it (scripts/oldcode.py)."""
-        key = (tag, config_id)
-        if key not in chunk_cache:
-            if config_id in grid:
+    def chunked(tag: str, config_id: str, run: dict[str, Any]) -> list[Any]:
+        """The tag's chunks under a config: today's code when it can reproduce it, else the code of `run` (the
+        run that logged that side), by its code_version (scripts/oldcode.py)."""
+        if config_id in grid:
+            key = (tag, config_id, "today")
+            if key not in chunk_cache:
                 chunk_cache[key] = chunks_of(source[tag], grid[config_id])
-            else:
-                first = next(r for r in log if r["status"] == "committed" and r["to_config_id"] == config_id)
-                commit = oldcode.commit_of(first["code_version"])
-                size = (int(first["max_tokens"]), int(first["overlap_tokens"]))
-                got, chunks = oldcode.chunk_at(commit, source[tag].files, *size)
-                add(
-                    f"config {config_id}",
-                    f"the code of {commit[:10]} computes this config_id",
-                    config_id,
-                    got,
-                )
-                sizes[config_id] = size
-                chunk_cache[key] = [
-                    SimpleNamespace(**{**c, "section_path": tuple(c["section_path"])}) for c in chunks
-                ]
+            return chunk_cache[key]
+        commit = oldcode.commit_of(run["code_version"])
+        key = (tag, config_id, oldcode.src_tree(commit))
+        if key not in chunk_cache:
+            size = (int(run["max_tokens"]), int(run["overlap_tokens"]))
+            got, chunks = oldcode.chunk_at(commit, source[tag].files, *size)
+            add(
+                f"config {config_id}",
+                f"the code of {commit[:10]} (its run's own) computes it",
+                config_id,
+                got,
+            )
+            sizes[config_id] = size
+            chunk_cache[key] = [
+                SimpleNamespace(**{**c, "section_path": tuple(c["section_path"])}) for c in chunks
+            ]
         return chunk_cache[key]
 
     for name, s, meta in jobs:
@@ -291,7 +293,9 @@ def main() -> None:
                 (row["to_config_id"], row["from_version_tag"], row["to_version_tag"], row["baseline_run_id"]),
                 (config_id, from_tag, tag, baseline_id),
             )
-        target = chunked(tag, config_id)
+        if not logged:
+            continue  # its code is known only from its run-log row (checked above)
+        target = chunked(tag, config_id, logged[0])
         bad = recount(target, source[tag], sizes[config_id][0])
         accept = s.get("accept_drift")
         accept_of = s.get("accept_drift_of") if v2 else None
@@ -324,7 +328,11 @@ def main() -> None:
                 from_tag,
                 (baseline_row or {}).get("to_version_tag"),
             )
-        base_chunks = chunked(from_tag, baseline_row["to_config_id"]) if from_tag and baseline_row else None
+        base_chunks = (
+            chunked(from_tag, baseline_row["to_config_id"], baseline_row)
+            if from_tag and baseline_row
+            else None
+        )
         totals_to = (len(source[tag].files), len(target), sum(c.n_tokens for c in target))
         totals_from = (
             (len(source[from_tag].files), len(base_chunks), sum(c.n_tokens for c in base_chunks))
@@ -332,6 +340,7 @@ def main() -> None:
             else None
         )
         expected_status: dict[str, str] = {}
+        numbers: dict[str, tuple[int, int]] = {}
         for r in rows:
             check = r["check_name"]
             got = {k: as_number(r[k]) for k in ("numerator", "denominator", "observed", "threshold")}
@@ -361,6 +370,7 @@ def main() -> None:
                     else:
                         status = "fail"
             expected_status[check] = status
+            numbers[check] = (want_num, want_den)
             add(scope, f"{check} numerator", want_num, got["numerator"])
             add(scope, f"{check} denominator", want_den, got["denominator"])
             add(scope, f"{check} threshold = POLICY", limit, got["threshold"])
@@ -386,7 +396,11 @@ def main() -> None:
 
         failing = sorted(c for c, st in expected_status.items() if st == "fail")
         overridden = [c for c, st in expected_status.items() if st == "overridden"]
-        should_commit = not failing and (accept is None or bool(overridden))
+        # v2's gate also needs the overridden drift to be exactly the accepted run's (not just part of it).
+        mismatch = bool(v2 and accept is not None and overridden) and (
+            {(c, *numbers[c]) for c in overridden} != accepted
+        )
+        should_commit = not failing and (accept is None or bool(overridden)) and not mismatch
         add(
             scope,
             "job outcome follows the checks",
@@ -412,7 +426,14 @@ def main() -> None:
                 named = sorted(c for c in all_checks if f"{c} fail" in error)
                 add(scope, "the failed row's error is the gate's", True, error.startswith("DqFailed"))
                 add(scope, "the error names exactly the failing checks", failing, named)
-                if not failing:
+                if not failing and mismatch:
+                    add(
+                        scope,
+                        "a partial match of the accepted drift is refused",
+                        True,
+                        "not the drift run" in error,
+                    )
+                elif not failing:
                     add(scope, "an unused --accept-drift is refused", True, "nothing to accept" in error)
         # Write-audit-publish, from Delta's history: the checks went in one insert, before the run's row.
         dq_write, log_write = dq_first.get(run_id), log_first.get(run_id)

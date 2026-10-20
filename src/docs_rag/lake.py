@@ -80,7 +80,7 @@ def stored_baseline(
     spark: Any, config: Config, tag: str, config_id: str
 ) -> tuple[list[BronzeDoc], list[StoredChunk]]:
     """The bronze snapshot of `tag` and its stored silver rows under `config_id`, a config today's code cannot
-    re-chunk, after docs_rag.silver.stored_baseline_violations (D-012's re-baseline path)."""
+    re-chunk, after docs_rag.silver.stored_baseline_violations (D-013's re-baseline path)."""
     docs = read_bronze(spark, config, tag)
     stored = read_stored(
         spark, config.silver_table, {"config_id": config_id, "repo": config.source_repo, "tag": tag}

@@ -275,7 +275,7 @@ RUN_LOG_COLUMNS: tuple[tuple[str, str], ...] = (
     ("dq_override_of", "STRING"),
     # Added the same way: how the baseline side was checked, 'rechunked' (re-chunked from bronze and compared
     # with silver, D-011) or 'stored' (its config cannot be re-chunked by this code: its stored silver rows
-    # against the logged fingerprint, D-012's re-baseline path). NULL for an initial run and early failures.
+    # against the logged fingerprint, D-013's re-baseline path). NULL for an initial run and early failures.
     ("baseline_check", "STRING"),
 )
 

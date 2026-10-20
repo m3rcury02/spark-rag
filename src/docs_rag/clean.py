@@ -33,7 +33,7 @@ from dataclasses import dataclass
 # Bump when cleaned text changes for the same input. The goldens (tests/test_clean_golden.py on fixtures,
 # scripts/corpus_fingerprint.py on the real corpus) fail on any change and are never overwritten. Chunk
 # offsets (char_start/char_end) point into the cleaned text, so this version names their coordinate system.
-CLEANER_VERSION = "2"  # 2: no tab label before a code block fenced in the same language (D-012)
+CLEANER_VERSION = "2"  # 2: no tab label before a code block fenced in the same language (D-013)
 
 # --- 1. front matter -----------------------------------------------------------------------------------
 
@@ -326,7 +326,7 @@ class _Tables:
 def _tab_label(m: re.Match[str], saved: list[str]) -> str:
     """The `<lang>:` label line of a language tab, left out when the tab opens with a code block fenced in the
     same language: it would only repeat the fence, and between two pieces of a split block it was a tiny chunk
-    of its own (D-012)."""
+    of its own (D-013)."""
     lang = m.group(1)
     ref = re.match(r"\s*\x01(\d+)\x01", m.string[m.end() :])
     if (

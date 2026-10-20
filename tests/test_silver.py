@@ -218,3 +218,15 @@ def test_a_stored_baseline_must_belong_to_the_bronze_snapshot() -> None:
     assert any("no stored rows" in p for p in stored_baseline_violations(rows, other_doc, OLD_ID, ZERO))
     fewer = bronze({"docs/gen.md": PAGES["docs/gen.md"]})
     assert any("not in bronze" in p for p in stored_baseline_violations(rows, fewer, OLD_ID, ZERO))
+
+
+def test_a_stored_baseline_keeps_its_positions_in_order() -> None:
+    rows = old_rows()
+    first_of_a = next(i for i, r in enumerate(rows) if r.path == "docs/a.md")
+    gap = [*rows[:first_of_a], dataclasses.replace(rows[first_of_a], chunk_index=5), *rows[first_of_a + 1 :]]
+    assert any("chunk_index is not 0.." in p for p in stored_baseline_violations(gap, bronze(), OLD_ID, ZERO))
+    other_hash = [*rows[:first_of_a], dataclasses.replace(rows[first_of_a], doc_clean_sha256="f" * 64)]
+    other_hash += rows[first_of_a + 1 :]
+    assert len([r for r in rows if r.path == "docs/a.md"]) > 1
+    problems = stored_baseline_violations(other_hash, bronze(), OLD_ID, ZERO)
+    assert any("more than one clean-text hash" in p for p in problems)

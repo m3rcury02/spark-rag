@@ -45,7 +45,8 @@ class DqConfig:
             raise ValueError(f"invalid DQ thresholds: {self}")
 
     def max_drift(self, kind: str) -> float:
-        return self.max_drift_patch if kind == "patch" else self.max_drift_feature
+        """The drift threshold for a release kind; anything but 'minor' or 'major' gets the strictest."""
+        return self.max_drift_feature if kind in ("minor", "major") else self.max_drift_patch
 
 
 @dataclass(frozen=True)

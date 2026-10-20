@@ -62,7 +62,7 @@ def config_id_of(
     cleaner: str, chunker: str, max_tokens: int, overlap_tokens: int, vocab: str = VOCAB_SHA256
 ) -> str:
     """The config_id of any cleaner/chunker version pair, so stored rows of an earlier version can be matched
-    to the config_id they were stored under (D-012's re-baseline path)."""
+    to the config_id they were stored under (D-013's re-baseline path)."""
     spec = {
         "cleaner": cleaner,
         "chunker": chunker,

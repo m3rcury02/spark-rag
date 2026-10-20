@@ -255,12 +255,14 @@ def stored_baseline_violations(
     rows: Sequence[StoredChunk], docs: Sequence[BronzeDoc], config_id: str, zero_chunk: frozenset[str]
 ) -> list[str]:
     """A baseline that today's code cannot re-chunk (chunked under an earlier cleaner or chunker version) is
-    checked from its stored silver rows instead (D-012's re-baseline path): the rows hold one cleaner/chunker
+    checked from its stored silver rows instead (D-013's re-baseline path): the rows hold one cleaner/chunker
     version and size, which hash to `config_id`; each row is what its chunk_id says (stored_violations, with
     those versions); each row belongs to a doc of the bronze snapshot, with its commit and content hash; and
-    every bronze doc has rows unless it is a known zero-chunk doc. What this cannot show is that those
-    versions chunked bronze into exactly these rows: that rests on the chunk fingerprint the baseline run
-    logged when it re-chunked them, which the caller compares."""
+    every bronze doc has rows unless it is a known zero-chunk doc; per doc, chunk_index runs 0..n-1, offsets
+    never go backwards and one clean-text hash is named. What this cannot show is that those versions chunked
+    bronze into exactly these rows, nor that the positions are the ones they produced: the (path, chunk_id)
+    set rests on the chunk fingerprint the baseline run logged when it re-chunked them, which the caller
+    compares; positions are not pinned by anything."""
     if not rows:
         return ["no stored rows"]
     shapes = {(r.cleaner_version, r.chunker_version, r.max_tokens, r.overlap_tokens) for r in rows}
@@ -291,6 +293,17 @@ def stored_baseline_violations(
     without = sorted(set(by_path) - {r.path for r in rows} - zero_chunk)
     if without:
         problems.append(f"{len(without)} bronze docs with no stored rows, e.g. {without[:3]}")
+    per_doc: dict[str, list[StoredChunk]] = {}
+    for r in rows:
+        per_doc.setdefault(r.path, []).append(r)
+    for path, doc in sorted(per_doc.items()):
+        doc.sort(key=lambda r: r.chunk_index)
+        if [r.chunk_index for r in doc] != list(range(len(doc))):
+            problems.append(f"{path}: chunk_index is not 0..{len(doc) - 1}")
+        if len({r.doc_clean_sha256 for r in doc}) != 1:
+            problems.append(f"{path}: rows name more than one clean-text hash")
+        if any(b.char_start < a.char_start for a, b in zip(doc, doc[1:], strict=False)):
+            problems.append(f"{path}: offsets go backwards")
     return _capped(problems)
 
 

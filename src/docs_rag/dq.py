@@ -161,12 +161,12 @@ def accept_failed_run(
     tag: str,
     baseline_run_id: str | None,
 ) -> Acceptance:
-    """Bind an override to the run named by --accept-drift-of: it never committed, it failed the gate on drift
-    alone, in one attempt, for the same target, baseline and config as this run. `statuses` are its run-log
-    statuses and `rows` its ops_dq_results rows."""
+    """Bind an override to the run named by --accept-drift-of: it has exactly one run-log row, failed, and it
+    failed the gate on drift alone, in one attempt, for the same target, baseline and config as this run.
+    `statuses` are its run-log statuses and `rows` its ops_dq_results rows."""
     problems = []
-    if "failed" not in statuses or "committed" in statuses:
-        problems.append(f"its run log statuses are {sorted(statuses)}, not one failed run")
+    if sorted(statuses) != ["failed"]:
+        problems.append(f"its run log statuses are {sorted(statuses)}, not one failed row")
     attempts = {r.attempt_id for r in rows}
     if len(attempts) != 1:
         problems.append(f"it has DQ rows from {len(attempts)} attempts (it must have reached the gate once)")

@@ -321,8 +321,10 @@ def test_an_acceptance_with_nothing_to_override_is_refused() -> None:
 @pytest.mark.parametrize(
     "statuses,change,problem",
     [
-        (["committed"], {}, "not one failed run"),
-        (["failed", "committed"], {}, "not one failed run"),
+        (["committed"], {}, "not one failed row"),
+        (["failed", "committed"], {}, "not one failed row"),
+        (["failed", "failed"], {}, "not one failed row"),
+        ([], {}, "not one failed row"),
         (["failed"], {"attempt_id": "a2"}, "2 attempts"),
         (["failed"], {"to_version_tag": "v4.0.0"}, "this run checks"),
         (["failed"], {"baseline_run_id": "r-other"}, "this run checks"),
@@ -466,3 +468,9 @@ def test_config_refuses_chunks_the_model_would_truncate() -> None:
 def test_dq_thresholds_are_validated(overrides: dict[str, object]) -> None:
     with pytest.raises(ValueError):
         DqConfig(**overrides)  # type: ignore[arg-type]
+
+
+def test_an_unknown_release_kind_gets_the_strictest_drift_threshold() -> None:
+    dq = DqConfig()
+    assert (dq.max_drift("major"), dq.max_drift("minor"), dq.max_drift("patch")) == (0.10, 0.10, 0.05)
+    assert dq.max_drift("forward") == 0.05

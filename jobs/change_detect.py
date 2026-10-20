@@ -1,4 +1,4 @@
-"""Databricks job: detect what a tag changes against the last committed run, gate it, log it (D-011, D-012).
+"""Databricks job: detect a tag's changes against the last committed run, gate, log (D-011, D-012, D-013).
 
 Runs as a serverless spark_python_task (see scripts/run_job.py) for the published chunk config, Config.chunk.
 Steps:
@@ -9,9 +9,9 @@ Steps:
    tag is re-chunked here and compared row for row (silver_chunk.py must have run first).
 4. Baseline side: bronze still holds the commit and docs the baseline run logged, and silver still holds its
    chunking under the baseline's config with the chunk fingerprint the baseline run logged: re-chunked and
-   compared the same way when this code can reproduce that config, else checked from the stored rows (D-012's
+   compared the same way when this code can reproduce that config, else checked from the stored rows (D-013's
    re-baseline path; a cleaner or chunker version bump). A target under another config than the baseline's
-   needs --allow-config-change.
+   needs --allow-config-change, and the flag is refused when the config does not change.
 5. Diff docs (by hash) and chunks (by chunk_id), and check that they fit together.
 6. The DQ gate (docs_rag.dq, D-012) on the target: every check is appended to ops_dq_results in one insert,
    pass or fail, and read back; a failed check (or an accepted drift that is not there) stops the run. Drift
@@ -284,10 +284,17 @@ def detect(args: argparse.Namespace, summary: dict[str, Any]) -> None:
             raise RuntimeError(
                 f"{tag} is {way} of the baseline {from_tag}: pass --allow-backwards if intended"
             )
-        if base is not None and base["to_config_id"] != chunking.config_id and not args.allow_config_change:
+        config_change = base is not None and base["to_config_id"] != chunking.config_id
+        if config_change and not args.allow_config_change:
             raise RuntimeError(
                 f"the baseline was chunked under config {base['to_config_id']}, this run uses "
                 f"{chunking.config_id}: pass --allow-config-change if intended"
+            )
+        if (
+            args.allow_config_change and not config_change
+        ):  # a standing flag must not wave future changes through
+            raise RuntimeError(
+                "--allow-config-change was given, but the config does not change: nothing to allow"
             )
         accept = None
         if override:  # bind the override to the failed run it names, before the expensive steps
@@ -302,7 +309,7 @@ def detect(args: argparse.Namespace, summary: dict[str, Any]) -> None:
 
         # 4. The baseline side, pinned by what the baseline run logged. A config this code can re-chunk is
         # re-chunked and compared with silver (D-011); one it cannot (an earlier cleaner or chunker version)
-        # is checked from its stored silver rows (D-012's re-baseline path). Either way the pins below hold.
+        # is checked from its stored silver rows (D-013's re-baseline path). Either way the pins below hold.
         base_docs: dict[str, str] | None = None
         base_records: Sequence[SilverRecord | StoredChunk] = []
         baseline: Baseline | None = None

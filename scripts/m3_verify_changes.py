@@ -6,8 +6,9 @@
 For every committed row: the logged doc path lists equal a comparison of git's files at the two tags (read
 with scripts/gitdocs.py, compared here with plain dicts); the doc counts equal D-002's git counts where D-002
 has the transition; the chunk counts per doc kind equal plain set arithmetic over a local chunking of git's
-files (chunk_document, verified in M2; for a config today's code cannot reproduce, the code of the first
-committed run that logged it, run from a git worktree by scripts/oldcode.py); and, where
+files (chunk_document, verified in M2; for a config today's code cannot reproduce, each side's own run's
+code, run from a git worktree by scripts/oldcode.py); a run with the re-baseline path logs the baseline
+check its code had to make (D-013); and, where
 runs/m2_e_stability.json has the transition, the chunk counts equal its independently coded numbers. For the
 log as a whole: the committed rows form one chain from one initial run, failed rows carry no counts and are
 never a baseline, and every job summary in --job-runs has exactly its row in the log (and the other way
@@ -17,6 +18,7 @@ round).
 import argparse
 import json
 import pathlib
+import subprocess
 from typing import Any
 
 import oldcode
@@ -29,9 +31,20 @@ from runguard import REPO, committed_head
 from docs_rag.chunk import chunk_document
 from docs_rag.config import Config
 
+# The first commit with D-013's re-baseline path (and the baseline_check column).
+REBASELINE_COMMIT = "c7b73ac41b93542ecacbe74e48f2a4edaf3dfeb4"
 # D-002 (git diff --name-status, reproduced from bronze in runs/m1_h_bronze_vs_git_files.json).
 D002 = {("v3.5.0", "v4.0.0"): (19, 96, 51), ("v4.0.0", "v4.0.1"): (1, 4, 0)}
 M2E = REPO / "runs" / "m2_e_stability.json"
+
+
+def descends(commit: str, ancestor: str) -> bool:
+    code = subprocess.run(
+        ["git", "-C", str(REPO), "merge-base", "--is-ancestor", ancestor, commit], capture_output=True
+    ).returncode
+    if code not in (0, 1):
+        raise RuntimeError(f"git does not know {commit}")
+    return code == 0
 
 
 def chunk_sets(tag_files: dict[str, str], config: Any) -> dict[str, dict[str, int]]:
@@ -70,7 +83,7 @@ def expected(
         "chunks_added_changed_docs": sum(owner_b[i] in changed for i in new_ids),
         "chunks_removed_changed_docs": sum(owner_a[i] in changed for i in gone_ids),
         "chunks_removed_deleted_docs": sum(owner_a[i] in deleted for i in gone_ids),
-        # non-zero only across a config change (D-012's re-baseline path)
+        # non-zero only across a config change (D-013's re-baseline path)
         "chunks_added_unchanged_docs": sum(owner_b[i] in unchanged for i in new_ids),
         "chunks_removed_unchanged_docs": sum(owner_a[i] in unchanged for i in gone_ids),
         "chunks_kept": len(ids_a & ids_b),
@@ -156,31 +169,33 @@ def main() -> None:
     source = read_tags(tags)
     m2e = json.loads(M2E.read_text())["configs"]
     grid = {c.config_id: c for c in config.chunk_grid}
-    cache: dict[tuple[str, str], dict[str, dict[str, int]]] = {}
+    cache: dict[tuple[str, str, str], dict[str, dict[str, int]]] = {}
 
-    def sets_of(tag: str, config_id: str) -> dict[str, dict[str, int]]:
+    def sets_of(tag: str, config_id: str, run: dict[str, Any]) -> dict[str, dict[str, int]]:
         """path -> {chunk_id: n_tokens} of a tag under a config: today's code when it can reproduce the
-        config, else the code of the first committed run that logged it (scripts/oldcode.py)."""
-        if (tag, config_id) not in cache:
-            if config_id in grid:
-                cache[(tag, config_id)] = chunk_sets(source[tag].files, grid[config_id])
-            else:
-                first = next(x for x in committed if x["to_config_id"] == config_id)
-                commit = oldcode.commit_of(first["code_version"])
-                got, chunks = oldcode.chunk_at(
-                    commit, source[tag].files, int(first["max_tokens"]), int(first["overlap_tokens"])
-                )
-                add(
-                    f"config {config_id}",
-                    f"the code of {commit[:10]} computes this config_id",
-                    config_id,
-                    got,
-                )
-                sets: dict[str, dict[str, int]] = {p: {} for p in source[tag].files}
-                for c in chunks:
-                    sets[c["path"]][c["chunk_id"]] = c["n_tokens"]
-                cache[(tag, config_id)] = sets
-        return cache[(tag, config_id)]
+        config, else the code of `run` (the run that logged that side), by its code_version
+        (scripts/oldcode.py; runs whose src/ trees are equal share one checkout)."""
+        if config_id in grid:
+            key = (tag, config_id, "today")
+            if key not in cache:
+                cache[key] = chunk_sets(source[tag].files, grid[config_id])
+            return cache[key]
+        commit = oldcode.commit_of(run["code_version"])
+        key = (tag, config_id, oldcode.src_tree(commit))
+        if key not in cache:
+            size = (int(run["max_tokens"]), int(run["overlap_tokens"]))
+            got, chunks = oldcode.chunk_at(commit, source[tag].files, *size)
+            add(
+                f"config {config_id}",
+                f"the code of {commit[:10]} (its run's own) computes it",
+                config_id,
+                got,
+            )
+            sets: dict[str, dict[str, int]] = {p: {} for p in source[tag].files}
+            for c in chunks:
+                sets[c["path"]][c["chunk_id"]] = c["n_tokens"]
+            cache[key] = sets
+        return cache[key]
 
     for r in order:
         a, b = r["from_version_tag"], r["to_version_tag"]
@@ -195,8 +210,15 @@ def main() -> None:
                 by_id[r["baseline_run_id"]]["to_version_tag"],
                 a,
             )
-        ca = sets_of(a, r["from_config_id"]) if a else {}
-        want = expected(source[a].files if a else None, source[b].files, ca, sets_of(b, r["to_config_id"]))
+        base = by_id.get(r["baseline_run_id"] or "")
+        ca = sets_of(a, r["from_config_id"], base) if a and base else {}
+        want = expected(source[a].files if a else None, source[b].files, ca, sets_of(b, r["to_config_id"], r))
+        if a and base:  # D-013: a run's code says how it checked its baseline (column added with the path)
+            commit = oldcode.commit_of(r["code_version"])
+            if descends(commit, REBASELINE_COMMIT):
+                grid_then = oldcode.grid_config_ids(commit)
+                how = "rechunked" if r["from_config_id"] in grid_then else "stored"
+                add(scope, "baseline_check is the path its code had to take", how, r.get("baseline_check"))
         for name, value in want.items():
             add(scope, name, value, r[name])
         if (a, b) in D002:
