@@ -55,14 +55,22 @@ class ChunkConfig:
     @property
     def config_id(self) -> str:
         """Identifies everything that shapes the output; part of the silver key, not of chunk IDs."""
-        spec = {
-            "cleaner": CLEANER_VERSION,
-            "chunker": CHUNKER_VERSION,
-            "max": self.max_tokens,
-            "overlap": self.overlap_tokens,
-            "vocab": VOCAB_SHA256,
-        }
-        return hashlib.sha256(json.dumps(spec, sort_keys=True).encode()).hexdigest()[:16]
+        return config_id_of(CLEANER_VERSION, CHUNKER_VERSION, self.max_tokens, self.overlap_tokens)
+
+
+def config_id_of(
+    cleaner: str, chunker: str, max_tokens: int, overlap_tokens: int, vocab: str = VOCAB_SHA256
+) -> str:
+    """The config_id of any cleaner/chunker version pair, so stored rows of an earlier version can be matched
+    to the config_id they were stored under (D-012's re-baseline path)."""
+    spec = {
+        "cleaner": cleaner,
+        "chunker": chunker,
+        "max": max_tokens,
+        "overlap": overlap_tokens,
+        "vocab": vocab,
+    }
+    return hashlib.sha256(json.dumps(spec, sort_keys=True).encode()).hexdigest()[:16]
 
 
 @dataclass(frozen=True)

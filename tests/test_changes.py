@@ -220,6 +220,7 @@ def committed_row(**overrides: object) -> RunLogRow:
         started_at=dt.datetime(2026, 10, 20, tzinfo=dt.UTC),
         finished_at=dt.datetime(2026, 10, 20, tzinfo=dt.UTC),
         code_version="0.0.1",
+        baseline_check="rechunked",
         **counts(DOCS, diff_chunks(BASE, TARGET, DOCS), from_chunks=len(BASE), to_tokens=51),  # type: ignore[arg-type]
     )
     return dataclasses.replace(base, **overrides)  # type: ignore[arg-type]
@@ -253,6 +254,13 @@ def test_a_failed_row_needs_no_counts() -> None:
         committed_row(dq_override="a reason")
     )
     assert row_violations(committed_row(dq_override="a reason", dq_override_of="r0")) == []
+
+
+def test_a_committed_row_says_how_its_baseline_was_checked() -> None:
+    assert "a run with a baseline says how it checked it" in row_violations(
+        committed_row(baseline_check=None)
+    )
+    assert row_violations(committed_row(baseline_check="stored")) == []
     assert row_violations(committed_row(status="detected")) == ["unknown status 'detected'"]
     assert row_violations(committed_row(code_version="")) == [
         "started_at, finished_at and code_version are required"

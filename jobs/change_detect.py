@@ -8,8 +8,10 @@ Steps:
 3. Target: the bronze snapshot is whole, and silver holds exactly the chunking of it under Config.chunk: the
    tag is re-chunked here and compared row for row (silver_chunk.py must have run first).
 4. Baseline side: bronze still holds the commit and docs the baseline run logged, and silver still holds its
-   chunking under the baseline's config, re-chunked and compared the same way, with the chunk fingerprint the
-   baseline run logged.
+   chunking under the baseline's config with the chunk fingerprint the baseline run logged: re-chunked and
+   compared the same way when this code can reproduce that config, else checked from the stored rows (D-012's
+   re-baseline path; a cleaner or chunker version bump). A target under another config than the baseline's
+   needs --allow-config-change.
 5. Diff docs (by hash) and chunks (by chunk_id), and check that they fit together.
 6. The DQ gate (docs_rag.dq, D-012) on the target: every check is appended to ops_dq_results in one insert,
    pass or fail, and read back; a failed check (or an accepted drift that is not there) stops the run. Drift
@@ -27,6 +29,7 @@ import argparse
 import dataclasses
 import datetime as dt
 import uuid
+from collections.abc import Sequence
 from typing import Any
 
 from pyspark.sql import SparkSession
@@ -67,8 +70,8 @@ from docs_rag.dq import (
     validate_override,
 )
 from docs_rag.jobenv import base_parser, check_environment, run_with_summary
-from docs_rag.lake import chunk_bronze, compare_with_stored, read_bronze
-from docs_rag.silver import SilverRecord, conflict_reason, fingerprint
+from docs_rag.lake import chunk_bronze, compare_with_stored, read_bronze, stored_baseline
+from docs_rag.silver import SilverRecord, StoredChunk, conflict_reason, fingerprint
 
 JOB = "change_detect"
 
@@ -199,7 +202,7 @@ def read_acceptance(
     )
 
 
-def refs(records: list[SilverRecord]) -> list[ChunkRef]:
+def refs(records: Sequence[SilverRecord | StoredChunk]) -> list[ChunkRef]:
     return [
         ChunkRef(r.path, r.chunk_id, r.n_tokens, (r.chunk_index, r.char_start, r.char_end)) for r in records
     ]
@@ -281,6 +284,11 @@ def detect(args: argparse.Namespace, summary: dict[str, Any]) -> None:
             raise RuntimeError(
                 f"{tag} is {way} of the baseline {from_tag}: pass --allow-backwards if intended"
             )
+        if base is not None and base["to_config_id"] != chunking.config_id and not args.allow_config_change:
+            raise RuntimeError(
+                f"the baseline was chunked under config {base['to_config_id']}, this run uses "
+                f"{chunking.config_id}: pass --allow-config-change if intended"
+            )
         accept = None
         if override:  # bind the override to the failed run it names, before the expensive steps
             accept = read_acceptance(spark, config, override, tag, from_tag, head)
@@ -292,17 +300,24 @@ def detect(args: argparse.Namespace, summary: dict[str, Any]) -> None:
         )
         known.update(to_commit_sha=target_commit)
 
-        # 4. The baseline side, pinned by what the baseline run logged.
+        # 4. The baseline side, pinned by what the baseline run logged. A config this code can re-chunk is
+        # re-chunked and compared with silver (D-011); one it cannot (an earlier cleaner or chunker version)
+        # is checked from its stored silver rows (D-012's re-baseline path). Either way the pins below hold.
         base_docs: dict[str, str] | None = None
-        base_records: list[SilverRecord] = []
+        base_records: Sequence[SilverRecord | StoredChunk] = []
         baseline: Baseline | None = None
         if base is not None:
             from_chunking = next((c for c in config.chunk_grid if c.config_id == base["to_config_id"]), None)
+            check = "rechunked" if from_chunking is not None else "stored"
+            known.update(baseline_check=check)
+            summary["baseline_check"] = check
             if from_chunking is None:
-                raise RuntimeError(
-                    f"the baseline's config {base['to_config_id']} is not in Config.chunk_grid"
+                bronze, base_records = stored_baseline(
+                    spark, config, base["to_version_tag"], base["to_config_id"]
                 )
-            if (base["to_version_tag"], from_chunking) == (tag, chunking):
+                base_docs = {d.path: d.content_sha256 for d in bronze}
+                base_commit = bronze[0].commit_sha
+            elif (base["to_version_tag"], from_chunking) == (tag, chunking):
                 base_docs, base_commit, base_records = target_docs, target_commit, target_records
             else:
                 base_docs, base_commit, base_records = verified_chunking(
@@ -319,7 +334,7 @@ def detect(args: argparse.Namespace, summary: dict[str, Any]) -> None:
             moved = [name for name, (now, logged) in pinned.items() if now != logged]
             if moved:
                 raise RuntimeError(f"the baseline {from_tag} no longer matches its logged run: {moved}")
-            known.update(from_commit_sha=base_commit, from_config_id=from_chunking.config_id)
+            known.update(from_commit_sha=base_commit, from_config_id=base["to_config_id"])
             baseline = Baseline(
                 base["to_version_tag"],
                 Totals(len(base_docs), len(base_records), sum(r.n_tokens for r in base_records)),
@@ -382,6 +397,7 @@ def detect(args: argparse.Namespace, summary: dict[str, Any]) -> None:
             code_version=code_version,
             dq_override=passed.override_reason,
             dq_override_of=passed.override_of,
+            baseline_check=known.get("baseline_check"),
             **counts(docs, chunks, len(base_records), sum(r.n_tokens for r in target_records)),
         )
         summary["row"] = {k: v for k, v in row.as_row().items() if not k.endswith("_paths")}
@@ -410,6 +426,7 @@ def detect(args: argparse.Namespace, summary: dict[str, Any]) -> None:
             started_at=started,
             finished_at=dt.datetime.now(dt.UTC),
             code_version=code_version,
+            baseline_check=known.get("baseline_check"),
         )
         try:
             log_failed(spark, table, failed)
@@ -445,6 +462,11 @@ def main() -> None:
     parser.add_argument("--initial", action="store_true", help="start the chain (only when there is none)")
     parser.add_argument(
         "--allow-backwards", action="store_true", help="allow a target older than the baseline"
+    )
+    parser.add_argument(
+        "--allow-config-change",
+        action="store_true",
+        help="allow a target chunked under another config than the baseline (e.g. a cleaner version bump)",
     )
     parser.add_argument(
         "--accept-drift",

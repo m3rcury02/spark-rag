@@ -16,6 +16,7 @@ from docs_rag.silver import (
     bronze_violations,
     check_against_stored,
     chunk_docs,
+    stored_baseline_violations,
     stored_violations,
     to_records,
 )
@@ -73,3 +74,20 @@ def chunk_bronze(
     chunked = chunk_docs(docs, chunking)
     records = to_records(docs, chunked, config.source_repo, tag, chunking, run_id, dt.datetime.now(dt.UTC))
     return chunked, records
+
+
+def stored_baseline(
+    spark: Any, config: Config, tag: str, config_id: str
+) -> tuple[list[BronzeDoc], list[StoredChunk]]:
+    """The bronze snapshot of `tag` and its stored silver rows under `config_id`, a config today's code cannot
+    re-chunk, after docs_rag.silver.stored_baseline_violations (D-012's re-baseline path)."""
+    docs = read_bronze(spark, config, tag)
+    stored = read_stored(
+        spark, config.silver_table, {"config_id": config_id, "repo": config.source_repo, "tag": tag}
+    )
+    problems = stored_baseline_violations(stored, docs, config_id, config.zero_chunk_docs)
+    if problems:
+        raise RuntimeError(
+            f"stored silver of the baseline {tag} under {config_id} fails its checks: " + "; ".join(problems)
+        )
+    return docs, stored

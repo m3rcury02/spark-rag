@@ -273,6 +273,10 @@ RUN_LOG_COLUMNS: tuple[tuple[str, str], ...] = (
     ("dq_override", "STRING"),
     # Added after M4 the same way: the failed run whose logged drift the override accepted (D-012).
     ("dq_override_of", "STRING"),
+    # Added the same way: how the baseline side was checked, 'rechunked' (re-chunked from bronze and compared
+    # with silver, D-011) or 'stored' (its config cannot be re-chunked by this code: its stored silver rows
+    # against the logged fingerprint, D-012's re-baseline path). NULL for an initial run and early failures.
+    ("baseline_check", "STRING"),
 )
 
 
@@ -328,6 +332,7 @@ class RunLogRow:
     code_version: str = ""
     dq_override: str | None = None
     dq_override_of: str | None = None
+    baseline_check: str | None = None
 
     def as_row(self) -> dict[str, object]:
         row: dict[str, object] = {f.name: getattr(self, f.name) for f in fields(self)}
@@ -410,5 +415,7 @@ def row_violations(row: RunLogRow) -> list[str]:
         "an initial run has no baseline": (row.direction == "initial") == (row.baseline_run_id is None),
         "a DQ override names its reason and the failed run it accepts": (row.dq_override is None)
         == (row.dq_override_of is None),
+        "a run with a baseline says how it checked it": (row.baseline_check in ("rechunked", "stored"))
+        == (row.baseline_run_id is not None),
     }
     return [name for name, ok in checks.items() if not ok]

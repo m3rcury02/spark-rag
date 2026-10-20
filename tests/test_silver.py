@@ -2,7 +2,8 @@ import dataclasses
 import datetime as dt
 import hashlib
 
-from docs_rag.chunk import ChunkConfig
+from docs_rag.chunk import CHUNKER_VERSION, ChunkConfig, config_id_of
+from docs_rag.clean import CLEANER_VERSION
 from docs_rag.silver import (
     SILVER_COLUMNS,
     BronzeDoc,
@@ -14,6 +15,7 @@ from docs_rag.silver import (
     conflict_reason,
     fingerprint,
     record_violations,
+    stored_baseline_violations,
     stored_violations,
     to_records,
     token_stats,
@@ -169,3 +171,50 @@ def test_token_stats() -> None:
     stats = token_stats(records(docs), chunk_docs(docs, CONFIG))
     assert stats["chunks"] == 2 and stats["docs_with_no_chunks"] == ["docs/gen.md"]
     assert sum(stats["n_tokens_histogram"].values()) == 2  # type: ignore[attr-defined]
+
+
+# --- the re-baseline path (D-012): a baseline checked from its stored rows ---
+
+OLD = ("0", CHUNKER_VERSION)  # an earlier cleaner version than today's
+OLD_ID = config_id_of(*OLD, CONFIG.max_tokens, CONFIG.overlap_tokens)
+ZERO = frozenset({"docs/gen.md"})
+
+
+def old_rows(recs: list[SilverRecord] | None = None) -> list[StoredChunk]:
+    """Rows as an earlier cleaner version would have stored them (same text here; only the label differs)."""
+    return [dataclasses.replace(r, cleaner_version=OLD[0]) for r in stored(recs or records())]
+
+
+def test_config_id_of_matches_the_config_and_tells_versions_apart() -> None:
+    assert config_id_of(CLEANER_VERSION, CHUNKER_VERSION, 64, 8) == CONFIG.config_id
+    assert CONFIG.config_id != OLD_ID
+
+
+def test_a_stored_baseline_of_an_earlier_version_passes() -> None:
+    assert stored_baseline_violations(old_rows(), bronze(), OLD_ID, ZERO) == []
+
+
+def test_a_stored_baseline_is_checked_row_by_row() -> None:
+    rows = old_rows()
+    tampered = [dataclasses.replace(rows[0], embed_text=rows[0].embed_text + " x"), *rows[1:]]
+    assert any(
+        "chunk_id does not match" in p for p in stored_baseline_violations(tampered, bronze(), OLD_ID, ZERO)
+    )
+    assert stored_baseline_violations([], bronze(), OLD_ID, ZERO) == ["no stored rows"]
+    mixed = [dataclasses.replace(rows[0], cleaner_version="9"), *rows[1:]]
+    assert (
+        "rows of 2 cleaner/chunker versions" in stored_baseline_violations(mixed, bronze(), OLD_ID, ZERO)[0]
+    )
+    wrong_id = stored_baseline_violations(rows, bronze(), CONFIG.config_id, ZERO)
+    assert any("do not hash to config_id" in p for p in wrong_id)
+
+
+def test_a_stored_baseline_must_belong_to_the_bronze_snapshot() -> None:
+    rows = old_rows()
+    assert any(
+        "another commit" in p for p in stored_baseline_violations(rows, bronze(commit="c2"), OLD_ID, ZERO)
+    )
+    other_doc = bronze({**PAGES, "docs/new.md": "# New\n\nA page silver never saw.\n"})
+    assert any("no stored rows" in p for p in stored_baseline_violations(rows, other_doc, OLD_ID, ZERO))
+    fewer = bronze({"docs/gen.md": PAGES["docs/gen.md"]})
+    assert any("not in bronze" in p for p in stored_baseline_violations(rows, fewer, OLD_ID, ZERO))

@@ -17,7 +17,15 @@ from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from typing import Literal
 
-from docs_rag.chunk import CHUNKER_VERSION, ChunkConfig, DocChunks, breadcrumb, chunk_document, chunk_id
+from docs_rag.chunk import (
+    CHUNKER_VERSION,
+    ChunkConfig,
+    DocChunks,
+    breadcrumb,
+    chunk_document,
+    chunk_id,
+    config_id_of,
+)
 from docs_rag.clean import CLEANER_VERSION
 from docs_rag.tokens import count_tokens
 
@@ -213,8 +221,12 @@ class StoredChunk:
     overlap_tokens: int
 
 
-def stored_violations(rows: Sequence[StoredChunk], config: ChunkConfig) -> list[str]:
-    """Every stored row must still be what its chunk_id says it is."""
+def stored_violations(
+    rows: Sequence[StoredChunk], config: ChunkConfig, versions: tuple[str, str] | None = None
+) -> list[str]:
+    """Every stored row must still be what its chunk_id says it is, stored under `versions` (cleaner, chunker;
+    by default today's)."""
+    cleaner, chunker = versions or (CLEANER_VERSION, CHUNKER_VERSION)
     problems = []
     for r in rows:
         where = f"{r.path} #{r.chunk_index}"
@@ -227,8 +239,8 @@ def stored_violations(rows: Sequence[StoredChunk], config: ChunkConfig) -> list[
         if not 0 <= r.char_start < r.char_end or r.char_end - r.char_start > len(r.body):
             problems.append(f"{where}: offsets {r.char_start}..{r.char_end} do not fit its body")
         if (r.cleaner_version, r.chunker_version, r.max_tokens, r.overlap_tokens) != (
-            CLEANER_VERSION,
-            CHUNKER_VERSION,
+            cleaner,
+            chunker,
             config.max_tokens,
             config.overlap_tokens,
         ):
@@ -236,6 +248,49 @@ def stored_violations(rows: Sequence[StoredChunk], config: ChunkConfig) -> list[
     dupes = [k for k, n in Counter(r.chunk_id for r in rows).items() if n > 1]
     if dupes:
         problems.append(f"{len(dupes)} chunk_ids stored more than once, e.g. {dupes[:3]}")
+    return _capped(problems)
+
+
+def stored_baseline_violations(
+    rows: Sequence[StoredChunk], docs: Sequence[BronzeDoc], config_id: str, zero_chunk: frozenset[str]
+) -> list[str]:
+    """A baseline that today's code cannot re-chunk (chunked under an earlier cleaner or chunker version) is
+    checked from its stored silver rows instead (D-012's re-baseline path): the rows hold one cleaner/chunker
+    version and size, which hash to `config_id`; each row is what its chunk_id says (stored_violations, with
+    those versions); each row belongs to a doc of the bronze snapshot, with its commit and content hash; and
+    every bronze doc has rows unless it is a known zero-chunk doc. What this cannot show is that those
+    versions chunked bronze into exactly these rows: that rests on the chunk fingerprint the baseline run
+    logged when it re-chunked them, which the caller compares."""
+    if not rows:
+        return ["no stored rows"]
+    shapes = {(r.cleaner_version, r.chunker_version, r.max_tokens, r.overlap_tokens) for r in rows}
+    if len(shapes) != 1:
+        return [f"rows of {len(shapes)} cleaner/chunker versions or sizes: {sorted(shapes)}"]
+    cleaner, chunker, max_tokens, overlap = next(iter(shapes))
+    problems = []
+    if config_id_of(cleaner, chunker, max_tokens, overlap) != config_id:
+        problems.append(
+            f"versions {(cleaner, chunker, max_tokens, overlap)} do not hash to config_id {config_id}"
+        )
+    problems += stored_violations(rows, ChunkConfig(max_tokens, overlap), (cleaner, chunker))
+    by_path = {d.path: d for d in docs}
+    foreign = sorted({r.path for r in rows if r.path not in by_path})
+    if foreign:
+        problems.append(f"{len(foreign)} paths not in bronze, e.g. {foreign[:3]}")
+    stale = sorted(
+        {
+            r.path
+            for r in rows
+            if r.path in by_path
+            and (r.commit_sha, r.doc_content_sha256)
+            != (by_path[r.path].commit_sha, by_path[r.path].content_sha256)
+        }
+    )
+    if stale:
+        problems.append(f"{len(stale)} docs whose rows name another commit or content hash, e.g. {stale[:3]}")
+    without = sorted(set(by_path) - {r.path for r in rows} - zero_chunk)
+    if without:
+        problems.append(f"{len(without)} bronze docs with no stored rows, e.g. {without[:3]}")
     return _capped(problems)
 
 
