@@ -1,0 +1,63 @@
+{
+  "meta": {
+    "label": "m4x_e_detect_v3.5.0_accept_other_run",
+    "git_commit": "7ee23c7b36af5305a2ce4089c5e2307211b971ac",
+    "script": "jobs/change_detect.py",
+    "job_args": [
+      "--tag",
+      "v3.5.0",
+      "--allow-backwards",
+      "--accept-drift",
+      "M4 follow-up demo: a deliberate rollback to v3.5.0, which still has the docs v4.0.0 deleted (D-002)",
+      "--accept-drift-of",
+      "64e598eb-8004-4b9d-bcba-2febe83286a7"
+    ],
+    "target": "workspace.docs_rag_dev",
+    "run_id": "d90f19c3-44e1-4589-8bc7-bb37e591613c",
+    "environment_version": "4",
+    "wheel": "docs_rag-0.0.1.dev103+g7ee23c7b3-py3-none-any.whl",
+    "parent_run_id": 1061261066212104,
+    "task_run_id": 224640129604787,
+    "result_state": "FAILED",
+    "state_message": "Task main failed with message: Workload failed, see run output for details.",
+    "run_start_utc": "2026-10-20T12:46:21Z",
+    "run_end_utc": "2026-10-20T12:47:03Z",
+    "run_duration_seconds": 41.9
+  },
+  "summary": {
+    "run_id": "d90f19c3-44e1-4589-8bc7-bb37e591613c",
+    "started_utc": "2026-10-20T12:46:48Z",
+    "tag": "v3.5.0",
+    "sink": "none",
+    "config_id": "ccbd80f05e15c8dd",
+    "accept_drift": "M4 follow-up demo: a deliberate rollback to v3.5.0, which still has the docs v4.0.0 deleted (D-002)",
+    "accept_drift_of": "64e598eb-8004-4b9d-bcba-2febe83286a7",
+    "attempt_id": "294684f7f5944de7b752f503870cbe3b",
+    "environment": {
+      "python": "3.12.3",
+      "databricks_runtime_version": "client.4.10",
+      "databricks_connect": "17.3.14",
+      "docs_rag": "0.0.1.dev103+g7ee23c7b3",
+      "tokenizers": "0.23.3",
+      "machine": "aarch64",
+      "spark": "4.2.0"
+    },
+    "earlier_attempts": [],
+    "baseline": {
+      "run_id": "ba641b3e-2f0b-4cf5-a682-9d85a43b8647",
+      "baseline_run_id": "5fe3034a-c97e-4aaf-937c-f4507d431adc",
+      "status": "committed",
+      "to_version_tag": "v4.0.1",
+      "to_commit_sha": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+      "to_config_id": "ccbd80f05e15c8dd",
+      "to_docs_fingerprint": "5b1534b24125aa7d7131d72727e2b28ff85b072262ed48dceedb3b40ba798c02",
+      "to_chunks_fingerprint": "ad300f7ddb87b42718cd0e0aab40e948e5f509124cc0c64224ede897805cb827"
+    },
+    "logged": "failed",
+    "status": "failed",
+    "error": "ValueError: --accept-drift-of 64e598eb-8004-4b9d-bcba-2febe83286a7: it checked [('ccbd80f05e15c8dd', 'v4.0.1', 'v3.5.0', 'e3a95072-cd43-4ffe-96a5-19fb01ae8a77')], this run checks ('ccbd80f05e15c8dd', 'v4.0.1', 'v3.5.0', 'ba641b3e-2f0b-4cf5-a682-9d85a43b8647')",
+    "finished_utc": "2026-10-20T12:46:57Z"
+  },
+  "error": "ValueError: --accept-drift-of 64e598eb-8004-4b9d-bcba-2febe83286a7: it checked [('ccbd80f05e15c8dd', 'v4.0.1', 'v3.5.0', 'e3a95072-cd43-4ffe-96a5-19fb01ae8a77')], this run checks ('ccbd80f05e15c8dd', 'v4.0.1', 'v3.5.0', 'ba641b3e-2f0b-4cf5-a682-9d85a43b8647')",
+  "error_trace": "124m\"\u001b[39m\u001b[38;5;124mstatus\u001b[39m\u001b[38;5;124m\"\u001b[39m] \u001b[38;5;241m=\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124msucceeded\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m     96\u001b[0m \u001b[38;5;28;01mexcept\u001b[39;00m \u001b[38;5;167;01mException\u001b[39;00m \u001b[38;5;28;01mas\u001b[39;00m e:\n\nFile \u001b[0;32m/tmp/tmpdx9ncfrh.py:286\u001b[0m, in \u001b[0;36mdetect\u001b[0;34m(args, summary)\u001b[0m\n\u001b[1;32m    284\u001b[0m accept \u001b[38;5;241m=\u001b[39m \u001b[38;5;28;01mNone\u001b[39;00m\n\u001b[1;32m    285\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m override:  \u001b[38;5;66;03m# bind the override to the failed run it names, before the expensive steps\u001b[39;00m\n\u001b[0;32m--> 286\u001b[0m     accept \u001b[38;5;241m=\u001b[39m read_acceptance(spark, config, override, tag, from_tag, head)\n\u001b[1;32m    287\u001b[0m     summary[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124macceptance\u001b[39m\u001b[38;5;124m\"\u001b[39m] \u001b[38;5;241m=\u001b[39m {\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mrun_id\u001b[39m\u001b[38;5;124m\"\u001b[39m: accept\u001b[38;5;241m.\u001b[39mrun_id, \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mdrift\u001b[39m\u001b[38;5;124m\"\u001b[39m: \u001b[38;5;28msorted\u001b[39m(accept\u001b[38;5;241m.\u001b[39mdrift)}\n\u001b[1;32m    289\u001b[0m \u001b[38;5;66;03m# 3. The target: bronze whole, silver exactly its chunking under the published config.\u001b[39;00m\n\nFile \u001b[0;32m/tmp/tmpdx9ncfrh.py:190\u001b[0m, in \u001b[0;36mread_acceptance\u001b[0;34m(spark, config, override, tag, from_tag, baseline_run_id)\u001b[0m\n\u001b[1;32m    153\u001b[0m statuses \u001b[38;5;241m=\u001b[39m [\n\u001b[1;32m    154\u001b[0m     r[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstatus\u001b[39m\u001b[38;5;124m\"\u001b[39m]\n\u001b[1;32m    155\u001b[0m     \u001b[38;5;28;01mfor\u001b[39;00m r \u001b[38;5;129;01min\u001b[39;00m spark\u001b[38;5;241m.\u001b[39msql(\n\u001b[0;32m   (...)\u001b[0m\n\u001b[1;32m    164\u001b[0m     )\u001b[38;5;241m.\u001b[39mcollect()\n\u001b[1;32m    165\u001b[0m ]\n\u001b[1;32m    166\u001b[0m rows \u001b[38;5;241m=\u001b[39m [\n\u001b[1;32m    167\u001b[0m     LoggedCheck(\n\u001b[1;32m    168\u001b[0m         r[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mrun_id\u001b[39m\u001b[38;5;124m\"\u001b[39m],\n\u001b[0;32m   (...)\u001b[0m\n\u001b[1;32m    188\u001b[0m     )\u001b[38;5;241m.\u001b[39mcollect()\n\u001b[1;32m    189\u001b[0m ]\n\u001b[0;32m--> 190\u001b[0m \u001b[38;5;28;01mreturn\u001b[39;00m accept_failed_run(\n\u001b[1;32m    191\u001b[0m     reason,\n\u001b[1;32m    192\u001b[0m     run_id,\n\u001b[1;32m    193\u001b[0m     statuses,\n\u001b[1;32m    194\u001b[0m     rows,\n\u001b[1;32m    195\u001b[0m     config_id\u001b[38;5;241m=\u001b[39mconfig\u001b[38;5;241m.\u001b[39mchunk\u001b[38;5;241m.\u001b[39mconfig_id,\n\u001b[1;32m    196\u001b[0m     from_tag\u001b[38;5;241m=\u001b[39mfrom_tag,\n\u001b[1;32m    197\u001b[0m     tag\u001b[38;5;241m=\u001b[39mtag,\n\u001b[1;32m    198\u001b[0m     baseline_run_id\u001b[38;5;241m=\u001b[39mbaseline_run_id,\n\u001b[1;32m    199\u001b[0m )\n\nFile \u001b[0;32m/local_disk0/.ephemeral_nfs/envs/pythonEnv-e2219c1d-e7c5-4c73-888e-dbb0e128809d/lib/python3.12/site-packages/docs_rag/dq.py:185\u001b[0m, in \u001b[0;36maccept_failed_run\u001b[0;34m(reason, run_id, statuses, rows, config_id, from_tag, tag, baseline_run_id)\u001b[0m\n\u001b[1;32m    183\u001b[0m     problems\u001b[38;5;241m.\u001b[39mappend(\u001b[38;5;124mf\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mit also failed \u001b[39m\u001b[38;5;132;01m{\u001b[39;00m[r\u001b[38;5;241m.\u001b[39mcheck\u001b[38;5;250m \u001b[39m\u001b[38;5;28;01mfor\u001b[39;00m\u001b[38;5;250m \u001b[39mr\u001b[38;5;250m \u001b[39m\u001b[38;5;129;01min\u001b[39;00m\u001b[38;5;250m \u001b[39mfailed\u001b[38;5;250m \u001b[39m\u001b[38;5;28;01mif\u001b[39;00m\u001b[38;5;250m \u001b[39mr\u001b[38;5;241m.\u001b[39mcheck\u001b[38;5;250m \u001b[39m\u001b[38;5;129;01mnot\u001b[39;00m\u001b[38;5;250m \u001b[39m\u001b[38;5;129;01min\u001b[39;00m\u001b[38;5;250m \u001b[39mDRIFT_CHECKS]\u001b[38;5;132;01m}\u001b[39;00m\u001b[38;5;124m\"\u001b[39m)\n\u001b[1;32m    184\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m problems:\n\u001b[0;32m--> 185\u001b[0m     \u001b[38;5;28;01mraise\u001b[39;00m \u001b[38;5;167;01mValueError\u001b[39;00m(\u001b[38;5;124mf\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m--accept-drift-of \u001b[39m\u001b[38;5;132;01m{\u001b[39;00mrun_id\u001b[38;5;132;01m}\u001b[39;00m\u001b[38;5;124m: \u001b[39m\u001b[38;5;124m\"\u001b[39m \u001b[38;5;241m+\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m; \u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;241m.\u001b[39mjoin(problems))\n\u001b[1;32m    186\u001b[0m \u001b[38;5;28;01mreturn\u001b[39;00m Acceptance(reason, run_id, \u001b[38;5;28mfrozenset\u001b[39m((r\u001b[38;5;241m.\u001b[39mcheck, r\u001b[38;5;241m.\u001b[39mnumerator, r\u001b[38;5;241m.\u001b[39mdenominator) \u001b[38;5;28;01mfor\u001b[39;00m r \u001b[38;5;129;01min\u001b[39;00m failed))\n\n\u001b[0;31mValueError\u001b[0m: --accept-drift-of 64e598eb-8004-4b9d-bcba-2febe83286a7: it checked [('ccbd80f05e15c8dd', 'v4.0.1', 'v3.5.0', 'e3a95072-cd43-4ffe-96a5-19fb01ae8a77')], this run checks ('ccbd80f05e15c8dd', 'v4.0.1', 'v3.5.0', 'ba641b3e-2f0b-4cf5-a682-9d85a43b8647')"
+}
