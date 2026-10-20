@@ -1,0 +1,181 @@
+{
+  "meta": {
+    "label": "m4_e_detect_v3.5.0_backwards_drift",
+    "git_commit": "70e0bae6bdb7ab1b839c9794e584b11946a277b2",
+    "script": "jobs/change_detect.py",
+    "job_args": [
+      "--tag",
+      "v3.5.0",
+      "--allow-backwards"
+    ],
+    "target": "workspace.docs_rag_dev",
+    "run_id": "64e598eb-8004-4b9d-bcba-2febe83286a7",
+    "environment_version": "4",
+    "wheel": "docs_rag-0.0.1.dev87+g70e0bae6b-py3-none-any.whl",
+    "parent_run_id": 810832710389834,
+    "task_run_id": 157635050073840,
+    "result_state": "FAILED",
+    "state_message": "Task main failed with message: Workload failed, see run output for details.",
+    "run_start_utc": "2026-10-20T01:24:20Z",
+    "run_end_utc": "2026-10-20T01:25:31Z",
+    "run_duration_seconds": 70.9
+  },
+  "summary": {
+    "run_id": "64e598eb-8004-4b9d-bcba-2febe83286a7",
+    "started_utc": "2026-10-20T01:24:51Z",
+    "tag": "v3.5.0",
+    "sink": "none",
+    "config_id": "ccbd80f05e15c8dd",
+    "accept_drift": null,
+    "attempt_id": "3d7534d904ac427c97b6a8d670d50073",
+    "environment": {
+      "python": "3.12.3",
+      "databricks_runtime_version": "client.4.10",
+      "databricks_connect": "17.3.14",
+      "docs_rag": "0.0.1.dev87+g70e0bae6b",
+      "tokenizers": "0.23.3",
+      "machine": "aarch64",
+      "spark": "4.2.0"
+    },
+    "earlier_attempts": [],
+    "baseline": {
+      "run_id": "e3a95072-cd43-4ffe-96a5-19fb01ae8a77",
+      "baseline_run_id": "fdd92ebc-c1e4-4a23-b43d-6638f9f6c440",
+      "status": "committed",
+      "to_version_tag": "v4.0.1",
+      "to_commit_sha": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+      "to_config_id": "ccbd80f05e15c8dd",
+      "to_docs_fingerprint": "5b1534b24125aa7d7131d72727e2b28ff85b072262ed48dceedb3b40ba798c02",
+      "to_chunks_fingerprint": "ad300f7ddb87b42718cd0e0aab40e948e5f509124cc0c64224ede897805cb827"
+    },
+    "dq": [
+      {
+        "check": "empty_chunks",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 5589,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "body with no token (blank, or only characters the tokenizer drops), or blank embed text; fails if any",
+        "examples": [],
+        "override_reason": null
+      },
+      {
+        "check": "tiny_chunks",
+        "status": "pass",
+        "numerator": 48,
+        "denominator": 5589,
+        "observed": 0.008588298443370907,
+        "threshold": 0.02,
+        "rule": "body under 5 tokens; fails above 2% of chunks",
+        "examples": [
+          "docs/sql-data-sources-avro.md #9: 2 tokens 'scala:'",
+          "docs/sql-data-sources-avro.md #12: 2 tokens 'java:'",
+          "docs/sql-data-sources-avro.md #15: 2 tokens 'r:'",
+          "docs/sql-data-sources-parquet.md #13: 2 tokens 'scala:'",
+          "docs/sql-data-sources-parquet.md #16: 2 tokens 'java:'",
+          "docs/sql-error-conditions-invalid-handle-error-class.md #3: 4 tokens 'Operation already exists.'",
+          "docs/sql-error-conditions-invalid-handle-error-class.md #4: 4 tokens 'Operation not found.'",
+          "docs/sql-error-conditions-invalid-handle-error-class.md #5: 4 tokens 'Session already exists.'",
+          "docs/sql-error-conditions-invalid-handle-error-class.md #6: 4 tokens 'Session not found.'",
+          "docs/sql-error-conditions-unsupported-feature-error-class.md #22: 4 tokens 'Multiple bucket TRANSFORMs.'"
+        ],
+        "override_reason": null
+      },
+      {
+        "check": "oversized_chunks",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 5589,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "embed text over 254 tokens (max_tokens 254; the embedding models' 256 less [CLS] and [SEP]); fails if any",
+        "examples": [],
+        "override_reason": null
+      },
+      {
+        "check": "duplicate_chunk_ids",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 5589,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "rows beyond the first of a repeated chunk_id; fails if any",
+        "examples": [],
+        "override_reason": null
+      },
+      {
+        "check": "duplicate_embed_text",
+        "status": "pass",
+        "numerator": 12,
+        "denominator": 5589,
+        "observed": 0.0021470746108427268,
+        "threshold": 0.01,
+        "rule": "copies beyond the first of a repeated embed text; fails above 1% of chunks",
+        "examples": [
+          "2x in ['docs/sql-ref-syntax-ddl-alter-view.md']: 'ALTER VIEW > Description > Parameters\\n\\n* **view_identifier**\\n\\n    Specifies a vi'",
+          "2x in ['docs/sql-error-conditions-incompatible-data-for-table-error-class.md', 'docs/sql-error-conditions-incompatible-data-to-table-error-class.md']: 'INCOMPATIBLE_DATA_FOR_TABLE error class > AMBIGUOUS_COLUMN_NAME\\n\\nAmbiguous colum'",
+          "2x in ['docs/sql-error-conditions-incompatible-data-for-table-error-class.md', 'docs/sql-error-conditions-incompatible-data-to-table-error-class.md']: 'INCOMPATIBLE_DATA_FOR_TABLE error class > CANNOT_FIND_DATA\\n\\nCannot find data for'",
+          "2x in ['docs/sql-error-conditions-incompatible-data-for-table-error-class.md', 'docs/sql-error-conditions-incompatible-data-to-table-error-class.md']: 'INCOMPATIBLE_DATA_FOR_TABLE error class > CANNOT_SAFELY_CAST\\n\\nCannot safely cast'",
+          "2x in ['docs/sql-error-conditions-incompatible-data-for-table-error-class.md', 'docs/sql-error-conditions-incompatible-data-to-table-error-class.md']: 'INCOMPATIBLE_DATA_FOR_TABLE error class > EXTRA_STRUCT_FIELDS\\n\\nCannot write extr'",
+          "2x in ['docs/sql-error-conditions-incompatible-data-for-table-error-class.md', 'docs/sql-error-conditions-incompatible-data-to-table-error-class.md']: 'INCOMPATIBLE_DATA_FOR_TABLE error class > NULLABLE_ARRAY_ELEMENTS\\n\\nCannot write '",
+          "2x in ['docs/sql-error-conditions-incompatible-data-for-table-error-class.md', 'docs/sql-error-conditions-incompatible-data-to-table-error-class.md']: 'INCOMPATIBLE_DATA_FOR_TABLE error class > NULLABLE_COLUMN\\n\\nCannot write nullable'",
+          "2x in ['docs/sql-error-conditions-incompatible-data-for-table-error-class.md', 'docs/sql-error-conditions-incompatible-data-to-table-error-class.md']: 'INCOMPATIBLE_DATA_FOR_TABLE error class > NULLABLE_MAP_VALUES\\n\\nCannot write null'",
+          "2x in ['docs/sql-error-conditions-incompatible-data-for-table-error-class.md', 'docs/sql-error-conditions-incompatible-data-to-table-error-class.md']: 'INCOMPATIBLE_DATA_FOR_TABLE error class > STRUCT_MISSING_FIELDS\\n\\nStruct `<colNam'",
+          "2x in ['docs/sql-error-conditions-incompatible-data-for-table-error-class.md', 'docs/sql-error-conditions-incompatible-data-to-table-error-class.md']: 'INCOMPATIBLE_DATA_FOR_TABLE error class > UNEXPECTED_COLUMN_NAME\\n\\nStruct `<colNa'"
+        ],
+        "override_reason": null
+      },
+      {
+        "check": "missing_metadata",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 5589,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "a docs/*.md path, non-blank section names (the title first), version_tag v3.5.0, a 40-hex commit_sha; fails if any row misses one",
+        "examples": [],
+        "override_reason": null
+      },
+      {
+        "check": "drift_docs",
+        "status": "fail",
+        "numerator": 244,
+        "denominator": 213,
+        "observed": 0.1455399061032865,
+        "threshold": 0.1,
+        "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+        "examples": [],
+        "override_reason": null
+      },
+      {
+        "check": "drift_chunks",
+        "status": "pass",
+        "numerator": 5589,
+        "denominator": 5462,
+        "observed": 0.023251556206517865,
+        "threshold": 0.1,
+        "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+        "examples": [],
+        "override_reason": null
+      },
+      {
+        "check": "drift_tokens",
+        "status": "pass",
+        "numerator": 667028,
+        "denominator": 692251,
+        "observed": -0.036436205942642186,
+        "threshold": 0.1,
+        "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+        "examples": [],
+        "override_reason": null
+      }
+    ],
+    "logged": "failed",
+    "status": "failed",
+    "error": "DqFailed: DQ gate failed: drift_docs fail: 213 -> 244 (+14.6%, limit 10%)",
+    "finished_utc": "2026-10-20T01:25:25Z"
+  },
+  "error": "DqFailed: DQ gate failed: drift_docs fail: 213 -> 244 (+14.6%, limit 10%)",
+  "error_trace": "[39m\n\u001b[1;32m    367\u001b[0m )\n\u001b[1;32m    368\u001b[0m parser\u001b[38;5;241m.\u001b[39madd_argument(\n\u001b[1;32m    369\u001b[0m     \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m--accept-drift\u001b[39m\u001b[38;5;124m\"\u001b[39m,\n\u001b[1;32m    370\u001b[0m     metavar\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mREASON\u001b[39m\u001b[38;5;124m\"\u001b[39m,\n\u001b[1;32m    371\u001b[0m     help\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124maccept, for this run only, drift over the DQ threshold (not a loss beyond the ceiling); \u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m    372\u001b[0m     \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mrefused when nothing drifted\u001b[39m\u001b[38;5;124m\"\u001b[39m,\n\u001b[1;32m    373\u001b[0m )\n\u001b[0;32m--> 374\u001b[0m run_with_summary(detect, parser)\n\nFile \u001b[0;32m/local_disk0/.ephemeral_nfs/envs/pythonEnv-c247063c-baa9-46e0-9fdc-bd103c783de1/lib/python3.12/site-packages/docs_rag/jobenv.py:94\u001b[0m, in \u001b[0;36mrun_with_summary\u001b[0;34m(job, parser)\u001b[0m\n\u001b[1;32m     92\u001b[0m summary: \u001b[38;5;28mdict\u001b[39m[\u001b[38;5;28mstr\u001b[39m, Any] \u001b[38;5;241m=\u001b[39m {\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mrun_id\u001b[39m\u001b[38;5;124m\"\u001b[39m: args\u001b[38;5;241m.\u001b[39mrun_id, \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstarted_utc\u001b[39m\u001b[38;5;124m\"\u001b[39m: utc_now()}\n\u001b[1;32m     93\u001b[0m \u001b[38;5;28;01mtry\u001b[39;00m:\n\u001b[0;32m---> 94\u001b[0m     job(args, summary)\n\u001b[1;32m     95\u001b[0m     summary[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstatus\u001b[39m\u001b[38;5;124m\"\u001b[39m] \u001b[38;5;241m=\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124msucceeded\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m     96\u001b[0m \u001b[38;5;28;01mexcept\u001b[39;00m \u001b[38;5;167;01mException\u001b[39;00m \u001b[38;5;28;01mas\u001b[39;00m e:\n\nFile \u001b[0;32m/tmp/tmpor4adz45.py:278\u001b[0m, in \u001b[0;36mdetect\u001b[0;34m(args, summary)\u001b[0m\n\u001b[1;32m    265\u001b[0m context \u001b[38;5;241m=\u001b[39m DqRunContext(\n\u001b[1;32m    266\u001b[0m     run_id\u001b[38;5;241m=\u001b[39margs\u001b[38;5;241m.\u001b[39mrun_id,\n\u001b[1;32m    267\u001b[0m     attempt_id\u001b[38;5;241m=\u001b[39mattempt_id,\n\u001b[0;32m   (...)\u001b[0m\n\u001b[1;32m    275\u001b[0m     code_version\u001b[38;5;241m=\u001b[39mcode_version,\n\u001b[1;32m    276\u001b[0m )\n\u001b[1;32m    277\u001b[0m write_dq_results(spark, config\u001b[38;5;241m.\u001b[39mdq_results_table, results, context)\n\u001b[0;32m--> 278\u001b[0m passed \u001b[38;5;241m=\u001b[39m gate(results, accept)\n\u001b[1;32m    279\u001b[0m summary[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mgate\u001b[39m\u001b[38;5;124m\"\u001b[39m] \u001b[38;5;241m=\u001b[39m {\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124moverridden\u001b[39m\u001b[38;5;124m\"\u001b[39m: passed\u001b[38;5;241m.\u001b[39moverridden, \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124moverride_reason\u001b[39m\u001b[38;5;124m\"\u001b[39m: passed\u001b[38;5;241m.\u001b[39moverride_reason}\n\u001b[1;32m    281\u001b[0m row \u001b[38;5;241m=\u001b[39m RunLogRow(\n\u001b[1;32m    282\u001b[0m     run_id\u001b[38;5;241m=\u001b[39margs\u001b[38;5;241m.\u001b[39mrun_id,\n\u001b[1;32m    283\u001b[0m     baseline_run_id\u001b[38;5;241m=\u001b[39mhead,\n\u001b[0;32m   (...)\u001b[0m\n\u001b[1;32m    304\u001b[0m     \u001b[38;5;241m*\u001b[39m\u001b[38;5;241m*\u001b[39mcounts(docs, chunks, \u001b[38;5;28mlen\u001b[39m(base_records), \u001b[38;5;28msum\u001b[39m(r\u001b[38;5;241m.\u001b[39mn_tokens \u001b[38;5;28;01mfor\u001b[39;00m r \u001b[38;5;129;01min\u001b[39;00m target_records)),\n\u001b[1;32m    305\u001b[0m )\n\nFile \u001b[0;32m/local_disk0/.ephemeral_nfs/envs/pythonEnv-c247063c-baa9-46e0-9fdc-bd103c783de1/lib/python3.12/site-packages/docs_rag/dq.py:270\u001b[0m, in \u001b[0;36mgate\u001b[0;34m(results, accept_drift)\u001b[0m\n\u001b[1;32m    268\u001b[0m failed \u001b[38;5;241m=\u001b[39m [r \u001b[38;5;28;01mfor\u001b[39;00m r \u001b[38;5;129;01min\u001b[39;00m results \u001b[38;5;28;01mif\u001b[39;00m r\u001b[38;5;241m.\u001b[39mstatus \u001b[38;5;241m==\u001b[39m FAIL]\n\u001b[1;32m    269\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m failed:\n\u001b[0;32m--> 270\u001b[0m     \u001b[38;5;28;01mraise\u001b[39;00m DqFailed(\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mDQ gate failed: \u001b[39m\u001b[38;5;124m\"\u001b[39m \u001b[38;5;241m+\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m; \u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;241m.\u001b[39mjoin(describe(r) \u001b[38;5;28;01mfor\u001b[39;00m r \u001b[38;5;129;01min\u001b[39;00m failed))\n\u001b[1;32m    271\u001b[0m overridden \u001b[38;5;241m=\u001b[39m \u001b[38;5;28mtuple\u001b[39m(r\u001b[38;5;241m.\u001b[39mcheck \u001b[38;5;28;01mfor\u001b[39;00m r \u001b[38;5;129;01min\u001b[39;00m results \u001b[38;5;28;01mif\u001b[39;00m r\u001b[38;5;241m.\u001b[39mstatus \u001b[38;5;241m==\u001b[39m OVERRIDDEN)\n\u001b[1;32m    272\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m accept_drift \u001b[38;5;129;01mis\u001b[39;00m \u001b[38;5;129;01mnot\u001b[39;00m \u001b[38;5;28;01mNone\u001b[39;00m \u001b[38;5;129;01mand\u001b[39;00m \u001b[38;5;129;01mnot\u001b[39;00m overridden:\n\n\u001b[0;31mDqFailed\u001b[0m: DQ gate failed: drift_docs fail: 213 -> 244 (+14.6%, limit 10%)"
+}
