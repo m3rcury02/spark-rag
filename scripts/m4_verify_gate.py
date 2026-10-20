@@ -3,7 +3,10 @@
     uv run --with databricks-sdk==0.152.0 python scripts/m4_verify_gate.py --label m4_v_gate_vs_git \
         --job-runs runs/m4_*_detect_*.json --pre-gate-runs runs/m3_*_detect_*.json
 
-The rules are D-012's, written out again below (POLICY). For each job in --job-runs that reached the gate,
+The rules are D-012's, written out again below (POLICY), in two versions chosen by the commit a run's code
+came from: v1 (M4: one 10% drift threshold, an override given by a reason alone) and v2 (from GATE_V2_COMMIT:
+5% for a patch release and 10% for a minor or major one, and an override valid only for the drift that a named
+failed run of the same config, tags and baseline failed on). For each job in --job-runs that reached the gate,
 the run's ops_dq_results rows must be one attempt (the job's), one row per check, with one config, tags and
 baseline that match its run log row and the published config, and the threshold POLICY states; each row's
 counts must equal a recount over a local chunking of git's files at the run's tag (for drift, also at its
@@ -45,12 +48,16 @@ POLICY = {
     "duplicate_chunk_ids": 0.0,
     "duplicate_embed_text": 0.01,
     "missing_metadata": 0.0,
-    "drift": 0.10,
+    "drift": 0.10,  # gate v1 (M4): one threshold, and an override was a reason alone
+    "drift_patch": 0.05,  # gate v2 (owner's decision of 2026-10-20): by release kind, a patch release
+    "drift_feature": 0.10,  # a minor or major release
     "max_override_loss": 0.50,
     "model_input_tokens": 256 - 2,  # all-MiniLM-L6-v2's 256 less [CLS] and [SEP]
 }
 # The first commit whose change_detect job runs the gate: a run whose code descends from it is gated.
 GATE_COMMIT = "41300433db257a33a29934b129b4cbcf54e5d272"
+# The first commit of gate v2: drift thresholds by release kind, and an override bound to a failed run.
+GATE_V2_COMMIT = "f20644313fd38589da210d30b723affa924b9ae8"
 DRIFT = ("drift_docs", "drift_chunks", "drift_tokens")
 COUNT_CHECKS = (
     "empty_chunks",
@@ -87,6 +94,24 @@ def recount(chunks: list[Chunk], tag: TagDocs, config: ChunkConfig) -> dict[str,
         "duplicate_embed_text": len(texts) - len(set(texts)),
         "missing_metadata": bad_meta,
     }
+
+
+def descends(commit: str, ancestor: str) -> bool | None:
+    """Whether `commit` contains `ancestor` (None: git does not know the commit)."""
+    code = subprocess.run(
+        ["git", "-C", str(REPO), "merge-base", "--is-ancestor", ancestor, commit], capture_output=True
+    ).returncode
+    return {0: True, 1: False}.get(code)
+
+
+def release_kind(a: str, b: str) -> str:
+    """D-012 v2: 'major' or 'minor' when that number differs; the same tag or a non-release tag: 'patch'."""
+    ra, rb = re.fullmatch(r"v?(\d+)\.(\d+)\.(\d+)", a), re.fullmatch(r"v?(\d+)\.(\d+)\.(\d+)", b)
+    if not (ra and rb):
+        return "patch"
+    if ra.group(1) != rb.group(1):
+        return "major"
+    return "minor" if ra.group(2) != rb.group(2) else "patch"
 
 
 def as_number(value: Any) -> Any:
@@ -174,9 +199,9 @@ def main() -> None:
     jobs = []
     for f in args.job_runs:
         data = json.loads(pathlib.Path(f).read_text())
-        jobs.append((pathlib.Path(f).name, data.get("summary") or {}))
+        jobs.append((pathlib.Path(f).name, data.get("summary") or {}, data.get("meta") or {}))
     tags_needed = set()
-    for _, s in jobs:
+    for _, s, _ in jobs:
         for r in by_run.get(s.get("run_id", ""), []):
             tags_needed.add(r["to_version_tag"])
             if r["from_version_tag"]:
@@ -190,9 +215,11 @@ def main() -> None:
             chunk_cache[key] = chunks_of(source[tag], grid[config_id])
         return chunk_cache[key]
 
-    for name, s in jobs:
+    for name, s, meta in jobs:
         run_id = s.get("run_id") or ""
         scope = f"job {name}"
+        v2 = descends(meta.get("git_commit", ""), GATE_V2_COMMIT)
+        add(scope, "its gate version is known from its commit", True, v2 is not None)
         if not run_id:  # a refused submit, or a job that died before writing its summary
             add(scope, "job summary has a run_id (verifiable)", True, False)
             continue
@@ -249,6 +276,28 @@ def main() -> None:
         target = chunked(tag, config_id)
         bad = recount(target, source[tag], grid[config_id])
         accept = s.get("accept_drift")
+        accept_of = s.get("accept_drift_of") if v2 else None
+        accepted: set[tuple[str, int, int]] = set()  # v2: the drift the named failed run failed on
+        if v2 and accept is not None:
+            of_rows = by_run.get(accept_of or "", [])
+            of_keys = {
+                (r["config_id"], r["from_version_tag"], r["to_version_tag"], r["baseline_run_id"])
+                for r in of_rows
+            }
+            of_failed = [r for r in of_rows if r["status"] == "fail"]
+            add(
+                scope,
+                "the accepted run is one failed run that failed the gate in one attempt, on drift alone, for "
+                "this run's config, tags and baseline",
+                (["failed"], 1, [(config_id, from_tag, tag, baseline_id)], True),
+                (
+                    sorted(r["status"] for r in log_by_run.get(accept_of or "", [])),
+                    len({r["attempt_id"] for r in of_rows}),
+                    sorted(of_keys, key=str),
+                    bool(of_failed) and all(r["check_name"] in DRIFT for r in of_failed),
+                ),
+            )
+            accepted = {(r["check_name"], int(r["numerator"]), int(r["denominator"])) for r in of_failed}
         baseline_row = committed.get(baseline_id or "")
         if from_tag:
             add(
@@ -279,7 +328,9 @@ def main() -> None:
                 observed: float | None = want_num / want_den
             else:
                 i = DRIFT.index(check)
-                want_num, limit = totals_to[i], POLICY["drift"]
+                kind = release_kind(from_tag or tag, tag)
+                drift_limit = POLICY["drift_patch"] if kind == "patch" else POLICY["drift_feature"]
+                want_num, limit = totals_to[i], drift_limit if v2 else POLICY["drift"]
                 if totals_from is None:
                     want_den, observed, status = 0, None, "not_applicable"
                 else:
@@ -287,7 +338,11 @@ def main() -> None:
                     observed = want_num / want_den - 1
                     if abs(want_num - want_den) <= limit * want_den:
                         status = "pass"
-                    elif accept and want_den - want_num <= POLICY["max_override_loss"] * want_den:
+                    elif (
+                        accept
+                        and want_den - want_num <= POLICY["max_override_loss"] * want_den
+                        and (not v2 or (check, want_num, want_den) in accepted)
+                    ):
                         status = "overridden"
                     else:
                         status = "fail"
@@ -310,9 +365,9 @@ def main() -> None:
             add(scope, f"{check} status", status, r["status"])
             add(
                 scope,
-                f"{check} override reason",
-                accept if status == "overridden" else None,
-                r["override_reason"],
+                f"{check} override reason and accepted run",
+                (accept, accept_of) if status == "overridden" else (None, None),
+                (r["override_reason"], r.get("override_of_run_id")),
             )
 
         failing = sorted(c for c, st in expected_status.items() if st == "fail")
@@ -334,9 +389,9 @@ def main() -> None:
             )
             add(
                 scope,
-                "dq_override = the reason iff the run committed with an override",
-                accept if overridden and should_commit else None,
-                row["dq_override"],
+                "dq_override (and dq_override_of) iff the run committed with an override",
+                (accept, accept_of) if overridden and should_commit else (None, None),
+                (row["dq_override"], row.get("dq_override_of")),
             )
             if not should_commit:
                 error = str(row["error"])
@@ -365,10 +420,12 @@ def main() -> None:
             continue
         pre_gate.add(summary["run_id"])
         commit = (data.get("meta") or {}).get("git_commit", "")
-        gated = subprocess.run(
-            ["git", "-C", str(REPO), "merge-base", "--is-ancestor", GATE_COMMIT, commit], capture_output=True
-        ).returncode  # 0: commit descends from the gate commit; 1: it does not; else: unknown commit
-        add(f"pre-gate {pathlib.Path(f).name}", "its code predates the gate", 1, gated)
+        add(
+            f"pre-gate {pathlib.Path(f).name}",
+            "its code predates the gate",
+            False,
+            descends(commit, GATE_COMMIT),
+        )
     add("tables", "DQ rows without a run log row", [], sorted(set(by_run) - set(log_by_run)))
     ungated = []
     for run_id in committed:
