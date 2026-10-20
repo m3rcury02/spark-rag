@@ -1,0 +1,584 @@
+{
+  "label": "m5_f_create_index",
+  "git_commit": "551bfdba9292fe37bdbac2e128ffcbc7bac678be",
+  "action": "create-index",
+  "endpoint_name": "docs_rag_endpoint",
+  "index_name": "workspace.docs_rag_dev.gold_chunk_index",
+  "started_utc": "2026-10-20T18:27:30Z",
+  "spec": {
+    "name": "workspace.docs_rag_dev.gold_chunk_index",
+    "endpoint_name": "docs_rag_endpoint",
+    "primary_key": "chunk_id",
+    "index_type": "DELTA_SYNC",
+    "delta_sync_index_spec": {
+      "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+      "pipeline_type": "TRIGGERED",
+      "columns_to_sync": [
+        "chunk_id",
+        "path",
+        "breadcrumb",
+        "body"
+      ],
+      "embedding_vector_columns": [
+        {
+          "name": "embedding",
+          "embedding_dimension": 384
+        }
+      ]
+    }
+  },
+  "requested_utc": "2026-10-20T18:27:31Z",
+  "polls": [
+    {
+      "after_s": 0.8,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_ENDPOINT",
+          "ready": false,
+          "indexed_row_count": null,
+          "message": "Delta sync index creation is pending endpoint provisioning.",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 31.6,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_ENDPOINT",
+          "ready": false,
+          "indexed_row_count": null,
+          "message": "Delta sync index creation is pending endpoint provisioning.",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 62.8,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_ENDPOINT",
+          "ready": false,
+          "indexed_row_count": null,
+          "message": "Delta sync index creation is pending endpoint provisioning.",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 93.6,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_ENDPOINT",
+          "ready": false,
+          "indexed_row_count": null,
+          "message": "Delta sync index creation is pending endpoint provisioning.",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 124.4,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_ENDPOINT",
+          "ready": false,
+          "indexed_row_count": null,
+          "message": "Delta sync index creation is pending endpoint provisioning.",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 155.3,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_ENDPOINT",
+          "ready": false,
+          "indexed_row_count": null,
+          "message": "Delta sync index creation is pending endpoint provisioning.",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 186.1,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_ENDPOINT",
+          "ready": false,
+          "indexed_row_count": null,
+          "message": "Delta sync index creation is pending endpoint provisioning.",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 216.8,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_ENDPOINT",
+          "ready": false,
+          "indexed_row_count": null,
+          "message": "Delta sync index creation is pending endpoint provisioning.",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 247.6,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_ENDPOINT",
+          "ready": false,
+          "indexed_row_count": null,
+          "message": "Delta sync index creation is pending endpoint provisioning.",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 278.4,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_ENDPOINT",
+          "ready": false,
+          "indexed_row_count": null,
+          "message": "Delta sync index creation is pending endpoint provisioning.",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 309.2,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_ENDPOINT",
+          "ready": false,
+          "indexed_row_count": null,
+          "message": "Delta sync index creation is pending endpoint provisioning.",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 339.9,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_ENDPOINT",
+          "ready": false,
+          "indexed_row_count": null,
+          "message": "Delta sync index creation is pending endpoint provisioning.",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 370.7,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_ENDPOINT",
+          "ready": false,
+          "indexed_row_count": null,
+          "message": "Delta sync index creation is pending endpoint provisioning.",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 401.4,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_ENDPOINT",
+          "ready": false,
+          "indexed_row_count": null,
+          "message": "Delta sync index creation is pending endpoint provisioning.",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 432.1,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_ENDPOINT",
+          "ready": false,
+          "indexed_row_count": null,
+          "message": "Delta sync index creation is pending endpoint provisioning.",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 463.0,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_ENDPOINT",
+          "ready": false,
+          "indexed_row_count": null,
+          "message": "Delta sync index creation is pending endpoint provisioning.",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 493.7,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_ENDPOINT",
+          "ready": false,
+          "indexed_row_count": null,
+          "message": "Delta sync index creation is pending endpoint provisioning.",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 524.5,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_ENDPOINT",
+          "ready": false,
+          "indexed_row_count": null,
+          "message": "Delta sync index creation is pending endpoint provisioning.",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 555.3,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_ENDPOINT",
+          "ready": false,
+          "indexed_row_count": null,
+          "message": "Delta sync index creation is pending endpoint provisioning.",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 586.8,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_ENDPOINT",
+          "ready": false,
+          "indexed_row_count": null,
+          "message": "Delta sync index creation is pending endpoint provisioning.",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 617.7,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_ENDPOINT",
+          "ready": false,
+          "indexed_row_count": null,
+          "message": "Delta sync index creation is pending endpoint provisioning.",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 648.4,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_ENDPOINT",
+          "ready": false,
+          "indexed_row_count": null,
+          "message": "Delta sync index creation is pending endpoint provisioning.",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 679.2,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_ENDPOINT",
+          "ready": false,
+          "indexed_row_count": null,
+          "message": "Delta sync index creation is pending endpoint provisioning.",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 710.0,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_ENDPOINT",
+          "ready": false,
+          "indexed_row_count": null,
+          "message": "Delta sync index creation is pending endpoint provisioning.",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 741.0,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_INDEX",
+          "ready": false,
+          "indexed_row_count": 0,
+          "message": "Delta sync Index creation is pending. Check latest status: https://<workspace-host>/explore/data/workspace/docs_rag_dev/gold_chunk_index",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 771.9,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_INDEX",
+          "ready": false,
+          "indexed_row_count": 0,
+          "message": "Delta sync Index creation is pending. Check latest status: https://<workspace-host>/explore/data/workspace/docs_rag_dev/gold_chunk_index",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 802.7,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_INDEX",
+          "ready": false,
+          "indexed_row_count": 0,
+          "message": "Delta sync Index creation is pending. Check latest status: https://<workspace-host>/explore/data/workspace/docs_rag_dev/gold_chunk_index",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 833.5,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_INDEX",
+          "ready": false,
+          "indexed_row_count": 0,
+          "message": "Delta sync Index creation is pending. Check latest status: https://<workspace-host>/explore/data/workspace/docs_rag_dev/gold_chunk_index",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": []
+      }
+    },
+    {
+      "after_s": 864.5,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_PIPELINE_RESOURCES",
+          "ready": false,
+          "indexed_row_count": 0,
+          "message": "Index is currently pending setup of pipeline resources. Check latest status: https://<workspace-host>/explore/data/workspace/docs_rag_dev/gold_chunk_index",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": [
+          {
+            "update_id": "d54641c7-5587-4865-82bb-a38a4fd7b735",
+            "state": "WAITING_FOR_RESOURCES",
+            "cause": "API_CALL",
+            "creation_time": 1792521697171
+          }
+        ]
+      }
+    },
+    {
+      "after_s": 895.2,
+      "seen": {
+        "index": {
+          "detailed_state": "PROVISIONING_INITIAL_SNAPSHOT",
+          "ready": false,
+          "indexed_row_count": 0,
+          "message": "Index is currently is in the process of syncing initial data. Check latest status: https://<workspace-host>/explore/data/workspace/docs_rag_dev/gold_chunk_index",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": [
+          {
+            "update_id": "d54641c7-5587-4865-82bb-a38a4fd7b735",
+            "state": "INITIALIZING",
+            "cause": "API_CALL",
+            "creation_time": 1792521697171
+          }
+        ]
+      }
+    },
+    {
+      "after_s": 926.2,
+      "seen": {
+        "index": {
+          "detailed_state": "ONLINE_TRIGGERED_UPDATE",
+          "ready": true,
+          "indexed_row_count": 5300,
+          "message": "Index is online but is currently is in the process of re-syncing initial data. Check latest status: https://<workspace-host>/explore/data/workspace/docs_rag_dev/gold_chunk_index",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": [
+          {
+            "update_id": "d54641c7-5587-4865-82bb-a38a4fd7b735",
+            "state": "INITIALIZING",
+            "cause": "API_CALL",
+            "creation_time": 1792521697171
+          }
+        ]
+      }
+    },
+    {
+      "after_s": 957.0,
+      "seen": {
+        "index": {
+          "detailed_state": "ONLINE_TRIGGERED_UPDATE",
+          "ready": true,
+          "indexed_row_count": 5567,
+          "message": "Index creation succeeded. Check latest status: https://<workspace-host>/explore/data/workspace/docs_rag_dev/gold_chunk_index",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": [
+          {
+            "update_id": "d54641c7-5587-4865-82bb-a38a4fd7b735",
+            "state": "RUNNING",
+            "cause": "API_CALL",
+            "creation_time": 1792521697171
+          }
+        ]
+      }
+    },
+    {
+      "after_s": 987.8,
+      "seen": {
+        "index": {
+          "detailed_state": "ONLINE_NO_PENDING_UPDATE",
+          "ready": true,
+          "indexed_row_count": 5567,
+          "message": "Index creation succeeded. Check latest status: https://<workspace-host>/explore/data/workspace/docs_rag_dev/gold_chunk_index",
+          "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+          "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+          "pipeline_type": "TRIGGERED"
+        },
+        "updates": [
+          {
+            "update_id": "d54641c7-5587-4865-82bb-a38a4fd7b735",
+            "state": "COMPLETED",
+            "cause": "API_CALL",
+            "creation_time": 1792521697171
+          }
+        ]
+      }
+    }
+  ],
+  "seconds_to_first_update_done": 987.8,
+  "index": {
+    "detailed_state": "ONLINE_NO_PENDING_UPDATE",
+    "ready": true,
+    "indexed_row_count": 5567,
+    "message": "Index creation succeeded. Check latest status: https://<workspace-host>/explore/data/workspace/docs_rag_dev/gold_chunk_index",
+    "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+    "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+    "pipeline_type": "TRIGGERED"
+  },
+  "seconds_to_synced": 988.4,
+  "updates": [
+    {
+      "update_id": "d54641c7-5587-4865-82bb-a38a4fd7b735",
+      "state": "COMPLETED",
+      "cause": "API_CALL",
+      "creation_time": 1792521697171
+    }
+  ],
+  "status": "succeeded",
+  "finished_utc": "2026-10-20T18:44:01Z"
+}
