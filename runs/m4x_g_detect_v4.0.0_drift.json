@@ -1,0 +1,183 @@
+{
+  "meta": {
+    "label": "m4x_g_detect_v4.0.0_drift",
+    "git_commit": "6675dfbabf5dc2f304a8749a68a8775322ee7310",
+    "script": "jobs/change_detect.py",
+    "job_args": [
+      "--tag",
+      "v4.0.0"
+    ],
+    "target": "workspace.docs_rag_dev",
+    "run_id": "3767945a-4f48-426e-9682-100bbcbc86e3",
+    "environment_version": "4",
+    "wheel": "docs_rag-0.0.1.dev105+g6675dfbab-py3-none-any.whl",
+    "parent_run_id": 581927625626646,
+    "task_run_id": 379735808314980,
+    "result_state": "FAILED",
+    "state_message": "Task main failed with message: Workload failed, see run output for details.",
+    "run_start_utc": "2026-10-20T12:49:00Z",
+    "run_end_utc": "2026-10-20T12:50:12Z",
+    "run_duration_seconds": 71.5
+  },
+  "summary": {
+    "run_id": "3767945a-4f48-426e-9682-100bbcbc86e3",
+    "started_utc": "2026-10-20T12:49:32Z",
+    "tag": "v4.0.0",
+    "sink": "none",
+    "config_id": "ccbd80f05e15c8dd",
+    "accept_drift": null,
+    "accept_drift_of": null,
+    "attempt_id": "1176c9526492491bac9ac1f42acb9014",
+    "environment": {
+      "python": "3.12.3",
+      "databricks_runtime_version": "client.4.10",
+      "databricks_connect": "17.3.14",
+      "docs_rag": "0.0.1.dev105+g6675dfbab",
+      "tokenizers": "0.23.3",
+      "machine": "aarch64",
+      "spark": "4.2.0"
+    },
+    "earlier_attempts": [],
+    "baseline": {
+      "run_id": "b5940b19-4317-43a5-8b3b-739c883ced4c",
+      "baseline_run_id": "ba641b3e-2f0b-4cf5-a682-9d85a43b8647",
+      "status": "committed",
+      "to_version_tag": "v3.5.0",
+      "to_commit_sha": "ce5ddad990373636e94071e7cef2f31021add07b",
+      "to_config_id": "ccbd80f05e15c8dd",
+      "to_docs_fingerprint": "9063c7050538b7e71b0aa03b43d00c01de52db43234acb14effc07003b14318e",
+      "to_chunks_fingerprint": "a9b871b539b4424bf1c7bb480c5438a4c91034ac98c042a2af725cbf9e907ff6"
+    },
+    "dq": [
+      {
+        "check": "empty_chunks",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 5449,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "body with no token (blank, or only characters the tokenizer drops), or blank embed text; fails if any",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "tiny_chunks",
+        "status": "pass",
+        "numerator": 46,
+        "denominator": 5449,
+        "observed": 0.008441915947880345,
+        "threshold": 0.02,
+        "rule": "body under 5 tokens; fails above 2% of chunks",
+        "examples": [
+          "docs/sql-data-sources-avro.md #9: 2 tokens 'scala:'",
+          "docs/sql-data-sources-avro.md #12: 2 tokens 'java:'",
+          "docs/sql-data-sources-avro.md #15: 2 tokens 'r:'",
+          "docs/sql-data-sources-parquet.md #13: 2 tokens 'scala:'",
+          "docs/sql-data-sources-parquet.md #16: 2 tokens 'java:'",
+          "docs/sql-data-sources-protobuf.md #10: 2 tokens 'scala:'",
+          "docs/sql-data-sources-protobuf.md #15: 2 tokens 'java:'",
+          "docs/sql-ref-datatypes.md #82: 2 tokens 'r:'",
+          "docs/sql-ref-functions.md #4: 3 tokens '* Generator Functions'",
+          "docs/sql-ref-syntax-aux-conf-mgmt-reset.md #4: 2 tokens '* SET'"
+        ],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "oversized_chunks",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 5449,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "embed text over 254 tokens (max_tokens 254; the embedding models' 256 less [CLS] and [SEP]); fails if any",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "duplicate_chunk_ids",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 5449,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "rows beyond the first of a repeated chunk_id; fails if any",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "duplicate_embed_text",
+        "status": "pass",
+        "numerator": 3,
+        "denominator": 5449,
+        "observed": 0.0005505597357313268,
+        "threshold": 0.01,
+        "rule": "copies beyond the first of a repeated embed text; fails above 1% of chunks",
+        "examples": [
+          "2x in ['docs/sql-ref-syntax-ddl-alter-view.md']: 'ALTER VIEW > Description > Parameters\\n\\n* **view_identifier**\\n\\n    Specifies a vi'",
+          "2x in ['docs/sql-migration-guide.md']: 'Migration Guide: SQL, Datasets and DataFrame > Upgrading from Spark SQL 2.4 to 3'",
+          "2x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Shared Variables > Accumulators\\n\\nWhile this code used th'"
+        ],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "missing_metadata",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 5449,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "a docs/*.md path, non-blank section names (the title first), version_tag v4.0.0, a 40-hex commit_sha; fails if any row misses one",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "drift_docs",
+        "status": "fail",
+        "numerator": 212,
+        "denominator": 244,
+        "observed": -0.1311475409836066,
+        "threshold": 0.1,
+        "rule": "major release: |to/from - 1| over 10% fails unless this run accepts the drift of a failed run with exactly these numbers; a loss over 50% fails anyway; not applicable without a baseline",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "drift_chunks",
+        "status": "pass",
+        "numerator": 5449,
+        "denominator": 5589,
+        "observed": -0.02504920379316511,
+        "threshold": 0.1,
+        "rule": "major release: |to/from - 1| over 10% fails unless this run accepts the drift of a failed run with exactly these numbers; a loss over 50% fails anyway; not applicable without a baseline",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "drift_tokens",
+        "status": "pass",
+        "numerator": 689988,
+        "denominator": 667028,
+        "observed": 0.03442134363175153,
+        "threshold": 0.1,
+        "rule": "major release: |to/from - 1| over 10% fails unless this run accepts the drift of a failed run with exactly these numbers; a loss over 50% fails anyway; not applicable without a baseline",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      }
+    ],
+    "logged": "failed",
+    "status": "failed",
+    "error": "DqFailed: DQ gate failed: drift_docs fail: 244 -> 212 (-13.1%, limit 10%)",
+    "finished_utc": "2026-10-20T12:50:06Z"
+  },
+  "error": "DqFailed: DQ gate failed: drift_docs fail: 244 -> 212 (-13.1%, limit 10%)",
+  "error_trace": "cept-drift-of\u001b[39m\u001b[38;5;124m\"\u001b[39m,\n\u001b[1;32m    456\u001b[0m     metavar\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mRUN_ID\u001b[39m\u001b[38;5;124m\"\u001b[39m,\n\u001b[1;32m    457\u001b[0m     help\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124ma run that failed the gate on drift alone, for the same tag, baseline and config; this run \u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m    458\u001b[0m     \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mpasses only if its drift is exactly that run\u001b[39m\u001b[38;5;124m'\u001b[39m\u001b[38;5;124ms (never a loss beyond the ceiling)\u001b[39m\u001b[38;5;124m\"\u001b[39m,\n\u001b[1;32m    459\u001b[0m )\n\u001b[0;32m--> 460\u001b[0m run_with_summary(detect, parser)\n\nFile \u001b[0;32m/local_disk0/.ephemeral_nfs/envs/pythonEnv-1ded1b88-c2f6-4f8d-848f-68436dd6edb8/lib/python3.12/site-packages/docs_rag/jobenv.py:94\u001b[0m, in \u001b[0;36mrun_with_summary\u001b[0;34m(job, parser)\u001b[0m\n\u001b[1;32m     92\u001b[0m summary: \u001b[38;5;28mdict\u001b[39m[\u001b[38;5;28mstr\u001b[39m, Any] \u001b[38;5;241m=\u001b[39m {\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mrun_id\u001b[39m\u001b[38;5;124m\"\u001b[39m: args\u001b[38;5;241m.\u001b[39mrun_id, \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstarted_utc\u001b[39m\u001b[38;5;124m\"\u001b[39m: utc_now()}\n\u001b[1;32m     93\u001b[0m \u001b[38;5;28;01mtry\u001b[39;00m:\n\u001b[0;32m---> 94\u001b[0m     job(args, summary)\n\u001b[1;32m     95\u001b[0m     summary[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstatus\u001b[39m\u001b[38;5;124m\"\u001b[39m] \u001b[38;5;241m=\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124msucceeded\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m     96\u001b[0m \u001b[38;5;28;01mexcept\u001b[39;00m \u001b[38;5;167;01mException\u001b[39;00m \u001b[38;5;28;01mas\u001b[39;00m e:\n\nFile \u001b[0;32m/tmp/tmp_myd6xf8.py:354\u001b[0m, in \u001b[0;36mdetect\u001b[0;34m(args, summary)\u001b[0m\n\u001b[1;32m    341\u001b[0m context \u001b[38;5;241m=\u001b[39m DqRunContext(\n\u001b[1;32m    342\u001b[0m     run_id\u001b[38;5;241m=\u001b[39margs\u001b[38;5;241m.\u001b[39mrun_id,\n\u001b[1;32m    343\u001b[0m     attempt_id\u001b[38;5;241m=\u001b[39mattempt_id,\n\u001b[0;32m   (...)\u001b[0m\n\u001b[1;32m    351\u001b[0m     code_version\u001b[38;5;241m=\u001b[39mcode_version,\n\u001b[1;32m    352\u001b[0m )\n\u001b[1;32m    353\u001b[0m write_dq_results(spark, config\u001b[38;5;241m.\u001b[39mdq_results_table, results, context)\n\u001b[0;32m--> 354\u001b[0m passed \u001b[38;5;241m=\u001b[39m gate(results, accept)\n\u001b[1;32m    355\u001b[0m summary[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mgate\u001b[39m\u001b[38;5;124m\"\u001b[39m] \u001b[38;5;241m=\u001b[39m {\n\u001b[1;32m    356\u001b[0m     \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124moverridden\u001b[39m\u001b[38;5;124m\"\u001b[39m: passed\u001b[38;5;241m.\u001b[39moverridden,\n\u001b[1;32m    357\u001b[0m     \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124moverride_reason\u001b[39m\u001b[38;5;124m\"\u001b[39m: passed\u001b[38;5;241m.\u001b[39moverride_reason,\n\u001b[1;32m    358\u001b[0m     \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124moverride_of\u001b[39m\u001b[38;5;124m\"\u001b[39m: passed\u001b[38;5;241m.\u001b[39moverride_of,\n\u001b[1;32m    359\u001b[0m }\n\u001b[1;32m    361\u001b[0m row \u001b[38;5;241m=\u001b[39m RunLogRow(\n\u001b[1;32m    362\u001b[0m     run_id\u001b[38;5;241m=\u001b[39margs\u001b[38;5;241m.\u001b[39mrun_id,\n\u001b[1;32m    363\u001b[0m     baseline_run_id\u001b[38;5;241m=\u001b[39mhead,\n\u001b[0;32m   (...)\u001b[0m\n\u001b[1;32m    385\u001b[0m     \u001b[38;5;241m*\u001b[39m\u001b[38;5;241m*\u001b[39mcounts(docs, chunks, \u001b[38;5;28mlen\u001b[39m(base_records), \u001b[38;5;28msum\u001b[39m(r\u001b[38;5;241m.\u001b[39mn_tokens \u001b[38;5;28;01mfor\u001b[39;00m r \u001b[38;5;129;01min\u001b[39;00m target_records)),\n\u001b[1;32m    386\u001b[0m )\n\nFile \u001b[0;32m/local_disk0/.ephemeral_nfs/envs/pythonEnv-1ded1b88-c2f6-4f8d-848f-68436dd6edb8/lib/python3.12/site-packages/docs_rag/dq.py:371\u001b[0m, in \u001b[0;36mgate\u001b[0;34m(results, accept)\u001b[0m\n\u001b[1;32m    369\u001b[0m failed \u001b[38;5;241m=\u001b[39m [r \u001b[38;5;28;01mfor\u001b[39;00m r \u001b[38;5;129;01min\u001b[39;00m results \u001b[38;5;28;01mif\u001b[39;00m r\u001b[38;5;241m.\u001b[39mstatus \u001b[38;5;241m==\u001b[39m FAIL]\n\u001b[1;32m    370\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m failed:\n\u001b[0;32m--> 371\u001b[0m     \u001b[38;5;28;01mraise\u001b[39;00m DqFailed(\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mDQ gate failed: \u001b[39m\u001b[38;5;124m\"\u001b[39m \u001b[38;5;241m+\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m; \u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;241m.\u001b[39mjoin(describe(r) \u001b[38;5;28;01mfor\u001b[39;00m r \u001b[38;5;129;01min\u001b[39;00m failed))\n\u001b[1;32m    372\u001b[0m overridden \u001b[38;5;241m=\u001b[39m [r \u001b[38;5;28;01mfor\u001b[39;00m r \u001b[38;5;129;01min\u001b[39;00m results \u001b[38;5;28;01mif\u001b[39;00m r\u001b[38;5;241m.\u001b[39mstatus \u001b[38;5;241m==\u001b[39m OVERRIDDEN]\n\u001b[1;32m    373\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m accept \u001b[38;5;129;01mis\u001b[39;00m \u001b[38;5;28;01mNone\u001b[39;00m:\n\n\u001b[0;31mDqFailed\u001b[0m: DQ gate failed: drift_docs fail: 244 -> 212 (-13.1%, limit 10%)"
+}
