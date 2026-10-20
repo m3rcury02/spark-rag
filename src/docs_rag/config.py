@@ -35,6 +35,8 @@ class DqConfig:
     max_drift_feature: float = 0.10  # a minor or major release
     max_override_loss: float = 0.50  # a loss beyond this fails even when the drift is accepted
     min_reason_chars: int = 20  # an --accept-drift reason has at least this many characters and 4 words
+    max_norm_error: float = 1e-3  # a stored vector's L2 norm must be within this of 1 (they are normalized)
+    min_canary_cosine: float = 0.999  # the model must reproduce the committed canary vectors (D-014)
 
     def __post_init__(self) -> None:
         if self.tiny_body_tokens < 1 or self.min_reason_chars < 1:

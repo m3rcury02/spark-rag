@@ -21,11 +21,14 @@ from docs_rag.dq import (
     GatePassed,
     LoggedCheck,
     Totals,
+    VectorsPassed,
     accept_failed_run,
     evaluate,
     gate,
+    gate_vectors,
     result_rows,
     validate_override,
+    vector_checks,
 )
 from docs_rag.silver import BronzeDoc, SilverRecord, chunk_docs, to_records
 
@@ -474,3 +477,41 @@ def test_an_unknown_release_kind_gets_the_strictest_drift_threshold() -> None:
     dq = DqConfig()
     assert (dq.max_drift("major"), dq.max_drift("minor"), dq.max_drift("patch")) == (0.10, 0.10, 0.05)
     assert dq.max_drift("forward") == 0.05
+
+
+UNIT = [0.6, 0.8] + [0.0] * 382
+
+
+def test_vectors_that_fit_pass_the_vector_gate() -> None:
+    ids = ["a", "b"]
+    results = vector_checks(ids, frozenset(ids), [UNIT, UNIT], 384, [0.9999, 1.0], DqConfig())
+    assert {r.status for r in results} == {PASS}
+    assert gate_vectors(results, 2).checked == 2
+
+
+def test_vector_checks_catch_each_kind_of_bad_vector() -> None:
+    dq = DqConfig()
+    nan = [float("nan")] + UNIT[1:]
+    long = [*UNIT, 0.0]
+    big = [2.0 * x for x in UNIT]
+    results = {
+        r.check: r
+        for r in vector_checks(
+            ["a", "b", "b", "x"], frozenset({"a", "b", "c"}), [UNIT, nan, long, big], 384, [0.98], dq
+        )
+    }
+    assert results["vector_ids"].numerator == 3  # c missing, x extra, b twice
+    assert results["vector_dimension"].numerator == 1
+    assert results["vector_finite"].numerator == 1
+    assert results["vector_norm"].numerator >= 1
+    assert results["embedding_canary"].status == FAIL
+    with pytest.raises(DqFailed, match="vector checks failed"):
+        gate_vectors(list(results.values()), 3)
+
+
+def test_a_run_that_embeds_nothing_has_no_vector_checks() -> None:
+    assert gate_vectors([], 0).checked == 0
+    with pytest.raises(DqFailed, match="not one per check"):
+        gate_vectors([], 2)
+    with pytest.raises(TypeError, match="issued only by"):
+        VectorsPassed(0)

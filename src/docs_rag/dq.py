@@ -19,6 +19,7 @@ raises DqFailed. Pure Python, so the job, the calibration script and the tests s
 """
 
 import datetime as dt
+import math
 import re
 from collections import Counter, defaultdict
 from collections.abc import Sequence
@@ -384,6 +385,98 @@ def gate(results: Sequence[DqResult], accept: Acceptance | None) -> GatePassed:
     if {(r.override_reason, r.override_of) for r in overridden} != {(accept.reason, accept.run_id)}:
         raise DqFailed("an overridden check names another reason or run than this run's acceptance")
     return GatePassed(tuple(names), tuple(r.check for r in overridden), accept.reason, accept.run_id, _ISSUED)
+
+
+# --- vector checks (D-014): after embedding, before the gold MERGE ----------------------------------------
+
+VECTOR_CHECKS = ("vector_ids", "vector_dimension", "vector_finite", "vector_norm", "embedding_canary")
+
+
+def vector_checks(
+    ids: Sequence[str],
+    expected_ids: frozenset[str],
+    vectors: Sequence[Sequence[float]],
+    dimension: int,
+    canary_cosines: Sequence[float],
+    dq: DqConfig,
+) -> list[DqResult]:
+    """Checks on the vectors of one run's added chunks, logged like the chunk checks: one vector per added
+    chunk (the ids, not only the count), the model's dimension, finite values, unit norm, and the canary: the
+    model must reproduce committed reference vectors, which catches a wrong model or a pooling change that
+    every other check would pass."""
+    extra = len(set(ids) ^ expected_ids) + (len(ids) - len(set(ids))) + abs(len(ids) - len(vectors))
+    wrong_dim = [i for i, v in zip(ids, vectors, strict=False) if len(v) != dimension]
+    not_finite = [i for i, v in zip(ids, vectors, strict=False) if not all(math.isfinite(x) for x in v)]
+    off_norm = [
+        (i, n)
+        for i, v in zip(ids, vectors, strict=False)
+        if abs((n := math.sqrt(sum(x * x for x in v))) - 1.0) > dq.max_norm_error
+    ]
+    low = [c for c in canary_cosines if c < dq.min_canary_cosine]
+    n = len(expected_ids)
+    return [
+        _count_check(
+            "vector_ids",
+            extra,
+            n,
+            0.0,
+            "exactly one vector per added chunk, by chunk_id; fails if any is missing, extra or repeated",
+            sorted(set(ids) ^ expected_ids),
+        ),
+        _count_check(
+            "vector_dimension",
+            len(wrong_dim),
+            n,
+            0.0,
+            f"a vector not of {dimension} values; fails if any",
+            wrong_dim,
+        ),
+        _count_check(
+            "vector_finite", len(not_finite), n, 0.0, "a NaN or infinite value; fails if any", not_finite
+        ),
+        _count_check(
+            "vector_norm",
+            len(off_norm),
+            n,
+            0.0,
+            f"L2 norm off 1 by more than {dq.max_norm_error}; fails if any",
+            [f"{i}: {v:.6f}" for i, v in off_norm],
+        ),
+        _count_check(
+            "embedding_canary",
+            len(low),
+            len(canary_cosines),
+            0.0,
+            f"cosine with the committed reference vector under {dq.min_canary_cosine}; fails if any",
+            [f"{c:.6f}" for c in canary_cosines],
+        ),
+    ]
+
+
+@dataclass(frozen=True)
+class VectorsPassed:
+    """Issued only by `gate_vectors`: the run's vectors passed every check (or it embedded nothing)."""
+
+    checked: int
+    issued: object = field(default=None, repr=False, compare=False)
+
+    def __post_init__(self) -> None:
+        if self.issued is not _ISSUED:
+            raise TypeError("a VectorsPassed is issued only by docs_rag.dq.gate_vectors")
+
+
+def gate_vectors(results: Sequence[DqResult], n_added: int) -> VectorsPassed:
+    """VectorsPassed when every vector check passed; a run that adds no chunk embeds nothing and has none."""
+    if n_added == 0:
+        if results:
+            raise DqFailed("vector checks for a run that embedded nothing")
+        return VectorsPassed(0, _ISSUED)
+    if sorted(r.check for r in results) != sorted(VECTOR_CHECKS):
+        raise DqFailed(f"vector results are not one per check: {[r.check for r in results]}")
+    failed = [r for r in results if r.status != PASS]
+    if failed:
+        raise DqFailed("vector checks failed: " + "; ".join(describe(r) for r in failed))
+    return VectorsPassed(n_added, _ISSUED)
 
 
 # --- the ops_dq_results row ---------------------------------------------------------------------------------
