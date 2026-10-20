@@ -1,4 +1,4 @@
-"""Databricks job: detect what a tag changes against the last committed run, and log it (D-011).
+"""Databricks job: detect what a tag changes against the last committed run, gate it, log it (D-011, D-012).
 
 Runs as a serverless spark_python_task (see scripts/run_job.py) for the published chunk config, Config.chunk.
 Steps:
@@ -10,15 +10,21 @@ Steps:
 4. Baseline side: bronze still holds the commit and docs the baseline run logged, and silver still holds its
    chunking under the baseline's config, re-chunked and compared the same way, with the chunk fingerprint the
    baseline run logged.
-5. Diff docs (by hash) and chunks (by chunk_id), check that they fit together, and build the row.
-6. Append the row with status 'committed': the job's last write, so a baseline exists only for a run whose
-   every step passed. A failure after the Spark session started appends a 'failed' row instead (never a
-   baseline) and re-raises; a retried attempt of a failed run appends its own row. A retry of a run that
-   already committed writes nothing. This job reads bronze and silver and writes only ops_run_log.
+5. Diff docs (by hash) and chunks (by chunk_id), and check that they fit together.
+6. The DQ gate (docs_rag.dq, D-012) on the target: every check is appended to ops_dq_results in one insert,
+   pass or fail, and read back; a failed check (or an --accept-drift with nothing to accept) stops the run.
+   An --accept-drift reason is checked before the Spark session starts.
+7. Append the row with status 'committed', which needs the gate's GatePassed: the job's last write, so a
+   baseline exists only for a run whose every step passed. A failure after the Spark session started appends
+   a 'failed' row instead (never a baseline) and re-raises; a retried attempt of a failed run appends its own
+   rows. A retry of a run that already committed writes nothing. This job reads bronze and silver and writes
+   only ops_run_log and ops_dq_results.
 """
 
 import argparse
+import dataclasses
 import datetime as dt
+import uuid
 from typing import Any
 
 from pyspark.sql import SparkSession
@@ -42,6 +48,18 @@ from docs_rag.changes import (
 )
 from docs_rag.chunk import ChunkConfig
 from docs_rag.config import Config, validate_tag
+from docs_rag.dq import (
+    DQ_RESULTS_COLUMNS,
+    DqResult,
+    DqRunContext,
+    GatePassed,
+    Totals,
+    dq_results_ddl,
+    evaluate,
+    gate,
+    result_rows,
+    validate_override,
+)
 from docs_rag.jobenv import base_parser, check_environment, run_with_summary
 from docs_rag.lake import chunk_bronze, compare_with_stored, read_bronze
 from docs_rag.silver import SilverRecord, conflict_reason, fingerprint
@@ -54,6 +72,12 @@ COMMENT 'One row per change-detection run; committed rows chain into the baselin
 TBLPROPERTIES ('delta.appendOnly' = 'true')
 """
 
+CREATE_DQ_RESULTS = f"""
+CREATE TABLE IF NOT EXISTS IDENTIFIER(:table) ({dq_results_ddl()})
+COMMENT 'One row per DQ check per change-detection run attempt, pass or fail. See D-012.'
+TBLPROPERTIES ('delta.appendOnly' = 'true')
+"""
+
 LOG_ROWS = """
 SELECT run_id, baseline_run_id, status, to_version_tag, to_commit_sha, to_config_id, to_docs_fingerprint,
        to_chunks_fingerprint
@@ -62,22 +86,49 @@ WHERE source_repo = :repo AND sink = :sink
 """
 
 
-def ensure_run_log(spark: SparkSession, table: str) -> None:
-    spark.sql(CREATE_RUN_LOG, args={"table": table})
-    columns = [
+def ensure_table(spark: SparkSession, create: str, table: str, columns: tuple[tuple[str, str], ...]) -> None:
+    spark.sql(create, args={"table": table})
+    found = [
         r["col_name"] for r in spark.sql("DESCRIBE TABLE IDENTIFIER(:table)", args={"table": table}).collect()
     ]
-    expected = [name for name, _ in RUN_LOG_COLUMNS]
-    if columns[: len(expected)] != expected:
-        raise RuntimeError(f"{table} columns {columns} differ from RUN_LOG_COLUMNS: migrate the table first")
+    expected = [name for name, _ in columns]
+    if found[: len(expected)] != expected:
+        raise RuntimeError(f"{table} columns {found} differ from {expected}: migrate the table first")
 
 
-def append_row(spark: SparkSession, table: str, row: RunLogRow) -> None:
+def _insert(spark: SparkSession, table: str, row: RunLogRow) -> None:
     problems = row_violations(row)
     if problems:
         raise RuntimeError("run log row fails its checks: " + "; ".join(problems))
     spark.createDataFrame([row.as_row()], run_log_ddl()).createOrReplaceTempView("run_log_incoming")
     spark.sql("INSERT INTO IDENTIFIER(:table) SELECT * FROM run_log_incoming", args={"table": table})
+
+
+def log_failed(spark: SparkSession, table: str, row: RunLogRow) -> None:
+    if row.status != FAILED:
+        raise RuntimeError(f"log_failed got a {row.status!r} row")
+    _insert(spark, table, row)
+
+
+def commit(spark: SparkSession, table: str, row: RunLogRow, passed: GatePassed) -> None:
+    """Append the committed row: only with the DQ gate's pass, and carrying its override (if any)."""
+    if row.status != COMMITTED or row.dq_override != passed.override_reason:
+        raise RuntimeError("a committed row must carry the DQ gate's pass and its override reason")
+    _insert(spark, table, row)
+
+
+def write_dq_results(spark: SparkSession, table: str, results: list[DqResult], context: DqRunContext) -> None:
+    """All of one attempt's checks in one insert, then read back: the gate decides only on logged results."""
+    spark.createDataFrame(result_rows(results, context), dq_results_ddl()).createOrReplaceTempView(
+        "dq_results_incoming"
+    )
+    spark.sql("INSERT INTO IDENTIFIER(:table) SELECT * FROM dq_results_incoming", args={"table": table})
+    back = spark.sql(
+        "SELECT check_name, status FROM IDENTIFIER(:table) WHERE run_id = :run_id AND attempt_id = :attempt",
+        args={"table": table, "run_id": context.run_id, "attempt": context.attempt_id},
+    ).collect()
+    if sorted((r["check_name"], r["status"]) for r in back) != sorted((r.check, r.status) for r in results):
+        raise RuntimeError(f"ops_dq_results read-back differs from the checks: {[tuple(r) for r in back]}")
 
 
 def refs(records: list[SilverRecord]) -> list[ChunkRef]:
@@ -110,14 +161,25 @@ def detect(args: argparse.Namespace, summary: dict[str, Any]) -> None:
     config = Config(catalog=args.catalog, schema=args.schema)
     chunking = config.chunk
     tag = validate_tag(args.tag)
-    summary.update({"tag": tag, "sink": config.sink, "config_id": chunking.config_id})
+    accept = validate_override(args.accept_drift, args.initial, config.dq)
+    attempt_id = uuid.uuid4().hex
+    summary.update(
+        {
+            "tag": tag,
+            "sink": config.sink,
+            "config_id": chunking.config_id,
+            "accept_drift": accept,
+            "attempt_id": attempt_id,
+        }
+    )
     summary["environment"] = check_environment(args.expect_env, args.expect_version)
     code_version = summary["environment"]["docs_rag"]
 
     spark = SparkSession.builder.getOrCreate()
     summary["environment"]["spark"] = spark.version
     table = config.run_log_table
-    ensure_run_log(spark, table)
+    ensure_table(spark, CREATE_RUN_LOG, table, RUN_LOG_COLUMNS)
+    ensure_table(spark, CREATE_DQ_RESULTS, config.dq_results_table, DQ_RESULTS_COLUMNS)
     earlier = spark.sql(
         "SELECT status FROM IDENTIFIER(:table) WHERE run_id = :run_id",
         args={"table": table, "run_id": args.run_id},
@@ -160,6 +222,7 @@ def detect(args: argparse.Namespace, summary: dict[str, Any]) -> None:
         # 4. The baseline side, pinned by what the baseline run logged.
         base_docs: dict[str, str] | None = None
         base_records: list[SilverRecord] = []
+        base_totals: Totals | None = None
         if base is not None:
             from_chunking = next((c for c in config.chunk_grid if c.config_id == base["to_config_id"]), None)
             if from_chunking is None:
@@ -184,6 +247,7 @@ def detect(args: argparse.Namespace, summary: dict[str, Any]) -> None:
             if moved:
                 raise RuntimeError(f"the baseline {from_tag} no longer matches its logged run: {moved}")
             known.update(from_commit_sha=base_commit, from_config_id=from_chunking.config_id)
+            base_totals = Totals(len(base_docs), len(base_records), sum(r.n_tokens for r in base_records))
 
         # 5. The diffs, and whether they fit together.
         docs = diff_docs(base_docs, target_docs)
@@ -194,6 +258,26 @@ def detect(args: argparse.Namespace, summary: dict[str, Any]) -> None:
         )
         if problems:
             raise RuntimeError("the chunk diff does not fit the doc diff: " + "; ".join(problems))
+
+        # 6. The DQ gate: log every check, then stop unless they all pass (or drift is accepted).
+        results = evaluate(target_records, len(target_docs), base_totals, config, chunking, tag, accept)
+        summary["dq"] = [dataclasses.asdict(r) for r in results]
+        context = DqRunContext(
+            run_id=args.run_id,
+            attempt_id=attempt_id,
+            source_repo=config.source_repo,
+            sink=config.sink,
+            config_id=chunking.config_id,
+            from_version_tag=from_tag,
+            to_version_tag=tag,
+            baseline_run_id=head,
+            checked_at=dt.datetime.now(dt.UTC),
+            code_version=code_version,
+        )
+        write_dq_results(spark, config.dq_results_table, results, context)
+        passed = gate(results, accept)
+        summary["gate"] = {"overridden": passed.overridden, "override_reason": passed.override_reason}
+
         row = RunLogRow(
             run_id=args.run_id,
             baseline_run_id=head,
@@ -216,13 +300,14 @@ def detect(args: argparse.Namespace, summary: dict[str, Any]) -> None:
             started_at=started,
             finished_at=dt.datetime.now(dt.UTC),
             code_version=code_version,
+            dq_override=passed.override_reason,
             **counts(docs, chunks, len(base_records), sum(r.n_tokens for r in target_records)),
         )
         summary["row"] = {k: v for k, v in row.as_row().items() if not k.endswith("_paths")}
         summary["paths"] = {"added": docs.added, "changed": docs.changed, "deleted": docs.deleted}
 
-        # 6. Commit: the last write.
-        append_row(spark, table, row)
+        # 7. Commit: the last write.
+        commit(spark, table, row, passed)
     except Exception as e:
         failed = RunLogRow(
             run_id=args.run_id,
@@ -246,7 +331,7 @@ def detect(args: argparse.Namespace, summary: dict[str, Any]) -> None:
             code_version=code_version,
         )
         try:
-            append_row(spark, table, failed)
+            log_failed(spark, table, failed)
             summary["logged"] = FAILED
         except Exception as log_error:  # noqa: BLE001 - keep the original error; record that logging failed
             summary["logged"] = f"failed row not written: {type(log_error).__name__}: {log_error}"
@@ -279,6 +364,12 @@ def main() -> None:
     parser.add_argument("--initial", action="store_true", help="start the chain (only when there is none)")
     parser.add_argument(
         "--allow-backwards", action="store_true", help="allow a target older than the baseline"
+    )
+    parser.add_argument(
+        "--accept-drift",
+        metavar="REASON",
+        help="accept, for this run only, drift over the DQ threshold (not a loss beyond the ceiling); "
+        "refused when nothing drifted",
     )
     run_with_summary(detect, parser)
 
