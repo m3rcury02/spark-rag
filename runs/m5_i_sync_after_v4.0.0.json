@@ -1,0 +1,136 @@
+{
+  "meta": {
+    "label": "m5_i_sync_after_v4.0.0",
+    "git_commit": "4f9eea4d347bd4fd2eef81283456ad42b17b7973",
+    "script": "jobs/sync_index.py",
+    "job_args": [],
+    "target": "workspace.docs_rag_dev",
+    "run_id": "9ba26a50-2cfc-4476-8692-f92ceeb0636c",
+    "environment_version": "4",
+    "wheel": "docs_rag-0.0.1.dev148+g4f9eea4d3-py3-none-any.whl",
+    "dependencies": [
+      "/Volumes/workspace/docs_rag_dev/artifacts/code/4f9eea4d347b/docs_rag-0.0.1.dev148+g4f9eea4d3-py3-none-any.whl"
+    ],
+    "parent_run_id": 100482322829311,
+    "task_run_id": 722782766141524,
+    "result_state": "SUCCESS",
+    "state_message": "",
+    "run_start_utc": "2026-10-20T18:50:23Z",
+    "run_end_utc": "2026-10-20T18:54:00Z",
+    "run_duration_seconds": 216.9
+  },
+  "summary": {
+    "run_id": "9ba26a50-2cfc-4476-8692-f92ceeb0636c",
+    "started_utc": "2026-10-20T18:51:32Z",
+    "gold": "workspace.docs_rag_dev.gold_chunk_embeddings",
+    "index": "workspace.docs_rag_dev.gold_chunk_index",
+    "environment": {
+      "python": "3.12.3",
+      "databricks_runtime_version": "client.4.10",
+      "databricks_connect": "17.3.14",
+      "docs_rag": "0.0.1.dev148+g4f9eea4d3",
+      "tokenizers": "0.23.3",
+      "machine": "aarch64"
+    },
+    "chain_head": {
+      "run_id": "700ad316-3830-43bd-a154-21904577c3a5",
+      "tag": "v4.0.0",
+      "gold_rows": 5423
+    },
+    "index_before": {
+      "detailed_state": "ONLINE_NO_PENDING_UPDATE",
+      "ready": true,
+      "indexed_row_count": 5567,
+      "message": "Index creation succeeded. Check latest status: https://<workspace-host>/explore/data/workspace/docs_rag_dev/gold_chunk_index",
+      "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+      "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+      "pipeline_type": "TRIGGERED"
+    },
+    "keys_before": {
+      "index_rows": 5567,
+      "gold_rows": 5423,
+      "missing": [
+        "00431b2968ba382f24ae7760f7fce3c0",
+        "00a77571d83720997865420d5ca5fed7",
+        "00cf0b893db9813f0607197dc7395168",
+        "00f83e888d53b9ab5abf258e0b8810f8",
+        "0187fc77a4d3e309e57a035a35fb02e0"
+      ],
+      "missing_count": 1866,
+      "extra": [
+        "0026639ac4f829f0309044a0ced8e3d0",
+        "00aeeb7db2d68779ec653b13ea7d8306",
+        "00bed41800383edc95b5853c67833558",
+        "00bef8491a718621189cad8a1cb3e6a4",
+        "01187e41969e38970dc9c61825ac918f"
+      ],
+      "extra_count": 2010,
+      "repeated_count": 0,
+      "equal": false
+    },
+    "sync": {
+      "update_id": "e6e97129-2cff-496f-9a76-280fc2dff9dc",
+      "state": "COMPLETED",
+      "cause": "API_CALL",
+      "creation_time": 1792522315417
+    },
+    "keys_after": {
+      "index_rows": 5423,
+      "gold_rows": 5423,
+      "missing": [],
+      "missing_count": 0,
+      "extra": [],
+      "extra_count": 0,
+      "repeated_count": 0,
+      "equal": true
+    },
+    "index_after": {
+      "detailed_state": "ONLINE_NO_PENDING_UPDATE",
+      "ready": true,
+      "indexed_row_count": 5423,
+      "message": "Index creation succeeded. Check latest status: https://<workspace-host>/explore/data/workspace/docs_rag_dev/gold_chunk_index",
+      "pipeline_id": "05755253-51d8-4070-93c5-25258daabe8f",
+      "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+      "pipeline_type": "TRIGGERED"
+    },
+    "probes": [
+      {
+        "chunk_id": "00011d3ee5a94028729040c2828a69f7",
+        "top": [
+          "00011d3ee5a94028729040c2828a69f7",
+          "0a17f43ba7a1c6215ad7e0f8ca758d67",
+          "b1dbb55044ae6d6055f48cc5afe4b94e",
+          "2ffb9f9cc3e547abbce65ed95e3baf91",
+          "364e3021ae4aa318811d0f3479400949"
+        ],
+        "found_itself": true
+      },
+      {
+        "chunk_id": "000f5e5599ae55680c181fd7074c1764",
+        "top": [
+          "000f5e5599ae55680c181fd7074c1764",
+          "1d52e60ab64a3f03f5e96cf1ec5b9063",
+          "41eff79dc0a83fefb2294ef04c18e61b",
+          "c7b2b7bc74a9bfd0436d46a1c9f26634",
+          "2f06a7f0dbb3aaf3c89b446a40efd9fb"
+        ],
+        "found_itself": true
+      },
+      {
+        "chunk_id": "00371a379617a9ec115a3450b777b32b",
+        "top": [
+          "00371a379617a9ec115a3450b777b32b",
+          "66463eb8fcf24a356ff78c049dee7aaa",
+          "e33d387081079b8965243d36d6b982a4",
+          "0c1870677ec914caf791805b1588d130",
+          "7c807ad462de716a037b927b0cd121b5"
+        ],
+        "found_itself": true
+      }
+    ],
+    "status": "succeeded",
+    "finished_utc": "2026-10-20T18:53:56Z"
+  },
+  "error": null,
+  "error_trace": null
+}
