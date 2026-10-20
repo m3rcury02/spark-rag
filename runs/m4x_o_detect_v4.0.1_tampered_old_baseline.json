@@ -1,0 +1,60 @@
+{
+  "meta": {
+    "label": "m4x_o_detect_v4.0.1_tampered_old_baseline",
+    "git_commit": "75e79c44eef7f53f6794671f96d63a797db29e08",
+    "script": "jobs/change_detect.py",
+    "job_args": [
+      "--tag",
+      "v4.0.1",
+      "--allow-config-change"
+    ],
+    "target": "workspace.docs_rag_dev",
+    "run_id": "f911c569-557b-4df7-9f1d-2b36f823a011",
+    "environment_version": "4",
+    "wheel": "docs_rag-0.0.1.dev122+g75e79c44e-py3-none-any.whl",
+    "parent_run_id": 231461717565274,
+    "task_run_id": 833598885020044,
+    "result_state": "FAILED",
+    "state_message": "Task main failed with message: Workload failed, see run output for details.",
+    "run_start_utc": "2026-10-20T13:25:31Z",
+    "run_end_utc": "2026-10-20T13:26:27Z",
+    "run_duration_seconds": 56.2
+  },
+  "summary": {
+    "run_id": "f911c569-557b-4df7-9f1d-2b36f823a011",
+    "started_utc": "2026-10-20T13:26:01Z",
+    "tag": "v4.0.1",
+    "sink": "none",
+    "config_id": "e70bf55c7cf1b856",
+    "accept_drift": null,
+    "accept_drift_of": null,
+    "attempt_id": "03185e8e04294446a574666122088cd7",
+    "environment": {
+      "python": "3.12.3",
+      "databricks_runtime_version": "client.4.10",
+      "databricks_connect": "17.3.14",
+      "docs_rag": "0.0.1.dev122+g75e79c44e",
+      "tokenizers": "0.23.3",
+      "machine": "aarch64",
+      "spark": "4.2.0"
+    },
+    "earlier_attempts": [],
+    "baseline": {
+      "run_id": "bda50378-42ce-42bf-aeaa-a21a200a4474",
+      "baseline_run_id": "a4cde2e8-e4b8-4d42-b3ed-d030dec50892",
+      "status": "committed",
+      "to_version_tag": "v4.0.1",
+      "to_commit_sha": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+      "to_config_id": "ccbd80f05e15c8dd",
+      "to_docs_fingerprint": "5b1534b24125aa7d7131d72727e2b28ff85b072262ed48dceedb3b40ba798c02",
+      "to_chunks_fingerprint": "ad300f7ddb87b42718cd0e0aab40e948e5f509124cc0c64224ede897805cb827"
+    },
+    "baseline_check": "stored",
+    "logged": "failed",
+    "status": "failed",
+    "error": "RuntimeError: stored silver of the baseline v4.0.1 under ccbd80f05e15c8dd fails its checks: docs/index.md #0: chunk_id does not match its content; docs/index.md #0: embed_text is not breadcrumb + body; docs/index.md #0: n_tokens 227 is wrong or over 254",
+    "finished_utc": "2026-10-20T13:26:22Z"
+  },
+  "error": "RuntimeError: stored silver of the baseline v4.0.1 under ccbd80f05e15c8dd fails its checks: docs/index.md #0: chunk_id does not match its content; docs/index.md #0: embed_text is not breadcrumb + body; docs/index.md #0: n_tokens 227 is wrong or over 254",
+  "error_trace": "  472\u001b[0m     \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m--accept-drift\u001b[39m\u001b[38;5;124m\"\u001b[39m,\n\u001b[1;32m    473\u001b[0m     metavar\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mREASON\u001b[39m\u001b[38;5;124m\"\u001b[39m,\n\u001b[1;32m    474\u001b[0m     help\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mwhy the drift of the run named by --accept-drift-of is accepted, for this run only\u001b[39m\u001b[38;5;124m\"\u001b[39m,\n\u001b[1;32m    475\u001b[0m )\n\u001b[1;32m    476\u001b[0m parser\u001b[38;5;241m.\u001b[39madd_argument(\n\u001b[1;32m    477\u001b[0m     \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m--accept-drift-of\u001b[39m\u001b[38;5;124m\"\u001b[39m,\n\u001b[1;32m    478\u001b[0m     metavar\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mRUN_ID\u001b[39m\u001b[38;5;124m\"\u001b[39m,\n\u001b[1;32m    479\u001b[0m     help\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124ma run that failed the gate on drift alone, for the same tag, baseline and config; this run \u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m    480\u001b[0m     \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mpasses only if its drift is exactly that run\u001b[39m\u001b[38;5;124m'\u001b[39m\u001b[38;5;124ms (never a loss beyond the ceiling)\u001b[39m\u001b[38;5;124m\"\u001b[39m,\n\u001b[1;32m    481\u001b[0m )\n\u001b[0;32m--> 482\u001b[0m run_with_summary(detect, parser)\n\nFile \u001b[0;32m/local_disk0/.ephemeral_nfs/envs/pythonEnv-ab2ffd13-7217-408e-bb82-c5d967c1edb4/lib/python3.12/site-packages/docs_rag/jobenv.py:94\u001b[0m, in \u001b[0;36mrun_with_summary\u001b[0;34m(job, parser)\u001b[0m\n\u001b[1;32m     92\u001b[0m summary: \u001b[38;5;28mdict\u001b[39m[\u001b[38;5;28mstr\u001b[39m, Any] \u001b[38;5;241m=\u001b[39m {\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mrun_id\u001b[39m\u001b[38;5;124m\"\u001b[39m: args\u001b[38;5;241m.\u001b[39mrun_id, \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstarted_utc\u001b[39m\u001b[38;5;124m\"\u001b[39m: utc_now()}\n\u001b[1;32m     93\u001b[0m \u001b[38;5;28;01mtry\u001b[39;00m:\n\u001b[0;32m---> 94\u001b[0m     job(args, summary)\n\u001b[1;32m     95\u001b[0m     summary[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstatus\u001b[39m\u001b[38;5;124m\"\u001b[39m] \u001b[38;5;241m=\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124msucceeded\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m     96\u001b[0m \u001b[38;5;28;01mexcept\u001b[39;00m \u001b[38;5;167;01mException\u001b[39;00m \u001b[38;5;28;01mas\u001b[39;00m e:\n\nFile \u001b[0;32m/tmp/tmpi5hggadj.py:315\u001b[0m, in \u001b[0;36mdetect\u001b[0;34m(args, summary)\u001b[0m\n\u001b[1;32m    313\u001b[0m summary[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mbaseline_check\u001b[39m\u001b[38;5;124m\"\u001b[39m] \u001b[38;5;241m=\u001b[39m check\n\u001b[1;32m    314\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m from_chunking \u001b[38;5;129;01mis\u001b[39;00m \u001b[38;5;28;01mNone\u001b[39;00m:\n\u001b[0;32m--> 315\u001b[0m     bronze, base_records \u001b[38;5;241m=\u001b[39m stored_baseline(\n\u001b[1;32m    316\u001b[0m         spark, config, base[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mto_version_tag\u001b[39m\u001b[38;5;124m\"\u001b[39m], base[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mto_config_id\u001b[39m\u001b[38;5;124m\"\u001b[39m]\n\u001b[1;32m    317\u001b[0m     )\n\u001b[1;32m    318\u001b[0m     base_docs \u001b[38;5;241m=\u001b[39m {d\u001b[38;5;241m.\u001b[39mpath: d\u001b[38;5;241m.\u001b[39mcontent_sha256 \u001b[38;5;28;01mfor\u001b[39;00m d \u001b[38;5;129;01min\u001b[39;00m bronze}\n\u001b[1;32m    319\u001b[0m     base_commit \u001b[38;5;241m=\u001b[39m bronze[\u001b[38;5;241m0\u001b[39m]\u001b[38;5;241m.\u001b[39mcommit_sha\n\nFile \u001b[0;32m/local_disk0/.ephemeral_nfs/envs/pythonEnv-ab2ffd13-7217-408e-bb82-c5d967c1edb4/lib/python3.12/site-packages/docs_rag/lake.py:90\u001b[0m, in \u001b[0;36mstored_baseline\u001b[0;34m(spark, config, tag, config_id)\u001b[0m\n\u001b[1;32m     88\u001b[0m problems \u001b[38;5;241m=\u001b[39m stored_baseline_violations(stored, docs, config_id, config\u001b[38;5;241m.\u001b[39mzero_chunk_docs)\n\u001b[1;32m     89\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m problems:\n\u001b[0;32m---> 90\u001b[0m     \u001b[38;5;28;01mraise\u001b[39;00m \u001b[38;5;167;01mRuntimeError\u001b[39;00m(\n\u001b[1;32m     91\u001b[0m         \u001b[38;5;124mf\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstored silver of the baseline \u001b[39m\u001b[38;5;132;01m{\u001b[39;00mtag\u001b[38;5;132;01m}\u001b[39;00m\u001b[38;5;124m under \u001b[39m\u001b[38;5;132;01m{\u001b[39;00mconfig_id\u001b[38;5;132;01m}\u001b[39;00m\u001b[38;5;124m fails its checks: \u001b[39m\u001b[38;5;124m\"\u001b[39m \u001b[38;5;241m+\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m; \u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;241m.\u001b[39mjoin(problems)\n\u001b[1;32m     92\u001b[0m     )\n\u001b[1;32m     93\u001b[0m \u001b[38;5;28;01mreturn\u001b[39;00m docs, stored\n\n\u001b[0;31mRuntimeError\u001b[0m: stored silver of the baseline v4.0.1 under ccbd80f05e15c8dd fails its checks: docs/index.md #0: chunk_id does not match its content; docs/index.md #0: embed_text is not breadcrumb + body; docs/index.md #0: n_tokens 227 is wrong or over 254"
+}
