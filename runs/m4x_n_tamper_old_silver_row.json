@@ -1,0 +1,51 @@
+{
+  "label": "m4x_n_tamper_old_silver_row",
+  "git_commit": "09ef21416a56245646df9ef8745a6e1665af044f",
+  "statements": [
+    {
+      "sql": "SELECT chunk_id, sha2(embed_text, 256) AS embed_sha256, length(embed_text) AS chars FROM workspace.docs_rag_dev.silver_chunks WHERE config_id = 'ccbd80f05e15c8dd' AND version_tag = 'v4.0.1' AND path = 'docs/index.md' AND chunk_index = 0",
+      "params": {},
+      "columns": [
+        "chunk_id",
+        "embed_sha256",
+        "chars"
+      ],
+      "rows": [
+        [
+          "8671aa6681209fb927671f5ca820d8fb",
+          "b061c199b0b8bc4984299699ab34a7a39b75ab459717a2f6cde9e79412865770",
+          "969"
+        ]
+      ]
+    },
+    {
+      "sql": "UPDATE workspace.docs_rag_dev.silver_chunks SET embed_text = concat(embed_text, ' [tampered]') WHERE config_id = 'ccbd80f05e15c8dd' AND version_tag = 'v4.0.1' AND path = 'docs/index.md' AND chunk_index = 0",
+      "params": {},
+      "columns": [
+        "num_affected_rows"
+      ],
+      "rows": [
+        [
+          "1"
+        ]
+      ]
+    },
+    {
+      "sql": "SELECT chunk_id, sha2(embed_text, 256) AS embed_sha256, length(embed_text) AS chars FROM workspace.docs_rag_dev.silver_chunks WHERE config_id = 'ccbd80f05e15c8dd' AND version_tag = 'v4.0.1' AND path = 'docs/index.md' AND chunk_index = 0",
+      "params": {},
+      "columns": [
+        "chunk_id",
+        "embed_sha256",
+        "chars"
+      ],
+      "rows": [
+        [
+          "8671aa6681209fb927671f5ca820d8fb",
+          "b0ed03352be96c3ace575c2357ac290332d8b68f06fbf8b34afcb36b35d73c86",
+          "980"
+        ]
+      ]
+    }
+  ],
+  "error": null
+}
