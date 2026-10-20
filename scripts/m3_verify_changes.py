@@ -6,10 +6,12 @@
 For every committed row: the logged doc path lists equal a comparison of git's files at the two tags (read
 with scripts/gitdocs.py, compared here with plain dicts); the doc counts equal D-002's git counts where D-002
 has the transition; the chunk counts per doc kind equal plain set arithmetic over a local chunking of git's
-files (chunk_document, verified in M2); and, where runs/m2_e_stability.json has the transition, the chunk
-counts equal its independently coded numbers. For the log as a whole: the committed rows form one chain from
-one initial run, failed rows carry no counts and are never a baseline, and every job summary in --job-runs
-has exactly its row in the log (and the other way round).
+files (chunk_document, verified in M2; for a config today's code cannot reproduce, the code of the first
+committed run that logged it, run from a git worktree by scripts/oldcode.py); and, where
+runs/m2_e_stability.json has the transition, the chunk counts equal its independently coded numbers. For the
+log as a whole: the committed rows form one chain from one initial run, failed rows carry no counts and are
+never a baseline, and every job summary in --job-runs has exactly its row in the log (and the other way
+round).
 """
 
 import argparse
@@ -17,6 +19,7 @@ import json
 import pathlib
 from typing import Any
 
+import oldcode
 from databricks.sdk import WorkspaceClient
 from gitdocs import read_tags
 from redact import Redactor
@@ -39,14 +42,18 @@ def chunk_sets(tag_files: dict[str, str], config: Any) -> dict[str, dict[str, in
     return out
 
 
-def expected(a_files: dict[str, str] | None, b_files: dict[str, str], config: Any) -> dict[str, Any]:
-    """The counts a committed row must hold, computed with plain dicts and sets."""
+def expected(
+    a_files: dict[str, str] | None,
+    b_files: dict[str, str],
+    ca: dict[str, dict[str, int]],
+    cb: dict[str, dict[str, int]],
+) -> dict[str, Any]:
+    """The counts a committed row must hold, computed with plain dicts and sets from both sides' chunks."""
     a_files = a_files or {}
     added = sorted(p for p in b_files if p not in a_files)
     deleted = sorted(p for p in a_files if p not in b_files)
     changed = sorted(p for p in b_files if p in a_files and a_files[p] != b_files[p])
-    unchanged = [p for p in b_files if p in a_files and a_files[p] == b_files[p]]
-    ca, cb = chunk_sets(a_files, config), chunk_sets(b_files, config)
+    unchanged = {p for p in b_files if p in a_files and a_files[p] == b_files[p]}
     ids_a = {i for d in ca.values() for i in d}
     ids_b = {i for d in cb.values() for i in d}
     owner_a = {i: p for p, d in ca.items() for i in d}
@@ -63,6 +70,9 @@ def expected(a_files: dict[str, str] | None, b_files: dict[str, str], config: An
         "chunks_added_changed_docs": sum(owner_b[i] in changed for i in new_ids),
         "chunks_removed_changed_docs": sum(owner_a[i] in changed for i in gone_ids),
         "chunks_removed_deleted_docs": sum(owner_a[i] in deleted for i in gone_ids),
+        # non-zero only across a config change (D-012's re-baseline path)
+        "chunks_added_unchanged_docs": sum(owner_b[i] in unchanged for i in new_ids),
+        "chunks_removed_unchanged_docs": sum(owner_a[i] in unchanged for i in gone_ids),
         "chunks_kept": len(ids_a & ids_b),
         "tokens_to_embed": sum(cb[owner_b[i]][i] for i in new_ids),
         "to_tokens": sum(n for d in cb.values() for n in d.values()),
@@ -146,10 +156,36 @@ def main() -> None:
     source = read_tags(tags)
     m2e = json.loads(M2E.read_text())["configs"]
     grid = {c.config_id: c for c in config.chunk_grid}
+    cache: dict[tuple[str, str], dict[str, dict[str, int]]] = {}
+
+    def sets_of(tag: str, config_id: str) -> dict[str, dict[str, int]]:
+        """path -> {chunk_id: n_tokens} of a tag under a config: today's code when it can reproduce the
+        config, else the code of the first committed run that logged it (scripts/oldcode.py)."""
+        if (tag, config_id) not in cache:
+            if config_id in grid:
+                cache[(tag, config_id)] = chunk_sets(source[tag].files, grid[config_id])
+            else:
+                first = next(x for x in committed if x["to_config_id"] == config_id)
+                commit = oldcode.commit_of(first["code_version"])
+                got, chunks = oldcode.chunk_at(
+                    commit, source[tag].files, int(first["max_tokens"]), int(first["overlap_tokens"])
+                )
+                add(
+                    f"config {config_id}",
+                    f"the code of {commit[:10]} computes this config_id",
+                    config_id,
+                    got,
+                )
+                sets: dict[str, dict[str, int]] = {p: {} for p in source[tag].files}
+                for c in chunks:
+                    sets[c["path"]][c["chunk_id"]] = c["n_tokens"]
+                cache[(tag, config_id)] = sets
+        return cache[(tag, config_id)]
+
     for r in order:
         a, b = r["from_version_tag"], r["to_version_tag"]
         scope = f"{r['run_id'][:8]} {a or '-'} -> {b}"
-        chunking = grid[r["to_config_id"]]
+        max_tokens, overlap_tokens = int(r["max_tokens"]), int(r["overlap_tokens"])
         add(scope, "to commit = git's", source[b].commit_sha, r["to_commit_sha"])
         if a:
             add(scope, "from commit = git's", source[a].commit_sha, r["from_commit_sha"])
@@ -159,7 +195,8 @@ def main() -> None:
                 by_id[r["baseline_run_id"]]["to_version_tag"],
                 a,
             )
-        want = expected(source[a].files if a else None, source[b].files, chunking)
+        ca = sets_of(a, r["from_config_id"]) if a else {}
+        want = expected(source[a].files if a else None, source[b].files, ca, sets_of(b, r["to_config_id"]))
         for name, value in want.items():
             add(scope, name, value, r[name])
         if (a, b) in D002:
@@ -169,11 +206,9 @@ def main() -> None:
                 list(D002[(a, b)]),
                 [r["docs_added"], r["docs_changed"], r["docs_deleted"]],
             )
-        t = (
-            m2e.get(f"{chunking.max_tokens}/{chunking.overlap_tokens}", {})
-            .get("transitions", {})
-            .get(f"{a}->{b}")
-        )
+        same_config = r["from_config_id"] in (None, r["to_config_id"])  # m2_e compares one config's tags
+        m2e_config = m2e.get(f"{max_tokens}/{overlap_tokens}", {}) if same_config else {}
+        t = m2e_config.get("transitions", {}).get(f"{a}->{b}")
         if t:
             sa = t["section_aware"]
             add(scope, "chunks kept = m2_e kept", sa["kept"], r["chunks_kept"])

@@ -28,8 +28,10 @@ import json
 import pathlib
 import re
 import subprocess
+from types import SimpleNamespace
 from typing import Any
 
+import oldcode
 from databricks.sdk import WorkspaceClient
 from gitdocs import TagDocs, read_tags
 from redact import Redactor
@@ -73,9 +75,9 @@ def chunks_of(tag: TagDocs, config: ChunkConfig) -> list[Chunk]:
     return [c for p, text in sorted(tag.files.items()) for c in chunk_document(p, text, config).chunks]
 
 
-def recount(chunks: list[Chunk], tag: TagDocs, config: ChunkConfig) -> dict[str, int]:
+def recount(chunks: list[Any], tag: TagDocs, max_tokens: int) -> dict[str, int]:
     """Rows breaking each count rule, by plain loops."""
-    limit = min(config.max_tokens, POLICY["model_input_tokens"])
+    limit = min(max_tokens, POLICY["model_input_tokens"])
     ids = [c.chunk_id for c in chunks]
     texts = [c.embed_text for c in chunks]
     bad_meta = 0
@@ -207,12 +209,31 @@ def main() -> None:
             if r["from_version_tag"]:
                 tags_needed.add(r["from_version_tag"])
     source = read_tags(sorted(tags_needed))
-    chunk_cache: dict[tuple[str, str], list[Chunk]] = {}
+    chunk_cache: dict[tuple[str, str], list[Any]] = {}
+    sizes = {c.config_id: (c.max_tokens, c.overlap_tokens) for c in config.chunk_grid}
 
-    def chunked(tag: str, config_id: str) -> list[Chunk]:
+    def chunked(tag: str, config_id: str) -> list[Any]:
+        """The tag's chunks under a config: today's code when it can reproduce it, else the code of the first
+        committed run that logged it (scripts/oldcode.py)."""
         key = (tag, config_id)
         if key not in chunk_cache:
-            chunk_cache[key] = chunks_of(source[tag], grid[config_id])
+            if config_id in grid:
+                chunk_cache[key] = chunks_of(source[tag], grid[config_id])
+            else:
+                first = next(r for r in log if r["status"] == "committed" and r["to_config_id"] == config_id)
+                commit = oldcode.commit_of(first["code_version"])
+                size = (int(first["max_tokens"]), int(first["overlap_tokens"]))
+                got, chunks = oldcode.chunk_at(commit, source[tag].files, *size)
+                add(
+                    f"config {config_id}",
+                    f"the code of {commit[:10]} computes this config_id",
+                    config_id,
+                    got,
+                )
+                sizes[config_id] = size
+                chunk_cache[key] = [
+                    SimpleNamespace(**{**c, "section_path": tuple(c["section_path"])}) for c in chunks
+                ]
         return chunk_cache[key]
 
     for name, s, meta in jobs:
@@ -256,8 +277,8 @@ def main() -> None:
         config_id, from_tag, tag, baseline_id = next(iter(keys))
         add(
             scope,
-            "DQ config = the published config = the job's",
-            [config.chunk.config_id] * 2,
+            "DQ config = the config the job's code published = the job's",
+            [oldcode.published_config_id(meta.get("git_commit", ""))] * 2,
             [config_id, s.get("config_id")],
         )
         add(scope, "DQ rows name the job's tag", s.get("tag"), tag)
@@ -270,11 +291,8 @@ def main() -> None:
                 (row["to_config_id"], row["from_version_tag"], row["to_version_tag"], row["baseline_run_id"]),
                 (config_id, from_tag, tag, baseline_id),
             )
-        if config_id not in grid:
-            add(scope, "config is in Config.chunk_grid", True, False)
-            continue
         target = chunked(tag, config_id)
-        bad = recount(target, source[tag], grid[config_id])
+        bad = recount(target, source[tag], sizes[config_id][0])
         accept = s.get("accept_drift")
         accept_of = s.get("accept_drift_of") if v2 else None
         accepted: set[tuple[str, int, int]] = set()  # v2: the drift the named failed run failed on
@@ -306,11 +324,7 @@ def main() -> None:
                 from_tag,
                 (baseline_row or {}).get("to_version_tag"),
             )
-        base_chunks = (
-            chunked(from_tag, baseline_row["to_config_id"])
-            if from_tag and baseline_row and baseline_row["to_config_id"] in grid
-            else None
-        )
+        base_chunks = chunked(from_tag, baseline_row["to_config_id"]) if from_tag and baseline_row else None
         totals_to = (len(source[tag].files), len(target), sum(c.n_tokens for c in target))
         totals_from = (
             (len(source[from_tag].files), len(base_chunks), sum(c.n_tokens for c in base_chunks))
