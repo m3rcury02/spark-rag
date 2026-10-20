@@ -12,7 +12,7 @@ check its code had to make (D-013); and, where
 runs/m2_e_stability.json has the transition, the chunk counts equal its independently coded numbers. For the
 log as a whole: the committed rows form one chain from one initial run, failed rows carry no counts and are
 never a baseline, and every job summary in --job-runs has exactly its row in the log (and the other way
-round).
+round). The log is read for one chain (--sink): 'none' for M3/M4, the gold table for M5.
 """
 
 import argparse
@@ -96,12 +96,13 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--label", required=True)
     ap.add_argument("--job-runs", nargs="*", default=[], help="runs/ files of the change_detect jobs")
+    ap.add_argument("--sink", required=True, help="the chain to check: 'none' (M3/M4) or the gold table (M5)")
     args = ap.parse_args()
     out_path = REPO / "runs" / f"{args.label}.json"
     if out_path.exists():
         raise SystemExit(f"runs/{args.label}.json exists: choose a new label")
     head = committed_head()
-    config = Config()
+    config = Config(sink=args.sink)
     w = WorkspaceClient()
     warehouse = next(iter(w.warehouses.list())).id or ""
     result = run_statement(
@@ -273,6 +274,7 @@ def main() -> None:
     out = {
         "label": args.label,
         "git_commit": head,
+        "sink": config.sink,
         "rows": len(rows),
         "committed": len(committed),
         "failed": len(failed),

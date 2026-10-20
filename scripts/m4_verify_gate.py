@@ -21,6 +21,12 @@ Across the tables: both are append-only, every DQ row belongs to a logged run, e
 complete set of DQ rows without a failure except the runs in --pre-gate-runs, and those have no DQ rows and
 finished before the first DQ check. Not independent of the pipeline: a chunk's version_tag (the job sets it;
 git chunks have none) and the chunker itself (verified in M2).
+
+Runs are read per sink (--sink): 'none' is the chain of M3/M4; the gold sink (M5, D-014) adds the vector
+checks: a run that passed the chunk gate and added chunks also has one row per vector check, each with the
+added chunks (by a local diff of git) as its denominator (the canary: its number of texts), no failure, and
+written in a second insert after the chunk checks' and before the run log row; any other run has none. The
+vectors themselves are checked by scripts/m5_verify_gold.py.
 """
 
 import argparse
@@ -41,6 +47,7 @@ from runguard import REPO, committed_head
 
 from docs_rag.chunk import Chunk, ChunkConfig, chunk_document
 from docs_rag.config import Config
+from docs_rag.embedder import load_canary
 from docs_rag.tokens import count_tokens
 
 POLICY = {
@@ -62,6 +69,7 @@ GATE_COMMIT = "41300433db257a33a29934b129b4cbcf54e5d272"
 # The first commit of gate v2: drift thresholds by release kind, and an override bound to a failed run.
 GATE_V2_COMMIT = "f20644313fd38589da210d30b723affa924b9ae8"
 DRIFT = ("drift_docs", "drift_chunks", "drift_tokens")
+VECTOR = ("embedding_canary", "vector_dimension", "vector_finite", "vector_ids", "vector_norm")  # gold only
 COUNT_CHECKS = (
     "empty_chunks",
     "tiny_chunks",
@@ -129,12 +137,15 @@ def main() -> None:
     ap.add_argument("--label", required=True)
     ap.add_argument("--job-runs", nargs="+", required=True, help="runs/ files of DQ-gated change_detect jobs")
     ap.add_argument("--pre-gate-runs", nargs="*", default=[], help="runs/ files of runs before the gate")
+    ap.add_argument("--sink", required=True, help="the chain to check: 'none' (M3/M4) or the gold table (M5)")
     args = ap.parse_args()
     out_path = REPO / "runs" / f"{args.label}.json"
     if out_path.exists():
         raise SystemExit(f"runs/{args.label}.json exists: choose a new label")
     head = committed_head()
-    config = Config()
+    config = Config(sink=args.sink)
+    gold = config.gold_table is not None
+    canary_texts = len(load_canary().texts)
     grid = {c.config_id: c for c in config.chunk_grid}
     w = WorkspaceClient()
     warehouse = next(iter(w.warehouses.list())).id or ""
@@ -147,7 +158,10 @@ def main() -> None:
         "SELECT * FROM IDENTIFIER(:table) WHERE source_repo = :repo AND sink = :sink",
         {"table": config.run_log_table, "repo": config.source_repo, "sink": config.sink},
     )
-    dq = query("SELECT * FROM IDENTIFIER(:table)", {"table": config.dq_results_table})
+    dq = query(
+        "SELECT * FROM IDENTIFIER(:table) WHERE source_repo = :repo AND sink = :sink",
+        {"table": config.dq_results_table, "repo": config.source_repo, "sink": config.sink},
+    )
     props = {
         t: {r["key"]: r["value"] for r in query("SHOW TBLPROPERTIES IDENTIFIER(:table)", {"table": t})}
         for t in (config.run_log_table, config.dq_results_table)
@@ -180,22 +194,26 @@ def main() -> None:
         t = dt.datetime.fromisoformat(value)
         return t if t.tzinfo else t.replace(tzinfo=dt.UTC)
 
-    def first_writes(table: str) -> dict[str, tuple[int, dt.datetime, int]]:
-        """run_id -> (the WRITE version its rows first appear in, that commit's time, its rows there), read
-        from Delta's own history by time travel, not from any timestamp the job wrote."""
+    def first_writes(table: str, group: str = "''") -> dict[tuple[str, str], tuple[int, dt.datetime, int]]:
+        """(run_id, group) -> (the WRITE version its rows first appear in, that commit's time, its rows
+        there), read from Delta's own history by time travel, not from any timestamp the job wrote. `group` is
+        a SQL expression that splits a run's rows (the chunk checks and the vector checks)."""
         history = query("DESCRIBE HISTORY IDENTIFIER(:table)", {"table": table})
-        first: dict[str, tuple[int, dt.datetime, int]] = {}
+        first: dict[tuple[str, str], tuple[int, dt.datetime, int]] = {}
         for h in sorted(history, key=lambda h: int(h["version"])):
             if h["operation"] != "WRITE":
                 continue
             v = int(h["version"])  # table names come from Config (validated identifiers), v is an int
             for r in query(
-                f"SELECT run_id, count(*) AS n FROM {table} VERSION AS OF {v} GROUP BY run_id", {}
+                f"SELECT run_id, CAST({group} AS STRING) AS g, count(*) AS n FROM {table} VERSION AS OF {v} "
+                "GROUP BY run_id, g",
+                {},
             ):
-                first.setdefault(r["run_id"], (v, ts(h["timestamp"]), int(r["n"])))
+                first.setdefault((r["run_id"], r["g"]), (v, ts(h["timestamp"]), int(r["n"])))
         return first
 
-    dq_first = first_writes(config.dq_results_table)
+    vector_sql = "check_name IN (" + ", ".join(f"'{c}'" for c in VECTOR) + ")"
+    dq_first = first_writes(config.dq_results_table, vector_sql)
     log_first = first_writes(config.run_log_table)
     all_checks = sorted([*COUNT_CHECKS, *DRIFT])
 
@@ -246,10 +264,11 @@ def main() -> None:
         if not run_id:  # a refused submit, or a job that died before writing its summary
             add(scope, "job summary has a run_id (verifiable)", True, False)
             continue
-        rows = by_run.get(run_id, [])
+        vector_rows = [r for r in by_run.get(run_id, []) if r["check_name"] in VECTOR]
+        rows = [r for r in by_run.get(run_id, []) if r["check_name"] not in VECTOR]
         logged = log_by_run.get(run_id, [])
         if "dq" not in s:  # the job stopped before the gate evaluated anything
-            add(scope, "no DQ rows (stopped before the gate)", 0, len(rows))
+            add(scope, "no DQ rows (stopped before the gate)", 0, len(rows) + len(vector_rows))
             add(scope, "job failed", "failed", s.get("status"))
             if s.get("logged") != "failed":  # it stopped before its failed row could be written (D-011)
                 add(scope, "no run log row (stopped before logging could start)", 0, len(logged))
@@ -267,7 +286,7 @@ def main() -> None:
             scope,
             "DQ rows come from one attempt, the job's",
             [s.get("attempt_id")],
-            sorted({r["attempt_id"] for r in rows}),
+            sorted({r["attempt_id"] for r in rows + vector_rows}),
         )
         add(scope, "one DQ row per check", all_checks, sorted(r["check_name"] for r in rows))
         keys = {
@@ -401,6 +420,30 @@ def main() -> None:
             {(c, *numbers[c]) for c in overridden} != accepted
         )
         should_commit = not failing and (accept is None or bool(overridden)) and not mismatch
+        # Gate v3 (gold sink): the vector checks of the added chunks, after the chunk gate passed.
+        added = len({c.chunk_id for c in target} - {c.chunk_id for c in base_chunks or []})
+        embedded = gold and should_commit and added > 0
+        add(
+            scope,
+            "vector rows exactly when it embedded",
+            sorted(VECTOR) if embedded else [],
+            sorted(r["check_name"] for r in vector_rows),
+        )
+        for r in vector_rows:
+            want_den = canary_texts if r["check_name"] == "embedding_canary" else added
+            add(
+                scope,
+                f"{r['check_name']} counts, status and threshold",
+                (0, want_den, "pass", 0.0, tag, config_id),
+                (
+                    as_number(r["numerator"]),
+                    as_number(r["denominator"]),
+                    r["status"],
+                    as_number(r["threshold"]),
+                    r["to_version_tag"],
+                    r["config_id"],
+                ),
+            )
         add(
             scope,
             "job outcome follows the checks",
@@ -436,7 +479,7 @@ def main() -> None:
                 elif not failing:
                     add(scope, "an unused --accept-drift is refused", True, "nothing to accept" in error)
         # Write-audit-publish, from Delta's history: the checks went in one insert, before the run's row.
-        dq_write, log_write = dq_first.get(run_id), log_first.get(run_id)
+        dq_write, log_write = dq_first.get((run_id, "false")), log_first.get((run_id, ""))
         add(scope, "all DQ rows written in one insert", len(all_checks), dq_write[2] if dq_write else None)
         add(scope, "run log row written once", 1, log_write[2] if log_write else None)
         add(
@@ -445,6 +488,20 @@ def main() -> None:
             True,
             bool(dq_write and log_write and dq_write[1] < log_write[1]),
         )
+        if embedded:
+            vec_write = dq_first.get((run_id, "true"))
+            add(scope, "vector rows written in one insert", len(VECTOR), vec_write[2] if vec_write else None)
+            add(
+                scope,
+                "vector rows written after the chunk checks, before the run log row (if any)",
+                True,
+                bool(
+                    vec_write
+                    and dq_write
+                    and dq_write[0] < vec_write[0]
+                    and (not log_write or vec_write[1] < log_write[1])
+                ),
+            )
 
     # Across the tables.
     pre_gate = set()
@@ -467,7 +524,11 @@ def main() -> None:
         if run_id in pre_gate:
             continue
         rows = by_run.get(run_id, [])
-        complete = sorted(r["check_name"] for r in rows) == all_checks
+        embedded = (
+            bool(committed[run_id].get("chunks_embedded")) and int(committed[run_id]["chunks_embedded"]) > 0
+        )
+        expected_checks = sorted([*all_checks, *(VECTOR if embedded else ())])
+        complete = sorted(r["check_name"] for r in rows) == expected_checks
         if not complete or any(r["status"] == "fail" for r in rows):
             ungated.append(run_id)
     add("tables", "committed runs since the gate without a complete passing DQ set", [], ungated)
@@ -483,6 +544,7 @@ def main() -> None:
     out = {
         "label": args.label,
         "git_commit": head,
+        "sink": config.sink,
         "policy": POLICY,
         "dq_rows": len(dq),
         "pre_gate_runs_exempted": sorted(pre_gate & set(committed)),
