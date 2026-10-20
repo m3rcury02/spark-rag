@@ -134,15 +134,18 @@ baseline is checked from its stored silver rows). CLEANER_VERSION is 2 (no tab l
 code fence). Silver holds both cleaners' rows for v3.5.0, v4.0.0 and v4.0.1 at 254/32 and 128/16. The chain for
 sink `none` has 15 committed runs and ends at v4.0.1 under cleaner 2 (`e70bf55c7cf1b856`). `ops_run_log` has
 47 columns (`dq_override`, `dq_override_of`, `baseline_check` added by `runs/m4_b`, `m4x_a`, `m4x_k`) and
-`ops_dq_results` 20. Evidence: `runs/m4_*`, `runs/m4x_*`, verified by `m4x_v2` (1,085/1,085), `m4x_w2`
-(334/334) and `m4x_s` (silver). Do not re-run the `m3_*`, `m4_*` or `m4x_*` labels.
+`ops_dq_results` 20. Evidence: `runs/m4_*`, `runs/m4x_*`, verified by `m4x_v3` (1,089/1,089), `m4x_w3`
+(342/342, each run re-chunked with its own code) and `m4x_s` (silver). Do not re-run the `m3_*`, `m4_*` or
+`m4x_*` labels.
 
 **Do not start M5 until the owner says so.** Open items:
 - Remote branches `m0-smoke-test`, `m1-bronze`, `m2-silver`, `m3-change-detection`, `m4-dq-gate`,
   `pre-m5-followups` (all merged) and `claude/modest-archimedes-mp5zx3` (stale) are still on GitHub: the
   session's git proxy refuses branch deletion (HTTP 403), so the owner deletes them in the GitHub UI.
-- Still open from D-012: the override's reason test is lexical and nothing records who overrode; gains are not
-  capped (M5 sizes embedding cost); the checks are structural (a leftover-markup check is a cheap next one).
+- Still open (D-012, D-013): the override's reason test is lexical and nothing records who overrode; gains are
+  not capped (M5 sizes embedding cost); the checks are structural (a leftover-markup check is a cheap next
+  one); positions of a stored baseline are pinned by nothing and no verifier checks `chunks_kept_relocated`;
+  refusals before the gate are evidenced only by the job's own error messages.
 - For M5's gold writes (from M1/M2): take counts from our own MERGE metrics (the sync pipeline's row metrics are
   always 0, D-001); on Databricks a no-op MERGE still writes an empty table version (D-006 run b), and
   Databricks commits its own `OPTIMIZE` versions (D-010): never read "we wrote" from a version bump.
