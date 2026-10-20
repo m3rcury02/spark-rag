@@ -110,6 +110,11 @@ def test_an_empty_body_fails_the_gate() -> None:
         gate(results, None)
 
 
+def test_a_body_the_tokenizer_drops_entirely_is_empty() -> None:
+    result = run([*corpus(), chunk(100, body="\u200b\u200b")])["empty_chunks"]  # zero-width spaces: 0 tokens
+    assert (result.status, result.numerator) == (FAIL, 1)
+
+
 def test_tiny_chunks_fail_only_above_their_share() -> None:
     tiny = [chunk(i, body="java:") for i in range(3)]
     at_limit = run([*tiny[:2], *corpus(100)[2:]])["tiny_chunks"]  # 2 of 100 = 2%: allowed

@@ -98,7 +98,7 @@ def main() -> None:
     if out_path.exists():
         raise SystemExit(f"runs/{args.label}.json exists: choose a new label")
     head = committed_head()
-    w = WorkspaceClient()
+    redactor = Redactor(WorkspaceClient())  # fails now, not after the git loop, if the credentials are bad
     config = Config()
     tags = release_tags(version(args.since))
     print(len(tags), "release tags:", " ".join(tags), flush=True)
@@ -189,7 +189,7 @@ def main() -> None:
         "tags_failing_each_check": dict(Counter(c for t in per_tag for c in t.get("failing_checks", []))),
         "d002_path": d002,
     }
-    out_path.write_text(Redactor(w).dump(out))
+    out_path.write_text(redactor.dump(out))
     print("transitions:", len(transitions), "| firing at max_drift:", firing[f"{config.dq.max_drift:.2f}"])
 
 

@@ -74,6 +74,9 @@ def main() -> None:
     ap.add_argument("--label", required=True)
     ap.add_argument("--job-runs", nargs="*", default=[], help="runs/ files of the change_detect jobs")
     args = ap.parse_args()
+    out_path = REPO / "runs" / f"{args.label}.json"
+    if out_path.exists():
+        raise SystemExit(f"runs/{args.label}.json exists: choose a new label")
     head = committed_head()
     config = Config()
     w = WorkspaceClient()
@@ -201,10 +204,12 @@ def main() -> None:
         data = json.loads(pathlib.Path(p).read_text())
         summary = data.get("summary") or {}
         if summary.get("run_id"):
-            jobs[summary["run_id"]] = (pathlib.Path(p).name, summary.get("status"))
+            # A failed job wrote a 'failed' row only if it says so ("logged"); one that stopped earlier (the
+            # environment check, an argument refused before the Spark session, D-011/D-012) logs nothing.
+            jobs[summary["run_id"]] = (pathlib.Path(p).name, summary.get("status"), summary.get("logged"))
     logged = {r["run_id"]: r["status"] for r in rows}
-    for run_id, (name, status) in sorted(jobs.items()):
-        outcome = "committed" if status == "succeeded" else "failed"
+    for run_id, (name, status, wrote) in sorted(jobs.items()):
+        outcome = "committed" if status == "succeeded" else "failed" if wrote == "failed" else None
         add(f"job {name}", "its run log row has the job's outcome", outcome, logged.get(run_id))
     add("log", "log rows without a job summary in --job-runs", [], sorted(set(logged) - set(jobs)))
 
@@ -219,8 +224,7 @@ def main() -> None:
         "checks": checks,
         "all_pass": all(c["pass"] for c in checks),
     }
-    text = Redactor(w).dump(out)
-    (REPO / "runs" / f"{args.label}.json").write_text(text)
+    out_path.write_text(Redactor(w).dump(out))
     for c in checks:
         print("PASS" if c["pass"] else "FAIL", c["scope"], "|", c["check"])
     print("all_pass:", out["all_pass"])

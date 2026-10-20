@@ -170,8 +170,9 @@ def evaluate(
     rows = sorted(records, key=lambda r: (r.path, r.chunk_index))
     limit = min(chunking.max_tokens, config.embedding_max_seq_length - SPECIAL_TOKENS)
 
-    empty = [r for r in rows if not r.body.strip() or not r.embed_text.strip()]
-    tiny = [(r, k) for r in rows if (k := count_tokens(r.body)) < dq.tiny_body_tokens]
+    counted = [(r, count_tokens(r.body)) for r in rows]
+    empty = [r for r, k in counted if k == 0 or not r.body.strip() or not r.embed_text.strip()]
+    tiny = [(r, k) for r, k in counted if k < dq.tiny_body_tokens]
     oversized = [(r, k) for r in rows if (k := max(count_tokens(r.embed_text), r.n_tokens)) > limit]
     extra_ids, repeated_ids = _extra_copies([r.chunk_id for r in rows])
     extra_texts, repeated_texts = _extra_copies([r.embed_text for r in rows])
@@ -187,7 +188,8 @@ def evaluate(
             len(empty),
             n,
             0.0,
-            "body or embed text blank; fails if any",
+            "body with no token (blank, or only characters the tokenizer drops), or blank embed text; "
+            "fails if any",
             [f"{_where(r)}: {r.body[:60]!r}" for r in empty],
         ),
         _count_check(
