@@ -1,0 +1,102 @@
+{
+  "label": "m4_j_task_attempts",
+  "git_commit": "4646259cb0f86cfd2e7dbdf6718ae2e1a0b8a13a",
+  "runs": [
+    {
+      "file": "m4_c_detect_v4.0.1_again.json",
+      "parent_run_id": 654447502176090,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "SUCCESS",
+          "start_utc": "2026-10-20T01:20:16+00:00",
+          "end_utc": "2026-10-20T01:22:00+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m4_d2_detect_v4.0.1_weak_reason.json",
+      "parent_run_id": 834561534600707,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "FAILED",
+          "start_utc": "2026-10-20T01:23:33+00:00",
+          "end_utc": "2026-10-20T01:24:08+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m4_d_detect_v4.0.1_accept_nothing.json",
+      "parent_run_id": 1002258704399834,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "FAILED",
+          "start_utc": "2026-10-20T01:22:26+00:00",
+          "end_utc": "2026-10-20T01:23:21+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m4_e_detect_v3.5.0_backwards_drift.json",
+      "parent_run_id": 810832710389834,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "FAILED",
+          "start_utc": "2026-10-20T01:24:20+00:00",
+          "end_utc": "2026-10-20T01:25:30+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m4_f_detect_v3.5.0_backwards_accepted.json",
+      "parent_run_id": 609162525264668,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "SUCCESS",
+          "start_utc": "2026-10-20T01:25:47+00:00",
+          "end_utc": "2026-10-20T01:27:10+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m4_g_detect_v4.0.0_drift.json",
+      "parent_run_id": 564427376765075,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "FAILED",
+          "start_utc": "2026-10-20T01:27:34+00:00",
+          "end_utc": "2026-10-20T01:28:42+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m4_h_detect_v4.0.0_accepted.json",
+      "parent_run_id": 640554069347855,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "SUCCESS",
+          "start_utc": "2026-10-20T01:29:02+00:00",
+          "end_utc": "2026-10-20T01:30:10+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m4_i_detect_v4.0.1.json",
+      "parent_run_id": 1099857801294062,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "SUCCESS",
+          "start_utc": "2026-10-20T01:30:29+00:00",
+          "end_utc": "2026-10-20T01:31:42+00:00"
+        }
+      ]
+    }
+  ]
+}

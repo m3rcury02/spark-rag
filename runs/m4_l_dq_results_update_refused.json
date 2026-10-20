@@ -1,0 +1,10 @@
+{
+  "label": "m4_l_dq_results_update_refused",
+  "git_commit": "4646259cb0f86cfd2e7dbdf6718ae2e1a0b8a13a",
+  "statements": [],
+  "error": {
+    "sql": "UPDATE workspace.docs_rag_dev.ops_dq_results SET status = 'pass' WHERE status = 'fail'",
+    "refused_utc": "2026-10-20T01:32:56Z",
+    "error": "StatementFailed: statement FAILED: [DELTA_CANNOT_MODIFY_APPEND_ONLY] This table is configured to only allow appends. If you would like to permit updates or deletes, use 'ALTER TABLE null SET TBLPROPERTIES (delta.appendOnly=false)'."
+  }
+}
