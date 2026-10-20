@@ -129,6 +129,13 @@ def sync(
     return update
 
 
+def failed(info: dict[str, Any]) -> None:
+    """Stop at once on a failed index state (e.g. ONLINE_PIPELINE_FAILED) instead of waiting it out: the
+    endpoint bills by the hour."""
+    if "FAILED" in str(info.get("detailed_state")):
+        raise SyncError(f"the index is {info['detailed_state']}: {info.get('message')}")
+
+
 def wait_synced(
     do: Do,
     index: str,
@@ -139,6 +146,7 @@ def wait_synced(
 ) -> dict[str, Any]:
     def synced() -> dict[str, Any] | None:
         info = summary_of(index_info(do, index))
+        failed(info)
         return info if info["detailed_state"] == SYNCED else None
 
     result: dict[str, Any] = _poll(synced, f"the index to be {SYNCED}", timeout, poll, sleep, clock)

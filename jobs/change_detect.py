@@ -211,24 +211,27 @@ def merge_gold(
     vectors: VectorsPassed,
     known: dict[str, Any],
 ) -> dict[str, Any]:
-    """The one write to gold: needs the DQ gate's pass and the vector gate's pass for exactly these rows. The
-    version it wrote goes into `known` at once, so a failure after it still records it."""
+    """The one write to gold: needs the DQ gate's pass and the vector gate's pass for exactly these rows. Once
+    the MERGE statement returns or raises, the history is read and a MERGE version found there goes into
+    `known` before anything is checked, so a failed row still points the repair at it (D-014)."""
     if not isinstance(passed, GatePassed) or vectors.checked != len(inserts):
         raise RuntimeError("the gold MERGE needs the DQ gate's pass and vector checks of exactly its rows")
     before = latest_version(spark, table)
     spark.createDataFrame(merge_source_rows(inserts, deletes), merge_source_ddl()).createOrReplaceTempView(
         "gold_changes"
     )
-    metrics = {
-        k: int(v) for k, v in spark.sql(MERGE_GOLD, args={"table": table}).collect()[0].asDict().items()
-    }
-    history = (
-        spark.sql("DESCRIBE HISTORY IDENTIFIER(:table)", args={"table": table})
-        .where(f"version > {before}")
-        .collect()
-    )
+    try:
+        merged = spark.sql(MERGE_GOLD, args={"table": table}).collect()[0].asDict()
+    finally:
+        history = (
+            spark.sql("DESCRIBE HISTORY IDENTIFIER(:table)", args={"table": table})
+            .where(f"version > {before}")
+            .collect()
+        )
+        merges = [int(r["version"]) for r in history if r["operation"] == "MERGE"]
+        known.update(gold_version=merges[0] if len(merges) == 1 else None)
+    metrics = {k: int(v) for k, v in merged.items()}
     version = merge_version([(int(r["version"]), r["operation"]) for r in history], before)
-    known.update(gold_version=version)
     logged = next(r["operationMetrics"] for r in history if int(r["version"]) == version)
     check_merge_counts(metrics, len(inserts), len(deletes))
     check_merge_counts(history_merge_metrics(logged), len(inserts), len(deletes))
@@ -281,11 +284,14 @@ def publish(
     if to_embed:
         t0 = time.monotonic()
         model = load_model(embedding)
+        canary = load_canary()
+        cosines = canary_cosines(canary, embedding, encode(model, canary.texts, embedding))
+        summary["canary_cosines"] = cosines
+        if min(cosines) < config.dq.min_canary_cosine:  # a wrong model: stop before the long encode
+            raise RuntimeError(f"the model does not reproduce the canary vectors: cosines {cosines}")
         t1 = time.monotonic()
         vectors = encode(model, [r.embed_text for r in to_embed], embedding)
         t2 = time.monotonic()
-        canary = load_canary()
-        cosines = canary_cosines(canary, embedding, encode(model, canary.texts, embedding))
         summary["embedding"] = {
             "model_id": embedding.model_id,
             "chunks": len(to_embed),
@@ -301,12 +307,12 @@ def publish(
         summary["vector_dq"] = [dataclasses.asdict(r) for r in results]
         checked = dataclasses.replace(context, checked_at=dt.datetime.now(dt.UTC))
         write_dq_results(spark, config.dq_results_table, results, checked)
-    vectors_passed = gate_vectors(results, len(added))
     known.update(
         embedding_model=embedding.model_id,
         chunks_embedded=len(to_embed),
         embedded_ids_fingerprint=fingerprint((r.path, r.chunk_id) for r in to_embed),
     )
+    vectors_passed = gate_vectors(results, len(added))
 
     # 9. One MERGE (none when nothing changed), then gold must hold exactly the target.
     if not added and not removed:

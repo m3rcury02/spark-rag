@@ -12,7 +12,8 @@ Delta history. For each run, from a local chunking of git's files at its tag (ch
 - the rows it inserted (embedded_by_run_id) are exactly the chunks added since the previous run, and every
   kept row still carries the run that inserted it before (only added chunks were embedded); the run's logged
   counts, embedded fingerprint (recomputed here) and the history's MERGE metrics agree with that;
-- gold's history holds one MERGE per run that changed gold and no other write (Databricks' OPTIMIZE aside).
+- gold's history holds one MERGE per run that changed gold and no other write (Databricks' own OPTIMIZE and
+  VACUUM aside).
 Vectors, over today's gold, computed in SQL: 384 values, finite, L2 norm within 1e-3 of 1, one model id. A
 sample (the 200 rows first by sha2 of chunk_id) is re-embedded here, calling sentence-transformers directly
 with the pinned model and revision on this machine's CPU: cosine with gold's vector >= 0.999 each. With
@@ -37,6 +38,7 @@ from sentence_transformers import SentenceTransformer
 
 from docs_rag.chunk import chunk_document
 from docs_rag.config import Config
+from docs_rag.gold import MAINTENANCE
 from docs_rag.index_sync import index_info, scan_keys, summary_of
 
 SAMPLE = 200
@@ -106,7 +108,7 @@ def main() -> None:
     history = sorted(
         query("DESCRIBE HISTORY IDENTIFIER(:table)", {"table": gold}), key=lambda h: int(h["version"])
     )
-    writes = [h for h in history if h["operation"] not in ("CREATE TABLE", "OPTIMIZE")]
+    writes = [h for h in history if h["operation"] not in ("CREATE TABLE", *MAINTENANCE)]
     add(
         "history",
         "every write to gold is a MERGE of a committed run",

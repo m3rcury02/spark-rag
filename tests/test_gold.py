@@ -108,3 +108,8 @@ def test_history_metrics_are_named_like_the_merge_result() -> None:
     check_merge_counts(history_merge_metrics(m), 5, 2)
     with pytest.raises(RuntimeError):
         check_merge_counts(history_merge_metrics({}), 0, 0)
+
+
+def test_table_maintenance_may_land_beside_the_merge() -> None:
+    history = [(4, "VACUUM START"), (5, "MERGE"), (6, "VACUUM END"), (7, "OPTIMIZE")]
+    assert merge_version(history, before=3) == 5

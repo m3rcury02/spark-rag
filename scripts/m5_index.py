@@ -29,7 +29,7 @@ from runguard import REPO, committed_head
 
 from docs_rag.config import Config
 from docs_rag.gold import INDEX_COLUMNS
-from docs_rag.index_sync import TERMINAL, index_info, summary_of, updates, wait_synced
+from docs_rag.index_sync import TERMINAL, failed, index_info, summary_of, updates, wait_synced
 
 ENDPOINTS = "/api/2.0/vector-search/endpoints"
 INDEXES = "/api/2.0/vector-search/indexes"
@@ -118,6 +118,8 @@ def create_index(w: WorkspaceClient, config: Config, out: dict[str, Any]) -> Non
 
     def first_update_done() -> tuple[bool, Any]:
         info = index(w, config.index)
+        if info:
+            failed(info)
         found = updates(w.api_client.do, info["pipeline_id"]) if info and info["pipeline_id"] else []
         if any(u["state"] in ("FAILED", "CANCELED") for u in found):
             raise SystemExit(f"the initial sync failed: {found}")

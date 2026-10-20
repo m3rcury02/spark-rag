@@ -2,7 +2,7 @@ from typing import Any
 
 import pytest
 
-from docs_rag.index_sync import SYNCED, SyncError, compare_keys, query_keys, scan_keys, sync
+from docs_rag.index_sync import SYNCED, SyncError, compare_keys, query_keys, scan_keys, sync, wait_synced
 
 
 class FakeIndex:
@@ -91,3 +91,11 @@ def test_compare_keys() -> None:
         1,
         False,
     )
+
+
+def test_a_failed_index_stops_the_wait_at_once() -> None:
+    fake = FakeIndex(["a"])
+    fake.state = "ONLINE_PIPELINE_FAILED"
+    fake.outcome = "RUNNING"  # the update never finishes: only the failed state can end the wait
+    with pytest.raises(SyncError, match="ONLINE_PIPELINE_FAILED"):
+        wait_synced(fake, "i", timeout=100, poll=1, sleep=lambda _: None, clock=iter(range(1000)).__next__)

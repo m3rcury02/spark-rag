@@ -157,12 +157,18 @@ WHEN NOT MATCHED AND c.op = 'insert' THEN INSERT ({_COLUMNS})
 """
 
 
+# Predictive optimization's own commits (D-010: an OPTIMIZE we did not run, runs/m2_h); VACUUM logs a start
+# and an end. None of them changes a row.
+MAINTENANCE = ("OPTIMIZE", "VACUUM START", "VACUUM END")
+
+
 def merge_version(history: Sequence[tuple[int, str]], before: int) -> int:
     """The version the MERGE wrote, from the (version, operation) rows of the table history after `before`:
-    exactly one MERGE; anything else there may only be Databricks' own OPTIMIZE (D-010)."""
+    exactly one MERGE; anything else there may only be the table maintenance Databricks runs on its own
+    (D-010), which changes no rows."""
     new = [(v, op) for v, op in history if v > before]
     merges = [v for v, op in new if op == "MERGE"]
-    others = sorted({op for _, op in new if op not in ("MERGE", "OPTIMIZE")})
+    others = sorted({op for _, op in new if op != "MERGE" and op not in MAINTENANCE})
     if len(merges) != 1 or others:
         raise RuntimeError(f"gold history after version {before} is not one MERGE: {sorted(new)}")
     return merges[0]
