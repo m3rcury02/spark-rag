@@ -146,6 +146,20 @@ def test_language_tabs_get_a_label_line() -> None:
     assert out == "python:\n\nA"
 
 
+def test_a_tab_that_opens_with_code_fenced_in_its_language_gets_no_label() -> None:
+    tab = (
+        '<div data-lang="{lang}" markdown="1">\n\n'
+        "{{% highlight scala %}}\nval x = 1\n{{% endhighlight %}}\n</div>"
+    )
+    assert clean(tab.format(lang="scala")) == "```scala\nval x = 1\n```"
+    assert clean(tab.format(lang="Scala")) == "```scala\nval x = 1\n```"
+    assert clean(tab.format(lang="java")).startswith("java:\n\n```scala")  # another language: kept
+    fenced = '<div data-lang="r" markdown="1">\n```r\nx <- 1\n```\n</div>'
+    assert clean(fenced) == "```r\nx <- 1\n```"
+    rust = '<div data-lang="r" markdown="1">\n```rust\nlet x = 1;\n```\n</div>'
+    assert clean(rust).startswith("r:\n\n```rust")
+
+
 def test_only_allowlisted_tags_are_stripped_and_entities_unescaped() -> None:
     assert clean("<b>bold</b> &lt;b&gt; <driver-node> a &amp; b") == "bold <b> <driver-node> a & b"
 

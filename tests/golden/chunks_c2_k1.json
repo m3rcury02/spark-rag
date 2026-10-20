@@ -1,0 +1,1727 @@
+{
+ "4cab8e9bd5874da0": [
+  {
+   "chunk_id": "caed4637717370118c6a8a5f9d404dd6",
+   "n_tokens": 23,
+   "span": [
+    0,
+    116
+   ],
+   "embed_text": "Quick Start\n\nThis tutorial provides a quick introduction to using Spark. See the programming guide\nfor a more complete reference."
+  },
+  {
+   "chunk_id": "87ed575f39e0f1148b27c7db8ea29fb5",
+   "n_tokens": 38,
+   "span": [
+    174,
+    294
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Basics\n\nSpark's shell provides a simple way to learn the API, as well as a powerful tool to analyze data interactively.\n\npython:"
+  },
+  {
+   "chunk_id": "c7b4223b684494da646776c3ca2877e8",
+   "n_tokens": 64,
+   "span": [
+    296,
+    515
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Basics\n\nSpark's primary abstraction is a distributed collection of items called a Dataset. As a result, all Datasets\nin Python are Dataset[Row], and we call it `DataFrame` to be consistent with the data frame concept in Pandas."
+  },
+  {
+   "chunk_id": "ba85e1cc67b815312d584bbc6ff91274",
+   "n_tokens": 46,
+   "span": [
+    482,
+    574
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Basics\n\nthe data frame concept in Pandas.\n\n```python\n>>> textFile = spark.read.text(\"README.md\")\n```"
+  },
+  {
+   "chunk_id": "bceac8a73f32f49c61baec4bbbc34452",
+   "n_tokens": 63,
+   "span": [
+    576,
+    708
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Basics\n\n```scala\nscala> val textFile = spark.read.textFile(\"README.md\")\ntextFile: org.apache.spark.sql.Dataset[String] = [value: string]\n```"
+  },
+  {
+   "chunk_id": "283cb50c68d045f6988f08606074daba",
+   "n_tokens": 56,
+   "span": [
+    803,
+    912
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Spark Properties\n\nProperty Name | Default | Meaning | Since Version\n`spark.app.name` | (none) | The name of your application. This will appear in the UI and in log data. | 0.9.0"
+  },
+  {
+   "chunk_id": "8fe89fb7614cec92f58a0c10a0a8444a",
+   "n_tokens": 41,
+   "span": [
+    925,
+    1004
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > TF-IDF\n\nRefer to the `HashingTF` Python docs for details.\n\n[example: tf_idf_example.py]"
+  },
+  {
+   "chunk_id": "62cf4701c8f6063acdcefaffa5f29218",
+   "n_tokens": 52,
+   "span": [
+    1025,
+    1198
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long paragraph\n\nSetting spark.sql.shuffle.partitions to 0 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 1 changes how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "11bc061b0a2c7ef9da16259bbc31024c",
+   "n_tokens": 60,
+   "span": [
+    1162,
+    1372
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long paragraph\n\nhow many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 2 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 3 changes how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "71d4f32ca7108f5eefc8bfb67893b0dc",
+   "n_tokens": 60,
+   "span": [
+    1336,
+    1546
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long paragraph\n\nhow many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 4 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 5 changes how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "7d40aee199b44b57c192037c9d5203de",
+   "n_tokens": 60,
+   "span": [
+    1510,
+    1720
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long paragraph\n\nhow many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 6 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 7 changes how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "48aa4ccda02a106d7551a44c503c31e6",
+   "n_tokens": 60,
+   "span": [
+    1684,
+    1894
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long paragraph\n\nhow many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 8 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 9 changes how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "15b85bff53bbde2ef1736002666ed2bb",
+   "n_tokens": 60,
+   "span": [
+    1858,
+    2070
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long paragraph\n\nhow many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 10 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 11 changes how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "f84439bfc0f9c27623af8a01143c31a7",
+   "n_tokens": 60,
+   "span": [
+    2034,
+    2246
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long paragraph\n\nhow many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 12 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 13 changes how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "68e3f874dfce1cddec282d31e46ce91b",
+   "n_tokens": 60,
+   "span": [
+    2210,
+    2422
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long paragraph\n\nhow many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 14 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 15 changes how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "9e7020f43f6d60402bafb2b146f779d1",
+   "n_tokens": 60,
+   "span": [
+    2386,
+    2598
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long paragraph\n\nhow many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 16 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 17 changes how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "4b642d569e04207227d2d2c4186978e0",
+   "n_tokens": 60,
+   "span": [
+    2562,
+    2774
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long paragraph\n\nhow many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 18 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 19 changes how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "48462e9ffc398f8af453cd3482abb7c3",
+   "n_tokens": 60,
+   "span": [
+    2738,
+    2950
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long paragraph\n\nhow many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 20 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 21 changes how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "ef4c9161f24cbbe5e450e56cf71cdb82",
+   "n_tokens": 60,
+   "span": [
+    2914,
+    3126
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long paragraph\n\nhow many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 22 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 23 changes how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "1297243390268177dc1c8ad1231b7254",
+   "n_tokens": 60,
+   "span": [
+    3090,
+    3302
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long paragraph\n\nhow many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 24 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 25 changes how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "467b64c6bb9e66190bf10fc44e8fe479",
+   "n_tokens": 60,
+   "span": [
+    3266,
+    3478
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long paragraph\n\nhow many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 26 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 27 changes how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "c4b913ef505540dc942a31706e4bda35",
+   "n_tokens": 60,
+   "span": [
+    3442,
+    3654
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long paragraph\n\nhow many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 28 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 29 changes how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "c7a9c2c79f7cbd25c9fe0c7385716479",
+   "n_tokens": 48,
+   "span": [
+    3680,
+    3731
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf0 = spark.range(0).withColumn('x', col('id') * 0)\n```"
+  },
+  {
+   "chunk_id": "2808632d3742bc48a2fbb53093ec442f",
+   "n_tokens": 48,
+   "span": [
+    3732,
+    3783
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf1 = spark.range(1).withColumn('x', col('id') * 1)\n```"
+  },
+  {
+   "chunk_id": "9a8cd2b813305b06e5f7bf8337a195f8",
+   "n_tokens": 48,
+   "span": [
+    3784,
+    3835
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf2 = spark.range(2).withColumn('x', col('id') * 2)\n```"
+  },
+  {
+   "chunk_id": "9ac541e867057bef667fe61301696918",
+   "n_tokens": 48,
+   "span": [
+    3836,
+    3887
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf3 = spark.range(3).withColumn('x', col('id') * 3)\n```"
+  },
+  {
+   "chunk_id": "bfadbea3951749c6928b2c3047582e47",
+   "n_tokens": 48,
+   "span": [
+    3888,
+    3939
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf4 = spark.range(4).withColumn('x', col('id') * 4)\n```"
+  },
+  {
+   "chunk_id": "75cfa86ca0b1e3ac04bcf14d1a6debc9",
+   "n_tokens": 48,
+   "span": [
+    3940,
+    3991
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf5 = spark.range(5).withColumn('x', col('id') * 5)\n```"
+  },
+  {
+   "chunk_id": "f61ea452d517914666476e672c32d299",
+   "n_tokens": 48,
+   "span": [
+    3992,
+    4043
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf6 = spark.range(6).withColumn('x', col('id') * 6)\n```"
+  },
+  {
+   "chunk_id": "3e4bf0240be3847c359e436517f24081",
+   "n_tokens": 48,
+   "span": [
+    4044,
+    4095
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf7 = spark.range(7).withColumn('x', col('id') * 7)\n```"
+  },
+  {
+   "chunk_id": "909c7e9f67abb0d759eed6705742f181",
+   "n_tokens": 48,
+   "span": [
+    4096,
+    4147
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf8 = spark.range(8).withColumn('x', col('id') * 8)\n```"
+  },
+  {
+   "chunk_id": "fb0328a9dec31f361709e491bfa9900e",
+   "n_tokens": 48,
+   "span": [
+    4148,
+    4199
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf9 = spark.range(9).withColumn('x', col('id') * 9)\n```"
+  },
+  {
+   "chunk_id": "2bc30de553b57e413d40b085ce1f2e42",
+   "n_tokens": 48,
+   "span": [
+    4200,
+    4254
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf10 = spark.range(10).withColumn('x', col('id') * 10)\n```"
+  },
+  {
+   "chunk_id": "f9d9fea401da6012ca98934bdc7d9bc4",
+   "n_tokens": 48,
+   "span": [
+    4255,
+    4309
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf11 = spark.range(11).withColumn('x', col('id') * 11)\n```"
+  },
+  {
+   "chunk_id": "86ce2d95cbb4c2b2f003f832187b597c",
+   "n_tokens": 48,
+   "span": [
+    4310,
+    4364
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf12 = spark.range(12).withColumn('x', col('id') * 12)\n```"
+  },
+  {
+   "chunk_id": "13124ae4aa300309ba8c4bd59d2a86d6",
+   "n_tokens": 48,
+   "span": [
+    4365,
+    4419
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf13 = spark.range(13).withColumn('x', col('id') * 13)\n```"
+  },
+  {
+   "chunk_id": "9a8f02a31f0bf364a8501dcca4237152",
+   "n_tokens": 48,
+   "span": [
+    4420,
+    4474
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf14 = spark.range(14).withColumn('x', col('id') * 14)\n```"
+  },
+  {
+   "chunk_id": "ff94da72c442cfa2ba0b604d92698995",
+   "n_tokens": 48,
+   "span": [
+    4475,
+    4529
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf15 = spark.range(15).withColumn('x', col('id') * 15)\n```"
+  },
+  {
+   "chunk_id": "15036666c52e0fa17b1895ddaa46f355",
+   "n_tokens": 48,
+   "span": [
+    4530,
+    4584
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf16 = spark.range(16).withColumn('x', col('id') * 16)\n```"
+  },
+  {
+   "chunk_id": "4a942b652935abaa899258c3616eceb1",
+   "n_tokens": 48,
+   "span": [
+    4585,
+    4639
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf17 = spark.range(17).withColumn('x', col('id') * 17)\n```"
+  },
+  {
+   "chunk_id": "29e9468ebf366ef8e8b03e4f2f13f4df",
+   "n_tokens": 48,
+   "span": [
+    4640,
+    4694
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf18 = spark.range(18).withColumn('x', col('id') * 18)\n```"
+  },
+  {
+   "chunk_id": "9eb58851c18238bcb6b7449e42c7b72c",
+   "n_tokens": 48,
+   "span": [
+    4695,
+    4749
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf19 = spark.range(19).withColumn('x', col('id') * 19)\n```"
+  },
+  {
+   "chunk_id": "29d21ff73d4c4cc2ccdc061eaef1b107",
+   "n_tokens": 48,
+   "span": [
+    4750,
+    4804
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf20 = spark.range(20).withColumn('x', col('id') * 20)\n```"
+  },
+  {
+   "chunk_id": "b084b398903944995203d07db5304470",
+   "n_tokens": 48,
+   "span": [
+    4805,
+    4859
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf21 = spark.range(21).withColumn('x', col('id') * 21)\n```"
+  },
+  {
+   "chunk_id": "6ad880285682edba5130c8a055edaaf5",
+   "n_tokens": 48,
+   "span": [
+    4860,
+    4914
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf22 = spark.range(22).withColumn('x', col('id') * 22)\n```"
+  },
+  {
+   "chunk_id": "dedf586b672a627c93d84d2480fc6e08",
+   "n_tokens": 48,
+   "span": [
+    4915,
+    4969
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf23 = spark.range(23).withColumn('x', col('id') * 23)\n```"
+  },
+  {
+   "chunk_id": "6fb683fa3702420a759485ce5f1f8f3d",
+   "n_tokens": 48,
+   "span": [
+    4970,
+    5024
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf24 = spark.range(24).withColumn('x', col('id') * 24)\n```"
+  },
+  {
+   "chunk_id": "6c2de0691a49e31ec059fca613053140",
+   "n_tokens": 48,
+   "span": [
+    5025,
+    5079
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf25 = spark.range(25).withColumn('x', col('id') * 25)\n```"
+  },
+  {
+   "chunk_id": "bff6eda7a8b36b96e20df72241491b9d",
+   "n_tokens": 48,
+   "span": [
+    5080,
+    5134
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf26 = spark.range(26).withColumn('x', col('id') * 26)\n```"
+  },
+  {
+   "chunk_id": "5cd6d4b7ccdaca8b5b928e17ef026e20",
+   "n_tokens": 48,
+   "span": [
+    5135,
+    5189
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf27 = spark.range(27).withColumn('x', col('id') * 27)\n```"
+  },
+  {
+   "chunk_id": "bc77c3ce1e161f5eb88bcffb3e78c9ad",
+   "n_tokens": 48,
+   "span": [
+    5190,
+    5244
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf28 = spark.range(28).withColumn('x', col('id') * 28)\n```"
+  },
+  {
+   "chunk_id": "a4765a68e9e63b1c971c88290780abf9",
+   "n_tokens": 48,
+   "span": [
+    5245,
+    5299
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf29 = spark.range(29).withColumn('x', col('id') * 29)\n```"
+  },
+  {
+   "chunk_id": "ed23dce3a94455001003c6d30d7fdc25",
+   "n_tokens": 58,
+   "span": [
+    5384,
+    5539
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option0` | 0 | Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "8d17b6b95253d3d2af84b89d8016d66a",
+   "n_tokens": 64,
+   "span": [
+    5503,
+    5665
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option0` | how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "a50a9e9404a8f00a1799d74ca46a6858",
+   "n_tokens": 64,
+   "span": [
+    5629,
+    5791
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option0` | how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "64aa2a613c9f2f4b00687a31a989737b",
+   "n_tokens": 55,
+   "span": [
+    5755,
+    5875
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option0` | how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "ce288ecd4db63803fd19b9d024710178",
+   "n_tokens": 52,
+   "span": [
+    5839,
+    5925
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option0` | how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "709f9a2b770d4ddcd287a58d9ba4a301",
+   "n_tokens": 46,
+   "span": [
+    5926,
+    6006
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option1` | 10 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "7e1aa8d53b5784ddb5f0891440ed8204",
+   "n_tokens": 46,
+   "span": [
+    6007,
+    6087
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option2` | 20 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "a58608740a7453774b2cfe8404dd4599",
+   "n_tokens": 46,
+   "span": [
+    6088,
+    6168
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option3` | 30 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "31cf657e28121107bd8cb6a3fbeff0b8",
+   "n_tokens": 46,
+   "span": [
+    6169,
+    6249
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option4` | 40 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "f5f79b223ca4e96418b900666075947f",
+   "n_tokens": 58,
+   "span": [
+    6250,
+    6406
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option5` | 50 | Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "402a82031d7c513c8d2953dfa0e1cc8e",
+   "n_tokens": 64,
+   "span": [
+    6370,
+    6532
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option5` | how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "44e8130c3617ffbe9446736533270878",
+   "n_tokens": 64,
+   "span": [
+    6496,
+    6658
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option5` | how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "1cb2e0e36dcd0ba60113227a2c7a3d3a",
+   "n_tokens": 55,
+   "span": [
+    6622,
+    6742
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option5` | how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "433486e80755ddb53fa203cc060b9677",
+   "n_tokens": 52,
+   "span": [
+    6706,
+    6792
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option5` | how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "8c99eada66d2e33961eaa706be84bf4b",
+   "n_tokens": 46,
+   "span": [
+    6793,
+    6873
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option6` | 60 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "b6ad6d46757d6bef74b259ccaceb9d6a",
+   "n_tokens": 46,
+   "span": [
+    6874,
+    6954
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option7` | 70 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "02827e00079322d1f398e08c1399c965",
+   "n_tokens": 46,
+   "span": [
+    6955,
+    7035
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option8` | 80 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "4ea1d912877fe16ea81879407cb34186",
+   "n_tokens": 46,
+   "span": [
+    7036,
+    7116
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option9` | 90 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "73fcdb7c17554f4edf46e31d8e72ca65",
+   "n_tokens": 58,
+   "span": [
+    7117,
+    7275
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option10` | 100 | Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "abbea09b1cfcdac0798bde14d4b03e85",
+   "n_tokens": 64,
+   "span": [
+    7239,
+    7401
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option10` | how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "cf8bd314ada6265abb21ab73f4c8323f",
+   "n_tokens": 64,
+   "span": [
+    7365,
+    7527
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option10` | how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "e099e48fafa8f466805aebde801a03b7",
+   "n_tokens": 55,
+   "span": [
+    7491,
+    7611
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option10` | how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "9a8acff1eaa5712eaefd0b610afb1d4b",
+   "n_tokens": 52,
+   "span": [
+    7575,
+    7661
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option10` | how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "6daef398b2ae8c948c5a28ebe601f003",
+   "n_tokens": 46,
+   "span": [
+    7662,
+    7744
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option11` | 110 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "406c7be4c8ffba67d10efa691bb5d3e4",
+   "n_tokens": 56,
+   "span": [
+    7760,
+    7836
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long word\n\nbcdfghjklmnpqrstvwxzbcdfghjklmnpqrstvwxzbcdfghjklmnpqrstvwxzbcdfghjklmnpqrst"
+  },
+  {
+   "chunk_id": "8f3ef8edc6444d68c5a1f92cb78c088d",
+   "n_tokens": 61,
+   "span": [
+    7836,
+    7968
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long word\n\nvwxzbcdfghjklmnpqrstvwx\n\nShortened from Spark docs pages (v3.5.0-v4.0.1): one of each construct the cleaner and chunker must handle."
+  },
+  {
+   "chunk_id": "57c040a4023cc05fdff7b6ce0f62399f",
+   "n_tokens": 51,
+   "span": [
+    7932,
+    8053
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long word\n\nthe cleaner and chunker must handle.\nNon-ASCII text stays as it is: café, naïve, “quoted”, Ā, 中文, and a dash — like this."
+  },
+  {
+   "chunk_id": "51633687396894ac21b247a0833cb191",
+   "n_tokens": 38,
+   "span": [
+    8072,
+    8151
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Layout table\n\n```bash\n# TERMINAL 1:\n# Running Netcat\n\n$ nc -lk 9999\napache spark\n```\n\npython:"
+  },
+  {
+   "chunk_id": "48e5a7c6e026a41e835d62ad7c17bb70",
+   "n_tokens": 34,
+   "span": [
+    8161,
+    8214
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Layout table\n\n```bash\n# TERMINAL 2: RUNNING structured_network_wordcount.py\n```"
+  },
+  {
+   "chunk_id": "949b726b44808707e1d02d9fa0922bac",
+   "n_tokens": 55,
+   "span": [
+    8215,
+    8321
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Layout table\n\n```bash\n$ ./bin/spark-submit examples/src/main/python/sql/streaming/structured_network_wordcount.py localhost 9999\n```"
+  },
+  {
+   "chunk_id": "5ba2750c732434306637d0891e349330",
+   "n_tokens": 32,
+   "span": [
+    8402,
+    8451
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Spans and nesting\n\nLeft Input | Right Input | Join Type\nStream | Static | Inner | Supported, not stateful"
+  },
+  {
+   "chunk_id": "7429e8ebc5e0e962df2c5d2fde1152bf",
+   "n_tokens": 30,
+   "span": [
+    8452,
+    8497
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Spans and nesting\n\nLeft Input | Right Input | Join Type\nStream | Static | Right Outer | Not supported"
+  },
+  {
+   "chunk_id": "609b29d814fb5becbd1b27364face349",
+   "n_tokens": 37,
+   "span": [
+    8498,
+    8555
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Spans and nesting\n\nLeft Input | Right Input | Join Type\nOther queries |  | All types | Append mode.; Update mode."
+  },
+  {
+   "chunk_id": "7f9a1e8af01c24f97d06e8323bc877a2",
+   "n_tokens": 38,
+   "span": [
+    8556,
+    8622
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Spans and nesting\n\nLeft Input | Right Input | Join Type\nArrayType | Element type, PG Array; IntegerType, integer[] | array"
+  },
+  {
+   "chunk_id": "380d1cb0c635f4b500da232286e4a40a",
+   "n_tokens": 54,
+   "span": [
+    8676,
+    8771
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Code in cells\n\nProperty Name | Meaning\n`rowTag` | For example, in this xml: `<books><book></book>...</books>` the value would be book."
+  },
+  {
+   "chunk_id": "dd0f6836112fd3535e6f6c4c80941747",
+   "n_tokens": 34,
+   "span": [
+    8772,
+    8821
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Code in cells\n\nProperty Name | Meaning\n`cov` in `package:stats` | (code below the table)"
+  },
+  {
+   "chunk_id": "ae6197dd42f11fb8a611a6e57c80f7b6",
+   "n_tokens": 35,
+   "span": [
+    8822,
+    8891
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Code in cells\n\nProperty Name | Meaning\n`samplingRatio` | Defines fraction of rows used for schema inferring."
+  },
+  {
+   "chunk_id": "6c8ce03668d14f9d15942815686acd25",
+   "n_tokens": 55,
+   "span": [
+    8893,
+    9001
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Code in cells\n\n```\nstats::cov(x, y = NULL, use = \"everything\",\n           method = c(\"pearson\", \"kendall\", \"spearman\"))\n```"
+  },
+  {
+   "chunk_id": "9005667728386f2c83550c6ee8481c2d",
+   "n_tokens": 48,
+   "span": [
+    9103,
+    9147
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Pipe tables\n\n|Keyword|Spark SQL ANSI Mode|Spark SQL NonANSI Mode|SQL-2016|\n|ADD|non-reserved|non-reserved|non-reserved|"
+  },
+  {
+   "chunk_id": "9a985b4f2c1dcc27a76db496e8ae98db",
+   "n_tokens": 56,
+   "span": [
+    9148,
+    9211
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Pipe tables\n\n|Keyword|Spark SQL ANSI Mode|Spark SQL NonANSI Mode|SQL-2016|\n|**explode_outer**   ( *expr* )|reserved|non-reserved|reserved|"
+  },
+  {
+   "chunk_id": "435eee9c8352f0e42fee8816f088a4a2",
+   "n_tokens": 29,
+   "span": [
+    9245,
+    9315
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Footnotes, rules and styles\n\nMLlib uses linear algebra packages for optimised numerical processing."
+  },
+  {
+   "chunk_id": "4ffaaa2de78e1645ac9a514325769015",
+   "n_tokens": 63,
+   "span": [
+    9271,
+    9493
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Footnotes, rules and styles\n\npackages for optimised numerical processing.\n\nNote: To learn more about the benefits and background of system optimised natives, you may wish to watch Sam Halliday's ScalaX talk on High Performance Linear Algebra in Scala."
+  },
+  {
+   "chunk_id": "79d9a723bf15601148313c1ed8293a97",
+   "n_tokens": 53,
+   "span": [
+    9449,
+    9633
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Footnotes, rules and styles\n\non High Performance Linear Algebra in Scala.\n\n**TABLE: person** with Ctrl and small print.\n\nSee Advanced Dependency Management and\n\"Improve Apache Spark write performance\"\nfor details."
+  },
+  {
+   "chunk_id": "620524cd884a2426a97c786ece071527",
+   "n_tokens": 56,
+   "span": [
+    9676,
+    9749
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Borders and preformatted text\n\n```sql\nSELECT * FROM person WHERE name LIKE 'M%';\n+---+---+---+\n| id|  name|age|\n```"
+  },
+  {
+   "chunk_id": "319e33c9c0c66721b4b0bf5c613305ae",
+   "n_tokens": 64,
+   "span": [
+    9733,
+    9794
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Borders and preformatted text\n\n```sql\n| id|  name|age|\n+---+---+---+\n|300|  Mike| 80|\n+---+---+---+\n```"
+  },
+  {
+   "chunk_id": "13ef7ee17f99f656c5cc2cb18ea8e216",
+   "n_tokens": 37,
+   "span": [
+    9800,
+    9840
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Borders and preformatted text\n\n```\n\nssh <driver-node> jstack <pid>\n\n```"
+  },
+  {
+   "chunk_id": "090143f5a2e2dc805d7a9e3e3affd6bf",
+   "n_tokens": 63,
+   "span": [
+    9871,
+    10080
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nSpark's scheduler is fully thread-safe and supports this use case to enable applications that serve\nmultiple requests (e.g. queries for multiple users). By default, Spark's scheduler runs jobs in FIFO\nfashion."
+  },
+  {
+   "chunk_id": "d2d4e41d5e3f1c2ed5408fba0c23c312",
+   "n_tokens": 63,
+   "span": [
+    10054,
+    10267
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nruns jobs in FIFO\nfashion. Each job is divided into \"stages\" (e.g. map and reduce phases), and the first job gets\npriority on all available resources while its stages have tasks to launch, then the second job gets"
+  },
+  {
+   "chunk_id": "7715a5869a1556fbb7f9fe351cc3db1a",
+   "n_tokens": 47,
+   "span": [
+    10232,
+    10367
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nto launch, then the second job gets\npriority, etc. If the jobs at the head of the queue don't need to use the whole cluster, later jobs"
+  },
+  {
+   "chunk_id": "95c438c0100a8fddec28d863b04dcb86",
+   "n_tokens": 64,
+   "span": [
+    10331,
+    10537
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nto use the whole cluster, later jobs\ncan start to run right away, but if the jobs at the head of the queue are large, then later jobs may be\ndelayed significantly. `spark.scheduler.mode` can be set to FAIR."
+  },
+  {
+   "chunk_id": "02743989263110c853f494151b22428e",
+   "n_tokens": 52,
+   "span": [
+    10518,
+    10662
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\ncan be set to FAIR. (This is useful for multi-user\nsettings.) Starting in Spark 0.8, it is also possible to configure fair sharing between jobs."
+  },
+  {
+   "chunk_id": "a9b26c1c69da2831bb8ed9769dd843fa",
+   "n_tokens": 49,
+   "span": [
+    10636,
+    10808
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nfair sharing between jobs. Under\nfair sharing, Spark assigns tasks between jobs in a \"round robin\" fashion, so that all jobs get a\nroughly equal share of cluster resources."
+  },
+  {
+   "chunk_id": "6aa4a9ac2886c15c5b14a2fe8ebf3875",
+   "n_tokens": 56,
+   "span": [
+    10765,
+    10993
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\na\nroughly equal share of cluster resources. This means that short jobs submitted while a long job is\nrunning can start receiving resources right away and still get good response times, without waiting\nfor the long job to finish."
+  },
+  {
+   "chunk_id": "d06883dccc67b33a6c0e50ee47af4818",
+   "n_tokens": 58,
+   "span": [
+    10958,
+    11131
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nwaiting\nfor the long job to finish. This mode is best for multi-user settings.\n\n- `spark.scheduler.allocation.file`: the path of the pool file, which can be local or remote."
+  },
+  {
+   "chunk_id": "60482f2ae1ecee9d28f8e812d0c7aeb4",
+   "n_tokens": 50,
+   "span": [
+    11102,
+    11233
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nwhich can be local or remote.\n- `spark.scheduler.pool`: the pool a thread's jobs go to; each thread can set its own local property."
+  },
+  {
+   "chunk_id": "6136babd7da03591c7b5266c9d0522a6",
+   "n_tokens": 49,
+   "span": [
+    11195,
+    11334
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nthread can set its own local property.\n- `spark.scheduler.mode`: FIFO or FAIR; FAIR shares the cluster between jobs in round-robin fashion."
+  },
+  {
+   "chunk_id": "84c5ae3cae10e17e18268d0633470ce7",
+   "n_tokens": 39,
+   "span": [
+    11298,
+    11373
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nbetween jobs in round-robin fashion.\n\n[example: datasource.py, csv_dataset]"
+  }
+ ],
+ "ece77f296d18fbd5": [
+  {
+   "chunk_id": "caed4637717370118c6a8a5f9d404dd6",
+   "n_tokens": 23,
+   "span": [
+    0,
+    116
+   ],
+   "embed_text": "Quick Start\n\nThis tutorial provides a quick introduction to using Spark. See the programming guide\nfor a more complete reference."
+  },
+  {
+   "chunk_id": "b952d8eafd2f54d2839d28486dd52f23",
+   "n_tokens": 118,
+   "span": [
+    174,
+    574
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Basics\n\nSpark's shell provides a simple way to learn the API, as well as a powerful tool to analyze data interactively.\n\npython:\n\nSpark's primary abstraction is a distributed collection of items called a Dataset. As a result, all Datasets\nin Python are Dataset[Row], and we call it `DataFrame` to be consistent with the data frame concept in Pandas.\n\n```python\n>>> textFile = spark.read.text(\"README.md\")\n```"
+  },
+  {
+   "chunk_id": "bceac8a73f32f49c61baec4bbbc34452",
+   "n_tokens": 63,
+   "span": [
+    576,
+    708
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Basics\n\n```scala\nscala> val textFile = spark.read.textFile(\"README.md\")\ntextFile: org.apache.spark.sql.Dataset[String] = [value: string]\n```"
+  },
+  {
+   "chunk_id": "9aaef445c8a5d806fc1c247b6f8878e5",
+   "n_tokens": 71,
+   "span": [
+    731,
+    912
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Spark Properties\n\nProperty Name | Default | Meaning | Since Version\n--- | --- | --- | ---\n`spark.app.name` | (none) | The name of your application. This will appear in the UI and in log data. | 0.9.0"
+  },
+  {
+   "chunk_id": "8fe89fb7614cec92f58a0c10a0a8444a",
+   "n_tokens": 41,
+   "span": [
+    925,
+    1004
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > TF-IDF\n\nRefer to the `HashingTF` Python docs for details.\n\n[example: tf_idf_example.py]"
+  },
+  {
+   "chunk_id": "25553975b6786a9acd5ee5e6d553fe76",
+   "n_tokens": 112,
+   "span": [
+    1025,
+    1459
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long paragraph\n\nSetting spark.sql.shuffle.partitions to 0 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 1 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 2 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 3 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 4 changes how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "fffdb36c302667e51a94b16988d94713",
+   "n_tokens": 123,
+   "span": [
+    1410,
+    1894
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long paragraph\n\nto 4 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 5 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 6 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 7 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 8 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 9 changes how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "45974fc1bdd38c0db175a94786f59b85",
+   "n_tokens": 123,
+   "span": [
+    1845,
+    2334
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long paragraph\n\nto 9 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 10 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 11 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 12 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 13 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 14 changes how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "3d71c71e04dccc3cd06f9edcb158dd7e",
+   "n_tokens": 123,
+   "span": [
+    2284,
+    2774
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long paragraph\n\nto 14 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 15 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 16 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 17 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 18 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 19 changes how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "60adbde231046f494972322b4f7339c8",
+   "n_tokens": 123,
+   "span": [
+    2724,
+    3214
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long paragraph\n\nto 19 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 20 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 21 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 22 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 23 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 24 changes how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "1a15441bb7345cfe07862373a6a4cefe",
+   "n_tokens": 123,
+   "span": [
+    3164,
+    3654
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long paragraph\n\nto 24 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 25 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 26 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 27 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 28 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 29 changes how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "eb2ef43faa2c9782d5087d5eb39a5ff4",
+   "n_tokens": 106,
+   "span": [
+    3680,
+    3835
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf0 = spark.range(0).withColumn('x', col('id') * 0)\ndf1 = spark.range(1).withColumn('x', col('id') * 1)\ndf2 = spark.range(2).withColumn('x', col('id') * 2)\n```"
+  },
+  {
+   "chunk_id": "0a80382df9041a13e5e16d448ce4febe",
+   "n_tokens": 106,
+   "span": [
+    3836,
+    3991
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf3 = spark.range(3).withColumn('x', col('id') * 3)\ndf4 = spark.range(4).withColumn('x', col('id') * 4)\ndf5 = spark.range(5).withColumn('x', col('id') * 5)\n```"
+  },
+  {
+   "chunk_id": "d9bcfd39088613cd3c3485a6deccc703",
+   "n_tokens": 106,
+   "span": [
+    3992,
+    4147
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf6 = spark.range(6).withColumn('x', col('id') * 6)\ndf7 = spark.range(7).withColumn('x', col('id') * 7)\ndf8 = spark.range(8).withColumn('x', col('id') * 8)\n```"
+  },
+  {
+   "chunk_id": "d3e28dcd5be29ddf49d2d8de3a4c3cc9",
+   "n_tokens": 106,
+   "span": [
+    4148,
+    4309
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf9 = spark.range(9).withColumn('x', col('id') * 9)\ndf10 = spark.range(10).withColumn('x', col('id') * 10)\ndf11 = spark.range(11).withColumn('x', col('id') * 11)\n```"
+  },
+  {
+   "chunk_id": "a7601c204f722f99a01ffa7b5637be18",
+   "n_tokens": 106,
+   "span": [
+    4310,
+    4474
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf12 = spark.range(12).withColumn('x', col('id') * 12)\ndf13 = spark.range(13).withColumn('x', col('id') * 13)\ndf14 = spark.range(14).withColumn('x', col('id') * 14)\n```"
+  },
+  {
+   "chunk_id": "d8f93c19e08eda7946ba92a3aa77375c",
+   "n_tokens": 106,
+   "span": [
+    4475,
+    4639
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf15 = spark.range(15).withColumn('x', col('id') * 15)\ndf16 = spark.range(16).withColumn('x', col('id') * 16)\ndf17 = spark.range(17).withColumn('x', col('id') * 17)\n```"
+  },
+  {
+   "chunk_id": "35d7e3dfc987a77f8be1b98c7da17f8d",
+   "n_tokens": 106,
+   "span": [
+    4640,
+    4804
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf18 = spark.range(18).withColumn('x', col('id') * 18)\ndf19 = spark.range(19).withColumn('x', col('id') * 19)\ndf20 = spark.range(20).withColumn('x', col('id') * 20)\n```"
+  },
+  {
+   "chunk_id": "9dbfdf07dab1e2884fa0abd49a45caf7",
+   "n_tokens": 106,
+   "span": [
+    4805,
+    4969
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf21 = spark.range(21).withColumn('x', col('id') * 21)\ndf22 = spark.range(22).withColumn('x', col('id') * 22)\ndf23 = spark.range(23).withColumn('x', col('id') * 23)\n```"
+  },
+  {
+   "chunk_id": "bb531cdd22da6e0860c78c02107ebc73",
+   "n_tokens": 106,
+   "span": [
+    4970,
+    5134
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf24 = spark.range(24).withColumn('x', col('id') * 24)\ndf25 = spark.range(25).withColumn('x', col('id') * 25)\ndf26 = spark.range(26).withColumn('x', col('id') * 26)\n```"
+  },
+  {
+   "chunk_id": "02408e69bb5ce0fafb0807afdb3783b9",
+   "n_tokens": 106,
+   "span": [
+    5135,
+    5299
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf27 = spark.range(27).withColumn('x', col('id') * 27)\ndf28 = spark.range(28).withColumn('x', col('id') * 28)\ndf29 = spark.range(29).withColumn('x', col('id') * 29)\n```"
+  },
+  {
+   "chunk_id": "eff9b9ca8a374c73f868ad761b26ae66",
+   "n_tokens": 121,
+   "span": [
+    5384,
+    5833
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option0` | 0 | Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "1e1f9cf16e19039bed678bcaa8e21e34",
+   "n_tokens": 62,
+   "span": [
+    5792,
+    5925
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option0` | Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "709f9a2b770d4ddcd287a58d9ba4a301",
+   "n_tokens": 46,
+   "span": [
+    5926,
+    6006
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option1` | 10 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "7e1aa8d53b5784ddb5f0891440ed8204",
+   "n_tokens": 46,
+   "span": [
+    6007,
+    6087
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option2` | 20 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "a58608740a7453774b2cfe8404dd4599",
+   "n_tokens": 46,
+   "span": [
+    6088,
+    6168
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option3` | 30 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "31cf657e28121107bd8cb6a3fbeff0b8",
+   "n_tokens": 46,
+   "span": [
+    6169,
+    6249
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option4` | 40 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "f268ac4ed4cf83281cec42fdd4ee9f36",
+   "n_tokens": 121,
+   "span": [
+    6250,
+    6700
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option5` | 50 | Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "5a6cac44320b3d0f001794f51705b2b7",
+   "n_tokens": 62,
+   "span": [
+    6659,
+    6792
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option5` | Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "8c99eada66d2e33961eaa706be84bf4b",
+   "n_tokens": 46,
+   "span": [
+    6793,
+    6873
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option6` | 60 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "b6ad6d46757d6bef74b259ccaceb9d6a",
+   "n_tokens": 46,
+   "span": [
+    6874,
+    6954
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option7` | 70 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "02827e00079322d1f398e08c1399c965",
+   "n_tokens": 46,
+   "span": [
+    6955,
+    7035
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option8` | 80 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "4ea1d912877fe16ea81879407cb34186",
+   "n_tokens": 46,
+   "span": [
+    7036,
+    7116
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option9` | 90 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "c4d59c7f15076e4c3673c613b139c1d2",
+   "n_tokens": 121,
+   "span": [
+    7117,
+    7569
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option10` | 100 | Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "869fd515174197f1a8fd0cc481af622b",
+   "n_tokens": 62,
+   "span": [
+    7528,
+    7661
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option10` | Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "6daef398b2ae8c948c5a28ebe601f003",
+   "n_tokens": 46,
+   "span": [
+    7662,
+    7744
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option11` | 110 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "2daffb1dd7dd684fbee18f7ba5b49961",
+   "n_tokens": 71,
+   "span": [
+    7760,
+    7859
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long word\n\nbcdfghjklmnpqrstvwxzbcdfghjklmnpqrstvwxzbcdfghjklmnpqrstvwxzbcdfghjklmnpqrstvwxzbcdfghjklmnpqrstvwx"
+  },
+  {
+   "chunk_id": "7159c1c3d07233c96f5d2194d89d8ee2",
+   "n_tokens": 77,
+   "span": [
+    7861,
+    8053
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long word\n\nShortened from Spark docs pages (v3.5.0-v4.0.1): one of each construct the cleaner and chunker must handle.\nNon-ASCII text stays as it is: café, naïve, “quoted”, Ā, 中文, and a dash — like this."
+  },
+  {
+   "chunk_id": "677fb686325aefe25b6e7bccaf27d04d",
+   "n_tokens": 96,
+   "span": [
+    8072,
+    8325
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Layout table\n\n```bash\n# TERMINAL 1:\n# Running Netcat\n\n$ nc -lk 9999\napache spark\n```\n\npython:\n\n```bash\n# TERMINAL 2: RUNNING structured_network_wordcount.py\n$ ./bin/spark-submit examples/src/main/python/sql/streaming/structured_network_wordcount.py localhost 9999\n```"
+  },
+  {
+   "chunk_id": "2f0b59f1af89bdd55b229ef64741c801",
+   "n_tokens": 85,
+   "span": [
+    8349,
+    8622
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Spans and nesting\n\nLeft Input | Right Input | Join Type\n--- | --- | ---\nStream | Static | Inner | Supported, not stateful\nStream | Static | Right Outer | Not supported\nOther queries |  | All types | Append mode.; Update mode.\nArrayType | Element type, PG Array; IntegerType, integer[] | array"
+  },
+  {
+   "chunk_id": "031b65b6e6cde27e287bca1e74b5a5c5",
+   "n_tokens": 96,
+   "span": [
+    8642,
+    8891
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Code in cells\n\nProperty Name | Meaning\n--- | ---\n`rowTag` | For example, in this xml: `<books><book></book>...</books>` the value would be book.\n`cov` in `package:stats` | (code below the table)\n`samplingRatio` | Defines fraction of rows used for schema inferring."
+  },
+  {
+   "chunk_id": "100c95e5aa76668cc31c4c96fbbd79d7",
+   "n_tokens": 68,
+   "span": [
+    8838,
+    9001
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Code in cells\n\n| Defines fraction of rows used for schema inferring.\n\n```\nstats::cov(x, y = NULL, use = \"everything\",\n           method = c(\"pearson\", \"kendall\", \"spearman\"))\n```"
+  },
+  {
+   "chunk_id": "c9124988670d73239ba77f4131deb78b",
+   "n_tokens": 92,
+   "span": [
+    9019,
+    9211
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Pipe tables\n\n|Keyword|Spark SQL ANSI Mode|Spark SQL NonANSI Mode|SQL-2016|\n|:---|:---:|---:|---|\n|ADD|non-reserved|non-reserved|non-reserved|\n|**explode_outer**   ( *expr* )|reserved|non-reserved|reserved|"
+  },
+  {
+   "chunk_id": "0a395408ee335b7f35faa1b4c77d2623",
+   "n_tokens": 97,
+   "span": [
+    9245,
+    9633
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Footnotes, rules and styles\n\nMLlib uses linear algebra packages for optimised numerical processing.\n\nNote: To learn more about the benefits and background of system optimised natives, you may wish to watch Sam Halliday's ScalaX talk on High Performance Linear Algebra in Scala.\n\n**TABLE: person** with Ctrl and small print.\n\nSee Advanced Dependency Management and\n\"Improve Apache Spark write performance\"\nfor details."
+  },
+  {
+   "chunk_id": "25ec66c9ff86e5174787144f9c0ce33e",
+   "n_tokens": 109,
+   "span": [
+    9669,
+    9840
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Borders and preformatted text\n\n```sql\nSELECT * FROM person WHERE name LIKE 'M%';\n+---+---+---+\n| id|  name|age|\n+---+---+---+\n|300|  Mike| 80|\n+---+---+---+\n```\n\n```\n\nssh <driver-node> jstack <pid>\n\n```"
+  },
+  {
+   "chunk_id": "939980aacb4de8f488825fc5c114162d",
+   "n_tokens": 109,
+   "span": [
+    9871,
+    10282
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nSpark's scheduler is fully thread-safe and supports this use case to enable applications that serve\nmultiple requests (e.g. queries for multiple users). By default, Spark's scheduler runs jobs in FIFO\nfashion. Each job is divided into \"stages\" (e.g. map and reduce phases), and the first job gets\npriority on all available resources while its stages have tasks to launch, then the second job gets\npriority, etc."
+  },
+  {
+   "chunk_id": "7e31cccabda6b1bc3e247efeb85c12d9",
+   "n_tokens": 125,
+   "span": [
+    10210,
+    10662
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nits stages have tasks to launch, then the second job gets\npriority, etc. If the jobs at the head of the queue don't need to use the whole cluster, later jobs\ncan start to run right away, but if the jobs at the head of the queue are large, then later jobs may be\ndelayed significantly. `spark.scheduler.mode` can be set to FAIR. (This is useful for multi-user\nsettings.) Starting in Spark 0.8, it is also possible to configure fair sharing between jobs."
+  },
+  {
+   "chunk_id": "afa2ffa33f9042dd45102cadf896b5dd",
+   "n_tokens": 102,
+   "span": [
+    10603,
+    11036
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nit is also possible to configure fair sharing between jobs. Under\nfair sharing, Spark assigns tasks between jobs in a \"round robin\" fashion, so that all jobs get a\nroughly equal share of cluster resources. This means that short jobs submitted while a long job is\nrunning can start receiving resources right away and still get good response times, without waiting\nfor the long job to finish. This mode is best for multi-user settings."
+  },
+  {
+   "chunk_id": "bcb49fd595de42bfcb6d29eb04ba7396",
+   "n_tokens": 123,
+   "span": [
+    10994,
+    11373
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nThis mode is best for multi-user settings.\n\n- `spark.scheduler.allocation.file`: the path of the pool file, which can be local or remote.\n- `spark.scheduler.pool`: the pool a thread's jobs go to; each thread can set its own local property.\n- `spark.scheduler.mode`: FIFO or FAIR; FAIR shares the cluster between jobs in round-robin fashion.\n\n[example: datasource.py, csv_dataset]"
+  }
+ ],
+ "e70bf55c7cf1b856": [
+  {
+   "chunk_id": "caed4637717370118c6a8a5f9d404dd6",
+   "n_tokens": 23,
+   "span": [
+    0,
+    116
+   ],
+   "embed_text": "Quick Start\n\nThis tutorial provides a quick introduction to using Spark. See the programming guide\nfor a more complete reference."
+  },
+  {
+   "chunk_id": "a5dac86bfd14f0ee785b8304184b42f2",
+   "n_tokens": 170,
+   "span": [
+    174,
+    708
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Basics\n\nSpark's shell provides a simple way to learn the API, as well as a powerful tool to analyze data interactively.\n\npython:\n\nSpark's primary abstraction is a distributed collection of items called a Dataset. As a result, all Datasets\nin Python are Dataset[Row], and we call it `DataFrame` to be consistent with the data frame concept in Pandas.\n\n```python\n>>> textFile = spark.read.text(\"README.md\")\n```\n\n```scala\nscala> val textFile = spark.read.textFile(\"README.md\")\ntextFile: org.apache.spark.sql.Dataset[String] = [value: string]\n```"
+  },
+  {
+   "chunk_id": "9aaef445c8a5d806fc1c247b6f8878e5",
+   "n_tokens": 71,
+   "span": [
+    731,
+    912
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Spark Properties\n\nProperty Name | Default | Meaning | Since Version\n--- | --- | --- | ---\n`spark.app.name` | (none) | The name of your application. This will appear in the UI and in log data. | 0.9.0"
+  },
+  {
+   "chunk_id": "8fe89fb7614cec92f58a0c10a0a8444a",
+   "n_tokens": 41,
+   "span": [
+    925,
+    1004
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > TF-IDF\n\nRefer to the `HashingTF` Python docs for details.\n\n[example: tf_idf_example.py]"
+  },
+  {
+   "chunk_id": "c55ef1adca24bcab220d0ecafe8d0a1f",
+   "n_tokens": 252,
+   "span": [
+    1025,
+    2070
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long paragraph\n\nSetting spark.sql.shuffle.partitions to 0 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 1 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 2 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 3 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 4 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 5 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 6 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 7 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 8 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 9 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 10 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 11 changes how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "5204c81408b0e3ecebb93d3a226c27ed",
+   "n_tokens": 252,
+   "span": [
+    1983,
+    3038
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long paragraph\n\nSetting spark.sql.shuffle.partitions to 11 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 12 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 13 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 14 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 15 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 16 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 17 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 18 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 19 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 20 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 21 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 22 changes how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "a35a61f8393d13a073f9d292a304de86",
+   "n_tokens": 172,
+   "span": [
+    2951,
+    3654
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long paragraph\n\nSetting spark.sql.shuffle.partitions to 22 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 23 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 24 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 25 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 26 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 27 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 28 changes how many tasks a shuffle stage runs. Setting spark.sql.shuffle.partitions to 29 changes how many tasks a shuffle stage runs."
+  },
+  {
+   "chunk_id": "b67b54a60f56381ca5e755d53e5716ce",
+   "n_tokens": 251,
+   "span": [
+    3680,
+    4095
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf0 = spark.range(0).withColumn('x', col('id') * 0)\ndf1 = spark.range(1).withColumn('x', col('id') * 1)\ndf2 = spark.range(2).withColumn('x', col('id') * 2)\ndf3 = spark.range(3).withColumn('x', col('id') * 3)\ndf4 = spark.range(4).withColumn('x', col('id') * 4)\ndf5 = spark.range(5).withColumn('x', col('id') * 5)\ndf6 = spark.range(6).withColumn('x', col('id') * 6)\ndf7 = spark.range(7).withColumn('x', col('id') * 7)\n```"
+  },
+  {
+   "chunk_id": "d22cd8082e4eec5054cb3638ec5d1e00",
+   "n_tokens": 251,
+   "span": [
+    4044,
+    4474
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf7 = spark.range(7).withColumn('x', col('id') * 7)\ndf8 = spark.range(8).withColumn('x', col('id') * 8)\ndf9 = spark.range(9).withColumn('x', col('id') * 9)\ndf10 = spark.range(10).withColumn('x', col('id') * 10)\ndf11 = spark.range(11).withColumn('x', col('id') * 11)\ndf12 = spark.range(12).withColumn('x', col('id') * 12)\ndf13 = spark.range(13).withColumn('x', col('id') * 13)\ndf14 = spark.range(14).withColumn('x', col('id') * 14)\n```"
+  },
+  {
+   "chunk_id": "1fee9878b3a0084bd6defc6cd508508e",
+   "n_tokens": 251,
+   "span": [
+    4420,
+    4859
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf14 = spark.range(14).withColumn('x', col('id') * 14)\ndf15 = spark.range(15).withColumn('x', col('id') * 15)\ndf16 = spark.range(16).withColumn('x', col('id') * 16)\ndf17 = spark.range(17).withColumn('x', col('id') * 17)\ndf18 = spark.range(18).withColumn('x', col('id') * 18)\ndf19 = spark.range(19).withColumn('x', col('id') * 19)\ndf20 = spark.range(20).withColumn('x', col('id') * 20)\ndf21 = spark.range(21).withColumn('x', col('id') * 21)\n```"
+  },
+  {
+   "chunk_id": "f9e82fd63dd36ff33988780fac923ee8",
+   "n_tokens": 251,
+   "span": [
+    4805,
+    5244
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf21 = spark.range(21).withColumn('x', col('id') * 21)\ndf22 = spark.range(22).withColumn('x', col('id') * 22)\ndf23 = spark.range(23).withColumn('x', col('id') * 23)\ndf24 = spark.range(24).withColumn('x', col('id') * 24)\ndf25 = spark.range(25).withColumn('x', col('id') * 25)\ndf26 = spark.range(26).withColumn('x', col('id') * 26)\ndf27 = spark.range(27).withColumn('x', col('id') * 27)\ndf28 = spark.range(28).withColumn('x', col('id') * 28)\n```"
+  },
+  {
+   "chunk_id": "8f062f2b73b5aef4bcc0d19be9873ad0",
+   "n_tokens": 77,
+   "span": [
+    5190,
+    5299
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long code\n\n```python\ndf28 = spark.range(28).withColumn('x', col('id') * 28)\ndf29 = spark.range(29).withColumn('x', col('id') * 29)\n```"
+  },
+  {
+   "chunk_id": "4c5f87005f4976150e7128dc756bc5e3",
+   "n_tokens": 145,
+   "span": [
+    5384,
+    5925
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option0` | 0 | Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "709f9a2b770d4ddcd287a58d9ba4a301",
+   "n_tokens": 46,
+   "span": [
+    5926,
+    6006
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option1` | 10 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "7e1aa8d53b5784ddb5f0891440ed8204",
+   "n_tokens": 46,
+   "span": [
+    6007,
+    6087
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option2` | 20 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "a58608740a7453774b2cfe8404dd4599",
+   "n_tokens": 46,
+   "span": [
+    6088,
+    6168
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option3` | 30 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "31cf657e28121107bd8cb6a3fbeff0b8",
+   "n_tokens": 46,
+   "span": [
+    6169,
+    6249
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option4` | 40 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "bf4ddafe24df71d1b884bdc0dea2ae45",
+   "n_tokens": 145,
+   "span": [
+    6250,
+    6792
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option5` | 50 | Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "8c99eada66d2e33961eaa706be84bf4b",
+   "n_tokens": 46,
+   "span": [
+    6793,
+    6873
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option6` | 60 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "b6ad6d46757d6bef74b259ccaceb9d6a",
+   "n_tokens": 46,
+   "span": [
+    6874,
+    6954
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option7` | 70 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "02827e00079322d1f398e08c1399c965",
+   "n_tokens": 46,
+   "span": [
+    6955,
+    7035
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option8` | 80 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "4ea1d912877fe16ea81879407cb34186",
+   "n_tokens": 46,
+   "span": [
+    7036,
+    7116
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option9` | 90 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "ae1440c8ca6eeb19bc6f2d914d143d59",
+   "n_tokens": 145,
+   "span": [
+    7117,
+    7661
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option10` | 100 | Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "6daef398b2ae8c948c5a28ebe601f003",
+   "n_tokens": 46,
+   "span": [
+    7662,
+    7744
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long table\n\nProperty Name | Default | Meaning | Since\n`spark.example.option11` | 110 | Sets how many tasks a shuffle stage runs. | 3.0.0"
+  },
+  {
+   "chunk_id": "2fe172f96971e3a45a3bdd9e03f32ad0",
+   "n_tokens": 136,
+   "span": [
+    7760,
+    8053
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Long word\n\nbcdfghjklmnpqrstvwxzbcdfghjklmnpqrstvwxzbcdfghjklmnpqrstvwxzbcdfghjklmnpqrstvwxzbcdfghjklmnpqrstvwx\n\nShortened from Spark docs pages (v3.5.0-v4.0.1): one of each construct the cleaner and chunker must handle.\nNon-ASCII text stays as it is: café, naïve, “quoted”, Ā, 中文, and a dash — like this."
+  },
+  {
+   "chunk_id": "677fb686325aefe25b6e7bccaf27d04d",
+   "n_tokens": 96,
+   "span": [
+    8072,
+    8325
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Layout table\n\n```bash\n# TERMINAL 1:\n# Running Netcat\n\n$ nc -lk 9999\napache spark\n```\n\npython:\n\n```bash\n# TERMINAL 2: RUNNING structured_network_wordcount.py\n$ ./bin/spark-submit examples/src/main/python/sql/streaming/structured_network_wordcount.py localhost 9999\n```"
+  },
+  {
+   "chunk_id": "2f0b59f1af89bdd55b229ef64741c801",
+   "n_tokens": 85,
+   "span": [
+    8349,
+    8622
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Spans and nesting\n\nLeft Input | Right Input | Join Type\n--- | --- | ---\nStream | Static | Inner | Supported, not stateful\nStream | Static | Right Outer | Not supported\nOther queries |  | All types | Append mode.; Update mode.\nArrayType | Element type, PG Array; IntegerType, integer[] | array"
+  },
+  {
+   "chunk_id": "e761d972085d16e8ecf9218ad0ece525",
+   "n_tokens": 138,
+   "span": [
+    8642,
+    9001
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Code in cells\n\nProperty Name | Meaning\n--- | ---\n`rowTag` | For example, in this xml: `<books><book></book>...</books>` the value would be book.\n`cov` in `package:stats` | (code below the table)\n`samplingRatio` | Defines fraction of rows used for schema inferring.\n\n```\nstats::cov(x, y = NULL, use = \"everything\",\n           method = c(\"pearson\", \"kendall\", \"spearman\"))\n```"
+  },
+  {
+   "chunk_id": "c9124988670d73239ba77f4131deb78b",
+   "n_tokens": 92,
+   "span": [
+    9019,
+    9211
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Pipe tables\n\n|Keyword|Spark SQL ANSI Mode|Spark SQL NonANSI Mode|SQL-2016|\n|:---|:---:|---:|---|\n|ADD|non-reserved|non-reserved|non-reserved|\n|**explode_outer**   ( *expr* )|reserved|non-reserved|reserved|"
+  },
+  {
+   "chunk_id": "0a395408ee335b7f35faa1b4c77d2623",
+   "n_tokens": 97,
+   "span": [
+    9245,
+    9633
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Footnotes, rules and styles\n\nMLlib uses linear algebra packages for optimised numerical processing.\n\nNote: To learn more about the benefits and background of system optimised natives, you may wish to watch Sam Halliday's ScalaX talk on High Performance Linear Algebra in Scala.\n\n**TABLE: person** with Ctrl and small print.\n\nSee Advanced Dependency Management and\n\"Improve Apache Spark write performance\"\nfor details."
+  },
+  {
+   "chunk_id": "25ec66c9ff86e5174787144f9c0ce33e",
+   "n_tokens": 109,
+   "span": [
+    9669,
+    9840
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > Borders and preformatted text\n\n```sql\nSELECT * FROM person WHERE name LIKE 'M%';\n+---+---+---+\n| id|  name|age|\n+---+---+---+\n|300|  Mike| 80|\n+---+---+---+\n```\n\n```\n\nssh <driver-node> jstack <pid>\n\n```"
+  },
+  {
+   "chunk_id": "4bae6d989921385ee8f16793d37bdd55",
+   "n_tokens": 234,
+   "span": [
+    9871,
+    10808
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nSpark's scheduler is fully thread-safe and supports this use case to enable applications that serve\nmultiple requests (e.g. queries for multiple users). By default, Spark's scheduler runs jobs in FIFO\nfashion. Each job is divided into \"stages\" (e.g. map and reduce phases), and the first job gets\npriority on all available resources while its stages have tasks to launch, then the second job gets\npriority, etc. If the jobs at the head of the queue don't need to use the whole cluster, later jobs\ncan start to run right away, but if the jobs at the head of the queue are large, then later jobs may be\ndelayed significantly. `spark.scheduler.mode` can be set to FAIR. (This is useful for multi-user\nsettings.) Starting in Spark 0.8, it is also possible to configure fair sharing between jobs. Under\nfair sharing, Spark assigns tasks between jobs in a \"round robin\" fashion, so that all jobs get a\nroughly equal share of cluster resources."
+  },
+  {
+   "chunk_id": "e82e7ee084c9de7bfac3b06d8dfdd293",
+   "n_tokens": 187,
+   "span": [
+    10663,
+    11373
+   ],
+   "embed_text": "Quick Start > Interactive Analysis with the Spark Shell > A long wrapped paragraph\n\nUnder\nfair sharing, Spark assigns tasks between jobs in a \"round robin\" fashion, so that all jobs get a\nroughly equal share of cluster resources. This means that short jobs submitted while a long job is\nrunning can start receiving resources right away and still get good response times, without waiting\nfor the long job to finish. This mode is best for multi-user settings.\n\n- `spark.scheduler.allocation.file`: the path of the pool file, which can be local or remote.\n- `spark.scheduler.pool`: the pool a thread's jobs go to; each thread can set its own local property.\n- `spark.scheduler.mode`: FIFO or FAIR; FAIR shares the cluster between jobs in round-robin fashion.\n\n[example: datasource.py, csv_dataset]"
+  }
+ ]
+}

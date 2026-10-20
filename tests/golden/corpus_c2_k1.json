@@ -1,0 +1,40 @@
+{
+ "e70bf55c7cf1b856": {
+  "max_tokens": 254,
+  "overlap_tokens": 32,
+  "v3.5.0": {
+   "source_commit": "ce5ddad990373636e94071e7cef2f31021add07b",
+   "chunks": 5567,
+   "fingerprint": "8e88c4be7ee4f8c547b15ea489f4c3d2cab67d1028872cc27d96468ba4181edf"
+  },
+  "v4.0.0": {
+   "source_commit": "fa33ea000a0bda9e5a3fa1af98e8e85b8cc5e4d4",
+   "chunks": 5423,
+   "fingerprint": "4cec3e01b036dfb81a258149023ac0b06770f4408589c2008e17ec30e5d4a312"
+  },
+  "v4.0.1": {
+   "source_commit": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+   "chunks": 5436,
+   "fingerprint": "be83033f0647a76bb0d7efd1f600ec9a7d9853c238d82b11da3d2a86769ec43c"
+  }
+ },
+ "ece77f296d18fbd5": {
+  "max_tokens": 128,
+  "overlap_tokens": 16,
+  "v3.5.0": {
+   "source_commit": "ce5ddad990373636e94071e7cef2f31021add07b",
+   "chunks": 8629,
+   "fingerprint": "608f356090f2ede08db37a294ad227149693614887c6cf6d981216a3d460ff70"
+  },
+  "v4.0.0": {
+   "source_commit": "fa33ea000a0bda9e5a3fa1af98e8e85b8cc5e4d4",
+   "chunks": 8744,
+   "fingerprint": "6c815b822b92963135a59636e724d760d9699f9ac064e159b4c9421c1dddf263"
+  },
+  "v4.0.1": {
+   "source_commit": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+   "chunks": 8767,
+   "fingerprint": "188677f43132b3ada196c77cf3a9bafaeeb0fef1545a3ac9650ee0a89c68ceb6"
+  }
+ }
+}

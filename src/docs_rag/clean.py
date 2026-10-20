@@ -10,8 +10,9 @@ The order matters and is fixed (D-008):
 4. code (fenced blocks, `<pre>`/`<xmp>` blocks, inline code spans) is masked, so nothing below touches it.
    Code is full of angle brackets that are not HTML (`Dataset<Row>`, XML config, `<driver-node>`);
 5. outside code: HTML tables become GFM tables (one ` | `-joined line per row, a `--- | ---` delimiter after a
-   header row), language tabs get a `<lang>:` label line, only an allowlist of real HTML tag names is
-   stripped (text kept), then entities are unescaped;
+   header row), language tabs get a `<lang>:` label line (none when the tab opens with a code block fenced in
+   that language: the label would repeat the fence; CLEANER_VERSION 2), only an allowlist of real HTML tag
+   names is stripped (text kept), then entities are unescaped;
 6. Markdown links keep their text, images and reference-link definitions go, kramdown `{:...}` lines and the
    table-of-contents bullet before `{:toc}` go, HTML comments go;
 7. code is restored and whitespace normalised;
@@ -32,7 +33,7 @@ from dataclasses import dataclass
 # Bump when cleaned text changes for the same input. The goldens (tests/test_clean_golden.py on fixtures,
 # scripts/corpus_fingerprint.py on the real corpus) fail on any change and are never overwritten. Chunk
 # offsets (char_start/char_end) point into the cleaned text, so this version names their coordinate system.
-CLEANER_VERSION = "1"
+CLEANER_VERSION = "2"  # 2: no tab label before a code block fenced in the same language (D-012)
 
 # --- 1. front matter -----------------------------------------------------------------------------------
 
@@ -209,6 +210,7 @@ _INNER_TABLE = re.compile(
 _ROW = re.compile(r"<tr\b[^>]*>(.*?)</tr>", re.S | re.I)
 _CELL = re.compile(r"<(t[dh])\b([^>]*)>(.*?)</t[dh]>", re.S | re.I)
 _LANG_TAB = re.compile(r'<div\s+data-lang="([^"]+)"[^>]*>', re.I)
+_FENCE_LANG = re.compile(r"(?:`{3,}|~{3,})[ \t]*([\w+#.-]+)")
 _BLOCK_REF = re.compile(r"\x01(\d+)\x01")
 _WHITESPACE_ENTITY = re.compile(r"&(?:nbsp|#160|#x0*a0|#10|#x0*a|#13|#x0*d|#9|#x0*9|NewLine|Tab);|\xa0", re.I)
 
@@ -321,11 +323,26 @@ class _Tables:
         return head + "\n\n" + "\n".join(lines) + "\n\n" + "".join(f"{b}\n\n" for b in lifted)
 
 
+def _tab_label(m: re.Match[str], saved: list[str]) -> str:
+    """The `<lang>:` label line of a language tab, left out when the tab opens with a code block fenced in the
+    same language: it would only repeat the fence, and between two pieces of a split block it was a tiny chunk
+    of its own (D-012)."""
+    lang = m.group(1)
+    ref = re.match(r"\s*\x01(\d+)\x01", m.string[m.end() :])
+    if (
+        ref
+        and (fence := _FENCE_LANG.match(saved[int(ref.group(1))]))
+        and fence.group(1).lower() == lang.lower()
+    ):
+        return "\n\n"
+    return f"\n\n{lang}:\n\n"
+
+
 def _html(text: str, tables: _Tables) -> str:
     """HTML outside code to text. Entities stay escaped; clean_page unescapes after counting residue."""
     text = re.sub(r"<(style|script)\b[^>]*>.*?</\1\s*>", "", text, flags=re.S | re.I)
     text = tables.render(text)
-    text = _LANG_TAB.sub(lambda m: f"\n\n{m.group(1)}:\n\n", text)
+    text = _LANG_TAB.sub(lambda m: _tab_label(m, tables.saved), text)
     text = re.sub(r"<li\b[^>]*>", "\n- ", text, flags=re.I)
     # In a Markdown pipe-table row a <br> is a line break inside a cell, not a new row.
     text = re.sub(r"(?m)^[ \t]*\|.*$", lambda m: re.sub(r"<br\s*/?>", " ", m.group(0), flags=re.I), text)
