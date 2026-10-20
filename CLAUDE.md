@@ -124,27 +124,29 @@ uv run python scripts/corpus_fingerprint.py --update
 
 ## Next session: pick up here
 
-M4 is complete on branch `m4-dq-gate` (D-012; M4 report given to the owner on 2026-10-20). M3 is merged into
-`main`. The DQ gate runs inside `jobs/change_detect.py` before the committed row; `ops_dq_results` (append-only)
+M4 is complete and merged into `main` (D-012; M4 report given to the owner on 2026-10-20). The DQ gate runs inside `jobs/change_detect.py` before the committed row; `ops_dq_results` (append-only)
 holds one row per check per gated run, and `ops_run_log` has a new last column `dq_override` (added by `runs/m4_b`).
 The chain for sink `none` now has 9 committed runs and ends at v4.0.1 again (M4 demo: rollback to v3.5.0 and
 forward to v4.0.0, both with `--accept-drift`). Evidence: `runs/m4_a`..`m4_l`, verified by `m4_v` (501/501) and
-`m4_w` (184/184). Do not re-run the `m3_*` or `m4_*` labels.
+`m4_w` (184/184). Do not re-run the `m3_*` or `m4_*` labels. The deleted endpoint's billing stopped (`m4_m`).
 
-**Do not start M5 until the owner says so.** Open items:
-- Owner decides whether to merge `m4-dq-gate` into `main`. Remote branches `m0-smoke-test`, `m1-bronze`,
-  `m2-silver`, `m3-change-detection` (all merged) and `claude/modest-archimedes-mp5zx3` (stale) are still on
-  GitHub: the session's git proxy refuses branch deletion (HTTP 403), so the owner deletes them in the GitHub UI.
-- `docs_rag_endpoint` was deleted on 2026-10-19 05:26Z (idle, 96 DBU/day; D-001). Re-probe
-  `system.billing.usage` after 2026-10-20 05:26Z to confirm the endpoint's usage stopped, and save the output
-  under `runs/`.
-- Owner's call (D-012, Open questions): the drift thresholds. Built: one 10% threshold (fires on 3 of 41 release
-  transitions: no patch, 2 of 7 minor, the one major). Alternatives on the same calibration: patch 5% / feature
-  10% (same 3 firings, tighter on patches), patch 5% / feature 20% (no firings), or drop/relax `drift_docs`.
-- Before M5 (D-012 Consequences): a CLEANER/CHUNKER version bump cannot cross an existing chain (the baseline's
-  config_id leaves `Config.chunk_grid`). Either make known cleaner fixes (the lone tab-label chunks) while only
-  the `none` chain exists, or build a logged re-baseline path (verify the baseline from stored silver rows and
-  its logged fingerprint). Optional: bind `--accept-drift` to a failed run's logged numbers (plan, then apply).
+**Do not start M5 until the owner says so.** Next work, as the owner decided on 2026-10-20 (D-012), before
+M5, on a new branch:
+1. Drift thresholds by release kind: patch 5%, minor and major 10% (kind from the two tags' version numbers,
+   whichever way; a same-tag run counts as patch; tags that are not releases get the strictest). Config,
+   `docs_rag.dq`, tests, the verifier's POLICY (by the gate version a run used, so M4's 10% runs still verify),
+   then a short Databricks demo.
+2. Bind the override to a failed run: `--accept-drift-of <failed run_id>` plus a reason, refused unless this
+   run's drift rows (check, numerator, denominator) equal that run's logged ones, for the same tag, baseline
+   and config. Log both run ids.
+3. A logged re-baseline path, so a CLEANER/CHUNKER version bump can cross an existing chain: verify the baseline
+   from its stored silver rows and logged chunk fingerprint instead of re-chunking with today's code; a run
+   whose config differs from its baseline's is a logged config change. Prove it with a real bump: the lone
+   tab-label chunks (`java:`, `scala:`, `r:`) as the first cleaner fix.
+Open items:
+- Remote branches `m0-smoke-test`, `m1-bronze`, `m2-silver`, `m3-change-detection`, `m4-dq-gate` (all merged)
+  and `claude/modest-archimedes-mp5zx3` (stale) are still on GitHub: the session's git proxy refuses branch
+  deletion (HTTP 403), so the owner deletes them in the GitHub UI.
 - For M5's gold writes (from M1/M2): take counts from our own MERGE metrics (the sync pipeline's row metrics are
   always 0, D-001); on Databricks a no-op MERGE still writes an empty table version (D-006 run b), and
   Databricks commits its own `OPTIMIZE` versions (D-010): never read "we wrote" from a version bump.

@@ -167,8 +167,10 @@ identifiers redacted. Commands:
   delete). It was kept at first because Free Edition allows only one, but idle it billed 96 DBU a day, which
   likely counts against the undisclosed quota (see Quota), and nothing needs it before M5. M5 creates it again (STANDARD, same name)
   right before the real index; budget about 20 min, since the M0 index waited at least 1043 s in
-  `PROVISIONING_ENDPOINT`. Not yet checked: that the 96 DBU a day actually stopped (re-probe
-  `system.billing.usage` more than 24 h after the deletion).
+  `PROVISIONING_ENDPOINT`. **The billing stopped** (`runs/m4_m_billing_after_endpoint_delete.json`, queried
+  2026-10-20 07:46Z): `VECTOR_SEARCH` billed 4 DBU in every hour up to the deletion, 2.2382 DBU in the hour of
+  it, and nothing after. The usage table's latest record then ended at 02:00Z, so it lagged about 6 h and the
+  check covers about 20 h after the deletion.
 - Unity Catalog keeps dropped tables recoverable with `UNDROP` and counts them when checking whether a schema
   is empty. A plain `DROP SCHEMA` therefore failed with "not empty" while `SHOW TABLES` returned nothing, and
   the cleanup had to force-drop after checking `SHOW TABLES DROPPED` held only the two smoke-test objects
@@ -721,8 +723,10 @@ first draft on the points marked "review" below.
 
 ## D-012 — The DQ gate between silver and gold
 
-- **Date:** 2026-10-20 · **Status:** Accepted, except the drift thresholds, which await the owner (Open
-  questions) (evidence: `runs/m4_*`)
+- **Date:** 2026-10-20 · **Status:** Accepted (evidence: `runs/m4_*`). **Owner decisions of 2026-10-20, not
+  yet built:** drift thresholds by release kind (patch 5%, minor and major 10%; option (4) below); the override
+  bound to a failed run's logged numbers (Consequences); and a logged re-baseline path rather than fixing the
+  cleaner before M5 (Consequences).
 
 **Context.** Brief item 5: "Data-quality checks: empty or tiny chunks, oversized chunks, duplicate chunks,
 missing metadata, and row-count drift between runs. A failed check stops the pipeline." CLAUDE.md: a failed
@@ -759,8 +763,8 @@ threshold and a logged override.
   "fitted". (5) Drop `drift_docs` or make it loss-only: it causes every historical firing (chunks fire only
   once, together with docs; tokens never), and the brief's "row-count drift" can be read as chunks, the rows
   gold publishes. Kept because it sees what chunk counts hide: 4.0.0 deleted 51 docs while chunks fell 2.5%,
-  and losing 51 pages is worth a human look even when it is a release. The owner decides between (3) and (4)
-  (Open questions).
+  and losing 51 pages is worth a human look even when it is a release. The owner chose (4) with patch 5% and
+  minor and major 10% (2026-10-20; not yet built, so the runs below used 10% throughout).
 - *Statuses.* A "warn" status was dropped: a check passes or fails; `overridden` and `not_applicable` exist
   only for drift.
 - *Language-tab labels.* 8 of the 10 tiny chunks logged as examples for v4.0.1 are lone tab labels (`java:`,
@@ -899,12 +903,10 @@ threshold and a logged override.
 - **M3 — chunk ID stability.** *Answered in M2 (D-009, D-010):* content-addressed IDs within heading sections
   are local (an edit to a section's text leaves other sections' chunks alone; a heading rename re-IDs the
   chunks beneath it), but they do not cut re-embedding cost against a whole-page baseline. M3 counts chunk-level change as added and removed chunk_ids.
-- **M4 — row-count drift threshold.** *Built in M4 (D-012), thresholds for the owner to confirm:* drift of
-  docs, chunks and tokens against the baseline run, with a per-run `--accept-drift "<reason>"` that is logged,
-  refused when nothing drifted, and never covers a loss over 50%. Built: one 10% threshold, which fires on 3 of
-  the 41 release transitions since v3.0.0 (no patch release, 2 of 7 minor, the one major). Alternatives with the
-  same calibration (`runs/m4_a`): patch 5% and feature releases 10% (the same 3 firings, tighter on patch
-  releases), or patch 5% and feature releases 20% (no firings). Or drop or relax `drift_docs`, which causes all 3.
+- **M4 — row-count drift threshold.** *Answered in M4 (D-012); the owner chose 2026-10-20:* drift of docs,
+  chunks and tokens against the baseline run, at 5% for a patch release and 10% for a minor or major one (the
+  same 3 firings in 41 historical transitions as one 10% rule, tighter on patch releases), with a logged
+  `--accept-drift` override that will be bound to a failed run's numbers. Built so far: one 10% threshold.
 - **M6 — relevance labels must not depend on chunking.** Gold answers are labelled as
   (doc path, section) plus an answer span, given as a verbatim quote of the cleaned text (D-010). A retrieved
   chunk counts as relevant if its slice overlaps an occurrence of the quote. Otherwise chunk sizes cannot be compared. With n=50, the 95% CI half-width on recall@5 is
