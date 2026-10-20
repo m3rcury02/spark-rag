@@ -142,7 +142,7 @@ uv run --with databricks-sdk==0.152.0 python scripts/m4_verify_gate.py --label <
     --sink gold_chunk_embeddings --job-runs runs/m5_*_detect_*.json
 uv run --with databricks-sdk==0.152.0 python scripts/m3_verify_changes.py --label <label> \
     --sink gold_chunk_embeddings --job-runs runs/m5_*_detect_*.json
-# The embedding canary is made once per model (never overwritten): scripts/m5_canary.py, same --with flags.
+# The embedding canary (one file today, MiniLM; never overwritten): scripts/m5_canary.py, same --with flags.
 ```
 
 ## Next session: pick up here
@@ -155,7 +155,8 @@ syncs the index from a committed state and proves it equal by key scan. The gold
 v3.5.0 (5,567 embedded) → v4.0.0 (drift accepted, 1,866 embedded) → v4.0.0 (0) → v4.0.1 (21 embedded); gold
 holds 5,436 rows at version 4. `ops_run_log` has 53 columns (`runs/m5_b` added six). The chain for sink `none`
 (15 runs, M3/M4) is unchanged. Evidence: `runs/m5_*`, verified by `m5_v1` (42/42, incl. the index scan),
-`m5_v2` (379/379) and `m5_v3b` (85/85; `m5_v3` failed on a verifier defect, kept as history). The index and the
+`m5_v2`/`m5_v2b` (379/379) and `m5_v3b` (85/85; `m5_v3` failed on a verifier defect, kept as history; `m2_e`
+has no cleaner-2 numbers, so no `m2_e` comparison applies to this chain). The index and the
 endpoint were deleted afterwards (`m5_m`, `m5_n`); gold stays. Do not re-run the `m3_*`, `m4_*`, `m4x_*` or
 `m5_*` labels.
 
@@ -169,9 +170,12 @@ endpoint were deleted afterwards (`m5_m`, `m5_n`); gold stays. Do not re-run the
   evidenced only by the job's own error messages.
 - For M6: the 2×2 grid (254/32 and 128/16 × MiniLM and bge-small) cannot have four live indexes (one endpoint,
   quota): rank exactly over gold-like tables, or locally. Silver holds both sizes under cleaner 2; bge needs its
-  own canary (revision `5c38ec7c405ec4b44b94cc5a9bb96e735b38267a`) and its query prefix decided. Anything that
-  reads the live index must check the last `sync_index` record: a committed head does not mean the index caught
-  up (D-014, decision 4).
+  own canary (revision `5c38ec7c405ec4b44b94cc5a9bb96e735b38267a`), which first needs one canary file per model
+  (today `m5_canary.py` and `load_canary` handle one), and its query prefix decided. Anything that reads the live
+  index should run `sync_index` first: a committed head does not mean the index caught up, and the sync job
+  writes no table row (D-014, decision 4).
+- Unit-tested only (added after the demo runs, `860e3e1`): a failing canary logged alone as its DQ row; the
+  failed-index check in the two sync waits that lacked it.
 - Never read "we wrote" from a gold version bump: Databricks commits its own OPTIMIZE/VACUUM (gold v3, D-010).
 
 ## Milestones (status)

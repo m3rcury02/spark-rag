@@ -53,7 +53,7 @@ identifiers redacted. Commands:
 | Outbound network from serverless | All 8 probed hosts answered over HTTPS: pypi.org, files.pythonhosted.org, github.com, api.github.com, codeload.github.com, raw.githubusercontent.com, huggingface.co, download.pytorch.org | `m0_smoke_test.json` → `network` |
 | Package install | `%pip install databricks-ai-search==0.78 sentence-transformers==6.1.0` plus a Python restart took 127.1 s. torch was not preinstalled, so pip pulled the CUDA build `2.14.1+cu130`. pip printed a resolver ERROR about a protobuf conflict with the preinstalled `google-api-core` (cell 2). It did no harm in this run | `install`; `m0_smoke_test_cells.txt` |
 | Embedding models on CPU | Both models downloaded from huggingface.co and loaded. On 256 texts of 189 tokens (batch 32, one pass): all-MiniLM-L6-v2 ran at 10.6 texts/s and bge-small-en-v1.5 at 6.6 texts/s. Hardware: 4 vCPU aarch64 with 15.3 GiB (the notebook's `mem_total_gb` key is really GiB). Serverless "does not guarantee a specific CPU architecture" ([dependencies](https://docs.databricks.com/aws/en/compute/serverless/dependencies), updated 2026-09-29), so a later run may land on x86_64 | `embeddings`, `compute` |
-| Endpoint | `docs_rag_endpoint` (STANDARD) reported ONLINE 0.1 s after it was created. The first index then waited in `PROVISIONING_ENDPOINT` for at least 1043 s. Whether later index creations wait again is unknown (*answered in D-014: an endpoint created again waited 710–741 s at its first index*) | `endpoint`; `m0_smoke_test_cells.txt` cell 12 |
+| Endpoint | `docs_rag_endpoint` (STANDARD) reported ONLINE 0.1 s after it was created. The first index then waited in `PROVISIONING_ENDPOINT` for at least 1043 s. Whether later index creations wait again is unknown (*partly answered in D-014: the first index on an endpoint created again waited again, 710–741 s; a second index on an already provisioned endpoint is untested*) | `endpoint`; `m0_smoke_test_cells.txt` cell 12 |
 | Delta Sync index (self-managed 384-d vectors, TRIGGERED) | Created and reported ready in 1138.3 s with 5 rows indexed. "Ready" came while the initial update was still running (`detailed_state` `ONLINE_TRIGGERED_UPDATE`; that update completed at 23:17:13.758Z). The test query's top-1 result was the expected row (a mechanics check, not a quality check) | `delta_sync`; `m0_sync_pipeline.json` |
 | Do UPDATE and DELETE propagate? | **Yes, measured.** We ran `DELETE` on c3, a `MERGE` update on c4, then `index.sync()`. After the sync's update completed, the index held exactly c1, c2, c4 and c5, with c4's new text, and `indexed_row_count` went from 5 to 4. **Confirmed independently** from outside the workspace with `scan()`, which lists every row by primary key; the notebook's own check used ANN search, which could in principle miss a row. The mutations were issued around the time the initial update finished, so these files cannot rule out that its tail applied part of them. Either way, no hand-written index call was needed | `delta_sync`; `m0_index_scan.json` |
 | Was `sync()` a separate update? Was it incremental? | **Separate: yes.** `sync()` started its own pipeline update 11.3 s after the initial update completed. It took 65.1 s, of which 49.0 s was start-up before it reached RUNNING; the initial update's start-up was 59.8 s. The notebook's 83.0 s "visible after" figure includes its 20 s polling interval (`time.sleep(20)` in the notebook). **Incremental: not measurable here.** `full_refresh=false` is also set on the initial full snapshot, and `num_output_rows` is 0 for both updates. That only changed rows are processed comes from the docs (see the docs table above) | `m0_sync_pipeline.json`; `m0_smoke_test.json` → `delta_sync` |
@@ -179,7 +179,8 @@ identifiers redacted. Commands:
   so its capacity is sized for the corpus. If capacity errors still appear, recreate the index rather than
   trying to grow it.
 - Call `index.sync()` in the same job right after each gold MERGE, wait for that update to complete, and log
-  its pipeline update id. (*D-014 moved the sync into its own job, run right after the committed row.*) This keeps the CDF gap short. CDF records "are transient and only accessible for a
+  its pipeline update id. (*D-014 moved the sync into its own job, to run right after the committed row: by hand
+  until M7's job graph chains it.*) This keeps the CDF gap short. CDF records "are transient and only accessible for a
   specified retention window"
   ([change data feed](https://docs.databricks.com/aws/en/tables/features/change-data-feed), updated
   2026-10-09), so an index that goes a long time without a sync may be unable to read the changes it missed.
@@ -900,7 +901,8 @@ threshold and a logged override.
 
 **Consequences.**
 - M5, order of steps (*superseded by D-014: the committed row comes before the index sync, which became its
-  own job, and there is no automatic resume*): chunk checks → embed into a staging table → vector checks (dimension, no NaN, norm),
+  own job; there is no automatic resume; and there is no staging table, the vectors go from memory into the
+  MERGE source*): chunk checks → embed into a staging table → vector checks (dimension, no NaN, norm),
   logged to `ops_dq_results` like the others, which the nine-check `gate` cannot take as it stands → gold MERGE
   with the token → index sync and wait → committed row. Vector checks after the MERGE would be audit after
   write, since gold is the index's source. A failure between the MERGE and the committed row leaves gold at the
@@ -1041,7 +1043,9 @@ the vectors into an index (AI Search Delta Sync with self-managed embeddings, D-
    (`m5_a`). Every job that embeds encodes those texts first and stops, before the bulk encode, unless every
    cosine with the shipped vectors is at least 0.999. A wrong model, revision, pooling or normalization changes
    the vectors while every other vector check (dimension, finite values, unit norm) still passes. The cosines
-   are logged as the `embedding_canary` DQ row.
+   are logged as the `embedding_canary` DQ row: with the other four vector rows when it passes, alone when it
+   fails (the job then stops). The alone-on-failure path was added after the demo runs (`860e3e1`) and is
+   covered by unit tests only.
 3. *Gold rows never change.* A run inserts the chunks it added and deletes the ones it removed; it never
    updates a row. A kept row keeps the `embedded_by_run_id` of the run that inserted it, and that is the
    evidence that only changed chunks were embedded. The schema is frozen once an index exists, because the
@@ -1061,12 +1065,14 @@ the vectors into an index (AI Search Delta Sync with self-managed embeddings, D-
 
    The index is synced afterwards, by its own job. D-012 had the sync, and the wait for it, before the commit.
    The index is a replica of gold. If the sync came first and failed, gold would be merged while the run stayed
-   uncommitted. That blocks the chain: the next run finds gold at neither the head nor its own target, over a
-   failure that changed nothing in gold. Committing first keeps the chain's promise that gold holds the head's
+   uncommitted. That blocks the chain over a failure that changed nothing in gold: the next run finds gold off
+   the chain head (at its own target if it repeats the tag, which decision 5 stops; at neither otherwise). Committing first keeps the chain's promise that gold holds the head's
    chunks, and a failed sync is simply run again.
 
-   The cost: a committed head no longer says the index has caught up. The sync job's record says that, so
-   anything that reads the index (M6, M9) must check the last sync. This also replaces D-001's plan of syncing
+   The cost: a committed head no longer says the index has caught up. Only the sync job's summary says that
+   (the artifacts Volume and `runs/`; it names the chain head it synced to and writes no table row). Anything
+   that reads the index (M6, M9) should run `sync_index` first: it is cheap when nothing changed (a key scan,
+   no sync) and proves the index equals gold. This also replaces D-001's plan of syncing
    inside the pipeline job. The CDF retention window still argues for running the sync right after the commit,
    as M7's job graph will.
 5. *No automatic resume.* Suppose gold already holds a run's target while the chain head is still its
@@ -1087,7 +1093,8 @@ the vectors into an index (AI Search Delta Sync with self-managed embeddings, D-
    4. Three probes query the index with gold rows' own vectors, and each row must come back in its own top 5.
       This checks the mechanics, not retrieval quality, which is M6.
 
-   A failed index state stops every wait at once, because the endpoint bills by the hour. The REST calls go
+   A failed index state stops every wait at once, because the endpoint bills by the hour. (In the demo runs
+   only the final two waits checked it; the other two were added in `860e3e1`, unit-tested only.) The REST calls go
    through `api_client.do`, so the job runs with the serverless job's own credentials and the module tests run
    against a fake.
 7. *A new chain.* Gold's chain starts with `--initial` at v3.5.0 and follows D-002's path. It is not compared
@@ -1108,9 +1115,9 @@ in one task attempt, `m5_o`):
 | c | v3.5.0 `--initial`: gold created; 5,567 chunks (666,786 tokens) embedded in 193.1 s, 28.8 chunks/s on serverless aarch64, model load 11.8 s; canary cosines 0.99999 (aarch64 against the x86_64 reference); MERGE 5,567 inserted, gold version 1; job 390 s | `m5_c_*` |
 | d | v4.0.0: drift_docs 244 → 212 (−13.1%, limit 10% for a major release) fails the gate before gold: no model load, no vector rows | `m5_d_*` |
 | e | endpoint created: ONLINE 0.3 s after the call | `m5_e_*` |
-| f | index created: `PROVISIONING_ENDPOINT` for 710–741 s (30 s polls), then index, pipeline resources and initial snapshot; `ONLINE_NO_PENDING_UPDATE` with 5,567 rows after 988 s. So the endpoint's ONLINE did not mean provisioned, as in M0 (D-001); this answers D-001's open point that a recreated endpoint waits again | `m5_f_*` |
+| f | index created: `PROVISIONING_ENDPOINT` for 710–741 s (30 s polls), then index, pipeline resources and initial snapshot; `ONLINE_NO_PENDING_UPDATE` with 5,567 rows after 988 s. So the endpoint's ONLINE did not mean provisioned, as in M0 (D-001): the first index on a recreated endpoint waits again | `m5_f_*` |
 | g | sync job: the index's 5,567 keys equal gold's, so no sync; 3/3 probes top-1 | `m5_g_*` |
-| h | v4.0.0 accepting run d's drift: docs +19 / ~96 / −51; chunks 5,567 → 5,423; **1,866 embedded** (215,078 of 689,619 tokens, 31.2%: 590 in new docs, 1,276 in changed docs); 3,557 kept, not re-embedded (2,037 moved); 2,010 deleted (1,484 from changed docs, 526 from deleted ones); gold version 2 | `m5_h_*` |
+| h | v4.0.0 accepting run d's drift: docs +19 / ~96 / −51; chunks 5,567 → 5,423; **1,866 embedded** (590 chunks in new docs, 1,276 in changed docs; 215,078 of 689,619 tokens, 31.2%); 3,557 kept, not re-embedded (2,037 moved: the job's own count, which no verifier checks); 2,010 deleted (1,484 from changed docs, 526 from deleted ones); gold version 2 | `m5_h_*` |
 | i | sync job: the index was missing exactly 1,866 keys and held 2,010 extra; one update COMPLETED; then keys equal gold's (5,423); probes 3/3 | `m5_i_*` |
 | j | v4.0.0 again: 0 added / 0 removed / 5,423 kept; no model load, no MERGE, no gold version | `m5_j_*` |
 | k | v4.0.1 (patch, gate passes): **21 embedded** (3,538 of 691,882 tokens, 0.51%); 8 deleted; 5,415 kept; gold version 4. Version 3 is an OPTIMIZE Databricks ran on its own between h and k | `m5_k_*` |
@@ -1126,14 +1133,18 @@ in one task attempt, `m5_o`):
     metrics agree. The history holds exactly one MERGE per run that changed gold. Every vector has 384 finite
     values, and the largest L2 norm error is 1.3e-7. A sample of 200 rows re-embedded locally (x86_64) has a
     minimum cosine of 0.99998 with gold's. The index's keys (scan) equal gold's.
-  - `m5_v2_gate_vs_git.json` (379, all pass) re-checks every DQ row, now including the five vector rows. Those
-    rows exist exactly for runs that embedded, with the added count as their denominator. They were written in
+  - `m5_v2_gate_vs_git.json` (379, all pass; again after the audit fixes as `m5_v2b`, 379) re-checks every DQ
+    row, now including the five vector rows. Those rows exist exactly for runs that embedded; four have the
+    added count as their denominator, the canary row its 3 texts. They were written in
     a second insert, after the chunk checks and before the committed row.
-  - `m5_v3b_changes_vs_git.json` (85, all pass) re-checks the counts and the chain.
-  - An earlier `m5_v3` failed five comparisons with `runs/m2_e`. The verifier had matched `m2_e` by chunk size
-    alone, but `m2_e` holds cleaner 1's numbers (config `ccbd80f05e15c8dd`), and this chain runs under cleaner
-    2. The verifier now matches by config id, computed with `m2_e`'s own commit's code. `m5_v3` is kept as
-    history. Before M5 no run had reached that comparison under cleaner 2.
+  - `m5_v3b_changes_vs_git.json` (85, all pass) re-checks the counts and the chain against re-chunked git and
+    D-002.
+  - An earlier `m5_v3` (93 checks) failed five of its eight comparisons with `runs/m2_e`. The verifier had
+    matched `m2_e` by chunk size alone, but `m2_e` holds cleaner 1's numbers (config `ccbd80f05e15c8dd`), and
+    this chain runs under cleaner 2. The verifier now matches by config id, computed with `m2_e`'s own
+    commit's code. `m2_e` has no numbers for cleaner 2, so `m5_v3b` makes no `m2_e` comparison for this chain:
+    its 85 checks are `m5_v3`'s 93 less those eight. `m5_v3` is kept as history. Before M5 no run had reached
+    that comparison under cleaner 2.
 - *Cost of incremental embedding:* the embedded share of tokens was 100% for the initial load, 31.2% for a
   major release and 0.51% for a patch release. The detect jobs took 101–390 s and the sync jobs 97–217 s.
   The endpoint existed from 18:26 to 19:09 UTC (about 43 min; at D-001's 4 DBU/h about 2.9 DBU, an inference).
@@ -1150,11 +1161,12 @@ in one task attempt, `m5_o`):
 **Consequences.**
 - The manual repair (decision 5) is untested: no run failed between a MERGE and its commit.
 - Silver rows of a config must stay while a chain's head points at it (D-013). Gold needs no positions; they
-  come from silver (D-011), and 2,037 kept chunks moved in run h alone.
+  come from silver (D-011), and the job counted 2,037 kept chunks that moved in run h alone.
 - Once a model change creates a second gold table, it needs a second index. The endpoint holds both, but
   quota caps how long they can stay up.
 - M6 ranks the 2×2 grid without four live indexes (D-001), against gold-like tables of each model and size.
-  It can reuse this pipeline's embedder and canary, with one canary per model.
+  It can reuse this pipeline's embedder. There is one canary file today (MiniLM): a second model first needs a
+  canary file per model in `scripts/m5_canary.py` and `embedder.load_canary`.
 - Still open from D-012: the override's reason test is lexical, nothing records who overrode, and gains are
   not capped. Embedding cost is now measured: 28.8–32.2 chunks/s on the two large encodes, about 3 minutes
   of encoding for a full load.
