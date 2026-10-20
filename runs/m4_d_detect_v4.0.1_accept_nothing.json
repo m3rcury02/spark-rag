@@ -1,0 +1,175 @@
+{
+  "meta": {
+    "label": "m4_d_detect_v4.0.1_accept_nothing",
+    "git_commit": "9708c3fec7148a3370f79a1261203cdfd8ee9129",
+    "script": "jobs/change_detect.py",
+    "job_args": [
+      "--tag",
+      "v4.0.1",
+      "--accept-drift",
+      "M4 demo: an override given when nothing drifted must be refused"
+    ],
+    "target": "workspace.docs_rag_dev",
+    "run_id": "2df9f72a-b1cf-448f-8f3f-7bc5b996e10e",
+    "environment_version": "4",
+    "wheel": "docs_rag-0.0.1.dev85+g9708c3fec-py3-none-any.whl",
+    "parent_run_id": 1002258704399834,
+    "task_run_id": 794438751379321,
+    "result_state": "FAILED",
+    "state_message": "Task main failed with message: Workload failed, see run output for details.",
+    "run_start_utc": "2026-10-20T01:22:26Z",
+    "run_end_utc": "2026-10-20T01:23:22Z",
+    "run_duration_seconds": 56.3
+  },
+  "summary": {
+    "run_id": "2df9f72a-b1cf-448f-8f3f-7bc5b996e10e",
+    "started_utc": "2026-10-20T01:22:52Z",
+    "tag": "v4.0.1",
+    "sink": "none",
+    "config_id": "ccbd80f05e15c8dd",
+    "accept_drift": "M4 demo: an override given when nothing drifted must be refused",
+    "attempt_id": "aa01d2d5e42345fb94726ffa8be66842",
+    "environment": {
+      "python": "3.12.3",
+      "databricks_runtime_version": "client.4.10",
+      "databricks_connect": "17.3.14",
+      "docs_rag": "0.0.1.dev85+g9708c3fec",
+      "tokenizers": "0.23.3",
+      "machine": "aarch64",
+      "spark": "4.2.0"
+    },
+    "earlier_attempts": [],
+    "baseline": {
+      "run_id": "e3a95072-cd43-4ffe-96a5-19fb01ae8a77",
+      "baseline_run_id": "fdd92ebc-c1e4-4a23-b43d-6638f9f6c440",
+      "status": "committed",
+      "to_version_tag": "v4.0.1",
+      "to_commit_sha": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+      "to_config_id": "ccbd80f05e15c8dd",
+      "to_docs_fingerprint": "5b1534b24125aa7d7131d72727e2b28ff85b072262ed48dceedb3b40ba798c02",
+      "to_chunks_fingerprint": "ad300f7ddb87b42718cd0e0aab40e948e5f509124cc0c64224ede897805cb827"
+    },
+    "dq": [
+      {
+        "check": "empty_chunks",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 5462,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "body with no token (blank, or only characters the tokenizer drops), or blank embed text; fails if any",
+        "examples": [],
+        "override_reason": null
+      },
+      {
+        "check": "tiny_chunks",
+        "status": "pass",
+        "numerator": 46,
+        "denominator": 5462,
+        "observed": 0.008421823507872574,
+        "threshold": 0.02,
+        "rule": "body under 5 tokens; fails above 2% of chunks",
+        "examples": [
+          "docs/sql-data-sources-avro.md #9: 2 tokens 'scala:'",
+          "docs/sql-data-sources-avro.md #12: 2 tokens 'java:'",
+          "docs/sql-data-sources-avro.md #15: 2 tokens 'r:'",
+          "docs/sql-data-sources-parquet.md #13: 2 tokens 'scala:'",
+          "docs/sql-data-sources-parquet.md #16: 2 tokens 'java:'",
+          "docs/sql-data-sources-protobuf.md #10: 2 tokens 'scala:'",
+          "docs/sql-data-sources-protobuf.md #15: 2 tokens 'java:'",
+          "docs/sql-ref-datatypes.md #82: 2 tokens 'r:'",
+          "docs/sql-ref-functions.md #4: 3 tokens '* Generator Functions'",
+          "docs/sql-ref-syntax-aux-conf-mgmt-reset.md #4: 2 tokens '* SET'"
+        ],
+        "override_reason": null
+      },
+      {
+        "check": "oversized_chunks",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 5462,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "embed text over 254 tokens (max_tokens 254; the embedding models' 256 less [CLS] and [SEP]); fails if any",
+        "examples": [],
+        "override_reason": null
+      },
+      {
+        "check": "duplicate_chunk_ids",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 5462,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "rows beyond the first of a repeated chunk_id; fails if any",
+        "examples": [],
+        "override_reason": null
+      },
+      {
+        "check": "duplicate_embed_text",
+        "status": "pass",
+        "numerator": 3,
+        "denominator": 5462,
+        "observed": 0.0005492493592090809,
+        "threshold": 0.01,
+        "rule": "copies beyond the first of a repeated embed text; fails above 1% of chunks",
+        "examples": [
+          "2x in ['docs/sql-ref-syntax-ddl-alter-view.md']: 'ALTER VIEW > Description > Parameters\\n\\n* **view_identifier**\\n\\n    Specifies a vi'",
+          "2x in ['docs/sql-migration-guide.md']: 'Migration Guide: SQL, Datasets and DataFrame > Upgrading from Spark SQL 2.4 to 3'",
+          "2x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Shared Variables > Accumulators\\n\\nWhile this code used th'"
+        ],
+        "override_reason": null
+      },
+      {
+        "check": "missing_metadata",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 5462,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "a docs/*.md path, non-blank section names (the title first), version_tag v4.0.1, a 40-hex commit_sha; fails if any row misses one",
+        "examples": [],
+        "override_reason": null
+      },
+      {
+        "check": "drift_docs",
+        "status": "pass",
+        "numerator": 213,
+        "denominator": 213,
+        "observed": 0.0,
+        "threshold": 0.1,
+        "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+        "examples": [],
+        "override_reason": null
+      },
+      {
+        "check": "drift_chunks",
+        "status": "pass",
+        "numerator": 5462,
+        "denominator": 5462,
+        "observed": 0.0,
+        "threshold": 0.1,
+        "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+        "examples": [],
+        "override_reason": null
+      },
+      {
+        "check": "drift_tokens",
+        "status": "pass",
+        "numerator": 692251,
+        "denominator": 692251,
+        "observed": 0.0,
+        "threshold": 0.1,
+        "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+        "examples": [],
+        "override_reason": null
+      }
+    ],
+    "logged": "failed",
+    "status": "failed",
+    "error": "DqFailed: --accept-drift was given, but no drift check is over its threshold: nothing to accept",
+    "finished_utc": "2026-10-20T01:23:16Z"
+  },
+  "error": "DqFailed: --accept-drift was given, but no drift check is over its threshold: nothing to accept",
+  "error_trace": "\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mREASON\u001b[39m\u001b[38;5;124m\"\u001b[39m,\n\u001b[1;32m    371\u001b[0m     help\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124maccept, for this run only, drift over the DQ threshold (not a loss beyond the ceiling); \u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m    372\u001b[0m     \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mrefused when nothing drifted\u001b[39m\u001b[38;5;124m\"\u001b[39m,\n\u001b[1;32m    373\u001b[0m )\n\u001b[0;32m--> 374\u001b[0m run_with_summary(detect, parser)\n\nFile \u001b[0;32m/local_disk0/.ephemeral_nfs/envs/pythonEnv-0e045b45-b79e-419c-a062-ac85b844c687/lib/python3.12/site-packages/docs_rag/jobenv.py:94\u001b[0m, in \u001b[0;36mrun_with_summary\u001b[0;34m(job, parser)\u001b[0m\n\u001b[1;32m     92\u001b[0m summary: \u001b[38;5;28mdict\u001b[39m[\u001b[38;5;28mstr\u001b[39m, Any] \u001b[38;5;241m=\u001b[39m {\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mrun_id\u001b[39m\u001b[38;5;124m\"\u001b[39m: args\u001b[38;5;241m.\u001b[39mrun_id, \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstarted_utc\u001b[39m\u001b[38;5;124m\"\u001b[39m: utc_now()}\n\u001b[1;32m     93\u001b[0m \u001b[38;5;28;01mtry\u001b[39;00m:\n\u001b[0;32m---> 94\u001b[0m     job(args, summary)\n\u001b[1;32m     95\u001b[0m     summary[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstatus\u001b[39m\u001b[38;5;124m\"\u001b[39m] \u001b[38;5;241m=\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124msucceeded\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m     96\u001b[0m \u001b[38;5;28;01mexcept\u001b[39;00m \u001b[38;5;167;01mException\u001b[39;00m \u001b[38;5;28;01mas\u001b[39;00m e:\n\nFile \u001b[0;32m/tmp/tmplqz7wxet.py:278\u001b[0m, in \u001b[0;36mdetect\u001b[0;34m(args, summary)\u001b[0m\n\u001b[1;32m    265\u001b[0m context \u001b[38;5;241m=\u001b[39m DqRunContext(\n\u001b[1;32m    266\u001b[0m     run_id\u001b[38;5;241m=\u001b[39margs\u001b[38;5;241m.\u001b[39mrun_id,\n\u001b[1;32m    267\u001b[0m     attempt_id\u001b[38;5;241m=\u001b[39mattempt_id,\n\u001b[0;32m   (...)\u001b[0m\n\u001b[1;32m    275\u001b[0m     code_version\u001b[38;5;241m=\u001b[39mcode_version,\n\u001b[1;32m    276\u001b[0m )\n\u001b[1;32m    277\u001b[0m write_dq_results(spark, config\u001b[38;5;241m.\u001b[39mdq_results_table, results, context)\n\u001b[0;32m--> 278\u001b[0m passed \u001b[38;5;241m=\u001b[39m gate(results, accept)\n\u001b[1;32m    279\u001b[0m summary[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mgate\u001b[39m\u001b[38;5;124m\"\u001b[39m] \u001b[38;5;241m=\u001b[39m {\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124moverridden\u001b[39m\u001b[38;5;124m\"\u001b[39m: passed\u001b[38;5;241m.\u001b[39moverridden, \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124moverride_reason\u001b[39m\u001b[38;5;124m\"\u001b[39m: passed\u001b[38;5;241m.\u001b[39moverride_reason}\n\u001b[1;32m    281\u001b[0m row \u001b[38;5;241m=\u001b[39m RunLogRow(\n\u001b[1;32m    282\u001b[0m     run_id\u001b[38;5;241m=\u001b[39margs\u001b[38;5;241m.\u001b[39mrun_id,\n\u001b[1;32m    283\u001b[0m     baseline_run_id\u001b[38;5;241m=\u001b[39mhead,\n\u001b[0;32m   (...)\u001b[0m\n\u001b[1;32m    304\u001b[0m     \u001b[38;5;241m*\u001b[39m\u001b[38;5;241m*\u001b[39mcounts(docs, chunks, \u001b[38;5;28mlen\u001b[39m(base_records), \u001b[38;5;28msum\u001b[39m(r\u001b[38;5;241m.\u001b[39mn_tokens \u001b[38;5;28;01mfor\u001b[39;00m r \u001b[38;5;129;01min\u001b[39;00m target_records)),\n\u001b[1;32m    305\u001b[0m )\n\nFile \u001b[0;32m/local_disk0/.ephemeral_nfs/envs/pythonEnv-0e045b45-b79e-419c-a062-ac85b844c687/lib/python3.12/site-packages/docs_rag/dq.py:273\u001b[0m, in \u001b[0;36mgate\u001b[0;34m(results, accept_drift)\u001b[0m\n\u001b[1;32m    271\u001b[0m overridden \u001b[38;5;241m=\u001b[39m \u001b[38;5;28mtuple\u001b[39m(r\u001b[38;5;241m.\u001b[39mcheck \u001b[38;5;28;01mfor\u001b[39;00m r \u001b[38;5;129;01min\u001b[39;00m results \u001b[38;5;28;01mif\u001b[39;00m r\u001b[38;5;241m.\u001b[39mstatus \u001b[38;5;241m==\u001b[39m OVERRIDDEN)\n\u001b[1;32m    272\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m accept_drift \u001b[38;5;129;01mis\u001b[39;00m \u001b[38;5;129;01mnot\u001b[39;00m \u001b[38;5;28;01mNone\u001b[39;00m \u001b[38;5;129;01mand\u001b[39;00m \u001b[38;5;129;01mnot\u001b[39;00m overridden:\n\u001b[0;32m--> 273\u001b[0m     \u001b[38;5;28;01mraise\u001b[39;00m DqFailed(\n\u001b[1;32m    274\u001b[0m         \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m--accept-drift was given, but no drift check is over its threshold: nothing to accept\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m    275\u001b[0m     )\n\u001b[1;32m    276\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m {r\u001b[38;5;241m.\u001b[39moverride_reason \u001b[38;5;28;01mfor\u001b[39;00m r \u001b[38;5;129;01min\u001b[39;00m results \u001b[38;5;28;01mif\u001b[39;00m r\u001b[38;5;241m.\u001b[39mstatus \u001b[38;5;241m==\u001b[39m OVERRIDDEN} \u001b[38;5;241m-\u001b[39m {accept_drift}:\n\u001b[1;32m    277\u001b[0m     \u001b[38;5;28;01mraise\u001b[39;00m DqFailed(\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124man overridden check names a reason other than this run\u001b[39m\u001b[38;5;124m'\u001b[39m\u001b[38;5;124ms --accept-drift\u001b[39m\u001b[38;5;124m\"\u001b[39m)\n\n\u001b[0;31mDqFailed\u001b[0m: --accept-drift was given, but no drift check is over its threshold: nothing to accept"
+}
