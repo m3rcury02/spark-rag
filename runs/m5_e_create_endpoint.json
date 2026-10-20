@@ -1,0 +1,33 @@
+{
+  "label": "m5_e_create_endpoint",
+  "git_commit": "e03c37b871aaae3d066b40435b571eca98864095",
+  "action": "create-endpoint",
+  "endpoint_name": "docs_rag_endpoint",
+  "index_name": "workspace.docs_rag_dev.gold_chunk_index",
+  "started_utc": "2026-10-20T18:26:07Z",
+  "requested_utc": "2026-10-20T18:26:07Z",
+  "polls": [
+    {
+      "after_s": 0.3,
+      "seen": {
+        "name": "docs_rag_endpoint",
+        "endpoint_type": "STANDARD",
+        "state": "ONLINE",
+        "message": null,
+        "num_indexes": 0,
+        "creation_timestamp": 1792520768475
+      }
+    }
+  ],
+  "seconds_to_online": 0.3,
+  "endpoint": {
+    "name": "docs_rag_endpoint",
+    "endpoint_type": "STANDARD",
+    "state": "ONLINE",
+    "message": null,
+    "num_indexes": 0,
+    "creation_timestamp": 1792520768475
+  },
+  "status": "succeeded",
+  "finished_utc": "2026-10-20T18:26:10Z"
+}
