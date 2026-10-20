@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "label": "m4x_m_detect_v4.0.1_config_change_without_flag",
+    "git_commit": "bfc94b61eea41d0978fa8a266cf486c65403766c",
+    "script": "jobs/change_detect.py",
+    "job_args": [
+      "--tag",
+      "v4.0.1"
+    ],
+    "target": "workspace.docs_rag_dev",
+    "run_id": "82df5b26-7123-4dbf-8896-e64f46f5ee93",
+    "environment_version": "4",
+    "wheel": "docs_rag-0.0.1.dev120+gbfc94b61e-py3-none-any.whl",
+    "parent_run_id": 1085983939484140,
+    "task_run_id": 534021915334734,
+    "result_state": "FAILED",
+    "state_message": "Task main failed with message: Workload failed, see run output for details.",
+    "run_start_utc": "2026-10-20T13:23:53Z",
+    "run_end_utc": "2026-10-20T13:24:40Z",
+    "run_duration_seconds": 47.1
+  },
+  "summary": {
+    "run_id": "82df5b26-7123-4dbf-8896-e64f46f5ee93",
+    "started_utc": "2026-10-20T13:24:26Z",
+    "tag": "v4.0.1",
+    "sink": "none",
+    "config_id": "e70bf55c7cf1b856",
+    "accept_drift": null,
+    "accept_drift_of": null,
+    "attempt_id": "8126a9a234fe47239337497f68e7b3f8",
+    "environment": {
+      "python": "3.12.3",
+      "databricks_runtime_version": "client.4.10",
+      "databricks_connect": "17.3.14",
+      "docs_rag": "0.0.1.dev120+gbfc94b61e",
+      "tokenizers": "0.23.3",
+      "machine": "aarch64",
+      "spark": "4.2.0"
+    },
+    "earlier_attempts": [],
+    "baseline": {
+      "run_id": "bda50378-42ce-42bf-aeaa-a21a200a4474",
+      "baseline_run_id": "a4cde2e8-e4b8-4d42-b3ed-d030dec50892",
+      "status": "committed",
+      "to_version_tag": "v4.0.1",
+      "to_commit_sha": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+      "to_config_id": "ccbd80f05e15c8dd",
+      "to_docs_fingerprint": "5b1534b24125aa7d7131d72727e2b28ff85b072262ed48dceedb3b40ba798c02",
+      "to_chunks_fingerprint": "ad300f7ddb87b42718cd0e0aab40e948e5f509124cc0c64224ede897805cb827"
+    },
+    "logged": "failed",
+    "status": "failed",
+    "error": "RuntimeError: the baseline was chunked under config ccbd80f05e15c8dd, this run uses e70bf55c7cf1b856: pass --allow-config-change if intended",
+    "finished_utc": "2026-10-20T13:24:35Z"
+  },
+  "error": "RuntimeError: the baseline was chunked under config ccbd80f05e15c8dd, this run uses e70bf55c7cf1b856: pass --allow-config-change if intended",
+  "error_trace": "m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m__main__\u001b[39m\u001b[38;5;124m\"\u001b[39m:\n\u001b[0;32m--> 486\u001b[0m     main()\n\nFile \u001b[0;32m/tmp/tmp8a5c1u51.py:482\u001b[0m, in \u001b[0;36mmain\u001b[0;34m()\u001b[0m\n\u001b[1;32m    471\u001b[0m parser\u001b[38;5;241m.\u001b[39madd_argument(\n\u001b[1;32m    472\u001b[0m     \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m--accept-drift\u001b[39m\u001b[38;5;124m\"\u001b[39m,\n\u001b[1;32m    473\u001b[0m     metavar\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mREASON\u001b[39m\u001b[38;5;124m\"\u001b[39m,\n\u001b[1;32m    474\u001b[0m     help\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mwhy the drift of the run named by --accept-drift-of is accepted, for this run only\u001b[39m\u001b[38;5;124m\"\u001b[39m,\n\u001b[1;32m    475\u001b[0m )\n\u001b[1;32m    476\u001b[0m parser\u001b[38;5;241m.\u001b[39madd_argument(\n\u001b[1;32m    477\u001b[0m     \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m--accept-drift-of\u001b[39m\u001b[38;5;124m\"\u001b[39m,\n\u001b[1;32m    478\u001b[0m     metavar\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mRUN_ID\u001b[39m\u001b[38;5;124m\"\u001b[39m,\n\u001b[1;32m    479\u001b[0m     help\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124ma run that failed the gate on drift alone, for the same tag, baseline and config; this run \u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m    480\u001b[0m     \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mpasses only if its drift is exactly that run\u001b[39m\u001b[38;5;124m'\u001b[39m\u001b[38;5;124ms (never a loss beyond the ceiling)\u001b[39m\u001b[38;5;124m\"\u001b[39m,\n\u001b[1;32m    481\u001b[0m )\n\u001b[0;32m--> 482\u001b[0m run_with_summary(detect, parser)\n\nFile \u001b[0;32m/local_disk0/.ephemeral_nfs/envs/pythonEnv-856cd0d3-0ea2-4806-9c50-18f889296d1f/lib/python3.12/site-packages/docs_rag/jobenv.py:94\u001b[0m, in \u001b[0;36mrun_with_summary\u001b[0;34m(job, parser)\u001b[0m\n\u001b[1;32m     92\u001b[0m summary: \u001b[38;5;28mdict\u001b[39m[\u001b[38;5;28mstr\u001b[39m, Any] \u001b[38;5;241m=\u001b[39m {\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mrun_id\u001b[39m\u001b[38;5;124m\"\u001b[39m: args\u001b[38;5;241m.\u001b[39mrun_id, \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstarted_utc\u001b[39m\u001b[38;5;124m\"\u001b[39m: utc_now()}\n\u001b[1;32m     93\u001b[0m \u001b[38;5;28;01mtry\u001b[39;00m:\n\u001b[0;32m---> 94\u001b[0m     job(args, summary)\n\u001b[1;32m     95\u001b[0m     summary[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstatus\u001b[39m\u001b[38;5;124m\"\u001b[39m] \u001b[38;5;241m=\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124msucceeded\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m     96\u001b[0m \u001b[38;5;28;01mexcept\u001b[39;00m \u001b[38;5;167;01mException\u001b[39;00m \u001b[38;5;28;01mas\u001b[39;00m e:\n\nFile \u001b[0;32m/tmp/tmp8a5c1u51.py:288\u001b[0m, in \u001b[0;36mdetect\u001b[0;34m(args, summary)\u001b[0m\n\u001b[1;32m    284\u001b[0m     \u001b[38;5;28;01mraise\u001b[39;00m \u001b[38;5;167;01mRuntimeError\u001b[39;00m(\n\u001b[1;32m    285\u001b[0m         \u001b[38;5;124mf\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;132;01m{\u001b[39;00mtag\u001b[38;5;132;01m}\u001b[39;00m\u001b[38;5;124m is \u001b[39m\u001b[38;5;132;01m{\u001b[39;00mway\u001b[38;5;132;01m}\u001b[39;00m\u001b[38;5;124m of the baseline \u001b[39m\u001b[38;5;132;01m{\u001b[39;00mfrom_tag\u001b[38;5;132;01m}\u001b[39;00m\u001b[38;5;124m: pass --allow-backwards if intended\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m    286\u001b[0m     )\n\u001b[1;32m    287\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m base \u001b[38;5;129;01mis\u001b[39;00m \u001b[38;5;129;01mnot\u001b[39;00m \u001b[38;5;28;01mNone\u001b[39;00m \u001b[38;5;129;01mand\u001b[39;00m base[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mto_config_id\u001b[39m\u001b[38;5;124m\"\u001b[39m] \u001b[38;5;241m!=\u001b[39m chunking\u001b[38;5;241m.\u001b[39mconfig_id \u001b[38;5;129;01mand\u001b[39;00m \u001b[38;5;129;01mnot\u001b[39;00m args\u001b[38;5;241m.\u001b[39mallow_config_change:\n\u001b[0;32m--> 288\u001b[0m     \u001b[38;5;28;01mraise\u001b[39;00m \u001b[38;5;167;01mRuntimeError\u001b[39;00m(\n\u001b[1;32m    289\u001b[0m         \u001b[38;5;124mf\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mthe baseline was chunked under config \u001b[39m\u001b[38;5;132;01m{\u001b[39;00mbase[\u001b[38;5;124m'\u001b[39m\u001b[38;5;124mto_config_id\u001b[39m\u001b[38;5;124m'\u001b[39m]\u001b[38;5;132;01m}\u001b[39;00m\u001b[38;5;124m, this run uses \u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m    290\u001b[0m         \u001b[38;5;124mf\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;132;01m{\u001b[39;00mchunking\u001b[38;5;241m.\u001b[39mconfig_id\u001b[38;5;132;01m}\u001b[39;00m\u001b[38;5;124m: pass --allow-config-change if intended\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m    291\u001b[0m     )\n\u001b[1;32m    292\u001b[0m accept \u001b[38;5;241m=\u001b[39m \u001b[38;5;28;01mNone\u001b[39;00m\n\u001b[1;32m    293\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m override:  \u001b[38;5;66;03m# bind the override to the failed run it names, before the expensive steps\u001b[39;00m\n\n\u001b[0;31mRuntimeError\u001b[0m: the baseline was chunked under config ccbd80f05e15c8dd, this run uses e70bf55c7cf1b856: pass --allow-config-change if intended"
+}
