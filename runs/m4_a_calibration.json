@@ -1,0 +1,4304 @@
+{
+  "label": "m4_a_calibration",
+  "git_commit": "667d8040e76fc7258cbb142e7c7da648cb2ce417",
+  "published_config": {
+    "max_tokens": 254,
+    "overlap_tokens": 32,
+    "config_id": "ccbd80f05e15c8dd"
+  },
+  "dq_config": {
+    "tiny_body_tokens": 5,
+    "max_tiny_share": 0.02,
+    "max_duplicate_embed_share": 0.01,
+    "max_drift": 0.1,
+    "max_override_loss": 0.5,
+    "min_reason_chars": 20
+  },
+  "embedding_max_seq_length": 256,
+  "tags": [
+    "v3.0.0",
+    "v3.0.1",
+    "v3.0.2",
+    "v3.0.3",
+    "v3.1.1",
+    "v3.1.2",
+    "v3.1.3",
+    "v3.2.0",
+    "v3.2.1",
+    "v3.2.2",
+    "v3.2.3",
+    "v3.2.4",
+    "v3.3.0",
+    "v3.3.1",
+    "v3.3.2",
+    "v3.3.3",
+    "v3.3.4",
+    "v3.4.0",
+    "v3.4.1",
+    "v3.4.2",
+    "v3.4.3",
+    "v3.4.4",
+    "v3.5.0",
+    "v3.5.1",
+    "v3.5.2",
+    "v3.5.3",
+    "v3.5.4",
+    "v3.5.5",
+    "v3.5.6",
+    "v3.5.7",
+    "v3.5.8",
+    "v3.5.9",
+    "v4.0.0",
+    "v4.0.1",
+    "v4.0.2",
+    "v4.0.3",
+    "v4.0.4",
+    "v4.1.0",
+    "v4.1.1",
+    "v4.1.2",
+    "v4.1.3",
+    "v4.2.0"
+  ],
+  "per_tag": [
+    {
+      "tag": "v3.0.0",
+      "commit": "3fdfce3120f307147244e5eaf46d61419a723d50",
+      "docs": 181,
+      "chunks": 3902,
+      "tokens": 514284,
+      "baseline": null,
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 3902,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 36,
+          "denominator": 3902,
+          "observed": 0.009226
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 3902,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 3902,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 3902,
+          "observed": 0.000769
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 3902,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "not_applicable",
+          "numerator": 181,
+          "denominator": 0,
+          "observed": null
+        },
+        "drift_chunks": {
+          "status": "not_applicable",
+          "numerator": 3902,
+          "denominator": 0,
+          "observed": null
+        },
+        "drift_tokens": {
+          "status": "not_applicable",
+          "numerator": 514284,
+          "denominator": 0,
+          "observed": null
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.0.1",
+      "commit": "2b147c4cd50da32fe2b4167f97c8142102a0510d",
+      "docs": 185,
+      "chunks": 3959,
+      "tokens": 522398,
+      "baseline": "v3.0.0",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 3959,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 35,
+          "denominator": 3959,
+          "observed": 0.008841
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 3959,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 3959,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 3959,
+          "observed": 0.000758
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 3959,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 185,
+          "denominator": 181,
+          "observed": 0.022099
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 3959,
+          "denominator": 3902,
+          "observed": 0.014608
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 522398,
+          "denominator": 514284,
+          "observed": 0.015777
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.0.2",
+      "commit": "648457905c4ea7d00e3d88048c63f360045f0714",
+      "docs": 186,
+      "chunks": 3961,
+      "tokens": 523335,
+      "baseline": "v3.0.1",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 3961,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 36,
+          "denominator": 3961,
+          "observed": 0.009089
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 3961,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 3961,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 3961,
+          "observed": 0.000757
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 3961,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 186,
+          "denominator": 185,
+          "observed": 0.005405
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 3961,
+          "denominator": 3959,
+          "observed": 0.000505
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 523335,
+          "denominator": 522398,
+          "observed": 0.001794
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.0.3",
+      "commit": "65ac1e75dc468f53fc778cd2ce1ba3f21067aab8",
+      "docs": 188,
+      "chunks": 3972,
+      "tokens": 525030,
+      "baseline": "v3.0.2",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 3972,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 36,
+          "denominator": 3972,
+          "observed": 0.009063
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 3972,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 3972,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 3972,
+          "observed": 0.000755
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 3972,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 188,
+          "denominator": 186,
+          "observed": 0.010753
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 3972,
+          "denominator": 3961,
+          "observed": 0.002777
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 525030,
+          "denominator": 523335,
+          "observed": 0.003239
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.1.1",
+      "commit": "1d550c4e90275ab418b9161925049239227f3dc9",
+      "docs": 187,
+      "chunks": 4040,
+      "tokens": 534041,
+      "baseline": "v3.0.3",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4040,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 37,
+          "denominator": 4040,
+          "observed": 0.009158
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4040,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4040,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 4040,
+          "observed": 0.000743
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4040,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 187,
+          "denominator": 188,
+          "observed": -0.005319
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 4040,
+          "denominator": 3972,
+          "observed": 0.01712
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 534041,
+          "denominator": 525030,
+          "observed": 0.017163
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.1.2",
+      "commit": "de351e30a90dd988b133b3d00fa6218bfcaba8b8",
+      "docs": 189,
+      "chunks": 4050,
+      "tokens": 535886,
+      "baseline": "v3.1.1",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4050,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 37,
+          "denominator": 4050,
+          "observed": 0.009136
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4050,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4050,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 4050,
+          "observed": 0.000741
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4050,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 189,
+          "denominator": 187,
+          "observed": 0.010695
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 4050,
+          "denominator": 4040,
+          "observed": 0.002475
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 535886,
+          "denominator": 534041,
+          "observed": 0.003455
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.1.3",
+      "commit": "d1f8a503a26bcfb4e466d9accc5fa241a7933667",
+      "docs": 189,
+      "chunks": 4054,
+      "tokens": 536475,
+      "baseline": "v3.1.2",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4054,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 37,
+          "denominator": 4054,
+          "observed": 0.009127
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4054,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4054,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 4054,
+          "observed": 0.00074
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4054,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 189,
+          "denominator": 189,
+          "observed": 0.0
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 4054,
+          "denominator": 4050,
+          "observed": 0.000988
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 536475,
+          "denominator": 535886,
+          "observed": 0.001099
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.2.0",
+      "commit": "5d45a415f3a29898d92380380cfd82bfc7f579ea",
+      "docs": 186,
+      "chunks": 4327,
+      "tokens": 571561,
+      "baseline": "v3.1.3",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4327,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 36,
+          "denominator": 4327,
+          "observed": 0.00832
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4327,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4327,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 4327,
+          "observed": 0.000693
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4327,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 186,
+          "denominator": 189,
+          "observed": -0.015873
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 4327,
+          "denominator": 4054,
+          "observed": 0.067341
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 571561,
+          "denominator": 536475,
+          "observed": 0.065401
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.2.1",
+      "commit": "4f25b3f71238a00508a356591553f2dfa89f8290",
+      "docs": 186,
+      "chunks": 4354,
+      "tokens": 574590,
+      "baseline": "v3.2.0",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4354,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 36,
+          "denominator": 4354,
+          "observed": 0.008268
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4354,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4354,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 4354,
+          "observed": 0.000689
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4354,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 186,
+          "denominator": 186,
+          "observed": 0.0
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 4354,
+          "denominator": 4327,
+          "observed": 0.00624
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 574590,
+          "denominator": 571561,
+          "observed": 0.0053
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.2.2",
+      "commit": "78a5825fe266c0884d2dd18cbca9625fa258d7f7",
+      "docs": 186,
+      "chunks": 4361,
+      "tokens": 575293,
+      "baseline": "v3.2.1",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4361,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 36,
+          "denominator": 4361,
+          "observed": 0.008255
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4361,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4361,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 4361,
+          "observed": 0.000688
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4361,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 186,
+          "denominator": 186,
+          "observed": 0.0
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 4361,
+          "denominator": 4354,
+          "observed": 0.001608
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 575293,
+          "denominator": 574590,
+          "observed": 0.001223
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.2.3",
+      "commit": "b53c341e0fefbb33d115ab630369a18765b7763d",
+      "docs": 186,
+      "chunks": 4362,
+      "tokens": 575503,
+      "baseline": "v3.2.2",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4362,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 36,
+          "denominator": 4362,
+          "observed": 0.008253
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4362,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4362,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 4362,
+          "observed": 0.000688
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4362,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 186,
+          "denominator": 186,
+          "observed": 0.0
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 4362,
+          "denominator": 4361,
+          "observed": 0.000229
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 575503,
+          "denominator": 575293,
+          "observed": 0.000365
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.2.4",
+      "commit": "0ae10ac18298d1792828f1d59b652ef17462d76e",
+      "docs": 186,
+      "chunks": 4363,
+      "tokens": 575582,
+      "baseline": "v3.2.3",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4363,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 36,
+          "denominator": 4363,
+          "observed": 0.008251
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4363,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4363,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 4363,
+          "observed": 0.000688
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4363,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 186,
+          "denominator": 186,
+          "observed": 0.0
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 4363,
+          "denominator": 4362,
+          "observed": 0.000229
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 575582,
+          "denominator": 575503,
+          "observed": 0.000137
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.3.0",
+      "commit": "f74867bddfbcdd4d08076db36851e88b15e66556",
+      "docs": 187,
+      "chunks": 4466,
+      "tokens": 590550,
+      "baseline": "v3.2.4",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4466,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 37,
+          "denominator": 4466,
+          "observed": 0.008285
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4466,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4466,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 4466,
+          "observed": 0.000672
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4466,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 187,
+          "denominator": 186,
+          "observed": 0.005376
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 4466,
+          "denominator": 4363,
+          "observed": 0.023608
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 590550,
+          "denominator": 575582,
+          "observed": 0.026005
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.3.1",
+      "commit": "fbbcf9434ac070dd4ced4fb9efe32899c6db12a9",
+      "docs": 187,
+      "chunks": 4483,
+      "tokens": 593123,
+      "baseline": "v3.3.0",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4483,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 38,
+          "denominator": 4483,
+          "observed": 0.008476
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4483,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4483,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 4483,
+          "observed": 0.000669
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4483,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 187,
+          "denominator": 187,
+          "observed": 0.0
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 4483,
+          "denominator": 4466,
+          "observed": 0.003807
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 593123,
+          "denominator": 590550,
+          "observed": 0.004357
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.3.2",
+      "commit": "5103e00c4ce5fcc4264ca9c4df12295d42557af6",
+      "docs": 187,
+      "chunks": 4483,
+      "tokens": 593111,
+      "baseline": "v3.3.1",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4483,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 38,
+          "denominator": 4483,
+          "observed": 0.008476
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4483,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4483,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 4483,
+          "observed": 0.000669
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4483,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 187,
+          "denominator": 187,
+          "observed": 0.0
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 4483,
+          "denominator": 4483,
+          "observed": 0.0
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 593111,
+          "denominator": 593123,
+          "observed": -2e-05
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.3.3",
+      "commit": "8c2b3319c6734250ff9d72f3d7e5cab56b142195",
+      "docs": 187,
+      "chunks": 4483,
+      "tokens": 593180,
+      "baseline": "v3.3.2",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4483,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 38,
+          "denominator": 4483,
+          "observed": 0.008476
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4483,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4483,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 4483,
+          "observed": 0.000669
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4483,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 187,
+          "denominator": 187,
+          "observed": 0.0
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 4483,
+          "denominator": 4483,
+          "observed": 0.0
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 593180,
+          "denominator": 593111,
+          "observed": 0.000116
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.3.4",
+      "commit": "18db204995b32e87a650f2f09f9bcf047ddafa90",
+      "docs": 187,
+      "chunks": 4488,
+      "tokens": 593923,
+      "baseline": "v3.3.3",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4488,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 38,
+          "denominator": 4488,
+          "observed": 0.008467
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4488,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4488,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 4488,
+          "observed": 0.000668
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 4488,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 187,
+          "denominator": 187,
+          "observed": 0.0
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 4488,
+          "denominator": 4483,
+          "observed": 0.001115
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 593923,
+          "denominator": 593180,
+          "observed": 0.001253
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.4.0",
+      "commit": "87a5442f7ed96b11051d8a9333476d080054e5a0",
+      "docs": 214,
+      "chunks": 5222,
+      "tokens": 644484,
+      "baseline": "v3.3.4",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5222,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 44,
+          "denominator": 5222,
+          "observed": 0.008426
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5222,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5222,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 5222,
+          "observed": 0.000574
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5222,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "fail",
+          "numerator": 214,
+          "denominator": 187,
+          "observed": 0.144385
+        },
+        "drift_chunks": {
+          "status": "fail",
+          "numerator": 5222,
+          "denominator": 4488,
+          "observed": 0.163547
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 644484,
+          "denominator": 593923,
+          "observed": 0.085131
+        }
+      },
+      "failing_checks": [
+        "drift_docs",
+        "drift_chunks"
+      ]
+    },
+    {
+      "tag": "v3.4.1",
+      "commit": "6b1ff22dde1ead51cbf370be6e48a802daae58b6",
+      "docs": 215,
+      "chunks": 5231,
+      "tokens": 645558,
+      "baseline": "v3.4.0",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5231,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 44,
+          "denominator": 5231,
+          "observed": 0.008411
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5231,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5231,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 5231,
+          "observed": 0.000574
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5231,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 215,
+          "denominator": 214,
+          "observed": 0.004673
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 5231,
+          "denominator": 5222,
+          "observed": 0.001723
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 645558,
+          "denominator": 644484,
+          "observed": 0.001666
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.4.2",
+      "commit": "0c0e7d4087c64efca259b4fb656b8be643be5686",
+      "docs": 215,
+      "chunks": 5241,
+      "tokens": 646732,
+      "baseline": "v3.4.1",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5241,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 44,
+          "denominator": 5241,
+          "observed": 0.008395
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5241,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5241,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 5241,
+          "observed": 0.000572
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5241,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 215,
+          "denominator": 215,
+          "observed": 0.0
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 5241,
+          "denominator": 5231,
+          "observed": 0.001912
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 646732,
+          "denominator": 645558,
+          "observed": 0.001819
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.4.3",
+      "commit": "1eb558c3a6fbdd59e5a305bc3ab12ce748f6511f",
+      "docs": 215,
+      "chunks": 5243,
+      "tokens": 647234,
+      "baseline": "v3.4.2",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5243,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 44,
+          "denominator": 5243,
+          "observed": 0.008392
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5243,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5243,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 5243,
+          "observed": 0.000572
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5243,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 215,
+          "denominator": 215,
+          "observed": 0.0
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 5243,
+          "denominator": 5241,
+          "observed": 0.000382
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 647234,
+          "denominator": 646732,
+          "observed": 0.000776
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.4.4",
+      "commit": "6729992c76fc59ab07f63f97a9858691274447d0",
+      "docs": 215,
+      "chunks": 5245,
+      "tokens": 647638,
+      "baseline": "v3.4.3",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5245,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 44,
+          "denominator": 5245,
+          "observed": 0.008389
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5245,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5245,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 5245,
+          "observed": 0.000572
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5245,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 215,
+          "denominator": 215,
+          "observed": 0.0
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 5245,
+          "denominator": 5243,
+          "observed": 0.000381
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 647638,
+          "denominator": 647234,
+          "observed": 0.000624
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.5.0",
+      "commit": "ce5ddad990373636e94071e7cef2f31021add07b",
+      "docs": 244,
+      "chunks": 5589,
+      "tokens": 667028,
+      "baseline": "v3.4.4",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5589,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 48,
+          "denominator": 5589,
+          "observed": 0.008588
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5589,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5589,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 12,
+          "denominator": 5589,
+          "observed": 0.002147
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5589,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "fail",
+          "numerator": 244,
+          "denominator": 215,
+          "observed": 0.134884
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 5589,
+          "denominator": 5245,
+          "observed": 0.065586
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 667028,
+          "denominator": 647638,
+          "observed": 0.02994
+        }
+      },
+      "failing_checks": [
+        "drift_docs"
+      ]
+    },
+    {
+      "tag": "v3.5.1",
+      "commit": "fd86f85e181fc2dc0f50a096855acf83a6cc5d9c",
+      "docs": 244,
+      "chunks": 5602,
+      "tokens": 668621,
+      "baseline": "v3.5.0",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5602,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 50,
+          "denominator": 5602,
+          "observed": 0.008925
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5602,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5602,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 12,
+          "denominator": 5602,
+          "observed": 0.002142
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5602,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 244,
+          "denominator": 244,
+          "observed": 0.0
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 5602,
+          "denominator": 5589,
+          "observed": 0.002326
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 668621,
+          "denominator": 667028,
+          "observed": 0.002388
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.5.2",
+      "commit": "bb7846dd487f259994fdc69e18e03382e3f64f42",
+      "docs": 244,
+      "chunks": 5607,
+      "tokens": 669449,
+      "baseline": "v3.5.1",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5607,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 50,
+          "denominator": 5607,
+          "observed": 0.008917
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5607,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5607,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 12,
+          "denominator": 5607,
+          "observed": 0.00214
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5607,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 244,
+          "denominator": 244,
+          "observed": 0.0
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 5607,
+          "denominator": 5602,
+          "observed": 0.000893
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 669449,
+          "denominator": 668621,
+          "observed": 0.001238
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.5.3",
+      "commit": "32232e9ed33bb16b93ad58cfde8b82e0f07c0970",
+      "docs": 244,
+      "chunks": 5608,
+      "tokens": 669665,
+      "baseline": "v3.5.2",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5608,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 50,
+          "denominator": 5608,
+          "observed": 0.008916
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5608,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5608,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 12,
+          "denominator": 5608,
+          "observed": 0.00214
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5608,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 244,
+          "denominator": 244,
+          "observed": 0.0
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 5608,
+          "denominator": 5607,
+          "observed": 0.000178
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 669665,
+          "denominator": 669449,
+          "observed": 0.000323
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.5.4",
+      "commit": "a6f220d951742f4074b37772485ee0ec7a774e7d",
+      "docs": 244,
+      "chunks": 5608,
+      "tokens": 669676,
+      "baseline": "v3.5.3",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5608,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 50,
+          "denominator": 5608,
+          "observed": 0.008916
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5608,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5608,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 12,
+          "denominator": 5608,
+          "observed": 0.00214
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5608,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 244,
+          "denominator": 244,
+          "observed": 0.0
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 5608,
+          "denominator": 5608,
+          "observed": 0.0
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 669676,
+          "denominator": 669665,
+          "observed": 1.6e-05
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.5.5",
+      "commit": "7c29c664cdc9321205a98a14858aaf8daaa19db2",
+      "docs": 244,
+      "chunks": 5610,
+      "tokens": 669880,
+      "baseline": "v3.5.4",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5610,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 50,
+          "denominator": 5610,
+          "observed": 0.008913
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5610,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5610,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 12,
+          "denominator": 5610,
+          "observed": 0.002139
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5610,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 244,
+          "denominator": 244,
+          "observed": 0.0
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 5610,
+          "denominator": 5608,
+          "observed": 0.000357
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 669880,
+          "denominator": 669676,
+          "observed": 0.000305
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.5.6",
+      "commit": "303c18c74664f161b9b969ac343784c088b47593",
+      "docs": 244,
+      "chunks": 5613,
+      "tokens": 670077,
+      "baseline": "v3.5.5",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5613,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 50,
+          "denominator": 5613,
+          "observed": 0.008908
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5613,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5613,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 12,
+          "denominator": 5613,
+          "observed": 0.002138
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5613,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 244,
+          "denominator": 244,
+          "observed": 0.0
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 5613,
+          "denominator": 5610,
+          "observed": 0.000535
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 670077,
+          "denominator": 669880,
+          "observed": 0.000294
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.5.7",
+      "commit": "ed00d046951a7ecda6429accd3b9c5b2dc792b65",
+      "docs": 244,
+      "chunks": 5613,
+      "tokens": 670077,
+      "baseline": "v3.5.6",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5613,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 50,
+          "denominator": 5613,
+          "observed": 0.008908
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5613,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5613,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 12,
+          "denominator": 5613,
+          "observed": 0.002138
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5613,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 244,
+          "denominator": 244,
+          "observed": 0.0
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 5613,
+          "denominator": 5613,
+          "observed": 0.0
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 670077,
+          "denominator": 670077,
+          "observed": 0.0
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.5.8",
+      "commit": "5a48a37b2dbd7b51e3640cd1d947438459556cc6",
+      "docs": 244,
+      "chunks": 5613,
+      "tokens": 670077,
+      "baseline": "v3.5.7",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5613,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 50,
+          "denominator": 5613,
+          "observed": 0.008908
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5613,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5613,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 12,
+          "denominator": 5613,
+          "observed": 0.002138
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5613,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 244,
+          "denominator": 244,
+          "observed": 0.0
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 5613,
+          "denominator": 5613,
+          "observed": 0.0
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 670077,
+          "denominator": 670077,
+          "observed": 0.0
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v3.5.9",
+      "commit": "7c14a3c28b141cc97a330c4d0f5d2a6da7267f85",
+      "docs": 244,
+      "chunks": 5614,
+      "tokens": 670230,
+      "baseline": "v3.5.8",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5614,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 50,
+          "denominator": 5614,
+          "observed": 0.008906
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5614,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5614,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 12,
+          "denominator": 5614,
+          "observed": 0.002138
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5614,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 244,
+          "denominator": 244,
+          "observed": 0.0
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 5614,
+          "denominator": 5613,
+          "observed": 0.000178
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 670230,
+          "denominator": 670077,
+          "observed": 0.000228
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v4.0.0",
+      "commit": "fa33ea000a0bda9e5a3fa1af98e8e85b8cc5e4d4",
+      "docs": 212,
+      "chunks": 5449,
+      "tokens": 689988,
+      "baseline": "v3.5.9",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5449,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 46,
+          "denominator": 5449,
+          "observed": 0.008442
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5449,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5449,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 5449,
+          "observed": 0.000551
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5449,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "fail",
+          "numerator": 212,
+          "denominator": 244,
+          "observed": -0.131148
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 5449,
+          "denominator": 5614,
+          "observed": -0.029391
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 689988,
+          "denominator": 670230,
+          "observed": 0.029479
+        }
+      },
+      "failing_checks": [
+        "drift_docs"
+      ]
+    },
+    {
+      "tag": "v4.0.1",
+      "commit": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+      "docs": 213,
+      "chunks": 5462,
+      "tokens": 692251,
+      "baseline": "v4.0.0",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5462,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 46,
+          "denominator": 5462,
+          "observed": 0.008422
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5462,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5462,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 5462,
+          "observed": 0.000549
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5462,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 213,
+          "denominator": 212,
+          "observed": 0.004717
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 5462,
+          "denominator": 5449,
+          "observed": 0.002386
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 692251,
+          "denominator": 689988,
+          "observed": 0.00328
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v4.0.2",
+      "commit": "7cc3b9bcdaab8c923f23cdbc9ce922530e1becf1",
+      "docs": 213,
+      "chunks": 5462,
+      "tokens": 692251,
+      "baseline": "v4.0.1",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5462,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 46,
+          "denominator": 5462,
+          "observed": 0.008422
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5462,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5462,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 5462,
+          "observed": 0.000549
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5462,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 213,
+          "denominator": 213,
+          "observed": 0.0
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 5462,
+          "denominator": 5462,
+          "observed": 0.0
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 692251,
+          "denominator": 692251,
+          "observed": 0.0
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v4.0.3",
+      "commit": "322ddd90b63c5d299427b7e32e255e25736db7ee",
+      "docs": 213,
+      "chunks": 5462,
+      "tokens": 692241,
+      "baseline": "v4.0.2",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5462,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 46,
+          "denominator": 5462,
+          "observed": 0.008422
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5462,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5462,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 5462,
+          "observed": 0.000549
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5462,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 213,
+          "denominator": 213,
+          "observed": 0.0
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 5462,
+          "denominator": 5462,
+          "observed": 0.0
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 692241,
+          "denominator": 692251,
+          "observed": -1.4e-05
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v4.0.4",
+      "commit": "c7d67e3f5d4c9d88a480367b44fc54d26adf99ab",
+      "docs": 213,
+      "chunks": 5462,
+      "tokens": 692241,
+      "baseline": "v4.0.3",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5462,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 46,
+          "denominator": 5462,
+          "observed": 0.008422
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5462,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5462,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 5462,
+          "observed": 0.000549
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5462,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 213,
+          "denominator": 213,
+          "observed": 0.0
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 5462,
+          "denominator": 5462,
+          "observed": 0.0
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 692241,
+          "denominator": 692241,
+          "observed": 0.0
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v4.1.0",
+      "commit": "e221b56be7b6d9e48e107fc4d1cf0c15f02700f8",
+      "docs": 225,
+      "chunks": 5623,
+      "tokens": 710377,
+      "baseline": "v4.0.4",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5623,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 47,
+          "denominator": 5623,
+          "observed": 0.008359
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5623,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5623,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 5623,
+          "observed": 0.000534
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5623,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 225,
+          "denominator": 213,
+          "observed": 0.056338
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 5623,
+          "denominator": 5462,
+          "observed": 0.029476
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 710377,
+          "denominator": 692241,
+          "observed": 0.026199
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v4.1.1",
+      "commit": "c0690c763bafabd08e7079d1137fa0a769a05bae",
+      "docs": 225,
+      "chunks": 5623,
+      "tokens": 710399,
+      "baseline": "v4.1.0",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5623,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 47,
+          "denominator": 5623,
+          "observed": 0.008359
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5623,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5623,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 5623,
+          "observed": 0.000534
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5623,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 225,
+          "denominator": 225,
+          "observed": 0.0
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 5623,
+          "denominator": 5623,
+          "observed": 0.0
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 710399,
+          "denominator": 710377,
+          "observed": 3.1e-05
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v4.1.2",
+      "commit": "f0bb2e6a47d0ebda424ffd633fcea8644a597954",
+      "docs": 226,
+      "chunks": 5698,
+      "tokens": 722038,
+      "baseline": "v4.1.1",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5698,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 48,
+          "denominator": 5698,
+          "observed": 0.008424
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5698,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5698,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 5698,
+          "observed": 0.000527
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5698,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 226,
+          "denominator": 225,
+          "observed": 0.004444
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 5698,
+          "denominator": 5623,
+          "observed": 0.013338
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 722038,
+          "denominator": 710399,
+          "observed": 0.016384
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v4.1.3",
+      "commit": "77bbf77e86ad48f58b5dfbc6ac882b3e70cf1989",
+      "docs": 226,
+      "chunks": 5698,
+      "tokens": 722039,
+      "baseline": "v4.1.2",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5698,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 48,
+          "denominator": 5698,
+          "observed": 0.008424
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5698,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5698,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 5698,
+          "observed": 0.000527
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 5698,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 226,
+          "denominator": 226,
+          "observed": 0.0
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 5698,
+          "denominator": 5698,
+          "observed": 0.0
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 722039,
+          "denominator": 722038,
+          "observed": 1e-06
+        }
+      },
+      "failing_checks": []
+    },
+    {
+      "tag": "v4.2.0",
+      "commit": "32f7299601108917fb01920a54e084595b7b3bf8",
+      "docs": 238,
+      "chunks": 6078,
+      "tokens": 776218,
+      "baseline": "v4.1.3",
+      "checks": {
+        "empty_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 6078,
+          "observed": 0.0
+        },
+        "tiny_chunks": {
+          "status": "pass",
+          "numerator": 52,
+          "denominator": 6078,
+          "observed": 0.008555
+        },
+        "oversized_chunks": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 6078,
+          "observed": 0.0
+        },
+        "duplicate_chunk_ids": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 6078,
+          "observed": 0.0
+        },
+        "duplicate_embed_text": {
+          "status": "pass",
+          "numerator": 3,
+          "denominator": 6078,
+          "observed": 0.000494
+        },
+        "missing_metadata": {
+          "status": "pass",
+          "numerator": 0,
+          "denominator": 6078,
+          "observed": 0.0
+        },
+        "drift_docs": {
+          "status": "pass",
+          "numerator": 238,
+          "denominator": 226,
+          "observed": 0.053097
+        },
+        "drift_chunks": {
+          "status": "pass",
+          "numerator": 6078,
+          "denominator": 5698,
+          "observed": 0.06669
+        },
+        "drift_tokens": {
+          "status": "pass",
+          "numerator": 776218,
+          "denominator": 722039,
+          "observed": 0.075036
+        }
+      },
+      "failing_checks": []
+    }
+  ],
+  "transitions": [
+    {
+      "from": "v3.0.0",
+      "to": "v3.0.1",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.022099,
+        "drift_chunks": 0.014608,
+        "drift_tokens": 0.015777
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.0.1",
+      "to": "v3.0.2",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.005405,
+        "drift_chunks": 0.000505,
+        "drift_tokens": 0.001794
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.0.2",
+      "to": "v3.0.3",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.010753,
+        "drift_chunks": 0.002777,
+        "drift_tokens": 0.003239
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.0.3",
+      "to": "v3.1.1",
+      "kind": "minor",
+      "drift": {
+        "drift_docs": -0.005319,
+        "drift_chunks": 0.01712,
+        "drift_tokens": 0.017163
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.1.1",
+      "to": "v3.1.2",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.010695,
+        "drift_chunks": 0.002475,
+        "drift_tokens": 0.003455
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.1.2",
+      "to": "v3.1.3",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.0,
+        "drift_chunks": 0.000988,
+        "drift_tokens": 0.001099
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.1.3",
+      "to": "v3.2.0",
+      "kind": "minor",
+      "drift": {
+        "drift_docs": -0.015873,
+        "drift_chunks": 0.067341,
+        "drift_tokens": 0.065401
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.2.0",
+      "to": "v3.2.1",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.0,
+        "drift_chunks": 0.00624,
+        "drift_tokens": 0.0053
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.2.1",
+      "to": "v3.2.2",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.0,
+        "drift_chunks": 0.001608,
+        "drift_tokens": 0.001223
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.2.2",
+      "to": "v3.2.3",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.0,
+        "drift_chunks": 0.000229,
+        "drift_tokens": 0.000365
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.2.3",
+      "to": "v3.2.4",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.0,
+        "drift_chunks": 0.000229,
+        "drift_tokens": 0.000137
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.2.4",
+      "to": "v3.3.0",
+      "kind": "minor",
+      "drift": {
+        "drift_docs": 0.005376,
+        "drift_chunks": 0.023608,
+        "drift_tokens": 0.026005
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.3.0",
+      "to": "v3.3.1",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.0,
+        "drift_chunks": 0.003807,
+        "drift_tokens": 0.004357
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.3.1",
+      "to": "v3.3.2",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.0,
+        "drift_chunks": 0.0,
+        "drift_tokens": -2e-05
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.3.2",
+      "to": "v3.3.3",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.0,
+        "drift_chunks": 0.0,
+        "drift_tokens": 0.000116
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.3.3",
+      "to": "v3.3.4",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.0,
+        "drift_chunks": 0.001115,
+        "drift_tokens": 0.001253
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.3.4",
+      "to": "v3.4.0",
+      "kind": "minor",
+      "drift": {
+        "drift_docs": 0.144385,
+        "drift_chunks": 0.163547,
+        "drift_tokens": 0.085131
+      },
+      "fails_at_max_drift": [
+        "drift_docs",
+        "drift_chunks"
+      ]
+    },
+    {
+      "from": "v3.4.0",
+      "to": "v3.4.1",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.004673,
+        "drift_chunks": 0.001723,
+        "drift_tokens": 0.001666
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.4.1",
+      "to": "v3.4.2",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.0,
+        "drift_chunks": 0.001912,
+        "drift_tokens": 0.001819
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.4.2",
+      "to": "v3.4.3",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.0,
+        "drift_chunks": 0.000382,
+        "drift_tokens": 0.000776
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.4.3",
+      "to": "v3.4.4",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.0,
+        "drift_chunks": 0.000381,
+        "drift_tokens": 0.000624
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.4.4",
+      "to": "v3.5.0",
+      "kind": "minor",
+      "drift": {
+        "drift_docs": 0.134884,
+        "drift_chunks": 0.065586,
+        "drift_tokens": 0.02994
+      },
+      "fails_at_max_drift": [
+        "drift_docs"
+      ]
+    },
+    {
+      "from": "v3.5.0",
+      "to": "v3.5.1",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.0,
+        "drift_chunks": 0.002326,
+        "drift_tokens": 0.002388
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.5.1",
+      "to": "v3.5.2",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.0,
+        "drift_chunks": 0.000893,
+        "drift_tokens": 0.001238
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.5.2",
+      "to": "v3.5.3",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.0,
+        "drift_chunks": 0.000178,
+        "drift_tokens": 0.000323
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.5.3",
+      "to": "v3.5.4",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.0,
+        "drift_chunks": 0.0,
+        "drift_tokens": 1.6e-05
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.5.4",
+      "to": "v3.5.5",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.0,
+        "drift_chunks": 0.000357,
+        "drift_tokens": 0.000305
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.5.5",
+      "to": "v3.5.6",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.0,
+        "drift_chunks": 0.000535,
+        "drift_tokens": 0.000294
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.5.6",
+      "to": "v3.5.7",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.0,
+        "drift_chunks": 0.0,
+        "drift_tokens": 0.0
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.5.7",
+      "to": "v3.5.8",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.0,
+        "drift_chunks": 0.0,
+        "drift_tokens": 0.0
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.5.8",
+      "to": "v3.5.9",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.0,
+        "drift_chunks": 0.000178,
+        "drift_tokens": 0.000228
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v3.5.9",
+      "to": "v4.0.0",
+      "kind": "major",
+      "drift": {
+        "drift_docs": -0.131148,
+        "drift_chunks": -0.029391,
+        "drift_tokens": 0.029479
+      },
+      "fails_at_max_drift": [
+        "drift_docs"
+      ]
+    },
+    {
+      "from": "v4.0.0",
+      "to": "v4.0.1",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.004717,
+        "drift_chunks": 0.002386,
+        "drift_tokens": 0.00328
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v4.0.1",
+      "to": "v4.0.2",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.0,
+        "drift_chunks": 0.0,
+        "drift_tokens": 0.0
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v4.0.2",
+      "to": "v4.0.3",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.0,
+        "drift_chunks": 0.0,
+        "drift_tokens": -1.4e-05
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v4.0.3",
+      "to": "v4.0.4",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.0,
+        "drift_chunks": 0.0,
+        "drift_tokens": 0.0
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v4.0.4",
+      "to": "v4.1.0",
+      "kind": "minor",
+      "drift": {
+        "drift_docs": 0.056338,
+        "drift_chunks": 0.029476,
+        "drift_tokens": 0.026199
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v4.1.0",
+      "to": "v4.1.1",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.0,
+        "drift_chunks": 0.0,
+        "drift_tokens": 3.1e-05
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v4.1.1",
+      "to": "v4.1.2",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.004444,
+        "drift_chunks": 0.013338,
+        "drift_tokens": 0.016384
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v4.1.2",
+      "to": "v4.1.3",
+      "kind": "patch",
+      "drift": {
+        "drift_docs": 0.0,
+        "drift_chunks": 0.0,
+        "drift_tokens": 1e-06
+      },
+      "fails_at_max_drift": []
+    },
+    {
+      "from": "v4.1.3",
+      "to": "v4.2.0",
+      "kind": "minor",
+      "drift": {
+        "drift_docs": 0.053097,
+        "drift_chunks": 0.06669,
+        "drift_tokens": 0.075036
+      },
+      "fails_at_max_drift": []
+    }
+  ],
+  "drift_firing_by_threshold": {
+    "0.05": {
+      "patch": {
+        "transitions": 33,
+        "any_metric_over": 0,
+        "docs_over": 0,
+        "chunks_over": 0,
+        "tokens_over": 0
+      },
+      "minor": {
+        "transitions": 7,
+        "any_metric_over": 5,
+        "docs_over": 4,
+        "chunks_over": 4,
+        "tokens_over": 3
+      },
+      "major": {
+        "transitions": 1,
+        "any_metric_over": 1,
+        "docs_over": 1,
+        "chunks_over": 0,
+        "tokens_over": 0
+      },
+      "all": {
+        "transitions": 41,
+        "any_metric_over": 6,
+        "docs_over": 5,
+        "chunks_over": 4,
+        "tokens_over": 3
+      }
+    },
+    "0.10": {
+      "patch": {
+        "transitions": 33,
+        "any_metric_over": 0,
+        "docs_over": 0,
+        "chunks_over": 0,
+        "tokens_over": 0
+      },
+      "minor": {
+        "transitions": 7,
+        "any_metric_over": 2,
+        "docs_over": 2,
+        "chunks_over": 1,
+        "tokens_over": 0
+      },
+      "major": {
+        "transitions": 1,
+        "any_metric_over": 1,
+        "docs_over": 1,
+        "chunks_over": 0,
+        "tokens_over": 0
+      },
+      "all": {
+        "transitions": 41,
+        "any_metric_over": 3,
+        "docs_over": 3,
+        "chunks_over": 1,
+        "tokens_over": 0
+      }
+    },
+    "0.15": {
+      "patch": {
+        "transitions": 33,
+        "any_metric_over": 0,
+        "docs_over": 0,
+        "chunks_over": 0,
+        "tokens_over": 0
+      },
+      "minor": {
+        "transitions": 7,
+        "any_metric_over": 1,
+        "docs_over": 0,
+        "chunks_over": 1,
+        "tokens_over": 0
+      },
+      "major": {
+        "transitions": 1,
+        "any_metric_over": 0,
+        "docs_over": 0,
+        "chunks_over": 0,
+        "tokens_over": 0
+      },
+      "all": {
+        "transitions": 41,
+        "any_metric_over": 1,
+        "docs_over": 0,
+        "chunks_over": 1,
+        "tokens_over": 0
+      }
+    },
+    "0.20": {
+      "patch": {
+        "transitions": 33,
+        "any_metric_over": 0,
+        "docs_over": 0,
+        "chunks_over": 0,
+        "tokens_over": 0
+      },
+      "minor": {
+        "transitions": 7,
+        "any_metric_over": 0,
+        "docs_over": 0,
+        "chunks_over": 0,
+        "tokens_over": 0
+      },
+      "major": {
+        "transitions": 1,
+        "any_metric_over": 0,
+        "docs_over": 0,
+        "chunks_over": 0,
+        "tokens_over": 0
+      },
+      "all": {
+        "transitions": 41,
+        "any_metric_over": 0,
+        "docs_over": 0,
+        "chunks_over": 0,
+        "tokens_over": 0
+      }
+    },
+    "0.25": {
+      "patch": {
+        "transitions": 33,
+        "any_metric_over": 0,
+        "docs_over": 0,
+        "chunks_over": 0,
+        "tokens_over": 0
+      },
+      "minor": {
+        "transitions": 7,
+        "any_metric_over": 0,
+        "docs_over": 0,
+        "chunks_over": 0,
+        "tokens_over": 0
+      },
+      "major": {
+        "transitions": 1,
+        "any_metric_over": 0,
+        "docs_over": 0,
+        "chunks_over": 0,
+        "tokens_over": 0
+      },
+      "all": {
+        "transitions": 41,
+        "any_metric_over": 0,
+        "docs_over": 0,
+        "chunks_over": 0,
+        "tokens_over": 0
+      }
+    },
+    "0.30": {
+      "patch": {
+        "transitions": 33,
+        "any_metric_over": 0,
+        "docs_over": 0,
+        "chunks_over": 0,
+        "tokens_over": 0
+      },
+      "minor": {
+        "transitions": 7,
+        "any_metric_over": 0,
+        "docs_over": 0,
+        "chunks_over": 0,
+        "tokens_over": 0
+      },
+      "major": {
+        "transitions": 1,
+        "any_metric_over": 0,
+        "docs_over": 0,
+        "chunks_over": 0,
+        "tokens_over": 0
+      },
+      "all": {
+        "transitions": 41,
+        "any_metric_over": 0,
+        "docs_over": 0,
+        "chunks_over": 0,
+        "tokens_over": 0
+      }
+    }
+  },
+  "tags_failing_each_check": {
+    "drift_docs": 3,
+    "drift_chunks": 1
+  },
+  "d002_path": {
+    "254/32": [
+      {
+        "from": null,
+        "to": "v3.5.0",
+        "checks": {
+          "empty_chunks": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 5589,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "body or embed text blank; fails if any",
+            "examples": []
+          },
+          "tiny_chunks": {
+            "status": "pass",
+            "numerator": 48,
+            "denominator": 5589,
+            "observed": 0.008588,
+            "threshold": 0.02,
+            "rule": "body under 5 tokens; fails above 2% of chunks",
+            "examples": [
+              "docs/sql-data-sources-avro.md #9: 2 tokens 'scala:'",
+              "docs/sql-data-sources-avro.md #12: 2 tokens 'java:'",
+              "docs/sql-data-sources-avro.md #15: 2 tokens 'r:'",
+              "docs/sql-data-sources-parquet.md #13: 2 tokens 'scala:'",
+              "docs/sql-data-sources-parquet.md #16: 2 tokens 'java:'",
+              "docs/sql-error-conditions-invalid-handle-error-class.md #3: 4 tokens 'Operation already exists.'",
+              "docs/sql-error-conditions-invalid-handle-error-class.md #4: 4 tokens 'Operation not found.'",
+              "docs/sql-error-conditions-invalid-handle-error-class.md #5: 4 tokens 'Session already exists.'",
+              "docs/sql-error-conditions-invalid-handle-error-class.md #6: 4 tokens 'Session not found.'",
+              "docs/sql-error-conditions-unsupported-feature-error-class.md #22: 4 tokens 'Multiple bucket TRANSFORMs.'"
+            ]
+          },
+          "oversized_chunks": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 5589,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "embed text over 254 tokens (max_tokens 254; the embedding models' 256 less [CLS] and [SEP]); fails if any",
+            "examples": []
+          },
+          "duplicate_chunk_ids": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 5589,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "rows beyond the first of a repeated chunk_id; fails if any",
+            "examples": []
+          },
+          "duplicate_embed_text": {
+            "status": "pass",
+            "numerator": 12,
+            "denominator": 5589,
+            "observed": 0.002147,
+            "threshold": 0.01,
+            "rule": "copies beyond the first of a repeated embed text; fails above 1% of chunks",
+            "examples": [
+              "2x in ['docs/sql-ref-syntax-ddl-alter-view.md']: 'ALTER VIEW > Description > Parameters\\n\\n* **view_identifier**\\n\\n    Specifies a vi'",
+              "2x in ['docs/sql-error-conditions-incompatible-data-for-table-error-class.md', 'docs/sql-error-conditions-incompatible-data-to-table-error-class.md']: 'INCOMPATIBLE_DATA_FOR_TABLE error class > AMBIGUOUS_COLUMN_NAME\\n\\nAmbiguous colum'",
+              "2x in ['docs/sql-error-conditions-incompatible-data-for-table-error-class.md', 'docs/sql-error-conditions-incompatible-data-to-table-error-class.md']: 'INCOMPATIBLE_DATA_FOR_TABLE error class > CANNOT_FIND_DATA\\n\\nCannot find data for'",
+              "2x in ['docs/sql-error-conditions-incompatible-data-for-table-error-class.md', 'docs/sql-error-conditions-incompatible-data-to-table-error-class.md']: 'INCOMPATIBLE_DATA_FOR_TABLE error class > CANNOT_SAFELY_CAST\\n\\nCannot safely cast'",
+              "2x in ['docs/sql-error-conditions-incompatible-data-for-table-error-class.md', 'docs/sql-error-conditions-incompatible-data-to-table-error-class.md']: 'INCOMPATIBLE_DATA_FOR_TABLE error class > EXTRA_STRUCT_FIELDS\\n\\nCannot write extr'",
+              "2x in ['docs/sql-error-conditions-incompatible-data-for-table-error-class.md', 'docs/sql-error-conditions-incompatible-data-to-table-error-class.md']: 'INCOMPATIBLE_DATA_FOR_TABLE error class > NULLABLE_ARRAY_ELEMENTS\\n\\nCannot write '",
+              "2x in ['docs/sql-error-conditions-incompatible-data-for-table-error-class.md', 'docs/sql-error-conditions-incompatible-data-to-table-error-class.md']: 'INCOMPATIBLE_DATA_FOR_TABLE error class > NULLABLE_COLUMN\\n\\nCannot write nullable'",
+              "2x in ['docs/sql-error-conditions-incompatible-data-for-table-error-class.md', 'docs/sql-error-conditions-incompatible-data-to-table-error-class.md']: 'INCOMPATIBLE_DATA_FOR_TABLE error class > NULLABLE_MAP_VALUES\\n\\nCannot write null'",
+              "2x in ['docs/sql-error-conditions-incompatible-data-for-table-error-class.md', 'docs/sql-error-conditions-incompatible-data-to-table-error-class.md']: 'INCOMPATIBLE_DATA_FOR_TABLE error class > STRUCT_MISSING_FIELDS\\n\\nStruct `<colNam'",
+              "2x in ['docs/sql-error-conditions-incompatible-data-for-table-error-class.md', 'docs/sql-error-conditions-incompatible-data-to-table-error-class.md']: 'INCOMPATIBLE_DATA_FOR_TABLE error class > UNEXPECTED_COLUMN_NAME\\n\\nStruct `<colNa'"
+            ]
+          },
+          "missing_metadata": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 5589,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "a docs/*.md path, non-blank section names (the title first), version_tag v3.5.0, a 40-hex commit_sha; fails if any row misses one",
+            "examples": []
+          },
+          "drift_docs": {
+            "status": "not_applicable",
+            "numerator": 244,
+            "denominator": 0,
+            "observed": null,
+            "threshold": 0.1,
+            "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": []
+          },
+          "drift_chunks": {
+            "status": "not_applicable",
+            "numerator": 5589,
+            "denominator": 0,
+            "observed": null,
+            "threshold": 0.1,
+            "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": []
+          },
+          "drift_tokens": {
+            "status": "not_applicable",
+            "numerator": 667028,
+            "denominator": 0,
+            "observed": null,
+            "threshold": 0.1,
+            "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": []
+          }
+        }
+      },
+      {
+        "from": "v3.5.0",
+        "to": "v4.0.0",
+        "checks": {
+          "empty_chunks": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 5449,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "body or embed text blank; fails if any",
+            "examples": []
+          },
+          "tiny_chunks": {
+            "status": "pass",
+            "numerator": 46,
+            "denominator": 5449,
+            "observed": 0.008442,
+            "threshold": 0.02,
+            "rule": "body under 5 tokens; fails above 2% of chunks",
+            "examples": [
+              "docs/sql-data-sources-avro.md #9: 2 tokens 'scala:'",
+              "docs/sql-data-sources-avro.md #12: 2 tokens 'java:'",
+              "docs/sql-data-sources-avro.md #15: 2 tokens 'r:'",
+              "docs/sql-data-sources-parquet.md #13: 2 tokens 'scala:'",
+              "docs/sql-data-sources-parquet.md #16: 2 tokens 'java:'",
+              "docs/sql-data-sources-protobuf.md #10: 2 tokens 'scala:'",
+              "docs/sql-data-sources-protobuf.md #15: 2 tokens 'java:'",
+              "docs/sql-ref-datatypes.md #82: 2 tokens 'r:'",
+              "docs/sql-ref-functions.md #4: 3 tokens '* Generator Functions'",
+              "docs/sql-ref-syntax-aux-conf-mgmt-reset.md #4: 2 tokens '* SET'"
+            ]
+          },
+          "oversized_chunks": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 5449,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "embed text over 254 tokens (max_tokens 254; the embedding models' 256 less [CLS] and [SEP]); fails if any",
+            "examples": []
+          },
+          "duplicate_chunk_ids": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 5449,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "rows beyond the first of a repeated chunk_id; fails if any",
+            "examples": []
+          },
+          "duplicate_embed_text": {
+            "status": "pass",
+            "numerator": 3,
+            "denominator": 5449,
+            "observed": 0.000551,
+            "threshold": 0.01,
+            "rule": "copies beyond the first of a repeated embed text; fails above 1% of chunks",
+            "examples": [
+              "2x in ['docs/sql-ref-syntax-ddl-alter-view.md']: 'ALTER VIEW > Description > Parameters\\n\\n* **view_identifier**\\n\\n    Specifies a vi'",
+              "2x in ['docs/sql-migration-guide.md']: 'Migration Guide: SQL, Datasets and DataFrame > Upgrading from Spark SQL 2.4 to 3'",
+              "2x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Shared Variables > Accumulators\\n\\nWhile this code used th'"
+            ]
+          },
+          "missing_metadata": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 5449,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "a docs/*.md path, non-blank section names (the title first), version_tag v4.0.0, a 40-hex commit_sha; fails if any row misses one",
+            "examples": []
+          },
+          "drift_docs": {
+            "status": "fail",
+            "numerator": 212,
+            "denominator": 244,
+            "observed": -0.131148,
+            "threshold": 0.1,
+            "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": []
+          },
+          "drift_chunks": {
+            "status": "pass",
+            "numerator": 5449,
+            "denominator": 5589,
+            "observed": -0.025049,
+            "threshold": 0.1,
+            "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": []
+          },
+          "drift_tokens": {
+            "status": "pass",
+            "numerator": 689988,
+            "denominator": 667028,
+            "observed": 0.034421,
+            "threshold": 0.1,
+            "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": []
+          }
+        }
+      },
+      {
+        "from": "v4.0.0",
+        "to": "v4.0.1",
+        "checks": {
+          "empty_chunks": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 5462,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "body or embed text blank; fails if any",
+            "examples": []
+          },
+          "tiny_chunks": {
+            "status": "pass",
+            "numerator": 46,
+            "denominator": 5462,
+            "observed": 0.008422,
+            "threshold": 0.02,
+            "rule": "body under 5 tokens; fails above 2% of chunks",
+            "examples": [
+              "docs/sql-data-sources-avro.md #9: 2 tokens 'scala:'",
+              "docs/sql-data-sources-avro.md #12: 2 tokens 'java:'",
+              "docs/sql-data-sources-avro.md #15: 2 tokens 'r:'",
+              "docs/sql-data-sources-parquet.md #13: 2 tokens 'scala:'",
+              "docs/sql-data-sources-parquet.md #16: 2 tokens 'java:'",
+              "docs/sql-data-sources-protobuf.md #10: 2 tokens 'scala:'",
+              "docs/sql-data-sources-protobuf.md #15: 2 tokens 'java:'",
+              "docs/sql-ref-datatypes.md #82: 2 tokens 'r:'",
+              "docs/sql-ref-functions.md #4: 3 tokens '* Generator Functions'",
+              "docs/sql-ref-syntax-aux-conf-mgmt-reset.md #4: 2 tokens '* SET'"
+            ]
+          },
+          "oversized_chunks": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 5462,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "embed text over 254 tokens (max_tokens 254; the embedding models' 256 less [CLS] and [SEP]); fails if any",
+            "examples": []
+          },
+          "duplicate_chunk_ids": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 5462,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "rows beyond the first of a repeated chunk_id; fails if any",
+            "examples": []
+          },
+          "duplicate_embed_text": {
+            "status": "pass",
+            "numerator": 3,
+            "denominator": 5462,
+            "observed": 0.000549,
+            "threshold": 0.01,
+            "rule": "copies beyond the first of a repeated embed text; fails above 1% of chunks",
+            "examples": [
+              "2x in ['docs/sql-ref-syntax-ddl-alter-view.md']: 'ALTER VIEW > Description > Parameters\\n\\n* **view_identifier**\\n\\n    Specifies a vi'",
+              "2x in ['docs/sql-migration-guide.md']: 'Migration Guide: SQL, Datasets and DataFrame > Upgrading from Spark SQL 2.4 to 3'",
+              "2x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Shared Variables > Accumulators\\n\\nWhile this code used th'"
+            ]
+          },
+          "missing_metadata": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 5462,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "a docs/*.md path, non-blank section names (the title first), version_tag v4.0.1, a 40-hex commit_sha; fails if any row misses one",
+            "examples": []
+          },
+          "drift_docs": {
+            "status": "pass",
+            "numerator": 213,
+            "denominator": 212,
+            "observed": 0.004717,
+            "threshold": 0.1,
+            "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": []
+          },
+          "drift_chunks": {
+            "status": "pass",
+            "numerator": 5462,
+            "denominator": 5449,
+            "observed": 0.002386,
+            "threshold": 0.1,
+            "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": []
+          },
+          "drift_tokens": {
+            "status": "pass",
+            "numerator": 692251,
+            "denominator": 689988,
+            "observed": 0.00328,
+            "threshold": 0.1,
+            "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": []
+          }
+        }
+      },
+      {
+        "from": "v4.0.1",
+        "to": "v4.0.1",
+        "checks": {
+          "empty_chunks": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 5462,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "body or embed text blank; fails if any",
+            "examples": []
+          },
+          "tiny_chunks": {
+            "status": "pass",
+            "numerator": 46,
+            "denominator": 5462,
+            "observed": 0.008422,
+            "threshold": 0.02,
+            "rule": "body under 5 tokens; fails above 2% of chunks",
+            "examples": [
+              "docs/sql-data-sources-avro.md #9: 2 tokens 'scala:'",
+              "docs/sql-data-sources-avro.md #12: 2 tokens 'java:'",
+              "docs/sql-data-sources-avro.md #15: 2 tokens 'r:'",
+              "docs/sql-data-sources-parquet.md #13: 2 tokens 'scala:'",
+              "docs/sql-data-sources-parquet.md #16: 2 tokens 'java:'",
+              "docs/sql-data-sources-protobuf.md #10: 2 tokens 'scala:'",
+              "docs/sql-data-sources-protobuf.md #15: 2 tokens 'java:'",
+              "docs/sql-ref-datatypes.md #82: 2 tokens 'r:'",
+              "docs/sql-ref-functions.md #4: 3 tokens '* Generator Functions'",
+              "docs/sql-ref-syntax-aux-conf-mgmt-reset.md #4: 2 tokens '* SET'"
+            ]
+          },
+          "oversized_chunks": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 5462,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "embed text over 254 tokens (max_tokens 254; the embedding models' 256 less [CLS] and [SEP]); fails if any",
+            "examples": []
+          },
+          "duplicate_chunk_ids": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 5462,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "rows beyond the first of a repeated chunk_id; fails if any",
+            "examples": []
+          },
+          "duplicate_embed_text": {
+            "status": "pass",
+            "numerator": 3,
+            "denominator": 5462,
+            "observed": 0.000549,
+            "threshold": 0.01,
+            "rule": "copies beyond the first of a repeated embed text; fails above 1% of chunks",
+            "examples": [
+              "2x in ['docs/sql-ref-syntax-ddl-alter-view.md']: 'ALTER VIEW > Description > Parameters\\n\\n* **view_identifier**\\n\\n    Specifies a vi'",
+              "2x in ['docs/sql-migration-guide.md']: 'Migration Guide: SQL, Datasets and DataFrame > Upgrading from Spark SQL 2.4 to 3'",
+              "2x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Shared Variables > Accumulators\\n\\nWhile this code used th'"
+            ]
+          },
+          "missing_metadata": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 5462,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "a docs/*.md path, non-blank section names (the title first), version_tag v4.0.1, a 40-hex commit_sha; fails if any row misses one",
+            "examples": []
+          },
+          "drift_docs": {
+            "status": "pass",
+            "numerator": 213,
+            "denominator": 213,
+            "observed": 0.0,
+            "threshold": 0.1,
+            "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": []
+          },
+          "drift_chunks": {
+            "status": "pass",
+            "numerator": 5462,
+            "denominator": 5462,
+            "observed": 0.0,
+            "threshold": 0.1,
+            "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": []
+          },
+          "drift_tokens": {
+            "status": "pass",
+            "numerator": 692251,
+            "denominator": 692251,
+            "observed": 0.0,
+            "threshold": 0.1,
+            "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": []
+          }
+        }
+      }
+    ],
+    "128/16": [
+      {
+        "from": null,
+        "to": "v3.5.0",
+        "checks": {
+          "empty_chunks": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 8701,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "body or embed text blank; fails if any",
+            "examples": []
+          },
+          "tiny_chunks": {
+            "status": "pass",
+            "numerator": 102,
+            "denominator": 8701,
+            "observed": 0.011723,
+            "threshold": 0.02,
+            "rule": "body under 5 tokens; fails above 2% of chunks",
+            "examples": [
+              "docs/running-on-yarn.md #175: 1 tokens 'Or'",
+              "docs/sparkr.md #33: 2 tokens 'r:'",
+              "docs/sql-data-sources-avro.md #17: 2 tokens 'scala:'",
+              "docs/sql-data-sources-avro.md #22: 2 tokens 'java:'",
+              "docs/sql-data-sources-avro.md #27: 2 tokens 'r:'",
+              "docs/sql-data-sources-parquet.md #24: 2 tokens 'scala:'",
+              "docs/sql-data-sources-parquet.md #29: 2 tokens 'java:'",
+              "docs/sql-error-conditions-invalid-handle-error-class.md #3: 4 tokens 'Operation already exists.'",
+              "docs/sql-error-conditions-invalid-handle-error-class.md #4: 4 tokens 'Operation not found.'",
+              "docs/sql-error-conditions-invalid-handle-error-class.md #5: 4 tokens 'Session already exists.'"
+            ]
+          },
+          "oversized_chunks": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 8701,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "embed text over 128 tokens (max_tokens 128; the embedding models' 256 less [CLS] and [SEP]); fails if any",
+            "examples": []
+          },
+          "duplicate_chunk_ids": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 8701,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "rows beyond the first of a repeated chunk_id; fails if any",
+            "examples": []
+          },
+          "duplicate_embed_text": {
+            "status": "pass",
+            "numerator": 37,
+            "denominator": 8701,
+            "observed": 0.004252,
+            "threshold": 0.01,
+            "rule": "copies beyond the first of a repeated embed text; fails above 1% of chunks",
+            "examples": [
+              "3x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Resilient Distributed Datasets (RDDs) > External Dataset'",
+              "3x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Resilient Distributed Datasets (RDDs) > RDD Operations >'",
+              "3x in ['docs/security.md']: 'Spark Security > Kerberos > Secure Interaction with Kubernetes\\n\\n```bash\\n/opt/spa'",
+              "3x in ['docs/structured-streaming-programming-guide.md']: 'Structured Streaming Programming Guide > Quick Example\\n\\n```bash\\n---\\n+---+---+\\n| '",
+              "2x in ['docs/sql-ref-syntax-ddl-alter-view.md']: 'ALTER VIEW > Description > Parameters\\n\\n* **view_identifier**\\n\\n    Specifies a vi'",
+              "2x in ['docs/sql-ref-syntax-aux-analyze-table.md']: 'ANALYZE TABLE > Examples\\n\\n```sql\\nDESC EXTENDED students;\\n+---+---+---+\\n|        '",
+              "2x in ['docs/sql-error-conditions-incompatible-data-for-table-error-class.md', 'docs/sql-error-conditions-incompatible-data-to-table-error-class.md']: 'INCOMPATIBLE_DATA_FOR_TABLE error class > AMBIGUOUS_COLUMN_NAME\\n\\nAmbiguous colum'",
+              "2x in ['docs/sql-error-conditions-incompatible-data-for-table-error-class.md', 'docs/sql-error-conditions-incompatible-data-to-table-error-class.md']: 'INCOMPATIBLE_DATA_FOR_TABLE error class > CANNOT_FIND_DATA\\n\\nCannot find data for'",
+              "2x in ['docs/sql-error-conditions-incompatible-data-for-table-error-class.md', 'docs/sql-error-conditions-incompatible-data-to-table-error-class.md']: 'INCOMPATIBLE_DATA_FOR_TABLE error class > CANNOT_SAFELY_CAST\\n\\nCannot safely cast'",
+              "2x in ['docs/sql-error-conditions-incompatible-data-for-table-error-class.md', 'docs/sql-error-conditions-incompatible-data-to-table-error-class.md']: 'INCOMPATIBLE_DATA_FOR_TABLE error class > EXTRA_STRUCT_FIELDS\\n\\nCannot write extr'"
+            ]
+          },
+          "missing_metadata": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 8701,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "a docs/*.md path, non-blank section names (the title first), version_tag v3.5.0, a 40-hex commit_sha; fails if any row misses one",
+            "examples": []
+          },
+          "drift_docs": {
+            "status": "not_applicable",
+            "numerator": 244,
+            "denominator": 0,
+            "observed": null,
+            "threshold": 0.1,
+            "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": []
+          },
+          "drift_chunks": {
+            "status": "not_applicable",
+            "numerator": 8701,
+            "denominator": 0,
+            "observed": null,
+            "threshold": 0.1,
+            "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": []
+          },
+          "drift_tokens": {
+            "status": "not_applicable",
+            "numerator": 750439,
+            "denominator": 0,
+            "observed": null,
+            "threshold": 0.1,
+            "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": []
+          }
+        }
+      },
+      {
+        "from": "v3.5.0",
+        "to": "v4.0.0",
+        "checks": {
+          "empty_chunks": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 8822,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "body or embed text blank; fails if any",
+            "examples": []
+          },
+          "tiny_chunks": {
+            "status": "pass",
+            "numerator": 101,
+            "denominator": 8822,
+            "observed": 0.011449,
+            "threshold": 0.02,
+            "rule": "body under 5 tokens; fails above 2% of chunks",
+            "examples": [
+              "docs/running-on-yarn.md #168: 1 tokens 'Or'",
+              "docs/sparkr.md #34: 2 tokens 'r:'",
+              "docs/sql-data-sources-avro.md #17: 2 tokens 'scala:'",
+              "docs/sql-data-sources-avro.md #22: 2 tokens 'java:'",
+              "docs/sql-data-sources-avro.md #27: 2 tokens 'r:'",
+              "docs/sql-data-sources-avro.md #31: 2 tokens 'sql:'",
+              "docs/sql-data-sources-parquet.md #24: 2 tokens 'scala:'",
+              "docs/sql-data-sources-parquet.md #29: 2 tokens 'java:'",
+              "docs/sql-data-sources-protobuf.md #18: 2 tokens 'scala:'",
+              "docs/sql-data-sources-protobuf.md #28: 2 tokens 'java:'"
+            ]
+          },
+          "oversized_chunks": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 8822,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "embed text over 128 tokens (max_tokens 128; the embedding models' 256 less [CLS] and [SEP]); fails if any",
+            "examples": []
+          },
+          "duplicate_chunk_ids": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 8822,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "rows beyond the first of a repeated chunk_id; fails if any",
+            "examples": []
+          },
+          "duplicate_embed_text": {
+            "status": "pass",
+            "numerator": 28,
+            "denominator": 8822,
+            "observed": 0.003174,
+            "threshold": 0.01,
+            "rule": "copies beyond the first of a repeated embed text; fails above 1% of chunks",
+            "examples": [
+              "3x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Resilient Distributed Datasets (RDDs) > External Dataset'",
+              "3x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Resilient Distributed Datasets (RDDs) > RDD Operations >'",
+              "3x in ['docs/security.md']: 'Spark Security > Kerberos > Secure Interaction with Kubernetes\\n\\n```bash\\n/opt/spa'",
+              "3x in ['docs/streaming/getting-started.md']: 'Structured Streaming Programming Guide > Quick Example\\n\\n```bash\\n---\\n+---+---+\\n| '",
+              "2x in ['docs/sql-ref-syntax-ddl-alter-view.md']: 'ALTER VIEW > Description > Parameters\\n\\n* **view_identifier**\\n\\n    Specifies a vi'",
+              "2x in ['docs/sql-ref-syntax-aux-analyze-table.md']: 'ANALYZE TABLE > Examples\\n\\n```sql\\nDESC EXTENDED students;\\n+---+---+---+\\n|        '",
+              "2x in ['docs/sql-migration-guide.md']: 'Migration Guide: SQL, Datasets and DataFrame > Upgrading from Spark SQL 2.4 to 3'",
+              "2x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Resilient Distributed Datasets (RDDs) > External Dataset'",
+              "2x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Resilient Distributed Datasets (RDDs) > External Dataset'",
+              "2x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Resilient Distributed Datasets (RDDs) > RDD Operations >'"
+            ]
+          },
+          "missing_metadata": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 8822,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "a docs/*.md path, non-blank section names (the title first), version_tag v4.0.0, a 40-hex commit_sha; fails if any row misses one",
+            "examples": []
+          },
+          "drift_docs": {
+            "status": "fail",
+            "numerator": 212,
+            "denominator": 244,
+            "observed": -0.131148,
+            "threshold": 0.1,
+            "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": []
+          },
+          "drift_chunks": {
+            "status": "pass",
+            "numerator": 8822,
+            "denominator": 8701,
+            "observed": 0.013906,
+            "threshold": 0.1,
+            "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": []
+          },
+          "drift_tokens": {
+            "status": "pass",
+            "numerator": 778501,
+            "denominator": 750439,
+            "observed": 0.037394,
+            "threshold": 0.1,
+            "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": []
+          }
+        }
+      },
+      {
+        "from": "v4.0.0",
+        "to": "v4.0.1",
+        "checks": {
+          "empty_chunks": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 8845,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "body or embed text blank; fails if any",
+            "examples": []
+          },
+          "tiny_chunks": {
+            "status": "pass",
+            "numerator": 101,
+            "denominator": 8845,
+            "observed": 0.011419,
+            "threshold": 0.02,
+            "rule": "body under 5 tokens; fails above 2% of chunks",
+            "examples": [
+              "docs/running-on-yarn.md #168: 1 tokens 'Or'",
+              "docs/sparkr.md #34: 2 tokens 'r:'",
+              "docs/sql-data-sources-avro.md #17: 2 tokens 'scala:'",
+              "docs/sql-data-sources-avro.md #22: 2 tokens 'java:'",
+              "docs/sql-data-sources-avro.md #27: 2 tokens 'r:'",
+              "docs/sql-data-sources-avro.md #31: 2 tokens 'sql:'",
+              "docs/sql-data-sources-parquet.md #24: 2 tokens 'scala:'",
+              "docs/sql-data-sources-parquet.md #29: 2 tokens 'java:'",
+              "docs/sql-data-sources-protobuf.md #18: 2 tokens 'scala:'",
+              "docs/sql-data-sources-protobuf.md #28: 2 tokens 'java:'"
+            ]
+          },
+          "oversized_chunks": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 8845,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "embed text over 128 tokens (max_tokens 128; the embedding models' 256 less [CLS] and [SEP]); fails if any",
+            "examples": []
+          },
+          "duplicate_chunk_ids": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 8845,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "rows beyond the first of a repeated chunk_id; fails if any",
+            "examples": []
+          },
+          "duplicate_embed_text": {
+            "status": "pass",
+            "numerator": 28,
+            "denominator": 8845,
+            "observed": 0.003166,
+            "threshold": 0.01,
+            "rule": "copies beyond the first of a repeated embed text; fails above 1% of chunks",
+            "examples": [
+              "3x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Resilient Distributed Datasets (RDDs) > External Dataset'",
+              "3x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Resilient Distributed Datasets (RDDs) > RDD Operations >'",
+              "3x in ['docs/security.md']: 'Spark Security > Kerberos > Secure Interaction with Kubernetes\\n\\n```bash\\n/opt/spa'",
+              "3x in ['docs/streaming/getting-started.md']: 'Structured Streaming Programming Guide > Quick Example\\n\\n```bash\\n---\\n+---+---+\\n| '",
+              "2x in ['docs/sql-ref-syntax-ddl-alter-view.md']: 'ALTER VIEW > Description > Parameters\\n\\n* **view_identifier**\\n\\n    Specifies a vi'",
+              "2x in ['docs/sql-ref-syntax-aux-analyze-table.md']: 'ANALYZE TABLE > Examples\\n\\n```sql\\nDESC EXTENDED students;\\n+---+---+---+\\n|        '",
+              "2x in ['docs/sql-migration-guide.md']: 'Migration Guide: SQL, Datasets and DataFrame > Upgrading from Spark SQL 2.4 to 3'",
+              "2x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Resilient Distributed Datasets (RDDs) > External Dataset'",
+              "2x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Resilient Distributed Datasets (RDDs) > External Dataset'",
+              "2x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Resilient Distributed Datasets (RDDs) > RDD Operations >'"
+            ]
+          },
+          "missing_metadata": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 8845,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "a docs/*.md path, non-blank section names (the title first), version_tag v4.0.1, a 40-hex commit_sha; fails if any row misses one",
+            "examples": []
+          },
+          "drift_docs": {
+            "status": "pass",
+            "numerator": 213,
+            "denominator": 212,
+            "observed": 0.004717,
+            "threshold": 0.1,
+            "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": []
+          },
+          "drift_chunks": {
+            "status": "pass",
+            "numerator": 8845,
+            "denominator": 8822,
+            "observed": 0.002607,
+            "threshold": 0.1,
+            "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": []
+          },
+          "drift_tokens": {
+            "status": "pass",
+            "numerator": 780970,
+            "denominator": 778501,
+            "observed": 0.003171,
+            "threshold": 0.1,
+            "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": []
+          }
+        }
+      },
+      {
+        "from": "v4.0.1",
+        "to": "v4.0.1",
+        "checks": {
+          "empty_chunks": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 8845,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "body or embed text blank; fails if any",
+            "examples": []
+          },
+          "tiny_chunks": {
+            "status": "pass",
+            "numerator": 101,
+            "denominator": 8845,
+            "observed": 0.011419,
+            "threshold": 0.02,
+            "rule": "body under 5 tokens; fails above 2% of chunks",
+            "examples": [
+              "docs/running-on-yarn.md #168: 1 tokens 'Or'",
+              "docs/sparkr.md #34: 2 tokens 'r:'",
+              "docs/sql-data-sources-avro.md #17: 2 tokens 'scala:'",
+              "docs/sql-data-sources-avro.md #22: 2 tokens 'java:'",
+              "docs/sql-data-sources-avro.md #27: 2 tokens 'r:'",
+              "docs/sql-data-sources-avro.md #31: 2 tokens 'sql:'",
+              "docs/sql-data-sources-parquet.md #24: 2 tokens 'scala:'",
+              "docs/sql-data-sources-parquet.md #29: 2 tokens 'java:'",
+              "docs/sql-data-sources-protobuf.md #18: 2 tokens 'scala:'",
+              "docs/sql-data-sources-protobuf.md #28: 2 tokens 'java:'"
+            ]
+          },
+          "oversized_chunks": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 8845,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "embed text over 128 tokens (max_tokens 128; the embedding models' 256 less [CLS] and [SEP]); fails if any",
+            "examples": []
+          },
+          "duplicate_chunk_ids": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 8845,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "rows beyond the first of a repeated chunk_id; fails if any",
+            "examples": []
+          },
+          "duplicate_embed_text": {
+            "status": "pass",
+            "numerator": 28,
+            "denominator": 8845,
+            "observed": 0.003166,
+            "threshold": 0.01,
+            "rule": "copies beyond the first of a repeated embed text; fails above 1% of chunks",
+            "examples": [
+              "3x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Resilient Distributed Datasets (RDDs) > External Dataset'",
+              "3x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Resilient Distributed Datasets (RDDs) > RDD Operations >'",
+              "3x in ['docs/security.md']: 'Spark Security > Kerberos > Secure Interaction with Kubernetes\\n\\n```bash\\n/opt/spa'",
+              "3x in ['docs/streaming/getting-started.md']: 'Structured Streaming Programming Guide > Quick Example\\n\\n```bash\\n---\\n+---+---+\\n| '",
+              "2x in ['docs/sql-ref-syntax-ddl-alter-view.md']: 'ALTER VIEW > Description > Parameters\\n\\n* **view_identifier**\\n\\n    Specifies a vi'",
+              "2x in ['docs/sql-ref-syntax-aux-analyze-table.md']: 'ANALYZE TABLE > Examples\\n\\n```sql\\nDESC EXTENDED students;\\n+---+---+---+\\n|        '",
+              "2x in ['docs/sql-migration-guide.md']: 'Migration Guide: SQL, Datasets and DataFrame > Upgrading from Spark SQL 2.4 to 3'",
+              "2x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Resilient Distributed Datasets (RDDs) > External Dataset'",
+              "2x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Resilient Distributed Datasets (RDDs) > External Dataset'",
+              "2x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Resilient Distributed Datasets (RDDs) > RDD Operations >'"
+            ]
+          },
+          "missing_metadata": {
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 8845,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "a docs/*.md path, non-blank section names (the title first), version_tag v4.0.1, a 40-hex commit_sha; fails if any row misses one",
+            "examples": []
+          },
+          "drift_docs": {
+            "status": "pass",
+            "numerator": 213,
+            "denominator": 213,
+            "observed": 0.0,
+            "threshold": 0.1,
+            "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": []
+          },
+          "drift_chunks": {
+            "status": "pass",
+            "numerator": 8845,
+            "denominator": 8845,
+            "observed": 0.0,
+            "threshold": 0.1,
+            "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": []
+          },
+          "drift_tokens": {
+            "status": "pass",
+            "numerator": 780970,
+            "denominator": 780970,
+            "observed": 0.0,
+            "threshold": 0.1,
+            "rule": "|to/from - 1| over 10% fails unless accepted with a reason; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": []
+          }
+        }
+      }
+    ]
+  }
+}
