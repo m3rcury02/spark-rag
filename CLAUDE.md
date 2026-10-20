@@ -29,13 +29,14 @@ Read both before starting any milestone.
 
 - Platform: Databricks Free Edition (serverless only), Unity Catalog, Delta.
   Vector index: Databricks **AI Search** (renamed from Vector Search in 2026) —
-  Delta Sync index with self-managed embeddings, on the single endpoint `docs_rag_endpoint` (deleted while idle
-  on 2026-10-19; M5 creates it again).
+  Delta Sync index `gold_chunk_index` over `gold_chunk_embeddings`, self-managed embeddings, on the single
+  endpoint `docs_rag_endpoint`. Both exist only while needed (M5 created and deleted them on 2026-10-20, D-014).
   **Status: accepted 2026-10-15** after the workspace smoke test (D-001, evidence in `runs/m0_*`).
 - Python 3.12, managed with `uv`. Every Databricks job pins **serverless environment version 4** (Python
   3.12.3) and asserts it at start-up; with no spec a job got env 2 / Python 3.11 (D-005). The package version
   comes from git (hatch-vcs), so serverless never runs a cached older wheel.
-- Embeddings: open-source sentence-transformers models, computed by us.
+- Embeddings: open-source sentence-transformers models, computed by us: all-MiniLM-L6-v2 at a pinned revision,
+  CPU torch pinned by sha256, checked against a shipped canary before gold is touched (D-014).
 - Deployment: Databricks Asset Bundles (dev/prod targets). CI: GitHub Actions.
 
 ## Code conventions
@@ -109,9 +110,10 @@ uv run --with databricks-sdk==0.152.0 --with sentence-transformers==6.1.0 --with
 uv run --with databricks-sdk==0.152.0 python scripts/run_job.py \
     --script jobs/change_detect.py --label <label> -- --tag v4.0.1 [--initial] [--allow-backwards] \
     [--allow-config-change] [--accept-drift "<reason>" --accept-drift-of <failed run_id>]
-uv run --with databricks-sdk==0.152.0 python scripts/m3_verify_changes.py \
-    --label <label> --job-runs runs/m3_*_detect_*.json runs/m4_*_detect_*.json runs/m4x_*_detect_*.json
-uv run --with databricks-sdk==0.152.0 python scripts/m4_verify_gate.py --label <label> \
+# The verifiers read one chain (--sink): 'none' for M3/M4's runs, gold_chunk_embeddings for M5's.
+uv run --with databricks-sdk==0.152.0 python scripts/m3_verify_changes.py --label <label> --sink none \
+    --job-runs runs/m3_*_detect_*.json runs/m4_*_detect_*.json runs/m4x_*_detect_*.json
+uv run --with databricks-sdk==0.152.0 python scripts/m4_verify_gate.py --label <label> --sink none \
     --job-runs runs/m4_*_detect_*.json runs/m4x_*_detect_*.json --pre-gate-runs runs/m3_*_detect_*.json
 uv run --with databricks-sdk==0.152.0 python scripts/task_attempts.py --label <label> runs/<run files>
 # M4 threshold calibration (git only, ~10 min): every DQ check over every release from v3.0.0 on.
@@ -122,44 +124,55 @@ uv run python scripts/corpus_fingerprint.py
 # create the new versions' goldens. Existing goldens are never overwritten.
 UPDATE_GOLDEN=1 uv run pytest tests/test_clean_golden.py tests/test_chunk_golden.py
 uv run python scripts/corpus_fingerprint.py --update
+# M5 gold + index (D-014). change_detect with Config.sink = gold embeds the added chunks and MERGEs gold
+# (run_job.py installs the pinned torch/sentence-transformers). The endpoint and the index bill while they
+# exist: create them only for a demo, the index after the full backfill, and delete both afterwards.
+uv run --with databricks-sdk==0.152.0 python scripts/m5_index.py create-endpoint --label <label>
+uv run --with databricks-sdk==0.152.0 python scripts/m5_index.py create-index --label <label>  # ~17 min
+uv run --with databricks-sdk==0.152.0 python scripts/run_job.py --script jobs/sync_index.py --label <label>
+uv run --with databricks-sdk==0.152.0 python scripts/m5_index.py status --label <label>
+uv run --with databricks-sdk==0.152.0 python scripts/m5_index.py delete-index --label <label>
+uv run --with databricks-sdk==0.152.0 python scripts/delete_endpoint.py --endpoint docs_rag_endpoint --label <label>
+# Verify gold against git (time travel per run, kept rows not re-embedded, vectors in SQL, a local re-embedding
+# sample; --index also scans the index), and the gold chain with the M3/M4 verifiers.
+uv run --with databricks-sdk==0.152.0 --with sentence-transformers==6.1.0 --with transformers==5.19.0 \
+    --with torch==2.14.1+cpu --index https://download.pytorch.org/whl/cpu \
+    --index-strategy unsafe-best-match python scripts/m5_verify_gold.py --label <label> [--index]
+uv run --with databricks-sdk==0.152.0 python scripts/m4_verify_gate.py --label <label> \
+    --sink gold_chunk_embeddings --job-runs runs/m5_*_detect_*.json
+uv run --with databricks-sdk==0.152.0 python scripts/m3_verify_changes.py --label <label> \
+    --sink gold_chunk_embeddings --job-runs runs/m5_*_detect_*.json
+# The embedding canary is made once per model (never overwritten): scripts/m5_canary.py, same --with flags.
 ```
 
 ## Next session: pick up here
 
-M4 and its follow-ups are complete (D-012, D-013; report given to the owner on 2026-10-20) on branch
-`pre-m5-followups`, merged into `main`. The DQ gate (v2) runs inside `jobs/change_detect.py` before the
-committed row: drift thresholds by release kind, and an override bound to a failed run (`--accept-drift-of`).
-A cleaner or chunker version bump crosses a chain through the re-baseline path (`--allow-config-change`; the
-baseline is checked from its stored silver rows). CLEANER_VERSION is 2 (no tab label before a same-language
-code fence). Silver holds both cleaners' rows for v3.5.0, v4.0.0 and v4.0.1 at 254/32 and 128/16. The chain for
-sink `none` has 15 committed runs and ends at v4.0.1 under cleaner 2 (`e70bf55c7cf1b856`). `ops_run_log` has
-47 columns (`dq_override`, `dq_override_of`, `baseline_check` added by `runs/m4_b`, `m4x_a`, `m4x_k`) and
-`ops_dq_results` 20. Evidence: `runs/m4_*`, `runs/m4x_*`, verified by `m4x_v3` (1,089/1,089), `m4x_w3`
-(342/342, each run re-chunked with its own code) and `m4x_s` (silver). Do not re-run the `m3_*`, `m4_*` or
-`m4x_*` labels.
+M5 is complete (D-014; report given to the owner on 2026-10-20) on branch `m5-gold-index` (not yet merged
+into `main`; the owner decides). `Config.sink` is `gold_chunk_embeddings`: `jobs/change_detect.py` checks gold
+holds the chain head, embeds only the added chunks (canary first), logs five vector checks as a second DQ insert,
+MERGEs inserts and deletes (rows never change), checks gold equals the target, then commits. `jobs/sync_index.py`
+syncs the index from a committed state and proves it equal by key scan. The gold chain has 4 committed runs:
+v3.5.0 (5,567 embedded) → v4.0.0 (drift accepted, 1,866 embedded) → v4.0.0 (0) → v4.0.1 (21 embedded); gold
+holds 5,436 rows at version 4. `ops_run_log` has 53 columns (`runs/m5_b` added six). The chain for sink `none`
+(15 runs, M3/M4) is unchanged. Evidence: `runs/m5_*`, verified by `m5_v1` (42/42, incl. the index scan),
+`m5_v2` (379/379) and `m5_v3b` (85/85; `m5_v3` failed on a verifier defect, kept as history). The index and the
+endpoint were deleted afterwards (`m5_m`, `m5_n`); gold stays. Do not re-run the `m3_*`, `m4_*`, `m4x_*` or
+`m5_*` labels.
 
-**Do not start M5 until the owner says so.** Open items:
-- Remote branches `m0-smoke-test`, `m1-bronze`, `m2-silver`, `m3-change-detection`, `m4-dq-gate`,
-  `pre-m5-followups` (all merged) and `claude/modest-archimedes-mp5zx3` (stale) are still on GitHub: the
-  session's git proxy refuses branch deletion (HTTP 403), so the owner deletes them in the GitHub UI.
+**Do not start M6 until the owner says so.** Open items:
+- Read the DBU the M5 window used (endpoint 18:26–19:09 UTC on 2026-10-20) from `system.billing.usage` once it
+  has rows (`m5_p` found none yet); the m2_d0d query works.
+- Untested: the manual repair after a failure between a gold MERGE and its committed row (D-014, decision 5).
 - Still open (D-012, D-013): the override's reason test is lexical and nothing records who overrode; gains are
-  not capped (M5 sizes embedding cost); the checks are structural (a leftover-markup check is a cheap next
-  one); positions of a stored baseline are pinned by nothing and no verifier checks `chunks_kept_relocated`;
-  refusals before the gate are evidenced only by the job's own error messages.
-- For M5's gold writes (from M1/M2): take counts from our own MERGE metrics (the sync pipeline's row metrics are
-  always 0, D-001); on Databricks a no-op MERGE still writes an empty table version (D-006 run b), and
-  Databricks commits its own `OPTIMIZE` versions (D-010): never read "we wrote" from a version bump.
-- Carry into M5: set `Config.sink` to the gold table: a new chain, so the first M5 run is an explicit `--initial`
-  load into an empty gold, and its drift is not applicable (D-012: decide whether to compare it with the `none`
-  chain's head). Order (D-012): chunk checks → embed to staging → vector checks (dimension, no NaN, norm) logged
-  like the others → gold MERGE with the `GatePassed` → sync and wait → committed row; define recovery for a
-  failure between the MERGE and the committed row. A later cleaner fix reaches gold as a cross-config chunk diff
-  (D-013): keep old silver rows while a chain's head points at their config. Gold holds no positions (they come
-  from silver; kept chunks move, D-011). Create the endpoint again first (~20 min of provisioning) and delete it
-  when the index is not needed (idle it bills 4 DBU/h even with no index, against the docs, and likely drains
-  the daily quota: D-001). Create the real index only after the full gold backfill, because capacity is sized
-  from the source table at creation and a small start limits growth. Re-test insert, update and delete with the
-  real MERGE. Sync right after each MERGE and wait for the update to complete ("ready" is not "synced") (D-001).
+  not capped; the checks are structural (a leftover-markup check is a cheap next one); positions of a stored
+  baseline are pinned by nothing and no verifier checks `chunks_kept_relocated`; refusals before the gate are
+  evidenced only by the job's own error messages.
+- For M6: the 2×2 grid (254/32 and 128/16 × MiniLM and bge-small) cannot have four live indexes (one endpoint,
+  quota): rank exactly over gold-like tables, or locally. Silver holds both sizes under cleaner 2; bge needs its
+  own canary (revision `5c38ec7c405ec4b44b94cc5a9bb96e735b38267a`) and its query prefix decided. Anything that
+  reads the live index must check the last `sync_index` record: a committed head does not mean the index caught
+  up (D-014, decision 4).
+- Never read "we wrote" from a gold version bump: Databricks commits its own OPTIMIZE/VACUUM (gold v3, D-010).
 
 ## Milestones (status)
 
@@ -168,7 +181,7 @@ sink `none` has 15 committed runs and ends at v4.0.1 under cleaner 2 (`e70bf55c7
 - [x] M2 — Silver: Markdown cleaning + section-aware chunking, stable chunk IDs, tests (2026-10-19; D-008, D-009, D-010)
 - [x] M3 — Change detection (doc + chunk level) and run log; v1 → v2 → re-run (2026-10-20; D-011)
 - [x] M4 — DQ checks as a gate between silver and gold (2026-10-20; D-012; follow-ups D-012 v2, D-013)
-- [ ] M5 — Embeddings + AI Search index sync (only changed chunks embedded)
+- [x] M5 — Embeddings + AI Search index sync (only changed chunks embedded) (2026-10-20; D-014)
 - [ ] M6 — Eval set (50 Q/A, owner reviews) + recall@5/MRR, 2 chunk sizes × 2 models
 - [ ] M7 — Asset Bundles (dev/prod), Jobs, GitHub Actions
 - [ ] M8 — README: Mermaid diagram, how to run, results table, limitations
