@@ -1,0 +1,3823 @@
+{
+  "label": "m4_v_gate_vs_git",
+  "git_commit": "51d50f986ae2c4ab9232eb5f615e5de1600100bc",
+  "policy": {
+    "tiny_body_tokens": 5,
+    "empty_chunks": 0.0,
+    "tiny_chunks": 0.02,
+    "oversized_chunks": 0.0,
+    "duplicate_chunk_ids": 0.0,
+    "duplicate_embed_text": 0.01,
+    "missing_metadata": 0.0,
+    "drift": 0.1,
+    "max_override_loss": 0.5,
+    "model_input_tokens": 254
+  },
+  "dq_rows": 63,
+  "pre_gate_runs_exempted": [
+    "b2b5cba6-ab0e-43af-8d05-ce065c108778",
+    "b762b472-c6cb-4cbc-93ce-da63e5c392f2",
+    "d31a2379-203f-4fe6-b962-411304398625",
+    "f2dc0c3b-9876-4d2b-a2ab-ab98087278f9",
+    "fdd92ebc-c1e4-4a23-b43d-6638f9f6c440"
+  ],
+  "log_rows": 19,
+  "checks": [
+    {
+      "scope": "workspace.docs_rag_dev.ops_run_log",
+      "check": "delta.appendOnly",
+      "expected": "true",
+      "logged": "true",
+      "pass": true
+    },
+    {
+      "scope": "workspace.docs_rag_dev.ops_dq_results",
+      "check": "delta.appendOnly",
+      "expected": "true",
+      "logged": "true",
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "DQ rows come from one attempt, the job's",
+      "expected": [
+        "bd1e1bbb2eb046e48a56c5e9ebff0e8c"
+      ],
+      "logged": [
+        "bd1e1bbb2eb046e48a56c5e9ebff0e8c"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "one DQ row per check",
+      "expected": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "logged": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "DQ rows share one config, tags and baseline",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "DQ config = the published config = the job's",
+      "expected": [
+        "ccbd80f05e15c8dd",
+        "ccbd80f05e15c8dd"
+      ],
+      "logged": [
+        "ccbd80f05e15c8dd",
+        "ccbd80f05e15c8dd"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "DQ rows name the job's tag",
+      "expected": "v4.0.1",
+      "logged": "v4.0.1",
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "one run log row",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "DQ rows and run log row agree on config, tags and baseline",
+      "expected": [
+        "ccbd80f05e15c8dd",
+        "v4.0.1",
+        "v4.0.1",
+        "fdd92ebc-c1e4-4a23-b43d-6638f9f6c440"
+      ],
+      "logged": [
+        "ccbd80f05e15c8dd",
+        "v4.0.1",
+        "v4.0.1",
+        "fdd92ebc-c1e4-4a23-b43d-6638f9f6c440"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "the baseline is a committed run of the from tag",
+      "expected": "v4.0.1",
+      "logged": "v4.0.1",
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "empty_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "empty_chunks denominator",
+      "expected": 5462,
+      "logged": 5462,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "empty_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "empty_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "empty_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "empty_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "tiny_chunks numerator",
+      "expected": 46,
+      "logged": 46,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "tiny_chunks denominator",
+      "expected": 5462,
+      "logged": 5462,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "tiny_chunks threshold = POLICY",
+      "expected": 0.02,
+      "logged": 0.02,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "tiny_chunks observed",
+      "expected": 0.008421823507872574,
+      "logged": 0.008421823507872574,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "tiny_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "tiny_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "oversized_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "oversized_chunks denominator",
+      "expected": 5462,
+      "logged": 5462,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "oversized_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "oversized_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "oversized_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "oversized_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "duplicate_chunk_ids numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "duplicate_chunk_ids denominator",
+      "expected": 5462,
+      "logged": 5462,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "duplicate_chunk_ids threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "duplicate_chunk_ids observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "duplicate_chunk_ids status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "duplicate_chunk_ids override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "duplicate_embed_text numerator",
+      "expected": 3,
+      "logged": 3,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "duplicate_embed_text denominator",
+      "expected": 5462,
+      "logged": 5462,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "duplicate_embed_text threshold = POLICY",
+      "expected": 0.01,
+      "logged": 0.01,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "duplicate_embed_text observed",
+      "expected": 0.0005492493592090809,
+      "logged": 0.0005492493592090809,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "duplicate_embed_text status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "duplicate_embed_text override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "missing_metadata numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "missing_metadata denominator",
+      "expected": 5462,
+      "logged": 5462,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "missing_metadata threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "missing_metadata observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "missing_metadata status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "missing_metadata override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "drift_docs numerator",
+      "expected": 213,
+      "logged": 213,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "drift_docs denominator",
+      "expected": 213,
+      "logged": 213,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "drift_docs threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "drift_docs observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "drift_docs status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "drift_docs override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "drift_chunks numerator",
+      "expected": 5462,
+      "logged": 5462,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "drift_chunks denominator",
+      "expected": 5462,
+      "logged": 5462,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "drift_chunks threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "drift_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "drift_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "drift_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "drift_tokens numerator",
+      "expected": 692251,
+      "logged": 692251,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "drift_tokens denominator",
+      "expected": 692251,
+      "logged": 692251,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "drift_tokens threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "drift_tokens observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "drift_tokens status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "drift_tokens override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "job outcome follows the checks",
+      "expected": "succeeded",
+      "logged": "succeeded",
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "run outcome follows the checks",
+      "expected": "committed",
+      "logged": "committed",
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "dq_override = the reason iff the run committed with an override",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "all DQ rows written in one insert",
+      "expected": 9,
+      "logged": 9,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "run log row written once",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_c_detect_v4.0.1_again.json",
+      "check": "DQ rows written before the run log row",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d2_detect_v4.0.1_weak_reason.json",
+      "check": "no DQ rows (stopped before the gate)",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d2_detect_v4.0.1_weak_reason.json",
+      "check": "job failed",
+      "expected": "failed",
+      "logged": "failed",
+      "pass": true
+    },
+    {
+      "scope": "job m4_d2_detect_v4.0.1_weak_reason.json",
+      "check": "no run log row (stopped before logging could start)",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "DQ rows come from one attempt, the job's",
+      "expected": [
+        "aa01d2d5e42345fb94726ffa8be66842"
+      ],
+      "logged": [
+        "aa01d2d5e42345fb94726ffa8be66842"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "one DQ row per check",
+      "expected": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "logged": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "DQ rows share one config, tags and baseline",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "DQ config = the published config = the job's",
+      "expected": [
+        "ccbd80f05e15c8dd",
+        "ccbd80f05e15c8dd"
+      ],
+      "logged": [
+        "ccbd80f05e15c8dd",
+        "ccbd80f05e15c8dd"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "DQ rows name the job's tag",
+      "expected": "v4.0.1",
+      "logged": "v4.0.1",
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "one run log row",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "DQ rows and run log row agree on config, tags and baseline",
+      "expected": [
+        "ccbd80f05e15c8dd",
+        "v4.0.1",
+        "v4.0.1",
+        "e3a95072-cd43-4ffe-96a5-19fb01ae8a77"
+      ],
+      "logged": [
+        "ccbd80f05e15c8dd",
+        "v4.0.1",
+        "v4.0.1",
+        "e3a95072-cd43-4ffe-96a5-19fb01ae8a77"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "the baseline is a committed run of the from tag",
+      "expected": "v4.0.1",
+      "logged": "v4.0.1",
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "empty_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "empty_chunks denominator",
+      "expected": 5462,
+      "logged": 5462,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "empty_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "empty_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "empty_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "empty_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "tiny_chunks numerator",
+      "expected": 46,
+      "logged": 46,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "tiny_chunks denominator",
+      "expected": 5462,
+      "logged": 5462,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "tiny_chunks threshold = POLICY",
+      "expected": 0.02,
+      "logged": 0.02,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "tiny_chunks observed",
+      "expected": 0.008421823507872574,
+      "logged": 0.008421823507872574,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "tiny_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "tiny_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "oversized_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "oversized_chunks denominator",
+      "expected": 5462,
+      "logged": 5462,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "oversized_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "oversized_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "oversized_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "oversized_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "duplicate_chunk_ids numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "duplicate_chunk_ids denominator",
+      "expected": 5462,
+      "logged": 5462,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "duplicate_chunk_ids threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "duplicate_chunk_ids observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "duplicate_chunk_ids status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "duplicate_chunk_ids override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "duplicate_embed_text numerator",
+      "expected": 3,
+      "logged": 3,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "duplicate_embed_text denominator",
+      "expected": 5462,
+      "logged": 5462,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "duplicate_embed_text threshold = POLICY",
+      "expected": 0.01,
+      "logged": 0.01,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "duplicate_embed_text observed",
+      "expected": 0.0005492493592090809,
+      "logged": 0.0005492493592090809,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "duplicate_embed_text status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "duplicate_embed_text override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "missing_metadata numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "missing_metadata denominator",
+      "expected": 5462,
+      "logged": 5462,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "missing_metadata threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "missing_metadata observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "missing_metadata status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "missing_metadata override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "drift_docs numerator",
+      "expected": 213,
+      "logged": 213,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "drift_docs denominator",
+      "expected": 213,
+      "logged": 213,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "drift_docs threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "drift_docs observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "drift_docs status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "drift_docs override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "drift_chunks numerator",
+      "expected": 5462,
+      "logged": 5462,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "drift_chunks denominator",
+      "expected": 5462,
+      "logged": 5462,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "drift_chunks threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "drift_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "drift_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "drift_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "drift_tokens numerator",
+      "expected": 692251,
+      "logged": 692251,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "drift_tokens denominator",
+      "expected": 692251,
+      "logged": 692251,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "drift_tokens threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "drift_tokens observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "drift_tokens status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "drift_tokens override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "job outcome follows the checks",
+      "expected": "failed",
+      "logged": "failed",
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "run outcome follows the checks",
+      "expected": "failed",
+      "logged": "failed",
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "dq_override = the reason iff the run committed with an override",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "the failed row's error is the gate's",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "the error names exactly the failing checks",
+      "expected": [],
+      "logged": [],
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "an unused --accept-drift is refused",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "all DQ rows written in one insert",
+      "expected": 9,
+      "logged": 9,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "run log row written once",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_d_detect_v4.0.1_accept_nothing.json",
+      "check": "DQ rows written before the run log row",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "DQ rows come from one attempt, the job's",
+      "expected": [
+        "3d7534d904ac427c97b6a8d670d50073"
+      ],
+      "logged": [
+        "3d7534d904ac427c97b6a8d670d50073"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "one DQ row per check",
+      "expected": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "logged": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "DQ rows share one config, tags and baseline",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "DQ config = the published config = the job's",
+      "expected": [
+        "ccbd80f05e15c8dd",
+        "ccbd80f05e15c8dd"
+      ],
+      "logged": [
+        "ccbd80f05e15c8dd",
+        "ccbd80f05e15c8dd"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "DQ rows name the job's tag",
+      "expected": "v3.5.0",
+      "logged": "v3.5.0",
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "one run log row",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "DQ rows and run log row agree on config, tags and baseline",
+      "expected": [
+        "ccbd80f05e15c8dd",
+        "v4.0.1",
+        "v3.5.0",
+        "e3a95072-cd43-4ffe-96a5-19fb01ae8a77"
+      ],
+      "logged": [
+        "ccbd80f05e15c8dd",
+        "v4.0.1",
+        "v3.5.0",
+        "e3a95072-cd43-4ffe-96a5-19fb01ae8a77"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "the baseline is a committed run of the from tag",
+      "expected": "v4.0.1",
+      "logged": "v4.0.1",
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "empty_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "empty_chunks denominator",
+      "expected": 5589,
+      "logged": 5589,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "empty_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "empty_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "empty_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "empty_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "tiny_chunks numerator",
+      "expected": 48,
+      "logged": 48,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "tiny_chunks denominator",
+      "expected": 5589,
+      "logged": 5589,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "tiny_chunks threshold = POLICY",
+      "expected": 0.02,
+      "logged": 0.02,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "tiny_chunks observed",
+      "expected": 0.008588298443370907,
+      "logged": 0.008588298443370907,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "tiny_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "tiny_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "oversized_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "oversized_chunks denominator",
+      "expected": 5589,
+      "logged": 5589,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "oversized_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "oversized_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "oversized_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "oversized_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "duplicate_chunk_ids numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "duplicate_chunk_ids denominator",
+      "expected": 5589,
+      "logged": 5589,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "duplicate_chunk_ids threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "duplicate_chunk_ids observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "duplicate_chunk_ids status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "duplicate_chunk_ids override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "duplicate_embed_text numerator",
+      "expected": 12,
+      "logged": 12,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "duplicate_embed_text denominator",
+      "expected": 5589,
+      "logged": 5589,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "duplicate_embed_text threshold = POLICY",
+      "expected": 0.01,
+      "logged": 0.01,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "duplicate_embed_text observed",
+      "expected": 0.0021470746108427268,
+      "logged": 0.0021470746108427268,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "duplicate_embed_text status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "duplicate_embed_text override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "missing_metadata numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "missing_metadata denominator",
+      "expected": 5589,
+      "logged": 5589,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "missing_metadata threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "missing_metadata observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "missing_metadata status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "missing_metadata override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "drift_docs numerator",
+      "expected": 244,
+      "logged": 244,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "drift_docs denominator",
+      "expected": 213,
+      "logged": 213,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "drift_docs threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "drift_docs observed",
+      "expected": 0.1455399061032865,
+      "logged": 0.1455399061032865,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "drift_docs status",
+      "expected": "fail",
+      "logged": "fail",
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "drift_docs override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "drift_chunks numerator",
+      "expected": 5589,
+      "logged": 5589,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "drift_chunks denominator",
+      "expected": 5462,
+      "logged": 5462,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "drift_chunks threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "drift_chunks observed",
+      "expected": 0.023251556206517865,
+      "logged": 0.023251556206517865,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "drift_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "drift_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "drift_tokens numerator",
+      "expected": 667028,
+      "logged": 667028,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "drift_tokens denominator",
+      "expected": 692251,
+      "logged": 692251,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "drift_tokens threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "drift_tokens observed",
+      "expected": -0.036436205942642186,
+      "logged": -0.036436205942642186,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "drift_tokens status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "drift_tokens override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "job outcome follows the checks",
+      "expected": "failed",
+      "logged": "failed",
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "run outcome follows the checks",
+      "expected": "failed",
+      "logged": "failed",
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "dq_override = the reason iff the run committed with an override",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "the failed row's error is the gate's",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "the error names exactly the failing checks",
+      "expected": [
+        "drift_docs"
+      ],
+      "logged": [
+        "drift_docs"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "all DQ rows written in one insert",
+      "expected": 9,
+      "logged": 9,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "run log row written once",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_e_detect_v3.5.0_backwards_drift.json",
+      "check": "DQ rows written before the run log row",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "DQ rows come from one attempt, the job's",
+      "expected": [
+        "ae18b6b6b40848d9bc520855fe5fe814"
+      ],
+      "logged": [
+        "ae18b6b6b40848d9bc520855fe5fe814"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "one DQ row per check",
+      "expected": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "logged": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "DQ rows share one config, tags and baseline",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "DQ config = the published config = the job's",
+      "expected": [
+        "ccbd80f05e15c8dd",
+        "ccbd80f05e15c8dd"
+      ],
+      "logged": [
+        "ccbd80f05e15c8dd",
+        "ccbd80f05e15c8dd"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "DQ rows name the job's tag",
+      "expected": "v3.5.0",
+      "logged": "v3.5.0",
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "one run log row",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "DQ rows and run log row agree on config, tags and baseline",
+      "expected": [
+        "ccbd80f05e15c8dd",
+        "v4.0.1",
+        "v3.5.0",
+        "e3a95072-cd43-4ffe-96a5-19fb01ae8a77"
+      ],
+      "logged": [
+        "ccbd80f05e15c8dd",
+        "v4.0.1",
+        "v3.5.0",
+        "e3a95072-cd43-4ffe-96a5-19fb01ae8a77"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "the baseline is a committed run of the from tag",
+      "expected": "v4.0.1",
+      "logged": "v4.0.1",
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "empty_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "empty_chunks denominator",
+      "expected": 5589,
+      "logged": 5589,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "empty_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "empty_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "empty_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "empty_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "tiny_chunks numerator",
+      "expected": 48,
+      "logged": 48,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "tiny_chunks denominator",
+      "expected": 5589,
+      "logged": 5589,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "tiny_chunks threshold = POLICY",
+      "expected": 0.02,
+      "logged": 0.02,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "tiny_chunks observed",
+      "expected": 0.008588298443370907,
+      "logged": 0.008588298443370907,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "tiny_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "tiny_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "oversized_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "oversized_chunks denominator",
+      "expected": 5589,
+      "logged": 5589,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "oversized_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "oversized_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "oversized_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "oversized_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "duplicate_chunk_ids numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "duplicate_chunk_ids denominator",
+      "expected": 5589,
+      "logged": 5589,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "duplicate_chunk_ids threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "duplicate_chunk_ids observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "duplicate_chunk_ids status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "duplicate_chunk_ids override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "duplicate_embed_text numerator",
+      "expected": 12,
+      "logged": 12,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "duplicate_embed_text denominator",
+      "expected": 5589,
+      "logged": 5589,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "duplicate_embed_text threshold = POLICY",
+      "expected": 0.01,
+      "logged": 0.01,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "duplicate_embed_text observed",
+      "expected": 0.0021470746108427268,
+      "logged": 0.0021470746108427268,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "duplicate_embed_text status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "duplicate_embed_text override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "missing_metadata numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "missing_metadata denominator",
+      "expected": 5589,
+      "logged": 5589,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "missing_metadata threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "missing_metadata observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "missing_metadata status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "missing_metadata override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "drift_docs numerator",
+      "expected": 244,
+      "logged": 244,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "drift_docs denominator",
+      "expected": 213,
+      "logged": 213,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "drift_docs threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "drift_docs observed",
+      "expected": 0.1455399061032865,
+      "logged": 0.1455399061032865,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "drift_docs status",
+      "expected": "overridden",
+      "logged": "overridden",
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "drift_docs override reason",
+      "expected": "M4 demo: deliberate rollback to v3.5.0, which still has the docs v4.0.0 deleted (D-002)",
+      "logged": "M4 demo: deliberate rollback to v3.5.0, which still has the docs v4.0.0 deleted (D-002)",
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "drift_chunks numerator",
+      "expected": 5589,
+      "logged": 5589,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "drift_chunks denominator",
+      "expected": 5462,
+      "logged": 5462,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "drift_chunks threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "drift_chunks observed",
+      "expected": 0.023251556206517865,
+      "logged": 0.023251556206517865,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "drift_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "drift_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "drift_tokens numerator",
+      "expected": 667028,
+      "logged": 667028,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "drift_tokens denominator",
+      "expected": 692251,
+      "logged": 692251,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "drift_tokens threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "drift_tokens observed",
+      "expected": -0.036436205942642186,
+      "logged": -0.036436205942642186,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "drift_tokens status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "drift_tokens override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "job outcome follows the checks",
+      "expected": "succeeded",
+      "logged": "succeeded",
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "run outcome follows the checks",
+      "expected": "committed",
+      "logged": "committed",
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "dq_override = the reason iff the run committed with an override",
+      "expected": "M4 demo: deliberate rollback to v3.5.0, which still has the docs v4.0.0 deleted (D-002)",
+      "logged": "M4 demo: deliberate rollback to v3.5.0, which still has the docs v4.0.0 deleted (D-002)",
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "all DQ rows written in one insert",
+      "expected": 9,
+      "logged": 9,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "run log row written once",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_f_detect_v3.5.0_backwards_accepted.json",
+      "check": "DQ rows written before the run log row",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "DQ rows come from one attempt, the job's",
+      "expected": [
+        "0c5748fd14d64d27b802202cbf8f5a25"
+      ],
+      "logged": [
+        "0c5748fd14d64d27b802202cbf8f5a25"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "one DQ row per check",
+      "expected": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "logged": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "DQ rows share one config, tags and baseline",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "DQ config = the published config = the job's",
+      "expected": [
+        "ccbd80f05e15c8dd",
+        "ccbd80f05e15c8dd"
+      ],
+      "logged": [
+        "ccbd80f05e15c8dd",
+        "ccbd80f05e15c8dd"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "DQ rows name the job's tag",
+      "expected": "v4.0.0",
+      "logged": "v4.0.0",
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "one run log row",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "DQ rows and run log row agree on config, tags and baseline",
+      "expected": [
+        "ccbd80f05e15c8dd",
+        "v3.5.0",
+        "v4.0.0",
+        "57c76a4c-f30e-48eb-a3fc-271b02997f9c"
+      ],
+      "logged": [
+        "ccbd80f05e15c8dd",
+        "v3.5.0",
+        "v4.0.0",
+        "57c76a4c-f30e-48eb-a3fc-271b02997f9c"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "the baseline is a committed run of the from tag",
+      "expected": "v3.5.0",
+      "logged": "v3.5.0",
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "empty_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "empty_chunks denominator",
+      "expected": 5449,
+      "logged": 5449,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "empty_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "empty_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "empty_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "empty_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "tiny_chunks numerator",
+      "expected": 46,
+      "logged": 46,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "tiny_chunks denominator",
+      "expected": 5449,
+      "logged": 5449,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "tiny_chunks threshold = POLICY",
+      "expected": 0.02,
+      "logged": 0.02,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "tiny_chunks observed",
+      "expected": 0.008441915947880345,
+      "logged": 0.008441915947880345,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "tiny_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "tiny_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "oversized_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "oversized_chunks denominator",
+      "expected": 5449,
+      "logged": 5449,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "oversized_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "oversized_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "oversized_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "oversized_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "duplicate_chunk_ids numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "duplicate_chunk_ids denominator",
+      "expected": 5449,
+      "logged": 5449,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "duplicate_chunk_ids threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "duplicate_chunk_ids observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "duplicate_chunk_ids status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "duplicate_chunk_ids override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "duplicate_embed_text numerator",
+      "expected": 3,
+      "logged": 3,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "duplicate_embed_text denominator",
+      "expected": 5449,
+      "logged": 5449,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "duplicate_embed_text threshold = POLICY",
+      "expected": 0.01,
+      "logged": 0.01,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "duplicate_embed_text observed",
+      "expected": 0.0005505597357313268,
+      "logged": 0.0005505597357313268,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "duplicate_embed_text status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "duplicate_embed_text override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "missing_metadata numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "missing_metadata denominator",
+      "expected": 5449,
+      "logged": 5449,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "missing_metadata threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "missing_metadata observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "missing_metadata status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "missing_metadata override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "drift_docs numerator",
+      "expected": 212,
+      "logged": 212,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "drift_docs denominator",
+      "expected": 244,
+      "logged": 244,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "drift_docs threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "drift_docs observed",
+      "expected": -0.1311475409836066,
+      "logged": -0.1311475409836066,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "drift_docs status",
+      "expected": "fail",
+      "logged": "fail",
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "drift_docs override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "drift_chunks numerator",
+      "expected": 5449,
+      "logged": 5449,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "drift_chunks denominator",
+      "expected": 5589,
+      "logged": 5589,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "drift_chunks threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "drift_chunks observed",
+      "expected": -0.02504920379316511,
+      "logged": -0.02504920379316511,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "drift_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "drift_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "drift_tokens numerator",
+      "expected": 689988,
+      "logged": 689988,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "drift_tokens denominator",
+      "expected": 667028,
+      "logged": 667028,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "drift_tokens threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "drift_tokens observed",
+      "expected": 0.03442134363175153,
+      "logged": 0.03442134363175153,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "drift_tokens status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "drift_tokens override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "job outcome follows the checks",
+      "expected": "failed",
+      "logged": "failed",
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "run outcome follows the checks",
+      "expected": "failed",
+      "logged": "failed",
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "dq_override = the reason iff the run committed with an override",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "the failed row's error is the gate's",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "the error names exactly the failing checks",
+      "expected": [
+        "drift_docs"
+      ],
+      "logged": [
+        "drift_docs"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "all DQ rows written in one insert",
+      "expected": 9,
+      "logged": 9,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "run log row written once",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_g_detect_v4.0.0_drift.json",
+      "check": "DQ rows written before the run log row",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "DQ rows come from one attempt, the job's",
+      "expected": [
+        "b6bb619ff5ed469881335566343fdae6"
+      ],
+      "logged": [
+        "b6bb619ff5ed469881335566343fdae6"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "one DQ row per check",
+      "expected": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "logged": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "DQ rows share one config, tags and baseline",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "DQ config = the published config = the job's",
+      "expected": [
+        "ccbd80f05e15c8dd",
+        "ccbd80f05e15c8dd"
+      ],
+      "logged": [
+        "ccbd80f05e15c8dd",
+        "ccbd80f05e15c8dd"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "DQ rows name the job's tag",
+      "expected": "v4.0.0",
+      "logged": "v4.0.0",
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "one run log row",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "DQ rows and run log row agree on config, tags and baseline",
+      "expected": [
+        "ccbd80f05e15c8dd",
+        "v3.5.0",
+        "v4.0.0",
+        "57c76a4c-f30e-48eb-a3fc-271b02997f9c"
+      ],
+      "logged": [
+        "ccbd80f05e15c8dd",
+        "v3.5.0",
+        "v4.0.0",
+        "57c76a4c-f30e-48eb-a3fc-271b02997f9c"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "the baseline is a committed run of the from tag",
+      "expected": "v3.5.0",
+      "logged": "v3.5.0",
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "empty_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "empty_chunks denominator",
+      "expected": 5449,
+      "logged": 5449,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "empty_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "empty_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "empty_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "empty_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "tiny_chunks numerator",
+      "expected": 46,
+      "logged": 46,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "tiny_chunks denominator",
+      "expected": 5449,
+      "logged": 5449,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "tiny_chunks threshold = POLICY",
+      "expected": 0.02,
+      "logged": 0.02,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "tiny_chunks observed",
+      "expected": 0.008441915947880345,
+      "logged": 0.008441915947880345,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "tiny_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "tiny_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "oversized_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "oversized_chunks denominator",
+      "expected": 5449,
+      "logged": 5449,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "oversized_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "oversized_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "oversized_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "oversized_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "duplicate_chunk_ids numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "duplicate_chunk_ids denominator",
+      "expected": 5449,
+      "logged": 5449,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "duplicate_chunk_ids threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "duplicate_chunk_ids observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "duplicate_chunk_ids status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "duplicate_chunk_ids override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "duplicate_embed_text numerator",
+      "expected": 3,
+      "logged": 3,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "duplicate_embed_text denominator",
+      "expected": 5449,
+      "logged": 5449,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "duplicate_embed_text threshold = POLICY",
+      "expected": 0.01,
+      "logged": 0.01,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "duplicate_embed_text observed",
+      "expected": 0.0005505597357313268,
+      "logged": 0.0005505597357313268,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "duplicate_embed_text status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "duplicate_embed_text override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "missing_metadata numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "missing_metadata denominator",
+      "expected": 5449,
+      "logged": 5449,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "missing_metadata threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "missing_metadata observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "missing_metadata status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "missing_metadata override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "drift_docs numerator",
+      "expected": 212,
+      "logged": 212,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "drift_docs denominator",
+      "expected": 244,
+      "logged": 244,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "drift_docs threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "drift_docs observed",
+      "expected": -0.1311475409836066,
+      "logged": -0.1311475409836066,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "drift_docs status",
+      "expected": "overridden",
+      "logged": "overridden",
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "drift_docs override reason",
+      "expected": "Spark 4.0.0 deleted 51 docs and added 19 (D-002): a release change, not a data fault",
+      "logged": "Spark 4.0.0 deleted 51 docs and added 19 (D-002): a release change, not a data fault",
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "drift_chunks numerator",
+      "expected": 5449,
+      "logged": 5449,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "drift_chunks denominator",
+      "expected": 5589,
+      "logged": 5589,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "drift_chunks threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "drift_chunks observed",
+      "expected": -0.02504920379316511,
+      "logged": -0.02504920379316511,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "drift_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "drift_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "drift_tokens numerator",
+      "expected": 689988,
+      "logged": 689988,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "drift_tokens denominator",
+      "expected": 667028,
+      "logged": 667028,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "drift_tokens threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "drift_tokens observed",
+      "expected": 0.03442134363175153,
+      "logged": 0.03442134363175153,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "drift_tokens status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "drift_tokens override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "job outcome follows the checks",
+      "expected": "succeeded",
+      "logged": "succeeded",
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "run outcome follows the checks",
+      "expected": "committed",
+      "logged": "committed",
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "dq_override = the reason iff the run committed with an override",
+      "expected": "Spark 4.0.0 deleted 51 docs and added 19 (D-002): a release change, not a data fault",
+      "logged": "Spark 4.0.0 deleted 51 docs and added 19 (D-002): a release change, not a data fault",
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "all DQ rows written in one insert",
+      "expected": 9,
+      "logged": 9,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "run log row written once",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_h_detect_v4.0.0_accepted.json",
+      "check": "DQ rows written before the run log row",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "DQ rows come from one attempt, the job's",
+      "expected": [
+        "1d1ca4a451b3425f9ecf0afcfd64eb5a"
+      ],
+      "logged": [
+        "1d1ca4a451b3425f9ecf0afcfd64eb5a"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "one DQ row per check",
+      "expected": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "logged": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "DQ rows share one config, tags and baseline",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "DQ config = the published config = the job's",
+      "expected": [
+        "ccbd80f05e15c8dd",
+        "ccbd80f05e15c8dd"
+      ],
+      "logged": [
+        "ccbd80f05e15c8dd",
+        "ccbd80f05e15c8dd"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "DQ rows name the job's tag",
+      "expected": "v4.0.1",
+      "logged": "v4.0.1",
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "one run log row",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "DQ rows and run log row agree on config, tags and baseline",
+      "expected": [
+        "ccbd80f05e15c8dd",
+        "v4.0.0",
+        "v4.0.1",
+        "487ec5c0-a4cb-48c2-99cd-ee0480527605"
+      ],
+      "logged": [
+        "ccbd80f05e15c8dd",
+        "v4.0.0",
+        "v4.0.1",
+        "487ec5c0-a4cb-48c2-99cd-ee0480527605"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "the baseline is a committed run of the from tag",
+      "expected": "v4.0.0",
+      "logged": "v4.0.0",
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "empty_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "empty_chunks denominator",
+      "expected": 5462,
+      "logged": 5462,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "empty_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "empty_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "empty_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "empty_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "tiny_chunks numerator",
+      "expected": 46,
+      "logged": 46,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "tiny_chunks denominator",
+      "expected": 5462,
+      "logged": 5462,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "tiny_chunks threshold = POLICY",
+      "expected": 0.02,
+      "logged": 0.02,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "tiny_chunks observed",
+      "expected": 0.008421823507872574,
+      "logged": 0.008421823507872574,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "tiny_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "tiny_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "oversized_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "oversized_chunks denominator",
+      "expected": 5462,
+      "logged": 5462,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "oversized_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "oversized_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "oversized_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "oversized_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "duplicate_chunk_ids numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "duplicate_chunk_ids denominator",
+      "expected": 5462,
+      "logged": 5462,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "duplicate_chunk_ids threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "duplicate_chunk_ids observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "duplicate_chunk_ids status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "duplicate_chunk_ids override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "duplicate_embed_text numerator",
+      "expected": 3,
+      "logged": 3,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "duplicate_embed_text denominator",
+      "expected": 5462,
+      "logged": 5462,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "duplicate_embed_text threshold = POLICY",
+      "expected": 0.01,
+      "logged": 0.01,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "duplicate_embed_text observed",
+      "expected": 0.0005492493592090809,
+      "logged": 0.0005492493592090809,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "duplicate_embed_text status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "duplicate_embed_text override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "missing_metadata numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "missing_metadata denominator",
+      "expected": 5462,
+      "logged": 5462,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "missing_metadata threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "missing_metadata observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "missing_metadata status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "missing_metadata override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "drift_docs numerator",
+      "expected": 213,
+      "logged": 213,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "drift_docs denominator",
+      "expected": 212,
+      "logged": 212,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "drift_docs threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "drift_docs observed",
+      "expected": 0.004716981132075526,
+      "logged": 0.004716981132075526,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "drift_docs status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "drift_docs override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "drift_chunks numerator",
+      "expected": 5462,
+      "logged": 5462,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "drift_chunks denominator",
+      "expected": 5449,
+      "logged": 5449,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "drift_chunks threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "drift_chunks observed",
+      "expected": 0.002385758854835718,
+      "logged": 0.002385758854835718,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "drift_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "drift_chunks override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "drift_tokens numerator",
+      "expected": 692251,
+      "logged": 692251,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "drift_tokens denominator",
+      "expected": 689988,
+      "logged": 689988,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "drift_tokens threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "drift_tokens observed",
+      "expected": 0.003279767184356741,
+      "logged": 0.003279767184356741,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "drift_tokens status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "drift_tokens override reason",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "job outcome follows the checks",
+      "expected": "succeeded",
+      "logged": "succeeded",
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "run outcome follows the checks",
+      "expected": "committed",
+      "logged": "committed",
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "dq_override = the reason iff the run committed with an override",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "all DQ rows written in one insert",
+      "expected": 9,
+      "logged": 9,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "run log row written once",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m4_i_detect_v4.0.1.json",
+      "check": "DQ rows written before the run log row",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "pre-gate m3_a_detect_v3.5.0_without_initial.json",
+      "check": "its code predates the gate",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "pre-gate m3_b_detect_v3.5.0_initial.json",
+      "check": "its code predates the gate",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "pre-gate m3_c_detect_v4.0.0.json",
+      "check": "its code predates the gate",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "pre-gate m3_d_detect_v4.0.0_rerun.json",
+      "check": "its code predates the gate",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "pre-gate m3_e_detect_v4.1.0_not_in_bronze.json",
+      "check": "its code predates the gate",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "pre-gate m3_f_detect_v4.0.1.json",
+      "check": "its code predates the gate",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "pre-gate m3_g_detect_v4.0.0_backwards.json",
+      "check": "its code predates the gate",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "pre-gate m3_i_detect_v4.0.0_backwards_one_attempt.json",
+      "check": "its code predates the gate",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "pre-gate m3_j_detect_v4.0.1_rerun.json",
+      "check": "its code predates the gate",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "tables",
+      "check": "DQ rows without a run log row",
+      "expected": [],
+      "logged": [],
+      "pass": true
+    },
+    {
+      "scope": "tables",
+      "check": "committed runs since the gate without a complete passing DQ set",
+      "expected": [],
+      "logged": [],
+      "pass": true
+    },
+    {
+      "scope": "tables",
+      "check": "pre-gate runs with DQ rows",
+      "expected": [],
+      "logged": [],
+      "pass": true
+    },
+    {
+      "scope": "tables",
+      "check": "pre-gate committed runs that finished after the first DQ check",
+      "expected": [],
+      "logged": [],
+      "pass": true
+    }
+  ],
+  "all_pass": true
+}
