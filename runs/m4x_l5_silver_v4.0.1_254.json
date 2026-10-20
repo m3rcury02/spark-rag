@@ -1,0 +1,193 @@
+{
+  "meta": {
+    "label": "m4x_l5_silver_v4.0.1_254",
+    "git_commit": "7eccfd13e04087b12db0a79f9f15890e102407d6",
+    "script": "jobs/silver_chunk.py",
+    "job_args": [
+      "--tag",
+      "v4.0.1"
+    ],
+    "target": "workspace.docs_rag_dev",
+    "run_id": "c4dfa313-9a0d-4d4b-9a2e-b472c0d30345",
+    "environment_version": "4",
+    "wheel": "docs_rag-0.0.1.dev118+g7f5ffbe2f-py3-none-any.whl",
+    "parent_run_id": 747359637058816,
+    "task_run_id": 62303740565647,
+    "result_state": "SUCCESS",
+    "state_message": "",
+    "run_start_utc": "2026-10-20T13:19:21Z",
+    "run_end_utc": "2026-10-20T13:20:42Z",
+    "run_duration_seconds": 81.8
+  },
+  "summary": {
+    "run_id": "c4dfa313-9a0d-4d4b-9a2e-b472c0d30345",
+    "started_utc": "2026-10-20T13:19:51Z",
+    "tag": "v4.0.1",
+    "chunk_config": {
+      "config_id": "e70bf55c7cf1b856",
+      "cleaner_version": "2",
+      "chunker_version": "1",
+      "max_tokens": 254,
+      "overlap_tokens": 32
+    },
+    "environment": {
+      "python": "3.12.3",
+      "databricks_runtime_version": "client.4.10",
+      "databricks_connect": "17.3.14",
+      "docs_rag": "0.0.1.dev118+g7f5ffbe2f",
+      "tokenizers": "0.23.3",
+      "machine": "aarch64",
+      "spark": "4.2.0"
+    },
+    "bronze": {
+      "docs": 213,
+      "commit_sha": "29434ea766b0fc3c3bf6eaadb43a8f931133649e"
+    },
+    "chunking": {
+      "seconds": 7.9,
+      "fingerprint": "bdbdafdf9940d65f1d916659117ed92ef247ae3890a0b1b9a435f6fe520afb6f",
+      "chunks": 5436,
+      "n_tokens_min": 6,
+      "n_tokens_median": 109,
+      "n_tokens_max": 254,
+      "n_tokens_histogram": {
+        "1-16": 68,
+        "17-32": 212,
+        "33-64": 1374,
+        "65-128": 1394,
+        "129-192": 876,
+        "193-224": 504,
+        "225-254": 1008
+      },
+      "body_tokens_under": {
+        "5": 20,
+        "10": 62,
+        "20": 277
+      },
+      "docs": 213,
+      "docs_with_no_chunks": [
+        "docs/sql-ref-functions-builtin.md"
+      ],
+      "sections": 1967,
+      "empty_sections": 226,
+      "single_small_chunk_docs": [
+        "docs/404.md",
+        "docs/ml-ann.md",
+        "docs/ml-decision-tree.md",
+        "docs/ml-ensembles.md",
+        "docs/ml-linear-methods.md",
+        "docs/ml-survival-regression.md",
+        "docs/programming-guide.md",
+        "docs/pyspark-migration-guide.md",
+        "docs/sql-error-conditions.md",
+        "docs/sql-pyspark-pandas-with-arrow.md",
+        "docs/sql-ref-syntax-aux-cache.md",
+        "docs/sql-ref-syntax-aux-conf-mgmt.md",
+        "docs/sql-ref-syntax-aux-describe.md",
+        "docs/sql-ref-syntax-aux-resource-mgmt.md",
+        "docs/sql-ref-syntax-aux-show.md",
+        "docs/sql-ref-syntax-qry-select-subqueries.md",
+        "docs/ss-migration-guide.md",
+        "docs/structured-streaming-kafka-integration.md",
+        "docs/structured-streaming-programming-guide.md"
+      ],
+      "violations": []
+    },
+    "check": {
+      "status": "new",
+      "stored_chunks": 0,
+      "computed_chunks": 5436,
+      "only_stored": 0,
+      "only_computed": 5436
+    },
+    "other_tags_reproduced": {
+      "v3.5.0": {
+        "status": "identical",
+        "stored_chunks": 5567,
+        "computed_chunks": 5567,
+        "only_stored": 0,
+        "only_computed": 0
+      },
+      "v4.0.0": {
+        "status": "identical",
+        "stored_chunks": 5423,
+        "computed_chunks": 5423,
+        "only_stored": 0,
+        "only_computed": 0
+      }
+    },
+    "merge": {
+      "num_affected_rows": 5436,
+      "num_updated_rows": 0,
+      "num_deleted_rows": 0,
+      "num_inserted_rows": 5436
+    },
+    "table": {
+      "name": "workspace.docs_rag_dev.silver_chunks",
+      "version_before_merge": 14,
+      "version_after_merge": 15,
+      "merge_made_a_commit": true,
+      "commits": [
+        {
+          "version": 15,
+          "operation": "MERGE",
+          "metrics": {
+            "numTargetRowsCopied": "0",
+            "numTargetRowsDeleted": "0",
+            "numTargetBytesRemoved": "0",
+            "numTargetDeletionVectorsAdded": "0",
+            "numTargetRowsMatchedUpdated": "0",
+            "numTargetRowsMatchedDeleted": "0",
+            "numTargetRowsUpdated": "0",
+            "numTargetChangeFilesAdded": "0",
+            "numTargetRowsNotMatchedBySourceDeleted": "0",
+            "rewriteTimeMs": "2305",
+            "numTargetFilesAdded": "6",
+            "numTargetBytesAdded": "1500428",
+            "executionTimeMs": "2347",
+            "materializeSourceTimeMs": "11",
+            "numTargetRowsInserted": "5436",
+            "numTargetDeletionVectorsUpdated": "0",
+            "scanTimeMs": "0",
+            "numOutputRows": "5436",
+            "numTargetDeletionVectorsRemoved": "0",
+            "numTargetRowsNotMatchedBySourceUpdated": "0",
+            "numSourceRows": "5436",
+            "numTargetFilesRemoved": "0"
+          }
+        }
+      ]
+    },
+    "tags_after": {
+      "v3.5.0": {
+        "chunks": 5567,
+        "distinct_chunk_ids": 5567,
+        "docs": 243,
+        "commits": 1,
+        "max_n_tokens": 254,
+        "chunks_over_max": 0
+      },
+      "v4.0.0": {
+        "chunks": 5423,
+        "distinct_chunk_ids": 5423,
+        "docs": 211,
+        "commits": 1,
+        "max_n_tokens": 254,
+        "chunks_over_max": 0
+      },
+      "v4.0.1": {
+        "chunks": 5436,
+        "distinct_chunk_ids": 5436,
+        "docs": 212,
+        "commits": 1,
+        "max_n_tokens": 254,
+        "chunks_over_max": 0
+      }
+    },
+    "invariant_violations": [],
+    "status": "succeeded",
+    "finished_utc": "2026-10-20T13:20:39Z"
+  },
+  "error": null,
+  "error_trace": null
+}
