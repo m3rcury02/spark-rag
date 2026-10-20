@@ -1,0 +1,17 @@
+{
+  "label": "m5_p_billing_today",
+  "git_commit": "c51e13c6694ff4cc909e2c36c78e9b10d406085f",
+  "statements": [
+    {
+      "sql": "SELECT date_trunc('HOUR', usage_start_time) AS hour_utc, billing_origin_product, round(sum(usage_quantity), 4) AS dbu FROM system.billing.usage WHERE usage_unit = 'DBU' AND usage_start_time >= '2026-10-20T17:00:00Z' GROUP BY ALL ORDER BY hour_utc, billing_origin_product",
+      "params": {},
+      "columns": [
+        "hour_utc",
+        "billing_origin_product",
+        "dbu"
+      ],
+      "rows": []
+    }
+  ],
+  "error": null
+}

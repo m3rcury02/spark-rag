@@ -1,0 +1,102 @@
+{
+  "label": "m5_o_task_attempts",
+  "git_commit": "c51e13c6694ff4cc909e2c36c78e9b10d406085f",
+  "runs": [
+    {
+      "file": "m5_c_detect_v3.5.0_initial.json",
+      "parent_run_id": 871119409056117,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "SUCCESS",
+          "start_utc": "2026-10-20T18:16:43+00:00",
+          "end_utc": "2026-10-20T18:23:12+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m5_d_detect_v4.0.0_drift.json",
+      "parent_run_id": 839971288168329,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "FAILED",
+          "start_utc": "2026-10-20T18:23:49+00:00",
+          "end_utc": "2026-10-20T18:25:39+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m5_g_sync_after_create.json",
+      "parent_run_id": 736607780095550,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "SUCCESS",
+          "start_utc": "2026-10-20T18:44:22+00:00",
+          "end_utc": "2026-10-20T18:45:58+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m5_h_detect_v4.0.0_accepted.json",
+      "parent_run_id": 974658769720139,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "SUCCESS",
+          "start_utc": "2026-10-20T18:46:25+00:00",
+          "end_utc": "2026-10-20T18:49:56+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m5_i_sync_after_v4.0.0.json",
+      "parent_run_id": 100482322829311,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "SUCCESS",
+          "start_utc": "2026-10-20T18:50:23+00:00",
+          "end_utc": "2026-10-20T18:54:00+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m5_j_detect_v4.0.0_rerun.json",
+      "parent_run_id": 178519913550010,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "SUCCESS",
+          "start_utc": "2026-10-20T18:54:23+00:00",
+          "end_utc": "2026-10-20T18:56:04+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m5_k_detect_v4.0.1.json",
+      "parent_run_id": 536388082023460,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "SUCCESS",
+          "start_utc": "2026-10-20T18:56:40+00:00",
+          "end_utc": "2026-10-20T18:58:48+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m5_l_sync_after_v4.0.1.json",
+      "parent_run_id": 921131469423278,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "SUCCESS",
+          "start_utc": "2026-10-20T18:59:21+00:00",
+          "end_utc": "2026-10-20T19:02:49+00:00"
+        }
+      ]
+    }
+  ]
+}
