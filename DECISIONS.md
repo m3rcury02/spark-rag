@@ -719,17 +719,142 @@ first draft on the points marked "review" below.
   the chain, which the read-back and every later run detect (`ChainError`), but nothing prevents it before
   M7. Retries need a per-attempt key if task retries are turned on.
 
+## D-012 — The DQ gate between silver and gold
+
+- **Date:** 2026-10-20 · **Status:** Accepted (evidence: `runs/m4_*`)
+
+**Context.** Brief item 5: "Data-quality checks: empty or tiny chunks, oversized chunks, duplicate chunks,
+missing metadata, and row-count drift between runs. A failed check stops the pipeline." CLAUDE.md: a failed
+check stops the run before anything is published (write-audit-publish); results go to `ops_dq_results`. D-011
+put the gate inside `jobs/change_detect.py`, before the committed row. The open question from M2: v3.5.0 →
+v4.0.0 legitimately drops 13% of the docs, so a hard drift check fires on real releases unless it has a
+threshold and a logged override.
+
+**Options.**
+- *Where the gate runs.* A separate job between silver and gold would split "committed" and "gated" across two
+  jobs, so a commit without a gate would only be caught after the fact. Chosen: inside the change-detection job,
+  after the diff and before the committed row, which can be appended only with the gate's `GatePassed`; M5's
+  gold write goes in the same place and needs the same token.
+- *What the checks cover.* Only the added chunks (what M5 embeds), or all of the target's chunks. Chosen: all,
+  because gold holds the whole target and a check on the change set misses a defect already in the baseline.
+  It is cheap next to re-chunking two tags, which the job already does (run times below).
+- *Thresholds.* Relative to the baseline (a share that may not grow) or absolute shares. Chosen: absolute
+  shares of the target's chunks, with room above what the real corpus has (tiny: 2% against at most 0.92% at
+  254/32 and 1.17% at 128/16; duplicate embed texts: 1% against at most 0.43%); a relative rule lets a slow
+  regression creep in one release at a time.
+- *Drift.* (1) Hard fail, no override: fires on every big release and gets switched off (the open question).
+  (2) Warn only: nobody reads warnings, and the brief says stop. (3) Per-release-kind thresholds (patch 5%,
+  minor and major 20% would have fired on none of the 41 transitions since 3.0): rejected as a rule fitted to
+  41 points, with one more concept to explain. (4) **One threshold plus a bound, logged override** (chosen).
+- *Statuses.* A "warn" status was dropped: a check passes or fails; `overridden` and `not_applicable` exist
+  only for drift.
+- *Language-tab labels.* 8 of the 10 tiny chunks logged as examples for v4.0.1 are lone tab labels (`java:`,
+  `scala:`, `r:`) left by the cleaner; the other two are one-item lists. Fixing them means a cleaner version
+  bump and a silver re-run. Chosen: leave them for M6 (they are under the threshold and listed as examples on
+  every run), and fix them there if retrieval shows they matter.
+
+**Decision.** `docs_rag.dq` (pure Python; thresholds in `Config.dq`), called by `jobs/change_detect.py`:
+
+| Check | Fails when | Threshold |
+|---|---|---|
+| `empty_chunks` | a body has no WordPiece token (blank, or only characters the tokenizer drops), or an embed text is blank | any |
+| `tiny_chunks` | bodies under 5 tokens, as a share of all chunks | > 2% |
+| `oversized_chunks` | an embed text (recounted, not read from `n_tokens`) over `min(max_tokens, 256 − 2)` | any |
+| `duplicate_chunk_ids` | rows beyond the first of a repeated chunk_id | any |
+| `duplicate_embed_text` | copies beyond the first of a repeated embed text, as a share | > 1% |
+| `missing_metadata` | a path outside `docs/*.md`, a blank section name (title first), another `version_tag`, a commit that is not 40 hex | any |
+| `drift_docs`, `drift_chunks`, `drift_tokens` | the target's total against the baseline run's: `|to − from| > 10% of from` | 10%; a loss over 50% cannot be overridden |
+
+- **Override.** `--accept-drift "<reason>"` turns a drift failure into `overridden` for that run only. It is
+  refused before the Spark session starts when the reason is under 20 characters or 4 words, or with
+  `--initial`; refused by the gate when no drift check is over its threshold ("nothing to accept"); and it never
+  covers a loss over 50% or any non-drift check. The reason is stored on every overridden `ops_dq_results` row
+  and in the new run-log column `dq_override` of the committed row.
+- **Logging.** One `ops_dq_results` row per check per run attempt (an `attempt_id` per job process): counts,
+  observed value, threshold, the rule in words, up to 10 examples, status. All nine rows go in one insert and
+  are read back before the gate decides. The table is append-only. A failed gate appends a `failed` run-log row
+  whose error names the failing checks; the baseline does not move.
+- **Model length** is checked when `Config` is built: every chunk config must satisfy `max_tokens + 2 ≤
+  embedding_max_seq_length` (256, all-MiniLM-L6-v2), so the oversized check is a backstop.
+- **Which checks can fire on real data.** Drift and the two share checks follow the content, so a future
+  release can trip them. Oversized chunks, duplicate IDs and missing metadata are backstops: silver is
+  re-chunked from bronze and compared row for row before the gate (D-011), the chunker asserts its own size
+  bound, and IDs hash the path and text, so on today's code they fire only after a regression that also passes
+  the goldens. An empty chunk can come from content: a section holding only characters the tokenizer drops
+  (zero-width spaces) gives a body with no token, which a review of this code showed. Unit tests
+  (`tests/test_dq.py`) show each check firing.
+
+**Evidence.**
+- *Calibration* (`runs/m4_a_calibration.json`, git only): all 42 final releases from v3.0.0 to v4.2.0, chunked
+  at 254/32, each against the previous release in version order. No release failed a count check: tiny
+  chunks 0.83–0.92% (threshold 2%), duplicate embed texts 0.05–0.21% (threshold 1%), no empty, oversized,
+  duplicate-ID or metadata failures (this run predates counting a body with no token as empty; the gate runs
+  below, on the final rule, found no empty chunk in v3.5.0, v4.0.0 or v4.0.1). At 128/16, along D-002's path:
+  tiny 1.14–1.17%, duplicates 0.32–0.43%.
+  Drift at 10% fired on 3 of 41 transitions: none of the 33 patch releases (largest move 2.2%, docs of
+  v3.0.0 → v3.0.1), 2 of 7 minor (3.3 → 3.4: docs +14.4%, chunks +16.4%; 3.4 → 3.5: docs +13.5%) and the one
+  major (3.5.9 → 4.0.0: docs −13.1%). Tokens never moved more than 8.5%. Firing by threshold: 5% → 6 of 41,
+  15% → 1, 20% → 0. So the 10% rule asks for a stated reason on about three of every eight feature releases,
+  and so far never on a patch release.
+- Doc counts are a poor proxy for the index's size: along D-002's path, 3.5.0 → 4.0.0 drops 13.1% of the docs
+  but 2.5% of the chunks, and tokens rise 3.4% (`d002_path`). The docs check fires although the index hardly
+  changes size (its content does: 31% of the tokens are new, D-011).
+- *The gate on Databricks* (2026-10-20, chain of sink `none`, head v4.0.1 at the start; each detect run a
+  serverless job via `scripts/run_job.py`):
+
+| Run | What happened | File |
+|---|---|---|
+| b | `ALTER TABLE ops_run_log ADD COLUMNS (dq_override …)`: 44 → 45 columns, still append-only; the 12 earlier rows read NULL | `m4_b_*` |
+| c | v4.0.1 again: all nine checks pass (tiny 46 of 5,462, duplicate embed texts 3, drift 0); `committed`. The first run also created `ops_dq_results` | `m4_c_*` |
+| d | the same with `--accept-drift "<reason>"`: nine `pass` rows logged, then refused by the gate, "nothing to accept"; `failed` | `m4_d_*` |
+| d2 | `--accept-drift "ok"`: refused before the Spark session ("at least 20 characters and 4 words"); no DQ row, no run-log row | `m4_d2_*` |
+| e | v3.5.0 with `--allow-backwards`: `drift_docs` 213 → 244 (+14.6%) fails (chunks +2.3%, tokens −3.6% pass); `failed`, the baseline stays v4.0.1 | `m4_e_*` |
+| f | the same with `--accept-drift`: `drift_docs` overridden, `committed` with the reason in `dq_override`; docs 51 added / 97 changed / 20 deleted, 194,079 tokens to embed | `m4_f_*` |
+| g | v4.0.0: `drift_docs` 244 → 212 (−13.1%) fails; `failed` | `m4_g_*` |
+| h | the same with `--accept-drift`: overridden, `committed`; docs 19 / 96 / 51 (= D-002) and 215,764 tokens to embed, as M3's run c | `m4_h_*` |
+| i | v4.0.1: all pass, `committed`; docs 1 / 4 / 0 and 3,538 tokens, as M3's run f. The chain is back at v4.0.1 | `m4_i_*` |
+
+- *Independent checks.* `m4_v_gate_vs_git.json` (501 checks, all pass) recomputes every DQ row of the seven runs
+  that reached the gate from a local chunking of git, with the rules written out again (it does not import
+  `docs_rag.dq`): counts, observed values, thresholds, statuses, override reasons; each run's outcome and the
+  checks its error names; and, from Delta's own history (time travel over each table's WRITE versions), that
+  each run's nine DQ rows went in one insert before its run-log row. Run d2 has no DQ or log row. Every
+  committed run since the gate has a complete passing set; the five M3 commits have none, and their code
+  predates the gate commit. Before it ran on real data the verifier was tested on simulated tables, where a
+  changed count, a missing `dq_override` and DQ rows written after the commit each failed it.
+  `m4_w_changes_vs_git.json` re-runs M3's verifier over all 19 log rows: 184 checks pass, and the nine
+  committed rows form one chain (v3.5.0 → 4.0.0 → 4.0.0 → 4.0.1 → 4.0.1 → 4.0.1 → 3.5.0 → 4.0.0 → 4.0.1).
+- *Write-audit-publish holds without trusting the job:* bronze's last history entry is 2026-10-15 and silver's
+  an `OPTIMIZE` of 2026-10-19, before M4 (`m4_k_*`); `ops_dq_results` has seven WRITEs of nine rows each, and an
+  `UPDATE` of it is refused with `DELTA_CANNOT_MODIFY_APPEND_ONLY` (`m4_l_*`). Each run had one task attempt
+  (`m4_j_*`).
+- *Cost.* Detect runs took 56–83 s of job time (c: 104 s, including creating `ops_dq_results`; d2: 36 s),
+  against 52–65 s in M3 (D-011; `run_duration_seconds`). The gate's own share was not
+  measured separately.
+
+**Consequences.**
+- M5: the gold MERGE takes the same `GatePassed`, after the gate and before the committed row. Vector checks
+  (dimension, no NaN, unit norm) join the gate as checks before the index sync.
+- M5's first run is `--initial` on a new chain, so its drift is not applicable: the first gold load is compared
+  with nothing. M5 decides whether to compare it with the head of the `none` chain.
+- The thresholds are a policy calibrated on 42 releases of one corpus; another corpus needs its own
+  calibration run (`scripts/m4_calibrate.py`).
+- M7: the override is a CLI flag on one run. A scheduled job has no one to type it, so a drift failure there
+  stops the schedule until someone runs the release by hand with a reason, which is the intended behaviour.
+
 ## Open questions (decide in the milestone noted)
 
 - **M2/M5 — chunk size vs model context.** *Answered in M2 (D-009):* sizes are counted in the models' own
   WordPiece units, and the parity run shows no chunk of either config over either model's limit. M4 keeps the
-  check as a DQ rule: a chunk is oversized when `n_tokens + 2` exceeds the embedding model's `max_seq_length`.
+  check as a DQ rule (D-012): a chunk is oversized when its recounted embed text plus [CLS] and [SEP] exceeds
+  the embedding model's `max_seq_length`, and `Config` refuses a chunk config that could produce one.
 - **M3 — chunk ID stability.** *Answered in M2 (D-009, D-010):* content-addressed IDs within heading sections
   are local (an edit to a section's text leaves other sections' chunks alone; a heading rename re-IDs the
   chunks beneath it), but they do not cut re-embedding cost against a whole-page baseline. M3 counts chunk-level change as added and removed chunk_ids.
-- **M4 — row-count drift threshold.** v3.5.0 → v4.0.0 legitimately removes 32 net docs (−13%). A
-  hard-fail drift check needs a threshold plus an explicit, logged override. Otherwise it fires on
-  every major release and someone disables it.
+- **M4 — row-count drift threshold.** *Answered in M4 (D-012):* 10% of docs, chunks and tokens against the
+  baseline run, with a per-run `--accept-drift "<reason>"` that is logged, refused when nothing drifted, and
+  never covers a loss over 50%. Over the 41 release transitions since v3.0.0 it fires on 3 (no patch release,
+  2 of 7 minor, the one major).
 - **M6 — relevance labels must not depend on chunking.** Gold answers are labelled as
   (doc path, section) plus an answer span, given as a verbatim quote of the cleaned text (D-010). A retrieved
   chunk counts as relevant if its slice overlaps an occurrence of the quote. Otherwise chunk sizes cannot be compared. With n=50, the 95% CI half-width on recall@5 is

@@ -99,14 +99,21 @@ uv run --with databricks-sdk==0.152.0 python scripts/m2_stability.py --label <la
 uv run --with databricks-sdk==0.152.0 --with sentence-transformers==6.1.0 --with transformers==5.19.0 \
     --with torch==2.14.1 --index https://download.pytorch.org/whl/cpu --index-strategy unsafe-best-match \
     python scripts/m2_tokenizer_parity.py --label <label> --tags v3.5.0 v4.0.0 v4.0.1
-# M3 change detection (same credentials): diff a tag against the head of the committed chain in ops_run_log, for
-# Config.chunk; needs bronze and silver of the tag. The first run of a sink needs --initial; going back a release
-# needs --allow-backwards. Then check every logged run against git, D-002 and runs/m2_e.
+# M3 change detection + M4 DQ gate (same credentials): diff a tag against the head of the committed chain in
+# ops_run_log, for Config.chunk, then gate it (ops_dq_results) before committing; needs bronze and silver of the
+# tag. The first run of a sink needs --initial; going back a release needs --allow-backwards; drift over 10% needs
+# --accept-drift "<reason>" (D-012). Then check every logged run against git, D-002 and runs/m2_e, and every
+# gated run's DQ rows against git.
 uv run --with databricks-sdk==0.152.0 python scripts/run_job.py \
-    --script jobs/change_detect.py --label <label> -- --tag v4.0.1 [--initial] [--allow-backwards]
+    --script jobs/change_detect.py --label <label> -- --tag v4.0.1 [--initial] [--allow-backwards] \
+    [--accept-drift "<reason>"]
 uv run --with databricks-sdk==0.152.0 python scripts/m3_verify_changes.py \
-    --label <label> --job-runs runs/m3_*_detect_*.json
+    --label <label> --job-runs runs/m3_*_detect_*.json runs/m4_*_detect_*.json
+uv run --with databricks-sdk==0.152.0 python scripts/m4_verify_gate.py \
+    --label <label> --job-runs runs/m4_*_detect_*.json --pre-gate-runs runs/m3_*_detect_*.json
 uv run --with databricks-sdk==0.152.0 python scripts/task_attempts.py --label <label> runs/<run files>
+# M4 threshold calibration (git only, ~10 min): every DQ check over every release from v3.0.0 on.
+uv run --with databricks-sdk==0.152.0 python scripts/m4_calibrate.py --label <label>
 # The real corpus as a golden (git only, ~1 min; also in CI and before every silver job in run_job.py):
 uv run python scripts/corpus_fingerprint.py
 # After a deliberate cleaner/chunker change: bump CLEANER_VERSION (clean.py) or CHUNKER_VERSION (chunk.py), then
@@ -117,29 +124,35 @@ uv run python scripts/corpus_fingerprint.py --update
 
 ## Next session: pick up here
 
-M3 is complete on branch `m3-change-detection` (D-011; M3 report given to the owner on 2026-10-20). M2 is merged
-into `main`. `workspace.docs_rag_dev.ops_run_log` (append-only) holds the D-002 sequence for sink `none`: a chain
-of 5 committed runs (v3.5.0 initial → v4.0.0 → v4.0.0 again → v4.0.1 → v4.0.1 again) plus failed runs. Evidence:
-`runs/m3_a`..`m3_k`, verified by `m3_v2` (102/102). Do not re-run the `m3_*` labels.
+M4 is complete on branch `m4-dq-gate` (D-012; M4 report given to the owner on 2026-10-20). M3 is merged into
+`main`. The DQ gate runs inside `jobs/change_detect.py` before the committed row; `ops_dq_results` (append-only)
+holds one row per check per gated run, and `ops_run_log` has a new last column `dq_override` (added by `runs/m4_b`).
+The chain for sink `none` now has 9 committed runs and ends at v4.0.1 again (M4 demo: rollback to v3.5.0 and
+forward to v4.0.0, both with `--accept-drift`). Evidence: `runs/m4_a`..`m4_l`, verified by `m4_v` (501/501) and
+`m4_w` (184/184). Do not re-run the `m3_*` or `m4_*` labels.
 
-**Do not start M4 until the owner says so.** Open items:
-- Owner decides whether to merge `m3-change-detection` into `main`. Remote branches `m0-smoke-test`, `m1-bronze`,
-  `m2-silver` (all merged) and `claude/modest-archimedes-mp5zx3` (stale) are still on GitHub: the session's git
-  proxy refuses branch deletion (HTTP 403), so the owner deletes them in the GitHub UI.
-- `docs_rag_endpoint` was deleted on 2026-10-19 (idle, 96 DBU/day; D-001). Re-probe `system.billing.usage` more
-  than 24 h later to confirm the endpoint's usage stopped, and save the output under `runs/`.
+**Do not start M5 until the owner says so.** Open items:
+- Owner decides whether to merge `m4-dq-gate` into `main`. Remote branches `m0-smoke-test`, `m1-bronze`,
+  `m2-silver`, `m3-change-detection` (all merged) and `claude/modest-archimedes-mp5zx3` (stale) are still on
+  GitHub: the session's git proxy refuses branch deletion (HTTP 403), so the owner deletes them in the GitHub UI.
+- `docs_rag_endpoint` was deleted on 2026-10-19 05:26Z (idle, 96 DBU/day; D-001). Re-probe
+  `system.billing.usage` after 2026-10-20 05:26Z to confirm the endpoint's usage stopped, and save the output
+  under `runs/`.
+- Owner's call (D-012): the drift rule fires on about 3 of 8 feature releases (none of 33 patch releases). Keep
+  one 10% threshold, or move to per-release-kind thresholds (which fit the 41 historical transitions with no
+  firing, but are fitted to them).
 - For M5's gold writes (from M1/M2): take counts from our own MERGE metrics (the sync pipeline's row metrics are
   always 0, D-001); on Databricks a no-op MERGE still writes an empty table version (D-006 run b), and
   Databricks commits its own `OPTIMIZE` versions (D-010): never read "we wrote" from a version bump.
-- Carry into M4: the DQ gate runs inside `jobs/change_detect.py`, before the committed row (the job's last write),
-  so a failed gate leaves the baseline where it was. Row-count drift uses the row's from/to totals; the
-  threshold and a logged override are still open (Open questions).
 - Carry into M5: set `Config.sink` to the gold table: a new chain, so the first M5 run is an explicit `--initial`
-  load into an empty gold. Gold holds no positions (they come from silver; kept chunks move, D-011). Create the
-  endpoint again first (~20 min of provisioning) and delete it when the index is not needed (idle it bills 4 DBU/h even with no index, against the docs, and likely drains the daily quota:
-  D-001). Create the real index only after the full gold backfill, because capacity is sized from the source
-  table at creation and a small start limits growth. Re-test insert, update and delete with the real MERGE.
-  Sync right after each MERGE and wait for the update to complete ("ready" is not "synced") (D-001).
+  load into an empty gold, and its drift is not applicable (D-012: decide whether to compare it with the `none`
+  chain's head). The gold MERGE goes after the gate and takes its `GatePassed`; add vector checks (dimension, no
+  NaN, norm) to the gate before the index sync. Gold holds no positions (they come from silver; kept chunks
+  move, D-011). Create the endpoint again first (~20 min of provisioning) and delete it when the index is not
+  needed (idle it bills 4 DBU/h even with no index, against the docs, and likely drains the daily quota: D-001).
+  Create the real index only after the full gold backfill, because capacity is sized from the source table at
+  creation and a small start limits growth. Re-test insert, update and delete with the real MERGE. Sync right
+  after each MERGE and wait for the update to complete ("ready" is not "synced") (D-001).
 
 ## Milestones (status)
 
@@ -147,7 +160,7 @@ of 5 committed runs (v3.5.0 initial → v4.0.0 → v4.0.0 again → v4.0.1 → v
 - [x] M1 — Bronze ingestion: fetch tag → `bronze_docs`, content hash, idempotent MERGE, tests, CI (2026-10-15; D-006, D-007)
 - [x] M2 — Silver: Markdown cleaning + section-aware chunking, stable chunk IDs, tests (2026-10-19; D-008, D-009, D-010)
 - [x] M3 — Change detection (doc + chunk level) and run log; v1 → v2 → re-run (2026-10-20; D-011)
-- [ ] M4 — DQ checks as a gate between silver and gold
+- [x] M4 — DQ checks as a gate between silver and gold (2026-10-20; D-012)
 - [ ] M5 — Embeddings + AI Search index sync (only changed chunks embedded)
 - [ ] M6 — Eval set (50 Q/A, owner reviews) + recall@5/MRR, 2 chunk sizes × 2 models
 - [ ] M7 — Asset Bundles (dev/prod), Jobs, GitHub Actions
