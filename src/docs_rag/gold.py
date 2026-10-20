@@ -9,7 +9,7 @@ Pure Python, so the job and the tests share it.
 """
 
 import datetime as dt
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, fields
 
 from docs_rag.chunk import breadcrumb
@@ -123,3 +123,56 @@ def check_merge_counts(metrics: dict[str, int], inserted: int, deleted: int) -> 
     )
     if got != (inserted, deleted, 0):
         raise RuntimeError(f"MERGE inserted/deleted/updated {got}, the diff says ({inserted}, {deleted}, 0)")
+
+
+# --- the MERGE ---------------------------------------------------------------------------------------------
+
+
+def merge_source_ddl() -> str:
+    """The MERGE's source: an op ('insert' or 'delete') and the gold columns, nullable (a delete row carries
+    only its chunk_id)."""
+    return ", ".join(
+        ["op STRING"] + [f"{name} {kind.removesuffix(' NOT NULL')}" for name, kind in GOLD_COLUMNS]
+    )
+
+
+def merge_source_rows(inserts: Sequence[GoldRow], deletes: Sequence[str]) -> list[dict[str, object]]:
+    empty: dict[str, object] = {name: None for name, _ in GOLD_COLUMNS}
+    rows = [{"op": "insert", **r.as_row()} for r in inserts]
+    rows += [{"op": "delete", **empty, "chunk_id": chunk_id} for chunk_id in deletes]
+    ids = [r["chunk_id"] for r in rows]
+    if len(ids) != len(set(ids)):
+        raise ValueError("a chunk_id is both inserted and deleted, or listed twice")
+    return rows
+
+
+_COLUMNS = ", ".join(name for name, _ in GOLD_COLUMNS)
+MERGE_GOLD = f"""
+MERGE INTO IDENTIFIER(:table) AS g
+USING gold_changes AS c
+ON g.chunk_id = c.chunk_id
+WHEN MATCHED AND c.op = 'delete' THEN DELETE
+WHEN NOT MATCHED AND c.op = 'insert' THEN INSERT ({_COLUMNS})
+  VALUES ({", ".join(f"c.{name}" for name, _ in GOLD_COLUMNS)})
+"""
+
+
+def merge_version(history: Sequence[tuple[int, str]], before: int) -> int:
+    """The version the MERGE wrote, from the (version, operation) rows of the table history after `before`:
+    exactly one MERGE; anything else there may only be Databricks' own OPTIMIZE (D-010)."""
+    new = [(v, op) for v, op in history if v > before]
+    merges = [v for v, op in new if op == "MERGE"]
+    others = sorted({op for _, op in new if op not in ("MERGE", "OPTIMIZE")})
+    if len(merges) != 1 or others:
+        raise RuntimeError(f"gold history after version {before} is not one MERGE: {sorted(new)}")
+    return merges[0]
+
+
+def history_merge_metrics(operation_metrics: Mapping[str, str]) -> dict[str, int]:
+    """DESCRIBE HISTORY's metrics of a MERGE, named as the MERGE statement's own result names them."""
+    names = {
+        "num_inserted_rows": "numTargetRowsInserted",
+        "num_deleted_rows": "numTargetRowsDeleted",
+        "num_updated_rows": "numTargetRowsUpdated",
+    }
+    return {ours: int(operation_metrics.get(theirs, "-1")) for ours, theirs in names.items()}

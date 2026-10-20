@@ -9,7 +9,7 @@ import json
 import os
 import platform
 import sys
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from typing import Any
 
 from docs_rag.config import Config
@@ -82,6 +82,16 @@ def check_environment(expect_env: str, expect_version: str) -> dict[str, Any]:
     if problems:
         raise RuntimeError("environment check failed: " + "; ".join(problems))
     return env
+
+
+def check_packages(packages: Sequence[tuple[str, str]]) -> dict[str, str | None]:
+    """Fail unless each package is installed at exactly its pinned version (e.g. Config.embedding.packages:
+    a different torch or transformers can change the vectors)."""
+    found = {name: _version(name) for name, _ in packages}
+    wrong = [f"{name} {found[name]}, expected {want}" for name, want in packages if found[name] != want]
+    if wrong:
+        raise RuntimeError("package check failed: " + "; ".join(wrong))
+    return found
 
 
 def run_with_summary(

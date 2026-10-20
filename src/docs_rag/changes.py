@@ -277,7 +277,17 @@ RUN_LOG_COLUMNS: tuple[tuple[str, str], ...] = (
     # with silver, D-011) or 'stored' (its config cannot be re-chunked by this code: its stored silver rows
     # against the logged fingerprint, D-013's re-baseline path). NULL for an initial run and early failures.
     ("baseline_check", "STRING"),
+    # Added in M5 the same way (D-014): what a run published to gold. NULL for sink 'none', and in a failed
+    # row for whatever the run did not reach.
+    ("embedding_model", "STRING"),  # model@revision of the vectors this run inserted
+    ("chunks_embedded", "INT"),  # vectors computed: the added chunks, nothing else
+    ("embedded_ids_fingerprint", "STRING"),  # silver.fingerprint of the (path, chunk_id) pairs embedded
+    ("gold_rows_inserted", "INT"),  # from the gold MERGE's own metrics
+    ("gold_rows_deleted", "INT"),
+    ("gold_version", "BIGINT"),  # the gold version the MERGE wrote; NULL when there was nothing to write
 )
+
+GOLD_COLUMNS_OF_RUN_LOG = RUN_LOG_COLUMNS[-6:]
 
 
 def run_log_ddl() -> str:
@@ -333,6 +343,12 @@ class RunLogRow:
     dq_override: str | None = None
     dq_override_of: str | None = None
     baseline_check: str | None = None
+    embedding_model: str | None = None
+    chunks_embedded: int | None = None
+    embedded_ids_fingerprint: str | None = None
+    gold_rows_inserted: int | None = None
+    gold_rows_deleted: int | None = None
+    gold_version: int | None = None
 
     def as_row(self) -> dict[str, object]:
         row: dict[str, object] = {f.name: getattr(self, f.name) for f in fields(self)}
@@ -372,7 +388,9 @@ def counts(docs: DocDiff, chunks: ChunkDiff, from_chunks: int, to_tokens: int) -
 
 
 _COUNT_COLUMNS = tuple(
-    name for name, kind in RUN_LOG_COLUMNS if kind in ("INT", "BIGINT") or name.endswith("_paths")
+    name
+    for name, kind in RUN_LOG_COLUMNS
+    if (kind in ("INT", "BIGINT") or name.endswith("_paths")) and (name, kind) not in GOLD_COLUMNS_OF_RUN_LOG
 )
 
 
@@ -418,4 +436,20 @@ def row_violations(row: RunLogRow) -> list[str]:
         "a run with a baseline says how it checked it": (row.baseline_check in ("rechunked", "stored"))
         == (row.baseline_run_id is not None),
     }
+    gold = [getattr(row, name) for name, _ in GOLD_COLUMNS_OF_RUN_LOG]
+    if row.sink == "none":
+        checks["a run without a sink publishes nothing"] = all(v is None for v in gold)
+    else:
+        changed = added + removed > 0
+        checks |= {
+            "a published run names its model and what it embedded": row.embedding_model is not None
+            and row.embedded_ids_fingerprint is not None,
+            "it embedded exactly the added chunks": row.chunks_embedded == added,
+            "gold inserted the added and deleted the removed chunks": (
+                row.gold_rows_inserted,
+                row.gold_rows_deleted,
+            )
+            == (added, removed),
+            "a gold version exactly when gold changed": (row.gold_version is not None) == changed,
+        }
     return [name for name, ok in checks.items() if not ok]

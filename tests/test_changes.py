@@ -265,3 +265,39 @@ def test_a_committed_row_says_how_its_baseline_was_checked() -> None:
     assert row_violations(committed_row(code_version="")) == [
         "started_at, finished_at and code_version are required"
     ]
+
+
+def published_row(**overrides: object) -> RunLogRow:
+    row = committed_row(sink="gold_chunk_embeddings")
+    added = row.chunks_added_new_docs + row.chunks_added_changed_docs + row.chunks_added_unchanged_docs  # type: ignore[operator]
+    removed = (
+        row.chunks_removed_changed_docs + row.chunks_removed_unchanged_docs + row.chunks_removed_deleted_docs  # type: ignore[operator]
+    )
+    gold = dict(
+        embedding_model="m@r",
+        chunks_embedded=added,
+        embedded_ids_fingerprint="f",
+        gold_rows_inserted=added,
+        gold_rows_deleted=removed,
+        gold_version=7,
+    )
+    return dataclasses.replace(row, **{**gold, **overrides})  # type: ignore[arg-type]
+
+
+def test_a_published_row_embedded_and_merged_exactly_the_chunk_diff() -> None:
+    row = published_row()
+    assert row.chunks_embedded and row.gold_rows_deleted  # the fixture adds and removes chunks
+    assert row_violations(row) == []
+    assert "it embedded exactly the added chunks" in row_violations(published_row(chunks_embedded=0))
+    assert "gold inserted the added and deleted the removed chunks" in row_violations(
+        published_row(gold_rows_deleted=0)
+    )
+    assert "a gold version exactly when gold changed" in row_violations(published_row(gold_version=None))
+    assert "a published run names its model and what it embedded" in row_violations(
+        published_row(embedding_model=None)
+    )
+
+
+def test_a_run_without_a_sink_publishes_nothing() -> None:
+    assert row_violations(committed_row(chunks_embedded=3)) == ["a run without a sink publishes nothing"]
+    assert row_violations(committed_row(status=FAILED, sink="gold_chunk_embeddings", gold_version=3)) == []
