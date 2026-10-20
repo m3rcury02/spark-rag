@@ -1,0 +1,126 @@
+{
+  "label": "m4x_t_task_attempts",
+  "git_commit": "fafdd5bf9a0ab732eb00bacd656564af65151c86",
+  "runs": [
+    {
+      "file": "m4x_l1_silver_v3.5.0_254.json",
+      "parent_run_id": 933994771987340,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "SUCCESS",
+          "start_utc": "2026-10-20T13:09:41+00:00",
+          "end_utc": "2026-10-20T13:11:23+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m4x_l2_silver_v3.5.0_128.json",
+      "parent_run_id": 419158374445948,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "SUCCESS",
+          "start_utc": "2026-10-20T13:12:42+00:00",
+          "end_utc": "2026-10-20T13:13:42+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m4x_l3_silver_v4.0.0_254.json",
+      "parent_run_id": 1101452352412061,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "SUCCESS",
+          "start_utc": "2026-10-20T13:14:40+00:00",
+          "end_utc": "2026-10-20T13:15:51+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m4x_l4_silver_v4.0.0_128.json",
+      "parent_run_id": 527770224991188,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "SUCCESS",
+          "start_utc": "2026-10-20T13:16:59+00:00",
+          "end_utc": "2026-10-20T13:18:10+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m4x_l5_silver_v4.0.1_254.json",
+      "parent_run_id": 747359637058816,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "SUCCESS",
+          "start_utc": "2026-10-20T13:19:21+00:00",
+          "end_utc": "2026-10-20T13:20:42+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m4x_l6_silver_v4.0.1_128.json",
+      "parent_run_id": 922221311701054,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "SUCCESS",
+          "start_utc": "2026-10-20T13:22:01+00:00",
+          "end_utc": "2026-10-20T13:23:26+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m4x_m_detect_v4.0.1_config_change_without_flag.json",
+      "parent_run_id": 1085983939484140,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "FAILED",
+          "start_utc": "2026-10-20T13:23:53+00:00",
+          "end_utc": "2026-10-20T13:24:40+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m4x_o_detect_v4.0.1_tampered_old_baseline.json",
+      "parent_run_id": 231461717565274,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "FAILED",
+          "start_utc": "2026-10-20T13:25:31+00:00",
+          "end_utc": "2026-10-20T13:26:26+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m4x_q_detect_v4.0.1_rebaseline.json",
+      "parent_run_id": 499297797110006,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "SUCCESS",
+          "start_utc": "2026-10-20T13:26:48+00:00",
+          "end_utc": "2026-10-20T13:27:49+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m4x_r_detect_v4.0.1_again.json",
+      "parent_run_id": 948434565571105,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "SUCCESS",
+          "start_utc": "2026-10-20T13:28:18+00:00",
+          "end_utc": "2026-10-20T13:29:15+00:00"
+        }
+      ]
+    }
+  ]
+}
