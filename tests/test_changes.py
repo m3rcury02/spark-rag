@@ -225,6 +225,9 @@ def test_rows_that_do_not_add_up_are_refused() -> None:
 
 def test_a_failed_row_needs_no_counts() -> None:
     assert row_violations(committed_row(status=FAILED, docs_added=None)) == []
+    assert row_violations(committed_row(status=FAILED, dq_override="a reason")) == [
+        "only a committed row carries a DQ override"
+    ]
     assert row_violations(committed_row(status="detected")) == ["unknown status 'detected'"]
     assert row_violations(committed_row(code_version="")) == [
         "started_at, finished_at and code_version are required"

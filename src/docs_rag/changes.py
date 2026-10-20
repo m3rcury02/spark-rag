@@ -248,6 +248,9 @@ RUN_LOG_COLUMNS: tuple[tuple[str, str], ...] = (
     ("started_at", "TIMESTAMP NOT NULL"),
     ("finished_at", "TIMESTAMP NOT NULL"),
     ("code_version", "STRING NOT NULL"),
+    # Added in M4 (D-012) with ALTER TABLE ADD COLUMNS, so it comes last: the --accept-drift reason of a run
+    # committed with an overridden drift check; NULL otherwise. Its checks are in ops_dq_results.
+    ("dq_override", "STRING"),
 )
 
 
@@ -301,6 +304,7 @@ class RunLogRow:
     started_at: dt.datetime | None = None
     finished_at: dt.datetime | None = None
     code_version: str = ""
+    dq_override: str | None = None
 
     def as_row(self) -> dict[str, object]:
         row: dict[str, object] = {f.name: getattr(self, f.name) for f in fields(self)}
@@ -349,7 +353,7 @@ def row_violations(row: RunLogRow) -> list[str]:
     if row.started_at is None or row.finished_at is None or not row.code_version:
         return ["started_at, finished_at and code_version are required"]
     if row.status == FAILED:
-        return []
+        return ["only a committed row carries a DQ override"] if row.dq_override is not None else []
     if row.status != COMMITTED:
         return [f"unknown status {row.status!r}"]
     if any(getattr(row, name) is None for name in _COUNT_COLUMNS):
