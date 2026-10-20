@@ -13,11 +13,15 @@ from docs_rag.dq import (
     NOT_APPLICABLE,
     OVERRIDDEN,
     PASS,
+    Acceptance,
+    Baseline,
     DqFailed,
     DqResult,
     DqRunContext,
     GatePassed,
+    LoggedCheck,
     Totals,
+    accept_failed_run,
     evaluate,
     gate,
     result_rows,
@@ -31,6 +35,8 @@ COMMIT = "a" * 40
 CONFIG = Config()
 CHUNKING = CONFIG.chunk
 REASON = "v4.0.0 removed 32 docs on purpose (D-002)"
+MAJOR = "v3.5.0"  # a baseline a major release away from TAG: drift threshold 10%
+PATCH = "v4.0.0"  # a baseline a patch release away from TAG: drift threshold 5%
 
 
 def chunk(i: int, **overrides: object) -> SilverRecord:
@@ -72,9 +78,35 @@ def by_check(results: list[DqResult]) -> dict[str, DqResult]:
 
 
 def run(
-    records: list[SilverRecord], baseline: Totals | None = None, accept: str | None = None, docs: int = 7
+    records: list[SilverRecord],
+    baseline: Totals | None = None,
+    accept: Acceptance | None = None,
+    docs: int = 7,
+    since: str = MAJOR,
 ) -> dict[str, DqResult]:
-    return by_check(evaluate(records, docs, baseline, CONFIG, CHUNKING, TAG, accept))
+    base = Baseline(since, baseline) if baseline else None
+    return by_check(evaluate(records, docs, base, CONFIG, CHUNKING, TAG, accept))
+
+
+def logged(results: list[DqResult], run_id: str = "r-failed", since: str = MAJOR) -> list[LoggedCheck]:
+    """The ops_dq_results rows a run with these results would have logged."""
+    return [
+        LoggedCheck(run_id, "a1", r.check, r.status, r.numerator, r.denominator, "cfg", since, TAG, "r-base")
+        for r in results
+    ]
+
+
+def acceptance_of(results: list[DqResult], since: str = MAJOR) -> Acceptance:
+    return accept_failed_run(
+        REASON,
+        "r-failed",
+        ["failed"],
+        logged(results, since=since),
+        config_id="cfg",
+        from_tag=since,
+        tag=TAG,
+        baseline_run_id="r-base",
+    )
 
 
 def totals(records: list[SilverRecord], docs: int = 7) -> Totals:
@@ -99,7 +131,7 @@ def test_chunking_real_pages_passes() -> None:
     docs = [BronzeDoc(p, c, "s", "s", COMMIT) for p, c in pages.items()]
     config = ChunkConfig(64, 8)
     records = to_records(docs, chunk_docs(docs, config), "apache/spark", TAG, config, "r", AT)
-    results = evaluate(records, 2, totals(records, 2), CONFIG, config, TAG)
+    results = evaluate(records, 2, Baseline(PATCH, totals(records, 2)), CONFIG, config, TAG)
     assert {r.status for r in results} == {PASS}
 
 
@@ -184,37 +216,87 @@ def test_no_chunks_at_all_fails() -> None:
 
 
 @pytest.mark.parametrize(
-    "baseline_docs,status",
-    [(100, PASS), (91, PASS), (90, FAIL), (111, PASS), (112, FAIL)],
+    "since,baseline_docs,status",
+    [
+        (MAJOR, 100, PASS),
+        (MAJOR, 91, PASS),
+        (MAJOR, 90, FAIL),
+        (MAJOR, 111, PASS),
+        (MAJOR, 112, FAIL),
+        (PATCH, 96, PASS),
+        (PATCH, 95, FAIL),
+        (PATCH, 105, PASS),
+        (PATCH, 106, FAIL),
+        ("v4.0.1", 106, FAIL),  # the same tag counts as a patch release
+        ("v4.1.0", 111, PASS),  # backwards across a minor release
+        ("branch-4.0", 106, FAIL),  # not a release: the strictest threshold
+    ],
 )
-def test_drift_fails_above_ten_percent_either_way(baseline_docs: int, status: str) -> None:
-    records = corpus()
-    result = run(records, Totals(baseline_docs, 100, 2000), docs=100)["drift_docs"]
+def test_drift_threshold_follows_the_release_kind(since: str, baseline_docs: int, status: str) -> None:
+    result = run(corpus(), Totals(baseline_docs, 100, 2000), docs=100, since=since)["drift_docs"]
     assert result.status == status
-    assert result.denominator == baseline_docs and result.numerator == 100
+    assert (result.denominator, result.numerator) == (baseline_docs, 100)
+    assert result.threshold == (0.10 if since in (MAJOR, "v4.1.0") else 0.05)
 
 
 def test_drift_at_exactly_the_threshold_passes() -> None:
     result = run(corpus(), Totals(100, 100, 2000), docs=110)["drift_docs"]
     assert (result.status, result.observed) == (PASS, pytest.approx(0.10))
+    assert run(corpus(), Totals(100, 100, 2000), docs=105, since=PATCH)["drift_docs"].status == PASS
 
 
-def test_accepted_drift_is_overridden_with_its_reason() -> None:
-    results = evaluate(corpus(), 87, Totals(100, 100, 2000), CONFIG, CHUNKING, TAG, REASON)
+def test_drift_of_a_failed_run_is_accepted_when_it_is_exactly_that_drift() -> None:
+    failed = evaluate(corpus(), 87, Baseline(MAJOR, Totals(100, 100, 2000)), CONFIG, CHUNKING, TAG)
+    with pytest.raises(DqFailed, match="drift_docs fail"):
+        gate(failed, None)
+    accept = acceptance_of(failed)
+    assert accept.drift == frozenset({("drift_docs", 87, 100)})
+    results = evaluate(corpus(), 87, Baseline(MAJOR, Totals(100, 100, 2000)), CONFIG, CHUNKING, TAG, accept)
     drift = by_check(results)["drift_docs"]
-    assert (drift.status, drift.override_reason) == (OVERRIDDEN, REASON)
+    assert (drift.status, drift.override_reason, drift.override_of) == (OVERRIDDEN, REASON, "r-failed")
     assert by_check(results)["drift_chunks"].override_reason is None  # only the checks it overrode
-    passed = gate(results, REASON)
-    assert (passed.overridden, passed.override_reason) == (("drift_docs",), REASON)
+    passed = gate(results, accept)
+    assert (passed.overridden, passed.override_reason, passed.override_of) == (
+        ("drift_docs",),
+        REASON,
+        "r-failed",
+    )
 
 
-def test_a_loss_beyond_the_ceiling_cannot_be_overridden_but_a_gain_can() -> None:
-    lost = by_check(evaluate(corpus(), 49, Totals(100, 100, 2000), CONFIG, CHUNKING, TAG, REASON))
+def test_an_acceptance_covers_only_the_numbers_it_saw() -> None:
+    accept = acceptance_of(
+        evaluate(corpus(), 87, Baseline(MAJOR, Totals(100, 100, 2000)), CONFIG, CHUNKING, TAG)
+    )
+    worse = by_check(
+        evaluate(corpus(), 60, Baseline(MAJOR, Totals(100, 100, 2000)), CONFIG, CHUNKING, TAG, accept)
+    )
+    assert worse["drift_docs"].status == FAIL
+    assert worse["drift_docs"].examples == ("not the drift run r-failed failed on",)
+    new_check = run(corpus(), Totals(100, 50, 2000), accept, docs=87)  # chunks drift too now
+    assert (new_check["drift_docs"].status, new_check["drift_chunks"].status) == (OVERRIDDEN, FAIL)
+    with pytest.raises(DqFailed, match="drift_chunks fail"):
+        gate(list(new_check.values()), accept)
+
+
+def test_a_loss_beyond_the_ceiling_cannot_be_accepted_but_a_gain_can() -> None:
+    lost_run = evaluate(corpus(), 49, Baseline(MAJOR, Totals(100, 100, 2000)), CONFIG, CHUNKING, TAG)
+    lost = by_check(
+        evaluate(
+            corpus(),
+            49,
+            Baseline(MAJOR, Totals(100, 100, 2000)),
+            CONFIG,
+            CHUNKING,
+            TAG,
+            acceptance_of(lost_run),
+        )
+    )
     assert lost["drift_docs"].status == FAIL
     assert lost["drift_docs"].examples == ("a loss this large cannot be overridden",)
     with pytest.raises(DqFailed, match=r"drift_docs fail: 100 -> 49 \(-51.0%"):
-        gate(list(lost.values()), REASON)
-    gained = by_check(evaluate(corpus(), 300, Totals(100, 100, 2000), CONFIG, CHUNKING, TAG, REASON))
+        gate(list(lost.values()), acceptance_of(lost_run))
+    gain_run = evaluate(corpus(), 300, Baseline(MAJOR, Totals(100, 100, 2000)), CONFIG, CHUNKING, TAG)
+    gained = run(corpus(), Totals(100, 100, 2000), acceptance_of(gain_run), docs=300)
     assert gained["drift_docs"].status == OVERRIDDEN
 
 
@@ -224,15 +306,85 @@ def test_tokens_and_chunks_drift_too() -> None:
     assert results["drift_tokens"].numerator == 2000
 
 
-def test_an_override_with_nothing_to_override_is_refused() -> None:
+def test_an_acceptance_with_nothing_to_override_is_refused() -> None:
+    accept = Acceptance(REASON, "r-failed", frozenset({("drift_docs", 87, 100)}))
     records = corpus()
-    results = evaluate(records, 7, totals(records), CONFIG, CHUNKING, TAG, REASON)
+    results = evaluate(records, 7, Baseline(MAJOR, totals(records)), CONFIG, CHUNKING, TAG, accept)
     assert {r.status for r in results} == {PASS}
     with pytest.raises(DqFailed, match="nothing to accept"):
-        gate(results, REASON)
-    initial = evaluate(records, 7, None, CONFIG, CHUNKING, TAG, REASON)
+        gate(results, accept)
+    initial = evaluate(records, 7, None, CONFIG, CHUNKING, TAG, accept)
     with pytest.raises(DqFailed, match="nothing to accept"):
-        gate(initial, REASON)
+        gate(initial, accept)
+
+
+@pytest.mark.parametrize(
+    "statuses,change,problem",
+    [
+        (["committed"], {}, "not one failed run"),
+        (["failed", "committed"], {}, "not one failed run"),
+        (["failed"], {"attempt_id": "a2"}, "2 attempts"),
+        (["failed"], {"to_version_tag": "v4.0.0"}, "this run checks"),
+        (["failed"], {"baseline_run_id": "r-other"}, "this run checks"),
+        (["failed"], {"config_id": "other"}, "this run checks"),
+    ],
+)
+def test_only_a_matching_failed_run_can_be_accepted(
+    statuses: list[str], change: dict[str, str], problem: str
+) -> None:
+    rows = logged(evaluate(corpus(), 87, Baseline(MAJOR, Totals(100, 100, 2000)), CONFIG, CHUNKING, TAG))
+    rows = [rows[0] if not change else dataclasses.replace(rows[0], **change), *rows[1:]]  # type: ignore[arg-type]
+    with pytest.raises(ValueError, match=problem):
+        accept_failed_run(
+            REASON,
+            "r-failed",
+            statuses,
+            rows,
+            config_id="cfg",
+            from_tag=MAJOR,
+            tag=TAG,
+            baseline_run_id="r-base",
+        )
+
+
+def test_a_run_that_failed_on_more_than_drift_cannot_be_accepted() -> None:
+    clean = evaluate(corpus(), 7, Baseline(MAJOR, Totals(7, 100, 2000)), CONFIG, CHUNKING, TAG)
+    with pytest.raises(ValueError, match="failed no drift check"):
+        accept_failed_run(
+            REASON,
+            "r-failed",
+            ["failed"],
+            logged(clean),
+            config_id="cfg",
+            from_tag=MAJOR,
+            tag=TAG,
+            baseline_run_id="r-base",
+        )
+    both = evaluate(
+        [*corpus(), chunk(100, body="")], 87, Baseline(MAJOR, Totals(100, 101, 2020)), CONFIG, CHUNKING, TAG
+    )
+    with pytest.raises(ValueError, match=r"also failed \['empty_chunks'\]"):
+        accept_failed_run(
+            REASON,
+            "r-failed",
+            ["failed"],
+            logged(both),
+            config_id="cfg",
+            from_tag=MAJOR,
+            tag=TAG,
+            baseline_run_id="r-base",
+        )
+    with pytest.raises(ValueError, match="0 attempts"):
+        accept_failed_run(
+            REASON,
+            "r-failed",
+            ["failed"],
+            [],
+            config_id="cfg",
+            from_tag=MAJOR,
+            tag=TAG,
+            baseline_run_id="r-base",
+        )
 
 
 def test_gate_refuses_results_that_do_not_fit_the_rules() -> None:
@@ -247,29 +399,42 @@ def test_gate_refuses_results_that_do_not_fit_the_rules() -> None:
     reasonless = [*results[:6], dataclasses.replace(results[6], status=OVERRIDDEN), *results[7:]]
     with pytest.raises(DqFailed, match="cannot have"):
         gate(reasonless, None)
-    other_reason = [
+    unasked = [
         *results[:6],
-        dataclasses.replace(results[6], status=OVERRIDDEN, override_reason="another reason here x"),
+        dataclasses.replace(results[6], status=OVERRIDDEN, override_reason=REASON, override_of="r-failed"),
         *results[7:],
     ]
-    with pytest.raises(DqFailed, match="other than"):
-        gate(other_reason, REASON)
+    with pytest.raises(DqFailed, match="accepts no drift"):
+        gate(unasked, None)
+    accept = Acceptance(REASON, "r-failed", frozenset({(results[6].check, results[6].numerator, 0)}))
+    other = [
+        *results[:6],
+        dataclasses.replace(
+            results[6], status=OVERRIDDEN, override_reason="another reason x", override_of="r-x"
+        ),
+        *results[7:],
+    ]
+    with pytest.raises(DqFailed, match="another reason or run"):
+        gate(other, accept)
 
 
 def test_a_gate_pass_cannot_be_made_outside_the_gate() -> None:
     with pytest.raises(TypeError, match="issued only by"):
-        GatePassed(CHECKS, (), None)
+        GatePassed(CHECKS, (), None, None)
 
 
-def test_override_reasons_are_checked_before_the_run() -> None:
+def test_override_arguments_are_checked_before_the_run() -> None:
     dq = DqConfig()
-    assert validate_override(None, initial=False, dq=dq) is None
-    assert validate_override(f"  {REASON}\n", initial=False, dq=dq) == REASON
+    assert validate_override(None, None, initial=False, dq=dq) is None
+    assert validate_override(f"  {REASON}\n", " r-failed ", initial=False, dq=dq) == (REASON, "r-failed")
+    for reason, of_run in ((REASON, None), (None, "r-failed"), (REASON, "  ")):
+        with pytest.raises(ValueError, match="go together"):
+            validate_override(reason, of_run, initial=False, dq=dq)
     with pytest.raises(ValueError, match="no baseline"):
-        validate_override(REASON, initial=True, dq=dq)
+        validate_override(REASON, "r-failed", initial=True, dq=dq)
     for weak in ("ok", "expected drift", "a b c d", "major release upgrade"):
         with pytest.raises(ValueError, match="at least 20 characters and 4 words"):
-            validate_override(weak, initial=False, dq=dq)
+            validate_override(weak, "r-failed", initial=False, dq=dq)
 
 
 def test_result_rows_match_the_table_columns() -> None:
@@ -290,7 +455,13 @@ def test_config_refuses_chunks_the_model_would_truncate() -> None:
 
 @pytest.mark.parametrize(
     "overrides",
-    [{"max_tiny_share": 1.5}, {"max_drift": -0.1}, {"max_override_loss": 0.05}, {"tiny_body_tokens": 0}],
+    [
+        {"max_tiny_share": 1.5},
+        {"max_drift_patch": -0.1},
+        {"max_drift_feature": 1.0},
+        {"max_override_loss": 0.08},
+        {"tiny_body_tokens": 0},
+    ],
 )
 def test_dq_thresholds_are_validated(overrides: dict[str, object]) -> None:
     with pytest.raises(ValueError):

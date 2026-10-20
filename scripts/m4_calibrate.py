@@ -8,7 +8,7 @@ Reads every final release tag from v3.0.0 on straight from git (scripts/gitdocs.
 
 - per tag: commit, docs, chunks, tokens, and every check's numerator, denominator and status;
 - per transition (consecutive releases in version order, labelled major / minor / patch): the drift of docs,
-  chunks and tokens, and which drift checks fail at Config.dq.max_drift;
+  chunks and tokens, and which drift checks fail at Config.dq's threshold for the release kind;
 - the firing rate of the drift rule at several thresholds, by transition kind;
 - along D-002's path (v3.5.0 initial, v4.0.0, v4.0.1, v4.0.1 again), the full results with examples, for every
   config of Config.chunk_grid.
@@ -31,7 +31,7 @@ from runguard import REPO, committed_head
 
 from docs_rag.chunk import ChunkConfig
 from docs_rag.config import Config
-from docs_rag.dq import DRIFT_CHECKS, FAIL, DqResult, Totals, evaluate
+from docs_rag.dq import DRIFT_CHECKS, FAIL, Baseline, DqResult, Totals, evaluate
 from docs_rag.hashing import sha256_hex
 from docs_rag.silver import BronzeDoc, SilverRecord, chunk_docs, to_records
 
@@ -119,7 +119,8 @@ def main() -> None:
             prev = None
             continue
         now = totals(tag, records)
-        results = evaluate(records, now.docs, prev[1] if prev else None, config, config.chunk, tag_name)
+        base = Baseline(*prev) if prev else None
+        results = evaluate(records, now.docs, base, config, config.chunk, tag_name)
         checks = {r.check: brief(r) for r in results}
         per_tag.append(
             {
@@ -140,7 +141,7 @@ def main() -> None:
                     "to": tag_name,
                     "kind": kind(prev[0], tag_name),
                     "drift": {c: checks[c]["observed"] for c in DRIFT_CHECKS},
-                    "fails_at_max_drift": [c for c in DRIFT_CHECKS if checks[c]["status"] == FAIL],
+                    "fails_at_threshold": [c for c in DRIFT_CHECKS if checks[c]["status"] == FAIL],
                 }
             )
         print(tag_name, now, per_tag[-1]["failing_checks"], flush=True)
@@ -167,7 +168,7 @@ def main() -> None:
         recs = {t: records_of(path_tags[t], chunking, config) for t in path_tags}
         steps = []
         for to_tag, from_tag in D002_PATH:
-            base = totals(path_tags[from_tag], recs[from_tag]) if from_tag else None
+            base = Baseline(from_tag, totals(path_tags[from_tag], recs[from_tag])) if from_tag else None
             results = evaluate(recs[to_tag], len(path_tags[to_tag].files), base, config, chunking, to_tag)
             steps.append({"from": from_tag, "to": to_tag, "checks": {r.check: full(r) for r in results}})
         d002[f"{chunking.max_tokens}/{chunking.overlap_tokens}"] = steps
@@ -190,7 +191,8 @@ def main() -> None:
         "d002_path": d002,
     }
     out_path.write_text(redactor.dump(out))
-    print("transitions:", len(transitions), "| firing at max_drift:", firing[f"{config.dq.max_drift:.2f}"])
+    fired = sum(bool(t["fails_at_threshold"]) for t in transitions)
+    print("transitions:", len(transitions), "| firing at the configured thresholds:", fired)
 
 
 if __name__ == "__main__":

@@ -4,10 +4,14 @@ Brief item 5: empty or tiny chunks, oversized chunks, duplicate chunks, missing 
 between runs. Each check gives one DqResult: what it counted, out of what, its threshold, and up to
 MAX_EXAMPLES examples. A count check fails when numerator > threshold * denominator (a threshold of 0: any).
 A drift check compares the target's docs, chunks and tokens with the baseline run's and fails when
-|to - from| > max_drift * from. Statuses:
+|to - from| > threshold * from, the threshold set by the release kind (patch, or minor and major;
+changes.release_kind).
+Statuses:
 - pass / fail;
-- overridden: a drift check over its threshold, accepted for this one run with a stated reason
-  (--accept-drift). Only drift can be overridden, and a loss beyond max_override_loss cannot;
+- overridden: a drift check over its threshold that this run accepts (an Acceptance): the operator names a
+  run that failed the gate on drift alone, for the same target, baseline and config, and gives a reason; a
+  check is overridden only if it fails with exactly the numbers that run logged. Only drift can be
+  overridden, and a loss beyond max_override_loss cannot;
 - not_applicable: drift of an initial run, which has no baseline.
 The checks cover all the target's chunks, not only the added ones, because gold holds the whole target.
 `gate` turns the results into a GatePassed, which committing a run requires (and, from M5, publishing it), or
@@ -20,6 +24,7 @@ from collections import Counter, defaultdict
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 
+from docs_rag.changes import release_kind
 from docs_rag.chunk import ChunkConfig
 from docs_rag.config import Config, DqConfig
 from docs_rag.silver import SilverRecord
@@ -53,6 +58,40 @@ class Totals:
 
 
 @dataclass(frozen=True)
+class Baseline:
+    """The committed run a target drifts from: its tag (for the release kind) and its totals."""
+
+    tag: str
+    totals: Totals
+
+
+@dataclass(frozen=True)
+class LoggedCheck:
+    """One ops_dq_results row of an earlier run, as an acceptance reads it."""
+
+    run_id: str
+    attempt_id: str
+    check: str
+    status: str
+    numerator: int
+    denominator: int
+    config_id: str
+    from_version_tag: str | None
+    to_version_tag: str
+    baseline_run_id: str | None
+
+
+@dataclass(frozen=True)
+class Acceptance:
+    """Drift this run accepts: the failed run whose drift the operator saw, the drift checks it failed with
+    their (check, numerator, denominator), and the operator's reason."""
+
+    reason: str
+    run_id: str
+    drift: frozenset[tuple[str, int, int]]
+
+
+@dataclass(frozen=True)
 class DqResult:
     check: str
     status: str
@@ -63,6 +102,7 @@ class DqResult:
     rule: str  # the rule in words, thresholds included
     examples: tuple[str, ...] = ()
     override_reason: str | None = None
+    override_of: str | None = None  # the failed run whose drift this run accepted
 
 
 class DqFailed(RuntimeError):
@@ -74,11 +114,12 @@ _ISSUED = object()
 
 @dataclass(frozen=True)
 class GatePassed:
-    """Issued only by `gate`: every check passed, or a drift check was overridden with a reason."""
+    """Issued only by `gate`: every check passed, or a drift check was overridden by an acceptance."""
 
     checks: tuple[str, ...]
     overridden: tuple[str, ...]
     override_reason: str | None  # set exactly when a check was overridden
+    override_of: str | None  # the failed run whose drift was accepted; set with override_reason
     issued: object = field(default=None, repr=False, compare=False)
 
     def __post_init__(self) -> None:
@@ -86,10 +127,18 @@ class GatePassed:
             raise TypeError("a GatePassed is issued only by docs_rag.dq.gate")
 
 
-def validate_override(reason: str | None, initial: bool, dq: DqConfig) -> str | None:
-    """The --accept-drift reason (whitespace normalised), checked before the run starts."""
-    if reason is None:
+def validate_override(
+    reason: str | None, of_run: str | None, initial: bool, dq: DqConfig
+) -> tuple[str, str] | None:
+    """--accept-drift (the reason, whitespace normalised) and --accept-drift-of (the failed run whose drift it
+    accepts), checked before the run starts. Both or neither."""
+    if reason is None and of_run is None:
         return None
+    if reason is None or of_run is None or not of_run.strip():
+        raise ValueError(
+            "--accept-drift and --accept-drift-of go together: a reason, and the failed run whose drift "
+            "it accepts"
+        )
     if initial:
         raise ValueError("--accept-drift with --initial: an initial run has no baseline to drift from")
     text = " ".join(reason.split())
@@ -98,7 +147,43 @@ def validate_override(reason: str | None, initial: bool, dq: DqConfig) -> str | 
             f"--accept-drift needs a reason of at least {dq.min_reason_chars} characters and 4 words, "
             f"got {reason!r}"
         )
-    return text
+    return text, of_run.strip()
+
+
+def accept_failed_run(
+    reason: str,
+    run_id: str,
+    statuses: Sequence[str],
+    rows: Sequence[LoggedCheck],
+    *,
+    config_id: str,
+    from_tag: str | None,
+    tag: str,
+    baseline_run_id: str | None,
+) -> Acceptance:
+    """Bind an override to the run named by --accept-drift-of: it never committed, it failed the gate on drift
+    alone, in one attempt, for the same target, baseline and config as this run. `statuses` are its run-log
+    statuses and `rows` its ops_dq_results rows."""
+    problems = []
+    if "failed" not in statuses or "committed" in statuses:
+        problems.append(f"its run log statuses are {sorted(statuses)}, not one failed run")
+    attempts = {r.attempt_id for r in rows}
+    if len(attempts) != 1:
+        problems.append(f"it has DQ rows from {len(attempts)} attempts (it must have reached the gate once)")
+    keys = {(r.config_id, r.from_version_tag, r.to_version_tag, r.baseline_run_id) for r in rows}
+    if keys and keys != {(config_id, from_tag, tag, baseline_run_id)}:
+        problems.append(
+            f"it checked {sorted(keys, key=str)}, "
+            f"this run checks {(config_id, from_tag, tag, baseline_run_id)}"
+        )
+    failed = [r for r in rows if r.status == FAIL]
+    if rows and not [r for r in failed if r.check in DRIFT_CHECKS]:
+        problems.append("it failed no drift check")
+    if [r.check for r in failed if r.check not in DRIFT_CHECKS]:
+        problems.append(f"it also failed {[r.check for r in failed if r.check not in DRIFT_CHECKS]}")
+    if problems:
+        raise ValueError(f"--accept-drift-of {run_id}: " + "; ".join(problems))
+    return Acceptance(reason, run_id, frozenset((r.check, r.numerator, r.denominator) for r in failed))
 
 
 def _where(r: SilverRecord) -> str:
@@ -133,32 +218,45 @@ def _metadata_problems(r: SilverRecord, config: Config, tag: str) -> list[str]:
     return problems
 
 
-def _drift(check: str, to: int, baseline: int | None, dq: DqConfig, accept_drift: str | None) -> DqResult:
+def _drift(
+    check: str, to: int, baseline: int | None, kind: str, dq: DqConfig, accept: Acceptance | None
+) -> DqResult:
+    threshold = dq.max_drift(kind)
     rule = (
-        f"|to/from - 1| over {dq.max_drift:.0%} fails unless accepted with a reason; a loss over "
-        f"{dq.max_override_loss:.0%} fails anyway; not applicable without a baseline"
+        f"{kind} release: |to/from - 1| over {threshold:.0%} fails unless this run accepts the drift of a "
+        f"failed run with exactly these numbers; a loss over {dq.max_override_loss:.0%} fails anyway; not "
+        "applicable without a baseline"
     )
     if baseline is None:
-        return DqResult(check, NOT_APPLICABLE, to, 0, None, dq.max_drift, rule)
+        return DqResult(check, NOT_APPLICABLE, to, 0, None, threshold, rule)
     if baseline == 0:
-        return DqResult(check, FAIL, to, 0, None, dq.max_drift, rule, ("the baseline has none",))
+        return DqResult(check, FAIL, to, 0, None, threshold, rule, ("the baseline has none",))
     observed = to / baseline - 1
-    if abs(to - baseline) <= dq.max_drift * baseline:
-        return DqResult(check, PASS, to, baseline, observed, dq.max_drift, rule)
-    if accept_drift is not None and baseline - to <= dq.max_override_loss * baseline:
-        return DqResult(check, OVERRIDDEN, to, baseline, observed, dq.max_drift, rule, (), accept_drift)
-    note = ("a loss this large cannot be overridden",) if accept_drift is not None else ()
-    return DqResult(check, FAIL, to, baseline, observed, dq.max_drift, rule, note)
+    if abs(to - baseline) <= threshold * baseline:
+        return DqResult(check, PASS, to, baseline, observed, threshold, rule)
+    within_ceiling = baseline - to <= dq.max_override_loss * baseline
+    if accept is not None and within_ceiling and (check, to, baseline) in accept.drift:
+        return DqResult(
+            check, OVERRIDDEN, to, baseline, observed, threshold, rule, (), accept.reason, accept.run_id
+        )
+    note: tuple[str, ...] = ()
+    if accept is not None:
+        note = (
+            ("a loss this large cannot be overridden",)
+            if not within_ceiling
+            else (f"not the drift run {accept.run_id} failed on",)
+        )
+    return DqResult(check, FAIL, to, baseline, observed, threshold, rule, note)
 
 
 def evaluate(
     records: Sequence[SilverRecord],
     target_docs: int,
-    baseline: Totals | None,
+    baseline: Baseline | None,
     config: Config,
     chunking: ChunkConfig,
     tag: str,
-    accept_drift: str | None = None,
+    accept: Acceptance | None = None,
 ) -> list[DqResult]:
     """Every check of CHECKS on the target's chunks (all of them) and its totals, in CHECKS order.
 
@@ -181,6 +279,8 @@ def evaluate(
         paths_of[r.embed_text].add(r.path)
     missing = [(r, p) for r in rows if (p := _metadata_problems(r, config, tag))]
     target = Totals(target_docs, n, sum(r.n_tokens for r in rows))
+    kind = release_kind(baseline.tag, tag) if baseline else "patch"
+    base = baseline.totals if baseline else None
 
     return [
         _count_check(
@@ -235,9 +335,9 @@ def evaluate(
             f"version_tag {tag}, a 40-hex commit_sha; fails if any row misses one",
             [f"{_where(r)}: {', '.join(p)}" for r, p in missing],
         ),
-        _drift("drift_docs", target.docs, baseline.docs if baseline else None, dq, accept_drift),
-        _drift("drift_chunks", target.chunks, baseline.chunks if baseline else None, dq, accept_drift),
-        _drift("drift_tokens", target.tokens, baseline.tokens if baseline else None, dq, accept_drift),
+        _drift("drift_docs", target.docs, base.docs if base else None, kind, dq, accept),
+        _drift("drift_chunks", target.chunks, base.chunks if base else None, kind, dq, accept),
+        _drift("drift_tokens", target.tokens, base.tokens if base else None, kind, dq, accept),
     ]
 
 
@@ -250,7 +350,7 @@ def describe(r: DqResult) -> str:
     return f"{r.check} {r.status}: {r.numerator}/{r.denominator} ({r.observed:.2%}, limit {r.threshold:.0%})"
 
 
-def gate(results: Sequence[DqResult], accept_drift: str | None) -> GatePassed:
+def gate(results: Sequence[DqResult], accept: Acceptance | None) -> GatePassed:
     """GatePassed if every check passed or was overridden as the rules allow; otherwise raise DqFailed."""
     names = [r.check for r in results]
     if sorted(names) != sorted(CHECKS):
@@ -262,20 +362,28 @@ def gate(results: Sequence[DqResult], accept_drift: str | None) -> GatePassed:
         if r.status not in allowed
         or (r.status in (OVERRIDDEN, NOT_APPLICABLE) and r.check not in DRIFT_CHECKS)
         or (r.status == OVERRIDDEN) != (r.override_reason is not None)
+        or (r.status == OVERRIDDEN) != (r.override_of is not None)
     ]
     if odd:
         raise DqFailed(f"DQ results with a status their check cannot have: {odd}")
     failed = [r for r in results if r.status == FAIL]
     if failed:
         raise DqFailed("DQ gate failed: " + "; ".join(describe(r) for r in failed))
-    overridden = tuple(r.check for r in results if r.status == OVERRIDDEN)
-    if accept_drift is not None and not overridden:
+    overridden = [r for r in results if r.status == OVERRIDDEN]
+    if accept is None:
+        if overridden:
+            raise DqFailed("a check is overridden, but this run accepts no drift")
+        return GatePassed(tuple(names), (), None, None, _ISSUED)
+    if not overridden:
         raise DqFailed(
-            "--accept-drift was given, but no drift check is over its threshold: nothing to accept"
+            f"--accept-drift-of {accept.run_id} was given, but no drift check is over its threshold: "
+            "nothing to accept"
         )
-    if {r.override_reason for r in results if r.status == OVERRIDDEN} - {accept_drift}:
-        raise DqFailed("an overridden check names a reason other than this run's --accept-drift")
-    return GatePassed(tuple(names), overridden, accept_drift if overridden else None, _ISSUED)
+    if {(r.check, r.numerator, r.denominator) for r in overridden} != accept.drift:
+        raise DqFailed(f"this run's drift is not the drift run {accept.run_id} failed on")
+    if {(r.override_reason, r.override_of) for r in overridden} != {(accept.reason, accept.run_id)}:
+        raise DqFailed("an overridden check names another reason or run than this run's acceptance")
+    return GatePassed(tuple(names), tuple(r.check for r in overridden), accept.reason, accept.run_id, _ISSUED)
 
 
 # --- the ops_dq_results row ---------------------------------------------------------------------------------
@@ -300,6 +408,9 @@ DQ_RESULTS_COLUMNS: tuple[tuple[str, str], ...] = (
     ("baseline_run_id", "STRING"),
     ("checked_at", "TIMESTAMP NOT NULL"),
     ("code_version", "STRING NOT NULL"),
+    # Added after M4 with ALTER TABLE ADD COLUMNS, so it comes last: the failed run whose drift an overridden
+    # check accepted (D-012, owner's decision of 2026-10-20).
+    ("override_of_run_id", "STRING"),
 )
 
 
@@ -346,6 +457,7 @@ def result_rows(results: Sequence[DqResult], context: DqRunContext) -> list[dict
             "baseline_run_id": context.baseline_run_id,
             "checked_at": context.checked_at,
             "code_version": context.code_version,
+            "override_of_run_id": r.override_of,
         }
         for r in results
     ]

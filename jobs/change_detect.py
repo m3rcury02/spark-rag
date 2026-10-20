@@ -12,8 +12,10 @@ Steps:
    baseline run logged.
 5. Diff docs (by hash) and chunks (by chunk_id), and check that they fit together.
 6. The DQ gate (docs_rag.dq, D-012) on the target: every check is appended to ops_dq_results in one insert,
-   pass or fail, and read back; a failed check (or an --accept-drift with nothing to accept) stops the run.
-   An --accept-drift reason is checked before the Spark session starts.
+   pass or fail, and read back; a failed check (or an accepted drift that is not there) stops the run. Drift
+   over its threshold passes only with --accept-drift "<reason>" --accept-drift-of <run_id>, naming a run that
+   failed the gate on exactly this drift (checked right after the baseline is known); the pair is checked for
+   form before the Spark session starts.
 7. Append the row with status 'committed', which needs the gate's GatePassed: the job's last write, so a
    baseline exists only for a run whose every step passed. A failure after the Spark session started appends
    a 'failed' row instead (never a baseline) and re-raises; a retried attempt of a failed run appends its own
@@ -50,10 +52,14 @@ from docs_rag.chunk import ChunkConfig
 from docs_rag.config import Config, validate_tag
 from docs_rag.dq import (
     DQ_RESULTS_COLUMNS,
+    Acceptance,
+    Baseline,
     DqResult,
     DqRunContext,
     GatePassed,
+    LoggedCheck,
     Totals,
+    accept_failed_run,
     dq_results_ddl,
     evaluate,
     gate,
@@ -112,8 +118,11 @@ def log_failed(spark: SparkSession, table: str, row: RunLogRow) -> None:
 
 def commit(spark: SparkSession, table: str, row: RunLogRow, passed: GatePassed) -> None:
     """Append the committed row: only with the DQ gate's pass, and carrying its override (if any)."""
-    if row.status != COMMITTED or row.dq_override != passed.override_reason:
-        raise RuntimeError("a committed row must carry the DQ gate's pass and its override reason")
+    if row.status != COMMITTED or (row.dq_override, row.dq_override_of) != (
+        passed.override_reason,
+        passed.override_of,
+    ):
+        raise RuntimeError("a committed row must carry the DQ gate's pass and its override")
     _insert(spark, table, row)
 
 
@@ -129,6 +138,65 @@ def write_dq_results(spark: SparkSession, table: str, results: list[DqResult], c
     ).collect()
     if sorted((r["check_name"], r["status"]) for r in back) != sorted((r.check, r.status) for r in results):
         raise RuntimeError(f"ops_dq_results read-back differs from the checks: {[tuple(r) for r in back]}")
+
+
+def read_acceptance(
+    spark: SparkSession,
+    config: Config,
+    override: tuple[str, str],
+    tag: str,
+    from_tag: str | None,
+    baseline_run_id: str | None,
+) -> Acceptance:
+    """The --accept-drift-of run's run-log statuses and DQ rows, bound to this run (docs_rag.dq)."""
+    reason, run_id = override
+    statuses = [
+        r["status"]
+        for r in spark.sql(
+            "SELECT status FROM IDENTIFIER(:table) "
+            "WHERE run_id = :run_id AND source_repo = :repo AND sink = :sink",
+            args={
+                "table": config.run_log_table,
+                "run_id": run_id,
+                "repo": config.source_repo,
+                "sink": config.sink,
+            },
+        ).collect()
+    ]
+    rows = [
+        LoggedCheck(
+            r["run_id"],
+            r["attempt_id"],
+            r["check_name"],
+            r["status"],
+            int(r["numerator"]),
+            int(r["denominator"]),
+            r["config_id"],
+            r["from_version_tag"],
+            r["to_version_tag"],
+            r["baseline_run_id"],
+        )
+        for r in spark.sql(
+            "SELECT * FROM IDENTIFIER(:table) "
+            "WHERE run_id = :run_id AND source_repo = :repo AND sink = :sink",
+            args={
+                "table": config.dq_results_table,
+                "run_id": run_id,
+                "repo": config.source_repo,
+                "sink": config.sink,
+            },
+        ).collect()
+    ]
+    return accept_failed_run(
+        reason,
+        run_id,
+        statuses,
+        rows,
+        config_id=config.chunk.config_id,
+        from_tag=from_tag,
+        tag=tag,
+        baseline_run_id=baseline_run_id,
+    )
 
 
 def refs(records: list[SilverRecord]) -> list[ChunkRef]:
@@ -161,14 +229,15 @@ def detect(args: argparse.Namespace, summary: dict[str, Any]) -> None:
     config = Config(catalog=args.catalog, schema=args.schema)
     chunking = config.chunk
     tag = validate_tag(args.tag)
-    accept = validate_override(args.accept_drift, args.initial, config.dq)
+    override = validate_override(args.accept_drift, args.accept_drift_of, args.initial, config.dq)
     attempt_id = uuid.uuid4().hex
     summary.update(
         {
             "tag": tag,
             "sink": config.sink,
             "config_id": chunking.config_id,
-            "accept_drift": accept,
+            "accept_drift": override[0] if override else None,
+            "accept_drift_of": override[1] if override else None,
             "attempt_id": attempt_id,
         }
     )
@@ -212,6 +281,10 @@ def detect(args: argparse.Namespace, summary: dict[str, Any]) -> None:
             raise RuntimeError(
                 f"{tag} is {way} of the baseline {from_tag}: pass --allow-backwards if intended"
             )
+        accept = None
+        if override:  # bind the override to the failed run it names, before the expensive steps
+            accept = read_acceptance(spark, config, override, tag, from_tag, head)
+            summary["acceptance"] = {"run_id": accept.run_id, "drift": sorted(accept.drift)}
 
         # 3. The target: bronze whole, silver exactly its chunking under the published config.
         target_docs, target_commit, target_records = verified_chunking(
@@ -222,7 +295,7 @@ def detect(args: argparse.Namespace, summary: dict[str, Any]) -> None:
         # 4. The baseline side, pinned by what the baseline run logged.
         base_docs: dict[str, str] | None = None
         base_records: list[SilverRecord] = []
-        base_totals: Totals | None = None
+        baseline: Baseline | None = None
         if base is not None:
             from_chunking = next((c for c in config.chunk_grid if c.config_id == base["to_config_id"]), None)
             if from_chunking is None:
@@ -247,7 +320,10 @@ def detect(args: argparse.Namespace, summary: dict[str, Any]) -> None:
             if moved:
                 raise RuntimeError(f"the baseline {from_tag} no longer matches its logged run: {moved}")
             known.update(from_commit_sha=base_commit, from_config_id=from_chunking.config_id)
-            base_totals = Totals(len(base_docs), len(base_records), sum(r.n_tokens for r in base_records))
+            baseline = Baseline(
+                base["to_version_tag"],
+                Totals(len(base_docs), len(base_records), sum(r.n_tokens for r in base_records)),
+            )
 
         # 5. The diffs, and whether they fit together.
         docs = diff_docs(base_docs, target_docs)
@@ -260,7 +336,7 @@ def detect(args: argparse.Namespace, summary: dict[str, Any]) -> None:
             raise RuntimeError("the chunk diff does not fit the doc diff: " + "; ".join(problems))
 
         # 6. The DQ gate: log every check, then stop unless they all pass (or drift is accepted).
-        results = evaluate(target_records, len(target_docs), base_totals, config, chunking, tag, accept)
+        results = evaluate(target_records, len(target_docs), baseline, config, chunking, tag, accept)
         summary["dq"] = [dataclasses.asdict(r) for r in results]
         context = DqRunContext(
             run_id=args.run_id,
@@ -276,7 +352,11 @@ def detect(args: argparse.Namespace, summary: dict[str, Any]) -> None:
         )
         write_dq_results(spark, config.dq_results_table, results, context)
         passed = gate(results, accept)
-        summary["gate"] = {"overridden": passed.overridden, "override_reason": passed.override_reason}
+        summary["gate"] = {
+            "overridden": passed.overridden,
+            "override_reason": passed.override_reason,
+            "override_of": passed.override_of,
+        }
 
         row = RunLogRow(
             run_id=args.run_id,
@@ -301,6 +381,7 @@ def detect(args: argparse.Namespace, summary: dict[str, Any]) -> None:
             finished_at=dt.datetime.now(dt.UTC),
             code_version=code_version,
             dq_override=passed.override_reason,
+            dq_override_of=passed.override_of,
             **counts(docs, chunks, len(base_records), sum(r.n_tokens for r in target_records)),
         )
         summary["row"] = {k: v for k, v in row.as_row().items() if not k.endswith("_paths")}
@@ -368,8 +449,13 @@ def main() -> None:
     parser.add_argument(
         "--accept-drift",
         metavar="REASON",
-        help="accept, for this run only, drift over the DQ threshold (not a loss beyond the ceiling); "
-        "refused when nothing drifted",
+        help="why the drift of the run named by --accept-drift-of is accepted, for this run only",
+    )
+    parser.add_argument(
+        "--accept-drift-of",
+        metavar="RUN_ID",
+        help="a run that failed the gate on drift alone, for the same tag, baseline and config; this run "
+        "passes only if its drift is exactly that run's (never a loss beyond the ceiling)",
     )
     run_with_summary(detect, parser)
 

@@ -151,6 +151,15 @@ _VERSION = re.compile(r"v?(\d+)\.(\d+)\.(\d+)")
 Direction = Literal["initial", "forward", "same", "backward", "unordered"]
 
 
+def release_number(tag: str) -> tuple[int, int, int] | None:
+    """(major, minor, patch) of a plain release tag (vX.Y.Z), else None."""
+    m = _VERSION.fullmatch(tag)
+    if not m:
+        return None
+    major, minor, patch = map(int, m.groups())
+    return major, minor, patch
+
+
 def direction(from_tag: str | None, to_tag: str) -> Direction:
     """How the target relates to the baseline tag, by release number (vX.Y.Z); tags that are not plain
     release numbers cannot be ordered."""
@@ -158,11 +167,22 @@ def direction(from_tag: str | None, to_tag: str) -> Direction:
         return "initial"
     if from_tag == to_tag:
         return "same"
-    a, b = _VERSION.fullmatch(from_tag), _VERSION.fullmatch(to_tag)
-    if not (a and b):
+    va, vb = release_number(from_tag), release_number(to_tag)
+    if va is None or vb is None:
         return "unordered"
-    va, vb = tuple(map(int, a.groups())), tuple(map(int, b.groups()))
     return "forward" if vb > va else "backward" if vb < va else "unordered"
+
+
+ReleaseKind = Literal["patch", "minor", "major"]
+
+
+def release_kind(from_tag: str, to_tag: str) -> ReleaseKind:
+    """How far apart two tags are, whichever is older: 'major' or 'minor' when that number differs, else
+    'patch'. The same tag, and any tag that is not a plain release number, count as 'patch', the strictest."""
+    va, vb = release_number(from_tag), release_number(to_tag)
+    if va is None or vb is None:
+        return "patch"
+    return "major" if va[0] != vb[0] else "minor" if va[1] != vb[1] else "patch"
 
 
 class ChainError(RuntimeError):
@@ -251,6 +271,8 @@ RUN_LOG_COLUMNS: tuple[tuple[str, str], ...] = (
     # Added in M4 (D-012) with ALTER TABLE ADD COLUMNS, so it comes last: the --accept-drift reason of a run
     # committed with an overridden drift check; NULL otherwise. Its checks are in ops_dq_results.
     ("dq_override", "STRING"),
+    # Added after M4 the same way: the failed run whose logged drift the override accepted (D-012).
+    ("dq_override_of", "STRING"),
 )
 
 
@@ -305,6 +327,7 @@ class RunLogRow:
     finished_at: dt.datetime | None = None
     code_version: str = ""
     dq_override: str | None = None
+    dq_override_of: str | None = None
 
     def as_row(self) -> dict[str, object]:
         row: dict[str, object] = {f.name: getattr(self, f.name) for f in fields(self)}
@@ -353,7 +376,8 @@ def row_violations(row: RunLogRow) -> list[str]:
     if row.started_at is None or row.finished_at is None or not row.code_version:
         return ["started_at, finished_at and code_version are required"]
     if row.status == FAILED:
-        return ["only a committed row carries a DQ override"] if row.dq_override is not None else []
+        overridden = row.dq_override is not None or row.dq_override_of is not None
+        return ["only a committed row carries a DQ override"] if overridden else []
     if row.status != COMMITTED:
         return [f"unknown status {row.status!r}"]
     if any(getattr(row, name) is None for name in _COUNT_COLUMNS):
@@ -384,5 +408,7 @@ def row_violations(row: RunLogRow) -> list[str]:
         or row.from_config_id is None
         or (n("chunks_added_unchanged_docs") == 0 and n("chunks_removed_unchanged_docs") == 0),
         "an initial run has no baseline": (row.direction == "initial") == (row.baseline_run_id is None),
+        "a DQ override names its reason and the failed run it accepts": (row.dq_override is None)
+        == (row.dq_override_of is None),
     }
     return [name for name, ok in checks.items() if not ok]

@@ -25,21 +25,27 @@ def validate_tag(tag: str) -> str:
 @dataclass(frozen=True)
 class DqConfig:
     """Thresholds of the DQ gate between silver and gold (D-012). Shares are of all the target's chunks; drift
-    is to/from - 1 of the target's docs, chunks and tokens against the baseline run's."""
+    is to/from - 1 of the target's docs, chunks and tokens against the baseline run's, with a threshold by
+    release kind (docs_rag.changes.release_kind; the owner's choice of 2026-10-20)."""
 
     tiny_body_tokens: int = 5  # a chunk whose body has fewer WordPiece tokens is tiny
     max_tiny_share: float = 0.02
     max_duplicate_embed_share: float = 0.01  # extra copies of an embed text, over all chunks
-    max_drift: float = 0.10  # more needs --accept-drift with a reason
-    max_override_loss: float = 0.50  # a loss beyond this fails even with --accept-drift
+    max_drift_patch: float = 0.05  # a patch release, the same tag, or tags that are not releases
+    max_drift_feature: float = 0.10  # a minor or major release
+    max_override_loss: float = 0.50  # a loss beyond this fails even when the drift is accepted
     min_reason_chars: int = 20  # an --accept-drift reason has at least this many characters and 4 words
 
     def __post_init__(self) -> None:
         if self.tiny_body_tokens < 1 or self.min_reason_chars < 1:
             raise ValueError("tiny_body_tokens and min_reason_chars must be positive")
-        shares = (self.max_tiny_share, self.max_duplicate_embed_share, self.max_drift, self.max_override_loss)
-        if not all(0 <= s < 1 for s in shares) or self.max_override_loss < self.max_drift:
+        drift = (self.max_drift_patch, self.max_drift_feature)
+        shares = (self.max_tiny_share, self.max_duplicate_embed_share, *drift, self.max_override_loss)
+        if not all(0 <= s < 1 for s in shares) or self.max_override_loss < max(drift):
             raise ValueError(f"invalid DQ thresholds: {self}")
+
+    def max_drift(self, kind: str) -> float:
+        return self.max_drift_patch if kind == "patch" else self.max_drift_feature
 
 
 @dataclass(frozen=True)

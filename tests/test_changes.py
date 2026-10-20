@@ -18,6 +18,7 @@ from docs_rag.changes import (
     direction,
     docs_fingerprint,
     pick_baseline,
+    release_kind,
     row_violations,
 )
 
@@ -138,6 +139,23 @@ def test_direction_orders_release_numbers(a: str | None, b: str, expected: str) 
     assert direction(a, b) == expected
 
 
+@pytest.mark.parametrize(
+    "a,b,kind",
+    [
+        ("v4.0.0", "v4.0.1", "patch"),
+        ("v4.0.1", "v4.0.0", "patch"),
+        ("v4.0.1", "v4.0.1", "patch"),
+        ("v4.0.4", "v4.1.0", "minor"),
+        ("v4.1.0", "v4.0.4", "minor"),
+        ("v3.5.9", "v4.0.0", "major"),
+        ("v4.0.1", "v3.5.0", "major"),
+        ("branch-4.0", "v4.0.1", "patch"),  # not a release: the strictest
+    ],
+)
+def test_release_kind_is_the_largest_number_that_differs(a: str, b: str, kind: str) -> None:
+    assert release_kind(a, b) == kind
+
+
 def test_no_committed_run_means_no_baseline() -> None:
     assert pick_baseline([]) is None
     assert pick_baseline([LogEntry("r1", None, FAILED)]) is None
@@ -228,6 +246,13 @@ def test_a_failed_row_needs_no_counts() -> None:
     assert row_violations(committed_row(status=FAILED, dq_override="a reason")) == [
         "only a committed row carries a DQ override"
     ]
+    assert row_violations(committed_row(status=FAILED, dq_override_of="r1")) == [
+        "only a committed row carries a DQ override"
+    ]
+    assert "a DQ override names its reason and the failed run it accepts" in row_violations(
+        committed_row(dq_override="a reason")
+    )
+    assert row_violations(committed_row(dq_override="a reason", dq_override_of="r0")) == []
     assert row_violations(committed_row(status="detected")) == ["unknown status 'detected'"]
     assert row_violations(committed_row(code_version="")) == [
         "started_at, finished_at and code_version are required"
