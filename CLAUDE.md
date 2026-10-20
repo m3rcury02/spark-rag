@@ -138,16 +138,21 @@ forward to v4.0.0, both with `--accept-drift`). Evidence: `runs/m4_a`..`m4_l`, v
 - `docs_rag_endpoint` was deleted on 2026-10-19 05:26Z (idle, 96 DBU/day; D-001). Re-probe
   `system.billing.usage` after 2026-10-20 05:26Z to confirm the endpoint's usage stopped, and save the output
   under `runs/`.
-- Owner's call (D-012): the drift rule fires on about 3 of 8 feature releases (none of 33 patch releases). Keep
-  one 10% threshold, or move to per-release-kind thresholds (which fit the 41 historical transitions with no
-  firing, but are fitted to them).
+- Owner's call (D-012, Open questions): the drift thresholds. Built: one 10% threshold (fires on 3 of 41 release
+  transitions: no patch, 2 of 7 minor, the one major). Alternatives on the same calibration: patch 5% / feature
+  10% (same 3 firings, tighter on patches), patch 5% / feature 20% (no firings), or drop/relax `drift_docs`.
+- Before M5 (D-012 Consequences): a CLEANER/CHUNKER version bump cannot cross an existing chain (the baseline's
+  config_id leaves `Config.chunk_grid`). Either make known cleaner fixes (the lone tab-label chunks) while only
+  the `none` chain exists, or build a logged re-baseline path (verify the baseline from stored silver rows and
+  its logged fingerprint). Optional: bind `--accept-drift` to a failed run's logged numbers (plan, then apply).
 - For M5's gold writes (from M1/M2): take counts from our own MERGE metrics (the sync pipeline's row metrics are
   always 0, D-001); on Databricks a no-op MERGE still writes an empty table version (D-006 run b), and
   Databricks commits its own `OPTIMIZE` versions (D-010): never read "we wrote" from a version bump.
 - Carry into M5: set `Config.sink` to the gold table: a new chain, so the first M5 run is an explicit `--initial`
   load into an empty gold, and its drift is not applicable (D-012: decide whether to compare it with the `none`
-  chain's head). The gold MERGE goes after the gate and takes its `GatePassed`; add vector checks (dimension, no
-  NaN, norm) to the gate before the index sync. Gold holds no positions (they come from silver; kept chunks
+  chain's head). Order (D-012): chunk checks → embed to staging → vector checks (dimension, no NaN, norm) logged
+  like the others → gold MERGE with the `GatePassed` → sync and wait → committed row; define recovery for a
+  failure between the MERGE and the committed row. Gold holds no positions (they come from silver; kept chunks
   move, D-011). Create the endpoint again first (~20 min of provisioning) and delete it when the index is not
   needed (idle it bills 4 DBU/h even with no index, against the docs, and likely drains the daily quota: D-001).
   Create the real index only after the full gold backfill, because capacity is sized from the source table at
