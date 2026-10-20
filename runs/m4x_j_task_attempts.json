@@ -1,0 +1,90 @@
+{
+  "label": "m4x_j_task_attempts",
+  "git_commit": "b3cd27a6e86c62f848b0a5f60c91bba7f668e39d",
+  "runs": [
+    {
+      "file": "m4x_b_detect_v4.0.1_again.json",
+      "parent_run_id": 254660754128330,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "SUCCESS",
+          "start_utc": "2026-10-20T12:42:41+00:00",
+          "end_utc": "2026-10-20T12:44:32+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m4x_d_detect_v3.5.0_drift.json",
+      "parent_run_id": 124539982103535,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "FAILED",
+          "start_utc": "2026-10-20T12:44:51+00:00",
+          "end_utc": "2026-10-20T12:46:00+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m4x_e_detect_v3.5.0_accept_other_run.json",
+      "parent_run_id": 1061261066212104,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "FAILED",
+          "start_utc": "2026-10-20T12:46:21+00:00",
+          "end_utc": "2026-10-20T12:47:02+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m4x_f_detect_v3.5.0_accepted.json",
+      "parent_run_id": 351178446232655,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "SUCCESS",
+          "start_utc": "2026-10-20T12:47:30+00:00",
+          "end_utc": "2026-10-20T12:48:40+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m4x_g_detect_v4.0.0_drift.json",
+      "parent_run_id": 581927625626646,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "FAILED",
+          "start_utc": "2026-10-20T12:49:00+00:00",
+          "end_utc": "2026-10-20T12:50:11+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m4x_h_detect_v4.0.0_accepted.json",
+      "parent_run_id": 623243076308334,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "SUCCESS",
+          "start_utc": "2026-10-20T12:50:30+00:00",
+          "end_utc": "2026-10-20T12:51:39+00:00"
+        }
+      ]
+    },
+    {
+      "file": "m4x_i_detect_v4.0.1.json",
+      "parent_run_id": 220155584214171,
+      "attempts": [
+        {
+          "attempt": 0,
+          "result": "SUCCESS",
+          "start_utc": "2026-10-20T12:51:59+00:00",
+          "end_utc": "2026-10-20T12:53:05+00:00"
+        }
+      ]
+    }
+  ]
+}
