@@ -1,0 +1,250 @@
+{
+  "meta": {
+    "label": "m4x_i_detect_v4.0.1",
+    "git_commit": "e0397bc3e5f36f13db71216edd5ee3c25a592572",
+    "script": "jobs/change_detect.py",
+    "job_args": [
+      "--tag",
+      "v4.0.1"
+    ],
+    "target": "workspace.docs_rag_dev",
+    "run_id": "bda50378-42ce-42bf-aeaa-a21a200a4474",
+    "environment_version": "4",
+    "wheel": "docs_rag-0.0.1.dev107+ge0397bc3e-py3-none-any.whl",
+    "parent_run_id": 220155584214171,
+    "task_run_id": 944937176060613,
+    "result_state": "SUCCESS",
+    "state_message": "",
+    "run_start_utc": "2026-10-20T12:51:59Z",
+    "run_end_utc": "2026-10-20T12:53:05Z",
+    "run_duration_seconds": 66.0
+  },
+  "summary": {
+    "run_id": "bda50378-42ce-42bf-aeaa-a21a200a4474",
+    "started_utc": "2026-10-20T12:52:27Z",
+    "tag": "v4.0.1",
+    "sink": "none",
+    "config_id": "ccbd80f05e15c8dd",
+    "accept_drift": null,
+    "accept_drift_of": null,
+    "attempt_id": "2fb200bb31224bcb831bc3866c7aae75",
+    "environment": {
+      "python": "3.12.3",
+      "databricks_runtime_version": "client.4.10",
+      "databricks_connect": "17.3.14",
+      "docs_rag": "0.0.1.dev107+ge0397bc3e",
+      "tokenizers": "0.23.3",
+      "machine": "aarch64",
+      "spark": "4.2.0"
+    },
+    "earlier_attempts": [],
+    "baseline": {
+      "run_id": "a4cde2e8-e4b8-4d42-b3ed-d030dec50892",
+      "baseline_run_id": "b5940b19-4317-43a5-8b3b-739c883ced4c",
+      "status": "committed",
+      "to_version_tag": "v4.0.0",
+      "to_commit_sha": "fa33ea000a0bda9e5a3fa1af98e8e85b8cc5e4d4",
+      "to_config_id": "ccbd80f05e15c8dd",
+      "to_docs_fingerprint": "10f1f12191520dc32e683b7704fd40bb2ee4bcc8d2c2e534e4a27f884d766c9e",
+      "to_chunks_fingerprint": "877e692076c81b6d824a8ade6bc821481a45b23aeea271778de2aa2594c875d6"
+    },
+    "dq": [
+      {
+        "check": "empty_chunks",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 5462,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "body with no token (blank, or only characters the tokenizer drops), or blank embed text; fails if any",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "tiny_chunks",
+        "status": "pass",
+        "numerator": 46,
+        "denominator": 5462,
+        "observed": 0.008421823507872574,
+        "threshold": 0.02,
+        "rule": "body under 5 tokens; fails above 2% of chunks",
+        "examples": [
+          "docs/sql-data-sources-avro.md #9: 2 tokens 'scala:'",
+          "docs/sql-data-sources-avro.md #12: 2 tokens 'java:'",
+          "docs/sql-data-sources-avro.md #15: 2 tokens 'r:'",
+          "docs/sql-data-sources-parquet.md #13: 2 tokens 'scala:'",
+          "docs/sql-data-sources-parquet.md #16: 2 tokens 'java:'",
+          "docs/sql-data-sources-protobuf.md #10: 2 tokens 'scala:'",
+          "docs/sql-data-sources-protobuf.md #15: 2 tokens 'java:'",
+          "docs/sql-ref-datatypes.md #82: 2 tokens 'r:'",
+          "docs/sql-ref-functions.md #4: 3 tokens '* Generator Functions'",
+          "docs/sql-ref-syntax-aux-conf-mgmt-reset.md #4: 2 tokens '* SET'"
+        ],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "oversized_chunks",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 5462,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "embed text over 254 tokens (max_tokens 254; the embedding models' 256 less [CLS] and [SEP]); fails if any",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "duplicate_chunk_ids",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 5462,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "rows beyond the first of a repeated chunk_id; fails if any",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "duplicate_embed_text",
+        "status": "pass",
+        "numerator": 3,
+        "denominator": 5462,
+        "observed": 0.0005492493592090809,
+        "threshold": 0.01,
+        "rule": "copies beyond the first of a repeated embed text; fails above 1% of chunks",
+        "examples": [
+          "2x in ['docs/sql-ref-syntax-ddl-alter-view.md']: 'ALTER VIEW > Description > Parameters\\n\\n* **view_identifier**\\n\\n    Specifies a vi'",
+          "2x in ['docs/sql-migration-guide.md']: 'Migration Guide: SQL, Datasets and DataFrame > Upgrading from Spark SQL 2.4 to 3'",
+          "2x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Shared Variables > Accumulators\\n\\nWhile this code used th'"
+        ],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "missing_metadata",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 5462,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "a docs/*.md path, non-blank section names (the title first), version_tag v4.0.1, a 40-hex commit_sha; fails if any row misses one",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "drift_docs",
+        "status": "pass",
+        "numerator": 213,
+        "denominator": 212,
+        "observed": 0.004716981132075526,
+        "threshold": 0.05,
+        "rule": "patch release: |to/from - 1| over 5% fails unless this run accepts the drift of a failed run with exactly these numbers; a loss over 50% fails anyway; not applicable without a baseline",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "drift_chunks",
+        "status": "pass",
+        "numerator": 5462,
+        "denominator": 5449,
+        "observed": 0.002385758854835718,
+        "threshold": 0.05,
+        "rule": "patch release: |to/from - 1| over 5% fails unless this run accepts the drift of a failed run with exactly these numbers; a loss over 50% fails anyway; not applicable without a baseline",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "drift_tokens",
+        "status": "pass",
+        "numerator": 692251,
+        "denominator": 689988,
+        "observed": 0.003279767184356741,
+        "threshold": 0.05,
+        "rule": "patch release: |to/from - 1| over 5% fails unless this run accepts the drift of a failed run with exactly these numbers; a loss over 50% fails anyway; not applicable without a baseline",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      }
+    ],
+    "gate": {
+      "overridden": [],
+      "override_reason": null,
+      "override_of": null
+    },
+    "row": {
+      "run_id": "bda50378-42ce-42bf-aeaa-a21a200a4474",
+      "baseline_run_id": "a4cde2e8-e4b8-4d42-b3ed-d030dec50892",
+      "job": "change_detect",
+      "source_repo": "apache/spark",
+      "sink": "none",
+      "status": "committed",
+      "error": null,
+      "direction": "forward",
+      "from_version_tag": "v4.0.0",
+      "from_commit_sha": "fa33ea000a0bda9e5a3fa1af98e8e85b8cc5e4d4",
+      "from_config_id": "ccbd80f05e15c8dd",
+      "to_version_tag": "v4.0.1",
+      "to_commit_sha": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+      "to_config_id": "ccbd80f05e15c8dd",
+      "max_tokens": 254,
+      "overlap_tokens": 32,
+      "from_docs": 212,
+      "to_docs": 213,
+      "docs_added": 1,
+      "docs_changed": 4,
+      "docs_deleted": 0,
+      "docs_unchanged": 208,
+      "docs_moved": 0,
+      "docs_changed_same_chunks": 3,
+      "from_chunks": 5449,
+      "to_chunks": 5462,
+      "chunks_added_new_docs": 13,
+      "chunks_added_changed_docs": 8,
+      "chunks_added_unchanged_docs": 0,
+      "chunks_removed_changed_docs": 8,
+      "chunks_removed_unchanged_docs": 0,
+      "chunks_removed_deleted_docs": 0,
+      "chunks_kept": 5441,
+      "chunks_kept_relocated": 0,
+      "tokens_to_embed": 3538,
+      "to_tokens": 692251,
+      "to_docs_fingerprint": "5b1534b24125aa7d7131d72727e2b28ff85b072262ed48dceedb3b40ba798c02",
+      "to_chunks_fingerprint": "ad300f7ddb87b42718cd0e0aab40e948e5f509124cc0c64224ede897805cb827",
+      "started_at": "2026-10-20 12:52:27.102352+00:00",
+      "finished_at": "2026-10-20 12:52:57.659814+00:00",
+      "code_version": "0.0.1.dev107+ge0397bc3e",
+      "dq_override": null,
+      "dq_override_of": null
+    },
+    "paths": {
+      "added": [
+        "docs/sql-ref-syntax-ddl-create-sql-function.md"
+      ],
+      "changed": [
+        "docs/quick-start.md",
+        "docs/sql-ref-syntax-ddl-create-function.md",
+        "docs/structured-streaming-programming-guide.md",
+        "docs/submitting-applications.md"
+      ],
+      "deleted": []
+    },
+    "logged": "committed",
+    "read_back": {
+      "rows_with_this_run_id": 1,
+      "status": "committed",
+      "chain_head": "bda50378-42ce-42bf-aeaa-a21a200a4474",
+      "committed_runs_in_chain": 13
+    },
+    "status": "succeeded",
+    "finished_utc": "2026-10-20T12:53:01Z"
+  },
+  "error": null,
+  "error_trace": null
+}
