@@ -412,7 +412,6 @@ def vector_checks(
         for i, v in zip(ids, vectors, strict=False)
         if abs((n := math.sqrt(sum(x * x for x in v))) - 1.0) > dq.max_norm_error
     ]
-    low = [c for c in canary_cosines if c < dq.min_canary_cosine]
     n = len(expected_ids)
     return [
         _count_check(
@@ -442,15 +441,22 @@ def vector_checks(
             f"L2 norm off 1 by more than {dq.max_norm_error}; fails if any",
             [f"{i}: {v:.6f}" for i, v in off_norm],
         ),
-        _count_check(
-            "embedding_canary",
-            len(low),
-            len(canary_cosines),
-            0.0,
-            f"cosine with the committed reference vector under {dq.min_canary_cosine}; fails if any",
-            [f"{c:.6f}" for c in canary_cosines],
-        ),
+        canary_check(canary_cosines, dq),
     ]
+
+
+def canary_check(canary_cosines: Sequence[float], dq: DqConfig) -> DqResult:
+    """The model reproduces the committed canary vectors. Run first, on its own, so a wrong model stops the
+    job before the long encode; a failure is logged as this one row (D-014)."""
+    low = [c for c in canary_cosines if c < dq.min_canary_cosine]
+    return _count_check(
+        "embedding_canary",
+        len(low),
+        len(canary_cosines),
+        0.0,
+        f"cosine with the committed reference vector under {dq.min_canary_cosine}; fails if any",
+        [f"{c:.6f}" for c in canary_cosines],
+    )
 
 
 @dataclass(frozen=True)

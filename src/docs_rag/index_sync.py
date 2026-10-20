@@ -86,15 +86,18 @@ def _poll(
 
 def wait_idle(
     do: Do,
+    index: str,
     pipeline_id: str,
     timeout: float = 3600,
     poll: float = 20,
     sleep: Callable[[float], None] = time.sleep,
     clock: Callable[[], float] = time.monotonic,
 ) -> list[dict[str, Any]]:
-    """Wait until no update of the pipeline is running (e.g. an index's initial sync); returns the updates."""
+    """Wait until no update of the pipeline is running (e.g. an index's initial sync); returns the updates.
+    Like every wait here, it stops at once on a failed index state."""
 
     def idle() -> list[dict[str, Any]] | None:
+        failed(summary_of(index_info(do, index)))
         found = updates(do, pipeline_id)
         return None if any(u["state"] not in TERMINAL for u in found) else found
 
@@ -113,10 +116,11 @@ def sync(
 ) -> dict[str, Any]:
     """Trigger one sync and wait for the update it started (the one update that is new after the call) to
     finish; anything but COMPLETED fails. Then wait for the index to report nothing pending."""
-    before = {u["update_id"] for u in wait_idle(do, pipeline_id, timeout, poll, sleep, clock)}
+    before = {u["update_id"] for u in wait_idle(do, index, pipeline_id, timeout, poll, sleep, clock)}
     do("POST", f"{_INDEXES}/{index}/sync")
 
     def started() -> dict[str, Any] | None:
+        failed(summary_of(index_info(do, index)))
         new = [u for u in updates(do, pipeline_id) if u["update_id"] not in before]
         if len(new) > 1:
             raise SyncError(f"{len(new)} updates started after one sync call: {new}")

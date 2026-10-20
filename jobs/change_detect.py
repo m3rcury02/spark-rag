@@ -67,8 +67,10 @@ from docs_rag.chunk import ChunkConfig
 from docs_rag.config import Config, validate_tag
 from docs_rag.dq import (
     DQ_RESULTS_COLUMNS,
+    PASS,
     Acceptance,
     Baseline,
+    DqFailed,
     DqResult,
     DqRunContext,
     GatePassed,
@@ -76,6 +78,8 @@ from docs_rag.dq import (
     Totals,
     VectorsPassed,
     accept_failed_run,
+    canary_check,
+    describe,
     dq_results_ddl,
     evaluate,
     gate,
@@ -287,8 +291,11 @@ def publish(
         canary = load_canary()
         cosines = canary_cosines(canary, embedding, encode(model, canary.texts, embedding))
         summary["canary_cosines"] = cosines
-        if min(cosines) < config.dq.min_canary_cosine:  # a wrong model: stop before the long encode
-            raise RuntimeError(f"the model does not reproduce the canary vectors: cosines {cosines}")
+        canary_result = canary_check(cosines, config.dq)
+        if canary_result.status != PASS:  # a wrong model: log the one row and stop before the long encode
+            checked = dataclasses.replace(context, checked_at=dt.datetime.now(dt.UTC))
+            write_dq_results(spark, config.dq_results_table, [canary_result], checked)
+            raise DqFailed("vector checks failed: " + describe(canary_result))
         t1 = time.monotonic()
         vectors = encode(model, [r.embed_text for r in to_embed], embedding)
         t2 = time.monotonic()

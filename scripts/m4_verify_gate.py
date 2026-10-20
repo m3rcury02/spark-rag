@@ -423,27 +423,32 @@ def main() -> None:
         # Gate v3 (gold sink): the vector checks of the added chunks, after the chunk gate passed.
         added = len({c.chunk_id for c in target} - {c.chunk_id for c in base_chunks or []})
         embedded = gold and should_commit and added > 0
+        # A wrong model fails the canary, which runs first and is logged alone; the run stops (D-014).
+        canary_failed = [(r["check_name"], r["status"]) for r in vector_rows] == [
+            ("embedding_canary", "fail")
+        ]
         add(
             scope,
-            "vector rows exactly when it embedded",
-            sorted(VECTOR) if embedded else [],
+            "vector rows exactly when it embedded (or the failed canary alone)",
+            (["embedding_canary"] if canary_failed else sorted(VECTOR)) if embedded else [],
             sorted(r["check_name"] for r in vector_rows),
         )
+        should_commit = should_commit and not canary_failed
         for r in vector_rows:
             want_den = canary_texts if r["check_name"] == "embedding_canary" else added
-            add(
-                scope,
-                f"{r['check_name']} counts, status and threshold",
-                (0, want_den, "pass", 0.0, tag, config_id),
-                (
-                    as_number(r["numerator"]),
-                    as_number(r["denominator"]),
-                    r["status"],
-                    as_number(r["threshold"]),
-                    r["to_version_tag"],
-                    r["config_id"],
-                ),
+            got_row = (
+                as_number(r["numerator"]),
+                as_number(r["denominator"]),
+                r["status"],
+                as_number(r["threshold"]),
+                r["to_version_tag"],
+                r["config_id"],
             )
+            want_row = (0, want_den, "pass", 0.0, tag, config_id)
+            if canary_failed:  # some canary text off: a numerator of 1 to all of them
+                want_row = (got_row[0], want_den, "fail", 0.0, tag, config_id)
+            ok = got_row == want_row and (not canary_failed or 0 < got_row[0] <= want_den)
+            add(scope, f"{r['check_name']} counts, status and threshold", want_row, got_row, ok=ok)
         add(
             scope,
             "job outcome follows the checks",
@@ -476,6 +481,8 @@ def main() -> None:
                         True,
                         "not the drift run" in error,
                     )
+                elif canary_failed:
+                    add(scope, "the error names the failed canary", True, "embedding_canary fail" in error)
                 elif not failing:
                     add(scope, "an unused --accept-drift is refused", True, "nothing to accept" in error)
         # Write-audit-publish, from Delta's history: the checks went in one insert, before the run's row.
@@ -490,7 +497,12 @@ def main() -> None:
         )
         if embedded:
             vec_write = dq_first.get((run_id, "true"))
-            add(scope, "vector rows written in one insert", len(VECTOR), vec_write[2] if vec_write else None)
+            add(
+                scope,
+                "vector rows written in one insert",
+                1 if canary_failed else len(VECTOR),
+                vec_write[2] if vec_write else None,
+            )
             add(
                 scope,
                 "vector rows written after the chunk checks, before the run log row (if any)",

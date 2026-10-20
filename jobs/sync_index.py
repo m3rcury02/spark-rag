@@ -73,7 +73,7 @@ def sync_index(args: argparse.Namespace, summary: dict[str, Any]) -> None:
     summary["index_before"] = info
     if info["source_table"] != gold or info["pipeline_type"] != "TRIGGERED":
         raise RuntimeError(f"{config.index} is not a TRIGGERED Delta Sync index of {gold}: {info}")
-    wait_idle(do, info["pipeline_id"])
+    wait_idle(do, config.index, info["pipeline_id"])
 
     # 3. Compare keys; sync only when they differ, then compare again.
     before = compare_keys(scan_keys(do, config.index, "chunk_id"), gold_keys)

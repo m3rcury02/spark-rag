@@ -99,3 +99,18 @@ def test_a_failed_index_stops_the_wait_at_once() -> None:
     fake.outcome = "RUNNING"  # the update never finishes: only the failed state can end the wait
     with pytest.raises(SyncError, match="ONLINE_PIPELINE_FAILED"):
         wait_synced(fake, "i", timeout=100, poll=1, sleep=lambda _: None, clock=iter(range(1000)).__next__)
+
+
+def test_a_sync_stops_at_once_when_the_index_fails_during_it() -> None:
+    fake = FakeIndex(["a"], outcome="RUNNING")  # its update never finishes
+    real = fake.__call__
+
+    def failing(method: str, path: str, query: Any = None, body: Any = None) -> Any:
+        result = real(method, path, query, body)
+        if path.endswith("/sync"):
+            fake.state = "ONLINE_PIPELINE_FAILED"
+        return result
+
+    clock = iter(range(10_000))
+    with pytest.raises(SyncError, match="ONLINE_PIPELINE_FAILED"):
+        sync(failing, "i", "p", timeout=100, poll=1, sleep=lambda _: None, clock=lambda: next(clock))

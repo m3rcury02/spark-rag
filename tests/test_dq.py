@@ -23,6 +23,8 @@ from docs_rag.dq import (
     Totals,
     VectorsPassed,
     accept_failed_run,
+    canary_check,
+    describe,
     evaluate,
     gate,
     gate_vectors,
@@ -515,3 +517,11 @@ def test_a_run_that_embeds_nothing_has_no_vector_checks() -> None:
         gate_vectors([], 2)
     with pytest.raises(TypeError, match="issued only by"):
         VectorsPassed(0)
+
+
+def test_the_canary_check_alone_names_a_wrong_model() -> None:
+    dq = DqConfig()
+    assert canary_check([0.99999, 1.0, 0.9995], dq).status == PASS
+    wrong = canary_check([0.99999, 0.42, 0.9], dq)
+    assert (wrong.check, wrong.status, wrong.numerator, wrong.denominator) == ("embedding_canary", FAIL, 2, 3)
+    assert "embedding_canary fail" in describe(wrong)  # the job's error, which the gate verifier reads
