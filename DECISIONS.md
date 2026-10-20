@@ -440,7 +440,8 @@ token, so a 99-character table border costs 99 tokens.
   such a row has fewer cells), a caption becomes a line above, list items in a cell are joined, a nested
   table is written inline in its cell, one-line code in a cell stays inline and longer code follows the table, a
   one-column table keeps its pipes. A table with no `<tr>` is a layout table and is unwrapped. Language tabs
-  become a `<lang>:` label line.
+  become a `<lang>:` label line (from CLEANER_VERSION 2, none when the tab opens with a code block fenced in
+  that language; D-013).
 - **Markdown.** Links keep their text (titles in all three forms, `<url>` targets, one level of parentheses,
   wrapped and unterminated URLs); images, reference definitions, kramdown `{:...}` lines, the TOC bullet and
   `***`/`___` rules go; footnotes become `Note: ...`; `<br>` inside a pipe-table row is a space.
@@ -465,7 +466,8 @@ corpus with one rule off):
 
 **Kept as is, on purpose (M6 questions, not M2 work).** Language tabs repeat near-identical prose; example
 pointers carry no code; stub pages ("This document has moved here.") are one small chunk each. Each is a
-retrieval-quality question for M6's recall@5/MRR, and changing one later is a version bump, not a redesign.
+retrieval-quality question for M6's recall@5/MRR, and changing one later is a version bump, not a redesign
+(once a chain exists, the bump crosses it through D-013's re-baseline path).
 Known limitation: on one page (spark-connect-overview.md) a heading inside the Python tab also heads the start
 of the Scala tab, because tabs become plain label lines.
 
@@ -723,10 +725,10 @@ first draft on the points marked "review" below.
 
 ## D-012 — The DQ gate between silver and gold
 
-- **Date:** 2026-10-20 · **Status:** Accepted (evidence: `runs/m4_*`). **Owner decisions of 2026-10-20, not
-  yet built:** drift thresholds by release kind (patch 5%, minor and major 10%; option (4) below); the override
-  bound to a failed run's logged numbers (Consequences); and a logged re-baseline path rather than fixing the
-  cleaner before M5 (Consequences).
+- **Date:** 2026-10-20 · **Status:** Accepted (evidence: `runs/m4_*`, `runs/m4x_*`). Two versions of the gate:
+  **v1** (M4) and **v2**, built the same day on the owner's decisions: drift thresholds by release kind (patch 5%,
+  minor and major 10%; option (4) below) and an override bound to a failed run's logged drift (Decision). The
+  owner's third decision, a re-baseline path for cleaner and chunker version bumps, is D-013.
 
 **Context.** Brief item 5: "Data-quality checks: empty or tiny chunks, oversized chunks, duplicate chunks,
 missing metadata, and row-count drift between runs. A failed check stops the pipeline." CLAUDE.md: a failed
@@ -764,14 +766,15 @@ threshold and a logged override.
   once, together with docs; tokens never), and the brief's "row-count drift" can be read as chunks, the rows
   gold publishes. Kept because it sees what chunk counts hide: 4.0.0 deleted 51 docs while chunks fell 2.5%,
   and losing 51 pages is worth a human look even when it is a release. The owner chose (4) with patch 5% and
-  minor and major 10% (2026-10-20; not yet built, so the runs below used 10% throughout).
+  minor and major 10% (2026-10-20), built as gate v2; M4's runs (the first table below) used v1's 10%.
 - *Statuses.* A "warn" status was dropped: a check passes or fails; `overridden` and `not_applicable` exist
   only for drift.
 - *Language-tab labels.* 8 of the 10 tiny chunks logged as examples for v4.0.1 are lone tab labels (`java:`,
   `scala:`, `r:`) left by the cleaner; the other two are one-item lists. The examples are the first 10 by path,
   not a sample, so the other 36 of the 46 are unclassified. Fixing the labels means a cleaner version bump and a
-  silver re-run, and today a bump cannot cross an existing chain (Consequences). Chosen for M4: leave them; they
-  are under the threshold. When to fix them is tied to M5's re-baseline question.
+  silver re-run, and in M4 a bump could not cross an existing chain (Consequences). Chosen for M4: leave them;
+  they were under the threshold. Fixed afterwards by CLEANER_VERSION 2, the first use of D-013's re-baseline
+  path: tiny chunks of v4.0.1 at 254/32 fell from 46 to 20.
 
 **Decision.** `docs_rag.dq` (pure Python; thresholds in `Config.dq`), called by `jobs/change_detect.py`:
 
@@ -783,18 +786,22 @@ threshold and a logged override.
 | `duplicate_chunk_ids` | rows beyond the first of a repeated chunk_id | any |
 | `duplicate_embed_text` | copies beyond the first of a repeated embed text, as a share | > 1% |
 | `missing_metadata` | a path outside `docs/*.md`, a blank section name (title first), another `version_tag`, a commit that is not 40 hex | any |
-| `drift_docs`, `drift_chunks`, `drift_tokens` | the target's total against the baseline run's: `|to − from| > 10% of from` | 10%; a loss over 50% cannot be overridden |
+| `drift_docs`, `drift_chunks`, `drift_tokens` | the target's total against the baseline run's: `|to − from| > threshold × from`, the threshold by release kind (`changes.release_kind`: the largest of major, minor, patch that differs; the same tag and tags that are not releases count as patch) | v2: 5% patch, 10% minor or major (v1: 10%); a loss over 50% cannot be overridden |
 
-- **Override.** `--accept-drift "<reason>"` turns every drift check over its threshold into `overridden`, for
-  that run only. It is refused before the Spark session starts when the reason is under 20 characters or 4
-  words, or with `--initial`; refused by the gate when no drift check is over its threshold ("nothing to
-  accept"); and it never covers a loss over 50% or any non-drift check. The reason is stored on every
-  overridden `ops_dq_results` row and in the new run-log column `dq_override` of the committed row. Its limits:
-  one reason covers all three drift checks at any size short of the loss ceiling; the reason test is lexical
-  (any four words pass); nothing ties the reason to the numbers the operator saw, so run h's reason (which says
-  "deleted 51 docs") would also pass a run that deleted 100; and nothing records who overrode. Only losses are
-  capped: a loss deletes from the index and is what a broken input looks like, while a gain only adds (and costs
-  embedding, which M5 must size). The 50% is a policy value, not calibrated.
+- **Override (v2): plan, then apply.** A drift failure is first seen in a failed run. The operator then runs
+  again with `--accept-drift "<reason>" --accept-drift-of <that run_id>`. The named run must have one `failed`
+  run-log row (and no committed one), DQ rows from one attempt with the same config, tags and baseline as this
+  run, and failed drift checks only. A drift check of this run is `overridden` only if it fails with exactly the
+  (check, numerator, denominator) that run logged, so the operator accepts numbers they saw, not "any drift".
+  Refused before the Spark session: one flag without the other, a reason under 20 characters or 4 words, or
+  `--initial`. Refused by the gate: an acceptance with nothing over its threshold ("nothing to accept"), or a
+  run whose drift is not the named run's. A loss over 50% and any non-drift check are never covered. The reason
+  and the run id go on every overridden `ops_dq_results` row (`override_reason`, `override_of_run_id`) and on the
+  committed run-log row (`dq_override`, `dq_override_of`). Still not bound: the reason test is lexical (any four
+  words pass), and nothing records who overrode. Only losses are capped: a loss deletes from the index and is
+  what a broken input looks like, while a gain only adds (and costs embedding, which M5 must size). The 50% is a
+  policy value, not calibrated. *v1 (M4)* took a reason alone, which covered every drift check at any size short
+  of the ceiling: run h's reason ("deleted 51 docs") would also have passed a run that deleted 100.
 - **Logging.** One `ops_dq_results` row per check per run attempt (an `attempt_id` per job process): counts,
   observed value, threshold, the rule in words, up to 10 examples, status. All nine rows go in one insert and
   are read back before the gate decides. The table is append-only. A failed gate appends a `failed` run-log row
@@ -863,6 +870,26 @@ threshold and a logged override.
   `DELTA_CANNOT_MODIFY_APPEND_ONLY` (`m4_l_*`). Each run had one task attempt (`m4_j_*`). M4 publishes nothing
   (sink `none`), so this shows the gate's order of writes; write-audit-publish for a real publish is untested
   until M5.
+- *Gate v2 on Databricks* (2026-10-20, same chain, head v4.0.1; `runs/m4x_a`..`m4x_j`):
+
+| Run | What happened | File |
+|---|---|---|
+| a | `ADD COLUMNS` `dq_override_of` (run log, 46 columns) and `override_of_run_id` (DQ results, 20); both still append-only | `m4x_a_*` |
+| b | v4.0.1 again: all pass, drift threshold 5% (same tag counts as patch); `committed` | `m4x_b_*` |
+| d | v3.5.0 with `--allow-backwards` (a major step): `drift_docs` 213 → 244 (+14.6%) over 10%; `failed` | `m4x_d_*` |
+| e | the same, accepting M4's failed run e (`64e598eb…`): refused before the gate, since that run drifted from another baseline run (`e3a95072…`, not `ba641b3e…`); `failed`, no DQ rows | `m4x_e_*` |
+| f | the same, accepting run d (`7a8d08da…`): `drift_docs` overridden with exactly d's 244/213; `committed` with `dq_override_of` = d | `m4x_f_*` |
+| g | v4.0.0: `drift_docs` 244 → 212 (−13.1%) over 10%; `failed` | `m4x_g_*` |
+| h | the same, accepting run g (`3767945a…`): overridden; `committed` | `m4x_h_*` |
+| i | v4.0.1 (a patch step): drift +0.5% / +0.2% / +0.3% within 5%; `committed` | `m4x_i_*` |
+
+  `m4x_v_gate_vs_git.json` (934 checks, all pass) re-checks every gated run of M4 and gate v2, each under the
+  rules of its own version, chosen by whether the run's commit descends from gate v2's first commit; for v2 it
+  reads the accepted run's DQ rows itself and checks that the run is a single failed run of the same config,
+  tags and baseline that failed on drift alone. `m4x_w_changes_vs_git.json` re-checks the 26 log rows (265
+  checks, all pass): 13 committed runs in one chain. Each run had one task attempt (`m4x_j_*`). The per-kind
+  thresholds fire on the same 3 of 41 historical transitions as v1 (`m4_a`'s table: no patch release over 5%;
+  `m4x_x` under cleaner 2 gives the same 3).
 - *Cost.* Detect runs took 56–83 s of job time (`run_duration_seconds`; c: 104 s, 50 s of it before the
   script started, and it also created `ops_dq_results`; d2: 36 s). On the same transitions as M3: 3.5.0 → 4.0.0
   61.2 → 68.8 s (`m3_c`, `m4_h`), 4.0.0 → 4.0.1 64.9 → 73.4 s (`m3_f`, `m4_i`), 4.0.1 again 54.4 → 56.3 s
@@ -876,12 +903,9 @@ threshold and a logged override.
   write, since gold is the index's source. A failure between the MERGE and the committed row leaves gold at the
   failed run's target while the baseline stays: M5 needs a recovery rule (e.g. a retry that finds gold equal to
   the target's chunk set re-applies idempotently instead of failing D-011's "gold equals the baseline" check).
-- A cleaner or chunker version bump cannot cross an existing chain today: the baseline's logged `config_id` is
-  no longer in `Config.chunk_grid`, so the job stops; re-chunking the baseline with new code would not match its
-  silver anyway; and `--initial` is refused while a chain exists. Before M5 starts the gold chain, either make
-  the known cleaner fixes (the tab labels) while only the throwaway `none` chain exists, or build a logged
-  re-baseline path (verify the baseline from its stored silver rows and logged fingerprint instead of
-  re-chunking it). The second is needed sooner or later anyway, since no cleaner stays frozen.
+- In M4 a cleaner or chunker version bump could not cross an existing chain: the baseline's logged `config_id`
+  left `Config.chunk_grid`, so the job stopped; re-chunking the baseline with new code would not match its
+  silver anyway; and `--initial` is refused while a chain exists. Solved by D-013's re-baseline path.
 - M5's first run is `--initial` on a new chain, so its drift is not applicable: the first gold load is compared
   with nothing. M5 decides whether to compare it with the head of the `none` chain.
 - The thresholds are a policy calibrated on 42 releases of one corpus; another corpus needs its own
@@ -890,8 +914,93 @@ threshold and a logged override.
   (about a minute of serverless), fails again and appends nine DQ rows and a failed row until someone runs the
   release by hand with a reason. M7 needs a failure notification (otherwise this is the warn-only option again),
   and should fail fast on a target whose last gated attempt failed on the same tag, commit and config.
-- The override could be bound to what the operator saw: `--accept-drift-of <failed run_id>` plus a reason,
-  refused unless this run's drift numbers equal that run's logged ones (plan, then apply). Not built in M4.
+- With the bound override (v2), a schedule still cannot accept drift by itself: the accepting run names a run
+  that has already failed, so a person reviews the numbers first, which is the intent.
+
+## D-013 — Crossing a cleaner or chunker version: the re-baseline path
+
+- **Date:** 2026-10-20 · **Status:** Accepted (evidence: `runs/m4x_k`..`m4x_x`)
+
+**Context.** D-012 found that a CLEANER_VERSION or CHUNKER_VERSION bump could not cross an existing chain:
+`config_id` hashes both versions, so after a bump the baseline's logged config is no longer in
+`Config.chunk_grid`, `change_detect` stopped ("not in Config.chunk_grid"), re-chunking the baseline with the
+new code would not match its silver anyway, and `--initial` is refused while a chain exists. Once M5 starts the
+gold chain, every cleaner fix would have been blocked. The owner chose to build a re-baseline path rather than
+fix the known cleaner issue first and freeze the cleaner (2026-10-20), since the path is needed for any later
+fix anyway.
+
+**Options.**
+- *Freeze the cleaner before M5.* Postpones the problem to the first fix after M5. Rejected.
+- *Start a new chain after every bump (`--initial` into an empty sink).* Re-embeds everything and breaks the
+  audit chain; for gold it means dropping and rebuilding the index. Rejected.
+- *Run the old code inside the job* (ship earlier versions in the wheel, or check out the baseline's commit):
+  two versions of the cleaner in one job, and a job that depends on git history. Rejected for the job; used for
+  verification (below), where it is cheap.
+- *Check the baseline from what was stored* (chosen): silver is immutable per (config_id, tag) and each row's
+  chunk_id is a hash of its own content, so stored rows can be checked without the code that made them.
+
+**Decision.** In `jobs/change_detect.py`, step 4:
+- A baseline whose config this code can reproduce is re-chunked from bronze and compared with silver, as
+  before (D-011). One it cannot is checked from its stored silver rows (`lake.stored_baseline`,
+  `silver.stored_baseline_violations`): the rows hold one cleaner/chunker version and size, and those hash to
+  the logged `config_id` (`chunk.config_id_of`); every row is what its chunk_id says (chunk_id recomputed from
+  path, section path, embed text and occurrence; embed text = breadcrumb + body; n_tokens recounted); every row
+  belongs to a doc of the baseline's bronze snapshot, with its commit and content hash; every bronze doc has
+  rows unless it is a known zero-chunk doc. Then the same pins as before: the commit, the docs fingerprint and
+  the chunk fingerprint the baseline run logged.
+- What the stored check cannot show is that the old versions chunked bronze into exactly these rows. That rests
+  on the logged chunk fingerprint, which the baseline run computed when it re-chunked them under its own code
+  and compared them with silver.
+- A target under another config than its baseline needs `--allow-config-change`; without it the run is
+  refused before any chunking. The chunk diff across configs is the usual set difference by chunk_id, so a
+  cleaner fix re-embeds only the chunks whose text changed; unchanged docs may now add or remove chunks
+  (`chunks_added_unchanged_docs`, `chunks_removed_unchanged_docs`), which the same-config rule forbids
+  otherwise. Drift compares the two configs' totals at the threshold for the release kind.
+- The run log records how the baseline was checked (new column `baseline_check`: `rechunked` or `stored`).
+- The verifiers re-check such runs with the code that logged the old config: `scripts/oldcode.py` checks out
+  that commit (taken from the run log's `code_version`) into a temporary git worktree and runs its chunker in a
+  child process, which must compute the same `config_id`.
+- First real use: CLEANER_VERSION 2 drops a language tab's `<lang>:` label when the tab opens with a code block
+  fenced in the same language (the label only repeated the fence, and between two pieces of a split block it
+  was a tiny chunk of its own).
+
+**Evidence** (2026-10-20, chain of sink `none`, head v4.0.1 under cleaner 1, config `ccbd80f05e15c8dd`):
+
+| Run | What happened | File |
+|---|---|---|
+| k | `ADD COLUMNS baseline_check` (run log, 47 columns) | `m4x_k_*` |
+| l1–l6 | silver under cleaner 2 for v3.5.0, v4.0.0, v4.0.1 at 254/32 (`e70bf55c7cf1b856`: 5,567 / 5,423 / 5,436 chunks) and 128/16 (`ece77f296d18fbd5`: 8,629 / 8,744 / 8,767); cleaner 1's rows stay beside them (`m4x_u`) | `m4x_l*` |
+| m | v4.0.1 under cleaner 2 without `--allow-config-change`: refused before chunking; `failed` | `m4x_m_*` |
+| n | one cleaner-1 silver row of v4.0.1 (`8671aa66…`, `docs/index.md` #0) tampered: embed text 969 → 980 characters, chunk_id kept | `m4x_n_*` |
+| o | v4.0.1 with the flag: the stored check names the row three ways (chunk_id does not match its content; embed text is not breadcrumb + body; n_tokens wrong); `failed`, `baseline_check` = stored | `m4x_o_*` |
+| p | the row restored: the same sha256 and length as before the tamper | `m4x_p_*` |
+| q | v4.0.1 with the flag: baseline checked from stored rows; docs 0 / 0 / 0; chunks 5,462 → 5,436, of which 221 added and 247 removed in unchanged docs and 5,215 kept; 42,372 of 691,882 tokens to embed (6.1%, against all of them for a new chain); drift within 5%; `committed`, `baseline_check` = stored | `m4x_q_*` |
+| r | v4.0.1 again: the baseline is now under today's config, so re-chunked; 0 / 0 / 0, 0 tokens; `committed`, `baseline_check` = rechunked | `m4x_r_*` |
+
+- *Independent checks:* silver under cleaner 2 equals a local chunking of git (`m4x_s_silver_vs_git.json`,
+  36 checks, all pass). `m4x_v2_gate_vs_git.json` (1,085 checks) and `m4x_w2_changes_vs_git.json` (334 checks),
+  all pass, re-check every gated and every logged run; the cleaner-1 runs are re-chunked by the code of
+  `fc42017625` (the first committed run that logged `ccbd80f05e15c8dd`), checked out by `scripts/oldcode.py`,
+  which computes the same `config_id`. For run q the verifier, with cleaner 1 on the baseline side and cleaner 2
+  on the target side, gets the logged 221 / 247 / 5,215 / 42,372. Each job had one task attempt (`m4x_t`).
+  Bronze has no history entry after 2026-10-15; silver's history shows the six MERGEs, the tamper and the
+  restore (`m4x_u`).
+- *What the fix changed* (git only, every release from v3.0.0, `m4x_x_calibration_cleaner2.json` against
+  `m4_a`): tiny chunks of v4.0.1 at 254/32 fell from 46 to 20, and at 128/16 from 101 to 24; across the 42
+  releases the tiny share fell from 0.83–0.92% to 0.35–0.45%. Duplicate embed texts rose from 3 to 5: in the
+  streaming guide three tabs end with "See the full source code." (`m4x_q`'s logged examples); under cleaner 1
+  the next tab's label was packed into two of those chunks, which kept them apart (seen with the cleaner-1 code
+  through `scripts/oldcode.py`, not saved). Drift at the per-kind thresholds still fires on 3 of 41
+  transitions.
+- *Cost:* the re-baseline run took 61 s of job time, like any detect run (`m4x_q`).
+
+**Consequences.**
+- Old silver rows must stay while any chain's baseline points at their config; silver is immutable and never
+  pruned today, which keeps this true. A future clean-up must check the heads of all chains first.
+- The stored check recounts tokens with today's vocabulary; a vocabulary change (part of `config_id`) would fail
+  it. A model with another tokenizer needs its own decision (M6).
+- M5: a cleaner fix after gold exists goes through this path: the gold MERGE applies the cross-config chunk
+  diff, and the index re-embeds only the changed chunks.
 
 ## Open questions (decide in the milestone noted)
 
@@ -906,7 +1015,7 @@ threshold and a logged override.
 - **M4 — row-count drift threshold.** *Answered in M4 (D-012); the owner chose 2026-10-20:* drift of docs,
   chunks and tokens against the baseline run, at 5% for a patch release and 10% for a minor or major one (the
   same 3 firings in 41 historical transitions as one 10% rule, tighter on patch releases), with a logged
-  `--accept-drift` override that will be bound to a failed run's numbers. Built so far: one 10% threshold.
+  override bound to a failed run's drift (`--accept-drift-of`). Built as gate v2 (`runs/m4x_*`).
 - **M6 — relevance labels must not depend on chunking.** Gold answers are labelled as
   (doc path, section) plus an answer span, given as a verbatim quote of the cleaned text (D-010). A retrieved
   chunk counts as relevant if its slice overlaps an occurrence of the quote. Otherwise chunk sizes cannot be compared. With n=50, the 95% CI half-width on recall@5 is

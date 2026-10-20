@@ -101,16 +101,18 @@ uv run --with databricks-sdk==0.152.0 --with sentence-transformers==6.1.0 --with
     python scripts/m2_tokenizer_parity.py --label <label> --tags v3.5.0 v4.0.0 v4.0.1
 # M3 change detection + M4 DQ gate (same credentials): diff a tag against the head of the committed chain in
 # ops_run_log, for Config.chunk, then gate it (ops_dq_results) before committing; needs bronze and silver of the
-# tag. The first run of a sink needs --initial; going back a release needs --allow-backwards; drift over 10% needs
-# --accept-drift "<reason>" (D-012). Then check every logged run against git, D-002 and runs/m2_e, and every
-# gated run's DQ rows against git.
+# tag. The first run of a sink needs --initial; going back a release needs --allow-backwards; a target under
+# another chunk config than its baseline (a cleaner/chunker version bump) needs --allow-config-change (D-013).
+# Drift over its threshold (5% patch, 10% minor/major) fails the run; to accept it, run again naming that
+# failed run (D-012 gate v2). Then check every logged run against git, D-002 and runs/m2_e, and every gated
+# run's DQ rows against git (configs today's code cannot reproduce are re-chunked by scripts/oldcode.py).
 uv run --with databricks-sdk==0.152.0 python scripts/run_job.py \
     --script jobs/change_detect.py --label <label> -- --tag v4.0.1 [--initial] [--allow-backwards] \
-    [--accept-drift "<reason>"]
+    [--allow-config-change] [--accept-drift "<reason>" --accept-drift-of <failed run_id>]
 uv run --with databricks-sdk==0.152.0 python scripts/m3_verify_changes.py \
-    --label <label> --job-runs runs/m3_*_detect_*.json runs/m4_*_detect_*.json
-uv run --with databricks-sdk==0.152.0 python scripts/m4_verify_gate.py \
-    --label <label> --job-runs runs/m4_*_detect_*.json --pre-gate-runs runs/m3_*_detect_*.json
+    --label <label> --job-runs runs/m3_*_detect_*.json runs/m4_*_detect_*.json runs/m4x_*_detect_*.json
+uv run --with databricks-sdk==0.152.0 python scripts/m4_verify_gate.py --label <label> \
+    --job-runs runs/m4_*_detect_*.json runs/m4x_*_detect_*.json --pre-gate-runs runs/m3_*_detect_*.json
 uv run --with databricks-sdk==0.152.0 python scripts/task_attempts.py --label <label> runs/<run files>
 # M4 threshold calibration (git only, ~10 min): every DQ check over every release from v3.0.0 on.
 uv run --with databricks-sdk==0.152.0 python scripts/m4_calibrate.py --label <label>
@@ -124,29 +126,23 @@ uv run python scripts/corpus_fingerprint.py --update
 
 ## Next session: pick up here
 
-M4 is complete and merged into `main` (D-012; M4 report given to the owner on 2026-10-20). The DQ gate runs inside `jobs/change_detect.py` before the committed row; `ops_dq_results` (append-only)
-holds one row per check per gated run, and `ops_run_log` has a new last column `dq_override` (added by `runs/m4_b`).
-The chain for sink `none` now has 9 committed runs and ends at v4.0.1 again (M4 demo: rollback to v3.5.0 and
-forward to v4.0.0, both with `--accept-drift`). Evidence: `runs/m4_a`..`m4_l`, verified by `m4_v` (501/501) and
-`m4_w` (184/184). Do not re-run the `m3_*` or `m4_*` labels. The deleted endpoint's billing stopped (`m4_m`).
+M4 and its follow-ups are complete (D-012, D-013; report given to the owner on 2026-10-20) on branch
+`pre-m5-followups`, merged into `main`. The DQ gate (v2) runs inside `jobs/change_detect.py` before the
+committed row: drift thresholds by release kind, and an override bound to a failed run (`--accept-drift-of`).
+A cleaner or chunker version bump crosses a chain through the re-baseline path (`--allow-config-change`; the
+baseline is checked from its stored silver rows). CLEANER_VERSION is 2 (no tab label before a same-language
+code fence). Silver holds both cleaners' rows for v3.5.0, v4.0.0 and v4.0.1 at 254/32 and 128/16. The chain for
+sink `none` has 15 committed runs and ends at v4.0.1 under cleaner 2 (`e70bf55c7cf1b856`). `ops_run_log` has
+47 columns (`dq_override`, `dq_override_of`, `baseline_check` added by `runs/m4_b`, `m4x_a`, `m4x_k`) and
+`ops_dq_results` 20. Evidence: `runs/m4_*`, `runs/m4x_*`, verified by `m4x_v2` (1,085/1,085), `m4x_w2`
+(334/334) and `m4x_s` (silver). Do not re-run the `m3_*`, `m4_*` or `m4x_*` labels.
 
-**Do not start M5 until the owner says so.** Next work, as the owner decided on 2026-10-20 (D-012), before
-M5, on a new branch:
-1. Drift thresholds by release kind: patch 5%, minor and major 10% (kind from the two tags' version numbers,
-   whichever way; a same-tag run counts as patch; tags that are not releases get the strictest). Config,
-   `docs_rag.dq`, tests, the verifier's POLICY (by the gate version a run used, so M4's 10% runs still verify),
-   then a short Databricks demo.
-2. Bind the override to a failed run: `--accept-drift-of <failed run_id>` plus a reason, refused unless this
-   run's drift rows (check, numerator, denominator) equal that run's logged ones, for the same tag, baseline
-   and config. Log both run ids.
-3. A logged re-baseline path, so a CLEANER/CHUNKER version bump can cross an existing chain: verify the baseline
-   from its stored silver rows and logged chunk fingerprint instead of re-chunking with today's code; a run
-   whose config differs from its baseline's is a logged config change. Prove it with a real bump: the lone
-   tab-label chunks (`java:`, `scala:`, `r:`) as the first cleaner fix.
-Open items:
-- Remote branches `m0-smoke-test`, `m1-bronze`, `m2-silver`, `m3-change-detection`, `m4-dq-gate` (all merged)
-  and `claude/modest-archimedes-mp5zx3` (stale) are still on GitHub: the session's git proxy refuses branch
-  deletion (HTTP 403), so the owner deletes them in the GitHub UI.
+**Do not start M5 until the owner says so.** Open items:
+- Remote branches `m0-smoke-test`, `m1-bronze`, `m2-silver`, `m3-change-detection`, `m4-dq-gate`,
+  `pre-m5-followups` (all merged) and `claude/modest-archimedes-mp5zx3` (stale) are still on GitHub: the
+  session's git proxy refuses branch deletion (HTTP 403), so the owner deletes them in the GitHub UI.
+- Still open from D-012: the override's reason test is lexical and nothing records who overrode; gains are not
+  capped (M5 sizes embedding cost); the checks are structural (a leftover-markup check is a cheap next one).
 - For M5's gold writes (from M1/M2): take counts from our own MERGE metrics (the sync pipeline's row metrics are
   always 0, D-001); on Databricks a no-op MERGE still writes an empty table version (D-006 run b), and
   Databricks commits its own `OPTIMIZE` versions (D-010): never read "we wrote" from a version bump.
@@ -154,12 +150,13 @@ Open items:
   load into an empty gold, and its drift is not applicable (D-012: decide whether to compare it with the `none`
   chain's head). Order (D-012): chunk checks → embed to staging → vector checks (dimension, no NaN, norm) logged
   like the others → gold MERGE with the `GatePassed` → sync and wait → committed row; define recovery for a
-  failure between the MERGE and the committed row. Gold holds no positions (they come from silver; kept chunks
-  move, D-011). Create the endpoint again first (~20 min of provisioning) and delete it when the index is not
-  needed (idle it bills 4 DBU/h even with no index, against the docs, and likely drains the daily quota: D-001).
-  Create the real index only after the full gold backfill, because capacity is sized from the source table at
-  creation and a small start limits growth. Re-test insert, update and delete with the real MERGE. Sync right
-  after each MERGE and wait for the update to complete ("ready" is not "synced") (D-001).
+  failure between the MERGE and the committed row. A later cleaner fix reaches gold as a cross-config chunk diff
+  (D-013): keep old silver rows while a chain's head points at their config. Gold holds no positions (they come
+  from silver; kept chunks move, D-011). Create the endpoint again first (~20 min of provisioning) and delete it
+  when the index is not needed (idle it bills 4 DBU/h even with no index, against the docs, and likely drains
+  the daily quota: D-001). Create the real index only after the full gold backfill, because capacity is sized
+  from the source table at creation and a small start limits growth. Re-test insert, update and delete with the
+  real MERGE. Sync right after each MERGE and wait for the update to complete ("ready" is not "synced") (D-001).
 
 ## Milestones (status)
 
@@ -167,7 +164,7 @@ Open items:
 - [x] M1 — Bronze ingestion: fetch tag → `bronze_docs`, content hash, idempotent MERGE, tests, CI (2026-10-15; D-006, D-007)
 - [x] M2 — Silver: Markdown cleaning + section-aware chunking, stable chunk IDs, tests (2026-10-19; D-008, D-009, D-010)
 - [x] M3 — Change detection (doc + chunk level) and run log; v1 → v2 → re-run (2026-10-20; D-011)
-- [x] M4 — DQ checks as a gate between silver and gold (2026-10-20; D-012)
+- [x] M4 — DQ checks as a gate between silver and gold (2026-10-20; D-012; follow-ups D-012 v2, D-013)
 - [ ] M5 — Embeddings + AI Search index sync (only changed chunks embedded)
 - [ ] M6 — Eval set (50 Q/A, owner reviews) + recall@5/MRR, 2 chunk sizes × 2 models
 - [ ] M7 — Asset Bundles (dev/prod), Jobs, GitHub Actions
