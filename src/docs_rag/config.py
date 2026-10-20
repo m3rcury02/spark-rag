@@ -61,6 +61,13 @@ class EmbeddingConfig:
     revision: str = "1110a243fdf4706b3f48f1d95db1a4f5529b4d41"
     dimension: int = 384
     batch_size: int = 64
+    # Installed by the jobs that embed (scripts/run_job.py) and checked at their start (docs_rag.jobenv): a
+    # different torch or transformers can change the vectors. torch is the CPU build (no CUDA libraries).
+    packages: tuple[tuple[str, str], ...] = (
+        ("torch", "2.14.1+cpu"),
+        ("sentence-transformers", "6.1.0"),
+        ("transformers", "5.19.0"),
+    )
 
     @property
     def model_id(self) -> str:
