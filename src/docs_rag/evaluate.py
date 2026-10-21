@@ -3,9 +3,9 @@
 An item labels its answer as a verbatim quote of the cleaned text (D-010), not as chunk ids, so one label
 serves every chunk config. A chunk is relevant to an item when its slice of the cleaned text covers at least
 a share (EvalConfig.min_quote_share, one half) of some occurrence of the quote, anywhere in the corpus
-(language tabs and shared pages repeat text). Where chunks overlap, a quote that straddles a boundary still has a chunk covering at least half of it;
-where two meet at a paragraph break without overlap it may not, so the eval checks that every item has a
-relevant chunk under every config rather than assuming it.
+(language tabs and shared pages repeat text). Where chunks overlap, a quote that straddles a boundary still
+has a chunk covering at least half of it; where two meet at a paragraph break without overlap it may not, so
+the eval checks that every item has a relevant chunk under every config rather than assuming it.
 
 recall@k is the share of items with at least one relevant chunk in the top k (one answer per item, so a chunk
 config that splits the answer across chunks is not penalised for it); MRR@k averages 1/rank of the first
