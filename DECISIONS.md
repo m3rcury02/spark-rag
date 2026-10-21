@@ -1301,6 +1301,17 @@ the questions only a found in the top 5 against those only b found.
 - The eval harness reuses the pipeline's chunker, embedder and the gold table, and ranks the deployed index
   with the same labels. A re-run after a corpus or model change is one command.
 
+**Set v2 at v4.2.0** (2026-10-21; this paragraph is committed before v2's first run). M7 moved dev's gold chain
+to v4.2.0 (D-016), so comparison 4 (gold's vectors against local) refuses set v1, which is labelled at v4.0.1.
+- *The set* (`eval/eval_set_v2.json`): v1's 50 owner-reviewed items at v4.2.0, with questions, answers,
+  sections and `also_in` unchanged. One quote changed with the docs: in q19's sentence v4.2.0 writes NULL in
+  backticks, so its quote is the release's text for the same sentence (the change is recorded in the set).
+  A local check against git found every quote once, inside its section, and in no other doc. `also_in` was not
+  re-reviewed for docs added since v4.0.1.
+- *What it is for:* comparison 4 at the head of dev's chain, and the same configs and comparisons on a later
+  release, read with v1's decision rule. No new comparison and no decision depends on it, and v1's results
+  stand. Not run: the live index (it needs the endpoint, D-001).
+
 ## D-016 — Orchestration and deployment: one bundle, one job, dev and prod
 
 - **Date:** 2026-10-21 · **Status:** Accepted (evidence: `runs/m7_*`)

@@ -1,0 +1,862 @@
+{
+ "version": "2",
+ "tag": "v4.2.0",
+ "commit_sha": "32f7299601108917fb01920a54e084595b7b3bf8",
+ "cleaner_version": "2",
+ "derived_from": {
+  "set": "eval/eval_set_v1.json",
+  "rule": "v1's 50 owner-reviewed items at a later release: questions, answers, sections and also_in unchanged; a quote is updated only where the release reworded it, to the release's text for the same sentence.",
+  "quote_changes": {
+   "q19": {
+    "v1": "If the query returns no rows the result is NULL.",
+    "v2": "If the query returns no rows the result is `NULL`.",
+    "why": "v4.2.0's docs/sql-ref-syntax-aux-exec-imm.md puts NULL in backticks; the sentence is otherwise the same"
+   }
+  }
+ },
+ "drafts": "eval/drafts_v1.json",
+ "owner_rejected_sections": [],
+ "spares": [
+  "s060",
+  "s061",
+  "s062",
+  "s064",
+  "s065",
+  "s066",
+  "s067",
+  "s068",
+  "s069",
+  "s070",
+  "s071",
+  "s072",
+  "s073",
+  "s074",
+  "s075"
+ ],
+ "items": [
+  {
+   "item_id": "q01",
+   "section_id": "s001",
+   "question": "How does MLlib's KernelDensity combine Gaussian kernels around each observation to produce its density estimate?",
+   "answer": "It averages the PDFs of normal distributions centered on each sample.",
+   "path": "docs/mllib-statistics.md",
+   "section_path": [
+    "Basic Statistics - RDD-based API",
+    "Kernel density estimation"
+   ],
+   "quote": "It achieves\nthis estimate by expressing the PDF of the empirical distribution at a particular point as the\nmean of PDFs of normal distributions centered around each of the samples.",
+   "kind": "behavior",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Quote is an exact substring (checked with python, occurs once); it states the answer; longest shared run is 2 words; grep finds KDE/KernelDensity only in mllib-statistics."
+  },
+  {
+   "item_id": "q02",
+   "section_id": "s002",
+   "question": "By default, how long can an unused Kafka consumer stay pooled on an executor before Structured Streaming may evict it?",
+   "answer": "5 minutes, set by spark.kafka.consumer.cache.timeout.",
+   "path": "docs/streaming/structured-streaming-kafka-integration.md",
+   "section_path": [
+    "Structured Streaming + Kafka Integration Guide (Kafka broker version 0.10.0 or higher)",
+    "Reading Data from Kafka",
+    "Consumer Caching"
+   ],
+   "quote": "spark.kafka.consumer.cache.timeout | 5m (5 minutes) | The minimum amount of time a consumer may sit idle in the pool before it is eligible for eviction by the evictor. | 3.0.0",
+   "kind": "config",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Exact substring, once; the question names the consumer pool, so the 5m fetchedData row is not a second answer; the DStream Kafka doc gives capacity, enable flag and key but no timeout; no leakage."
+  },
+  {
+   "item_id": "q03",
+   "section_id": "s003",
+   "question": "When spark.mllib isotonic regression training data has duplicate feature values, how is the merged label computed?",
+   "answer": "As the weighted average of all labels for that feature.",
+   "path": "docs/mllib-isotonic-regression.md",
+   "section_path": [
+    "Regression - RDD-based API",
+    "Isotonic regression"
+   ],
+   "quote": "Aggregated label is the weighted average of all labels.",
+   "kind": "behavior",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Exact substring, once (55 chars); ml-classification-regression covers duplicate features only for prediction, not for aggregating training labels; no leakage."
+  },
+  {
+   "item_id": "q04",
+   "section_id": "s004",
+   "question": "What type rule must the THEN and ELSE results of a Spark SQL CASE expression satisfy?",
+   "answer": "They must be the same type or coercible to a common type.",
+   "path": "docs/sql-ref-syntax-qry-select-case.md",
+   "section_path": [
+    "CASE Clause",
+    "Parameters"
+   ],
+   "quote": "Specifies the then expression based on the `boolean_expression` condition; `then_expression` and `else_expression` should all be same type or coercible to a common type.",
+   "kind": "fact",
+   "also_in": [
+    "docs/sql-ref-ansi-compliance.md"
+   ],
+   "verdict": "keep",
+   "review_note": "Exact substring, once; 'coercible'/'common type' appear elsewhere only in ansi-compliance's least-common-type text (line 216 names the case expression), so also_in is right; no leakage."
+  },
+  {
+   "item_id": "q05",
+   "section_id": "s005",
+   "question": "If a session variable created with DECLARE VARIABLE has the same name as a column, which one does an unqualified reference pick?",
+   "answer": "The column; the variable is used only if no column or alias matches, unless qualified with session/system.session.",
+   "path": "docs/sql-ref-syntax-ddl-declare-variable.md",
+   "section_path": [
+    "DECLARE VARIABLE",
+    "Description"
+   ],
+   "quote": "Unless you qualify a variable with `session` or `system.session`, a variable is only resolved after\nSpark fails to resolve a name to a column or column alias.",
+   "kind": "behavior",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Exact substring, once; grep finds the resolution order only here (drop-variable, set-var and identifier docs do not state it); answer is 17 words; not yes/no; no leakage."
+  },
+  {
+   "item_id": "q06",
+   "section_id": "s006",
+   "question": "What happens to cached data and dependent caches when I run DROP TABLE on a cached Spark SQL table?",
+   "answer": "DROP TABLE uncaches the table and all of its dependents.",
+   "path": "docs/sql-ref-syntax-ddl-drop-table.md",
+   "section_path": [
+    "DROP TABLE",
+    "Description"
+   ],
+   "quote": "If the table is cached, the command uncaches the table and all its dependents.",
+   "kind": "behavior",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Exact substring, once; the other cache sentences (ALTER TABLE/VIEW, REPAIR, LOAD, TRUNCATE) are about other commands, and no doc says DROP TABLE uncaches; no leakage."
+  },
+  {
+   "item_id": "q07",
+   "section_id": "s007",
+   "question": "Which Spark version first allowed writing DStream-based Spark Streaming applications in Python?",
+   "answer": "Spark 1.2.",
+   "path": "docs/streaming-programming-guide.md",
+   "section_path": [
+    "Spark Streaming Programming Guide",
+    "Overview"
+   ],
+   "quote": "write Spark Streaming programs in Scala, Java or Python (introduced in Spark 1.2),",
+   "kind": "fact",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Exact substring, once; the other 'Spark 1.2' hits (write-ahead logs, shuffle service, ML migration) are about other features; one answer; no leakage."
+  },
+  {
+   "item_id": "q08",
+   "section_id": "s008",
+   "question": "How is the lift of an association rule calculated by spark.ml's FPGrowthModel?",
+   "answer": "support(antecedent U consequent) divided by support(antecedent) x support(consequent).",
+   "path": "docs/ml-frequent-pattern-mining.md",
+   "section_path": [
+    "Frequent Pattern Mining",
+    "FP-Growth"
+   ],
+   "quote": "`lift: double`: A measure of how well the antecedent predicts the consequent, calculated as `support(antecedent U consequent) / (support(antecedent) x support(consequent))`",
+   "kind": "fact",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Exact substring, once; the only other 'lift' hit is 'restriction is lifted' (Imputer) in ml-migration-guide, so the note's claim that it mentions lift is wrong but the item stands; no leakage."
+  },
+  {
+   "item_id": "q09",
+   "section_id": "s011",
+   "question": "How do I list only Spark's built-in functions with SHOW FUNCTIONS, excluding user-defined ones?",
+   "answer": "Use the SYSTEM function kind, e.g. SHOW SYSTEM FUNCTIONS.",
+   "path": "docs/sql-ref-syntax-aux-show-functions.md",
+   "section_path": [
+    "SHOW FUNCTIONS",
+    "Parameters"
+   ],
+   "quote": "**SYSTEM** - Looks up the function(s) among the system defined functions.",
+   "kind": "how-to",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Exact substring, once; 'system defined functions' appears only in this doc, and SHOW SYSTEM FUNCTIONS is in its own Examples, so the answer form is documented, not inferred; no leakage."
+  },
+  {
+   "item_id": "q10",
+   "section_id": "s012",
+   "question": "How do I load a pretty-printed JSON document whose records span several lines into a PySpark DataFrame?",
+   "answer": "Set the multiLine parameter to True when reading with spark.read.json.",
+   "path": "docs/sql-data-sources-json.md",
+   "section_path": [
+    "JSON Files"
+   ],
+   "quote": "For a regular multi-line JSON file, set the `multiLine` parameter to `True`.",
+   "kind": "how-to",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Exact substring, once (Python tab only); multiLine elsewhere is CSV only; caveat: the same doc's options-table row ('may span multiple lines') sits in another chunk and would score as a miss."
+  },
+  {
+   "item_id": "q11",
+   "section_id": "s013",
+   "question": "How do I tell Spark that my Scala UDF can return different results for identical inputs?",
+   "answer": "Call asNondeterministic() on the UserDefinedFunction.",
+   "path": "docs/sql-ref-functions-udf-scalar.md",
+   "section_path": [
+    "Scalar User Defined Functions (UDFs)",
+    "UserDefinedFunction"
+   ],
+   "quote": "**asNondeterministic(): UserDefinedFunction**\n\n    Updates UserDefinedFunction to nondeterministic.",
+   "kind": "how-to",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Exact substring, once; create-sql-function's NOT DETERMINISTIC is a different API (SQL functions) and the question says Scala UDF, so it is a fair distractor, not also_in; no leakage."
+  },
+  {
+   "item_id": "q12",
+   "section_id": "s014",
+   "question": "With CREATE TABLE LIKE, which clause makes the new table external by pointing it at a directory such as HDFS?",
+   "answer": "The LOCATION clause; giving it a path creates an external table there.",
+   "path": "docs/sql-ref-syntax-ddl-create-table-like.md",
+   "section_path": [
+    "CREATE TABLE LIKE",
+    "Parameters"
+   ],
+   "quote": "**LOCATION**\n\n    Path to the directory where table data is stored, which could be a path on distributed storage like HDFS, etc. Location to create an external table.",
+   "kind": "syntax",
+   "also_in": [
+    "docs/sql-ref-syntax-ddl-create-table-like.md"
+   ],
+   "verdict": "fixed",
+   "review_note": "Exact substring, once; 'only this doc' was wrong: sql-migration-guide says CREATE TABLE ... LOCATION equals CREATE EXTERNAL TABLE (Hive), so it belongs in also_in; no leakage."
+  },
+  {
+   "item_id": "q13",
+   "section_id": "s016",
+   "question": "In Spark 4.0, which operations on streaming checkpoint state does the state data source support, and how is it queried?",
+   "answer": "Reading only, through a batch query; writing is planned for the future.",
+   "path": "docs/streaming/structured-streaming-state-data-source.md",
+   "section_path": [
+    "State Data Source Integration Guide",
+    "Overview"
+   ],
+   "quote": "As of Spark 4.0, state data source provides the read functionality with a batch query. Additional functionalities including write is on the future roadmap.",
+   "kind": "fact",
+   "also_in": [
+    "docs/streaming/apis-on-dataframes-and-datasets.md"
+   ],
+   "verdict": "fixed",
+   "review_note": "The quote was exact, but the 'only' in the answer came from the next sentence, so I extended the quote to two adjacent sentences (155 chars, checked with python). The also_in entry is confirmed by grep."
+  },
+  {
+   "item_id": "q14",
+   "section_id": "s017",
+   "question": "Which SerDe class does a SELECT TRANSFORM query use by default when Hive support is enabled?",
+   "answer": "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe.",
+   "path": "docs/sql-ref-syntax-qry-select-transform.md",
+   "section_path": [
+    "TRANSFORM",
+    "Hive SerDe behavior"
+   ],
+   "quote": "Spark uses the Hive SerDe `org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe` by default",
+   "kind": "config",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "The quote is exact and contains the answer, with no 4-word overlap. Grep shows LazySimpleSerDe as a TRANSFORM default only here; other hits are only example output or example ROW FORMAT SERDE clauses."
+  },
+  {
+   "item_id": "q15",
+   "section_id": "s019",
+   "question": "What column name and type does spark.read.text produce, and what does each row of the result hold?",
+   "answer": "A string column named \"value\"; each row holds one line of the file.",
+   "path": "docs/sql-data-sources-text.md",
+   "section_path": [
+    "Text Files"
+   ],
+   "quote": "When reading a text file, each line becomes each row that has string \"value\" column by default.",
+   "kind": "behavior",
+   "also_in": [],
+   "verdict": "fixed",
+   "review_note": "The quote is exact and the answer is correct. I fixed the note's false claim that the fact is unique in the corpus: grep finds the analogous streaming socket statement, which is a hard negative."
+  },
+  {
+   "item_id": "q16",
+   "section_id": "s020",
+   "question": "Once I have estimated how big Eden should be, how do I size the JVM young generation for Spark executors?",
+   "answer": "Set -Xmn to 4/3 of the estimated Eden size E (-Xmn=4/3*E).",
+   "path": "docs/tuning.md",
+   "section_path": [
+    "Tuning Spark",
+    "Memory Tuning",
+    "Garbage Collection Tuning"
+   ],
+   "quote": "then you can set the size of the Young generation using the option `-Xmn=4/3*E`.",
+   "kind": "how-to",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "The quote is exact and contains the answer, with no 4-word overlap. Grep shows -Xmn and 4/3 only in tuning.md (the configuration.md and monitoring.md hits name the young-generation GC, a different fact)."
+  },
+  {
+   "item_id": "q17",
+   "section_id": "s021",
+   "question": "Without persist or cache, what happens to a transformed RDD each time I trigger another action on it?",
+   "answer": "It may be recomputed every time an action runs on it.",
+   "path": "docs/rdd-programming-guide.md",
+   "section_path": [
+    "RDD Programming Guide",
+    "Resilient Distributed Datasets (RDDs)",
+    "RDD Operations"
+   ],
+   "quote": "By default, each transformed RDD may be recomputed each time you run an action on it.",
+   "kind": "behavior",
+   "also_in": [],
+   "verdict": "fixed",
+   "review_note": "The old 'why does Spark rerun the lineage' question was answered by a restatement, not a reason. I rewrote it as a what-happens question (18 words, no 4-word run, checked with python); the quote is unchanged and exact."
+  },
+  {
+   "item_id": "q18",
+   "section_id": "s022",
+   "question": "Which file format do DataFrame load() and save() use when no format is given, and which setting changes it?",
+   "answer": "Parquet, unless changed with spark.sql.sources.default.",
+   "path": "docs/sql-data-sources-load-save-functions.md",
+   "section_path": [
+    "Generic Load/Save Functions"
+   ],
+   "quote": "In the simplest form, the default data source (`parquet` unless otherwise configured by\n`spark.sql.sources.default`) will be used for all operations.",
+   "kind": "config",
+   "also_in": [
+    "docs/sql-ref-syntax-ddl-create-table-datasource.md"
+   ],
+   "verdict": "keep",
+   "review_note": "The quote is exact, including the line break. Grep confirms the only near-repeats are the create-table-datasource comment (in also_in) and the migration-guide line about the CREATE TABLE provider."
+  },
+  {
+   "item_id": "q19",
+   "section_id": "s023",
+   "question": "What value do the target variables get when EXECUTE IMMEDIATE ... INTO runs a dynamic query that yields zero rows?",
+   "answer": "NULL.",
+   "path": "docs/sql-ref-syntax-aux-exec-imm.md",
+   "section_path": [
+    "EXECUTE IMMEDIATE",
+    "Parameters"
+   ],
+   "quote": "If the query returns no rows the result is `NULL`.",
+   "kind": "behavior",
+   "also_in": [],
+   "verdict": "fixed",
+   "review_note": "The quote is exact and the answer is correct. I fixed the note's uniqueness claim: grep finds the near-identical SET VARIABLE no-rows rule, which is now recorded as a hard negative."
+  },
+  {
+   "item_id": "q20",
+   "section_id": "s024",
+   "question": "What happens when I RESET a single Spark SQL config key that has no default value defined?",
+   "answer": "The key is removed from the session configuration.",
+   "path": "docs/sql-ref-syntax-aux-conf-mgmt-reset.md",
+   "section_path": [
+    "RESET",
+    "Parameters"
+   ],
+   "quote": "If the default value is undefined, the `configuration_key` will be removed.",
+   "kind": "behavior",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "The quote is exact, contains the answer, and has no 4-word overlap. Grep finds no other doc with this rule (configuration.md and the migration guide only say RESET restores defaults)."
+  },
+  {
+   "item_id": "q21",
+   "section_id": "s026",
+   "question": "What extra library must be available before Spark can write ORC files using the brotli compression codec?",
+   "answer": "brotli4j.",
+   "path": "docs/sql-data-sources-orc.md",
+   "section_path": [
+    "ORC Files",
+    "Data Source Option"
+   ],
+   "quote": "Note that `brotli` requires `brotli4j` to be installed.",
+   "kind": "config",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "The quote is exact, with no 4-word overlap. Grep confirms brotli4j only in the ORC doc and the Parquet BrotliCodec sentence as a hard negative; the question names ORC, so it has one answer."
+  },
+  {
+   "item_id": "q22",
+   "section_id": "s027",
+   "question": "How does adding the LATERAL keyword change which columns a subquery placed in FROM is allowed to reference?",
+   "answer": "Plain subqueries see only outer-query columns; LATERAL ones can also reference columns from preceding FROM-clause items.",
+   "path": "docs/sql-ref-syntax-qry-select-lateral-subquery.md",
+   "section_path": [
+    "LATERAL SUBQUERY",
+    "Description"
+   ],
+   "quote": "It provides a way to reference columns in the preceding `FROM` clause.\nWithout the `LATERAL` keyword, subqueries can only refer to columns in the outer query, but not in the `FROM` clause.",
+   "kind": "comparison",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "The quote is exact (188 chars, across the line break). Grep shows other LATERAL hits are only syntax lines, examples or link lists, with no restatement of the column-reference rule."
+  },
+  {
+   "item_id": "q23",
+   "section_id": "s029",
+   "question": "Which environment variable do I set so a Hadoop-free Spark distribution can find Hadoop's jars?",
+   "answer": "SPARK_DIST_CLASSPATH, set to include Hadoop's package jars.",
+   "path": "docs/hadoop-provided.md",
+   "section_path": [
+    "Using Spark's \"Hadoop Free\" Build"
+   ],
+   "quote": "To use these builds, you need to modify `SPARK_DIST_CLASSPATH` to include Hadoop's package jars.",
+   "kind": "how-to",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "The quote is exact, with no 4-word overlap. Grep confirms the variable is only in hadoop-provided.md (index.md and building-spark.md do not name it). Its later export examples and Kubernetes section are same-doc hard negatives."
+  },
+  {
+   "item_id": "q24",
+   "section_id": "s030",
+   "question": "Which PMML model type and normalization method does Spark emit when exporting a spark.mllib SVMModel?",
+   "answer": "RegressionModel with functionName=\"classification\" and normalizationMethod=\"none\".",
+   "path": "docs/mllib-pmml-model-export.md",
+   "section_path": [
+    "PMML model export - RDD-based API",
+    "spark.mllib supported models"
+   ],
+   "quote": "SVMModel | RegressionModel (functionName=\"classification\" normalizationMethod=\"none\")",
+   "kind": "fact",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "The quote is an exact single table row. Grep confirms normalizationMethod appears only in mllib-pmml-model-export.md, and the other PMML hits (migration guide, mllib-guide link) state different facts."
+  },
+  {
+   "item_id": "q25",
+   "section_id": "s031",
+   "question": "How does the RDD-based spark.mllib decision tree implementation distribute training data across a cluster?",
+   "answer": "It partitions the data by rows, enabling distributed training with millions of instances.",
+   "path": "docs/mllib-decision-tree.md",
+   "section_path": [
+    "Decision Trees - RDD-based API"
+   ],
+   "quote": "The implementation partitions data by rows,\nallowing distributed training with millions of instances.",
+   "kind": "fact",
+   "also_in": [
+    "docs/ml-classification-regression.md"
+   ],
+   "verdict": "keep",
+   "review_note": "Quote checked as an exact substring (1 hit), no 4-word overlap. Grep shows only ml-classification-regression.md repeats it, and its wording ('or even billions') differs, so also_in is needed. No unique fact exists in the section."
+  },
+  {
+   "item_id": "q26",
+   "section_id": "s032",
+   "question": "Which table property keys does SHOW TBLPROPERTIES leave out of its output because of their name prefix?",
+   "answer": "Keys starting with the spark.sql prefix are excluded.",
+   "path": "docs/sql-ref-syntax-aux-show-tblproperties.md",
+   "section_path": [
+    "SHOW TBLPROPERTIES",
+    "Parameters"
+   ],
+   "quote": "Property value returned by this statement excludes some properties\n  that are internal to spark and hive. The excluded properties are :\n  - All the properties that start with prefix `spark.sql`",
+   "kind": "behavior",
+   "also_in": [],
+   "verdict": "fixed",
+   "review_note": "The drafted quote did not say these properties are excluded, so it did not hold the answer. Switched to the spark.sql-prefix exclusion, which is unique and verified as a substring (193 chars, no 4-word overlap)."
+  },
+  {
+   "item_id": "q27",
+   "section_id": "s033",
+   "question": "Which Avro function should I use to pack several DataFrame columns into one binary value before writing to Kafka?",
+   "answer": "to_avro(), which turns structs into Avro records, re-encoding multiple columns into one.",
+   "path": "docs/sql-data-sources-avro.md",
+   "section_path": [
+    "Apache Avro Data Source Guide",
+    "to_avro() and from_avro()"
+   ],
+   "quote": "`to_avro()` can be used to turn structs into Avro records. This method is particularly useful when you would like to re-encode multiple columns into a single one when writing data out to Kafka.",
+   "kind": "how-to",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Exact substring, no 4-word overlap. Grep confirms the only parallel is the to_protobuf sentence, and 'Avro' in the question rules it out. Small weakness: the title lists to_avro, so the encode direction is guessable."
+  },
+  {
+   "item_id": "q28",
+   "section_id": "s035",
+   "question": "How do I make Spark pick up a rebuilt JAR for an existing Hive UDF when re-running CREATE FUNCTION?",
+   "answer": "Use CREATE OR REPLACE FUNCTION; OR REPLACE reloads the function's resources.",
+   "path": "docs/sql-ref-syntax-ddl-create-function.md",
+   "section_path": [
+    "CREATE FUNCTION (External)",
+    "Parameters"
+   ],
+   "quote": "* **OR REPLACE**\n\n    If specified, the resources for the function are reloaded. This is mainly useful\n    to pick up any changes made to the implementation of the function.",
+   "kind": "how-to",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Exact substring, no 4-word overlap ('pick up' is only 2 words). The OR REPLACE text in create-sql-function.md is a different fact (replaces the body or signature), so the answer is unique."
+  },
+  {
+   "item_id": "q29",
+   "section_id": "s036",
+   "question": "For which kind of view does Spark reject changing the schema binding via ALTER VIEW?",
+   "answer": "TEMPORARY views; ALTER VIEW ... WITH SCHEMA is not supported for them.",
+   "path": "docs/sql-ref-syntax-ddl-alter-view.md",
+   "section_path": [
+    "ALTER VIEW",
+    "Description",
+    "ALTER View WITH SCHEMA"
+   ],
+   "quote": "This statement is not supported for `TEMPORARY` views.",
+   "kind": "fact",
+   "also_in": [
+    "docs/sql-ref-syntax-ddl-create-view.md"
+   ],
+   "verdict": "keep",
+   "review_note": "Exact substring, and the sentence occurs only once in alter-view.md. Grep confirms the only near-duplicate is the WITH SCHEMA clause in create-view.md, which is correctly listed in also_in."
+  },
+  {
+   "item_id": "q30",
+   "section_id": "s037",
+   "question": "Which config lets Spark 3.2 or later load Parquet data whose timestamps are stored at nanosecond precision?",
+   "answer": "Set spark.sql.legacy.parquet.nanosAsLong to true, restoring the pre-3.2 behavior.",
+   "path": "docs/sql-migration-guide.md",
+   "section_path": [
+    "Migration Guide: SQL, Datasets and DataFrame",
+    "Upgrading from Spark SQL 3.1 to 3.2"
+   ],
+   "quote": "Since Spark 3.2, Parquet files with nanosecond precision for timestamp type (`INT64 (TIMESTAMP(NANOS, true))`) are not readable. To restore the behavior before Spark 3.2, you can set `spark.sql.legacy.parquet.nanosAsLong` to `true`.",
+   "kind": "config",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Exact substring (232 chars, within the limit). Grep finds nanosAsLong and TIMESTAMP(NANOS only in sql-migration-guide.md. One answer, no 4-word overlap."
+  },
+  {
+   "item_id": "q31",
+   "section_id": "s038",
+   "question": "What kinds of expressions is a HAVING clause condition allowed to reference in Spark SQL?",
+   "answer": "Only constants, expressions that appear in GROUP BY, and aggregate functions.",
+   "path": "docs/sql-ref-syntax-qry-select-having.md",
+   "section_path": [
+    "HAVING Clause",
+    "Parameters"
+   ],
+   "quote": "The expressions specified in the `HAVING` clause can only refer to:\n    1. Constants\n    2. Expressions that appear in GROUP BY\n    3. Aggregate functions",
+   "kind": "syntax",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Exact substring, no 4-word overlap. Grep confirms the HAVING entry in select.md and the lateral-subquery line do not state this rule, so it is unique."
+  },
+  {
+   "item_id": "q32",
+   "section_id": "s039",
+   "question": "What is the default delay between retries when a Spark Streaming Kinesis fetch fails?",
+   "answer": "100ms, set by spark.streaming.kinesis.retry.waitTime.",
+   "path": "docs/streaming-kinesis-integration.md",
+   "section_path": [
+    "Spark Streaming + Kinesis Integration",
+    "Kinesis retry configuration"
+   ],
+   "quote": "This configuration can be tweaked to increase the sleep between fetches when a fetch fails to reduce these exceptions. Default is \"100ms\".",
+   "kind": "config",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Exact substring, no 4-word overlap, and the core answer (100ms) is in the quote. The key is outside the quote but correct, from the same bullet. Grep finds kinesis.retry only in this doc."
+  },
+  {
+   "item_id": "q33",
+   "section_id": "s040",
+   "question": "What reset probability does GraphX's Graph.pageRank use when I don't pass one explicitly?",
+   "answer": "0.15, the default value of the resetProb parameter.",
+   "path": "docs/graphx-programming-guide.md",
+   "section_path": [
+    "GraphX Programming Guide",
+    "Graph Operators",
+    "Summary List of Operators"
+   ],
+   "quote": "def pageRank(tol: Double, resetProb: Double = 0.15): Graph[Double, Double]",
+   "kind": "fact",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Exact substring. Grep finds resetProb and 0.15 once in the whole corpus, and 'reset probability' paraphrases the identifier. It is a code-line quote, but it holds the answer."
+  },
+  {
+   "item_id": "q34",
+   "section_id": "s041",
+   "question": "If I pass a database separately to SHOW COLUMNS, how should the table name be written?",
+   "answer": "The table name must not be qualified with a different database name.",
+   "path": "docs/sql-ref-syntax-aux-show-columns.md",
+   "section_path": [
+    "SHOW COLUMNS",
+    "Parameters"
+   ],
+   "quote": "When this parameter is specified then table\n    name should not be qualified with a different database name.",
+   "kind": "syntax",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Exact substring, no 4-word overlap. Grep finds 'qualified with a different database name' only in show-columns.md. One answer, not yes/no."
+  },
+  {
+   "item_id": "q35",
+   "section_id": "s042",
+   "question": "Into which two broad categories does Spark SQL divide expressions based on how they handle NULL inputs?",
+   "answer": "Null intolerant expressions, and expressions that can process NULL value operands.",
+   "path": "docs/sql-ref-null-semantics.md",
+   "section_path": [
+    "NULL Semantics",
+    "Expressions"
+   ],
+   "quote": "The expressions\nin Spark can be broadly classified as :\n- Null intolerant expressions\n- Expressions that can process `NULL` value operands",
+   "kind": "fact",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Exact substring, no 4-word overlap. Grep confirms 'Null intolerant' and 'broadly classified' appear only in null-semantics.md. Its later headings are in the same doc, which is allowed."
+  },
+  {
+   "item_id": "q36",
+   "section_id": "s043",
+   "question": "What happens when I run REFRESH FUNCTION on a temporary or built-in function?",
+   "answer": "It throws an exception; REFRESH FUNCTION only works for permanent functions.",
+   "path": "docs/sql-ref-syntax-aux-cache-refresh-function.md",
+   "section_path": [
+    "REFRESH FUNCTION",
+    "Description"
+   ],
+   "quote": "Note that `REFRESH FUNCTION` only works for permanent functions. Refreshing native functions or temporary functions will cause an exception.",
+   "kind": "behavior",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Exact substring, no 4-word overlap. Grep confirms the other docs that name REFRESH FUNCTION only list it under related statements, so the rule is unique."
+  },
+  {
+   "item_id": "q37",
+   "section_id": "s045",
+   "question": "What is the difference between running LOAD DATA with OVERWRITE and running it without?",
+   "answer": "Without OVERWRITE new data is appended; with OVERWRITE the table's data is replaced.",
+   "path": "docs/sql-ref-syntax-dml-load.md",
+   "section_path": [
+    "LOAD DATA",
+    "Parameters"
+   ],
+   "quote": "By default, new data is appended to the table. If `OVERWRITE` is used, the table is instead overwritten with new data.",
+   "kind": "comparison",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Exact substring, no 4-word overlap. Grep finds 'appended to the table' and 'overwritten with new data' only in dml-load.md. A single comparison answer, not yes/no."
+  },
+  {
+   "item_id": "q38",
+   "section_id": "s046",
+   "question": "In Spark SQL, what is a bare `FROM <tableName>` query with no SELECT equivalent to?",
+   "answer": "It behaves the same as `TABLE <tableName>`.",
+   "path": "docs/sql-pipe-syntax.md",
+   "section_path": [
+    "SQL Pipe Syntax",
+    "Syntax",
+    "Overview"
+   ],
+   "quote": "`FROM <tableName>` is now a supported standalone query which behaves the same as\n`TABLE <tableName>`.",
+   "kind": "syntax",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "The quote is an exact substring and no 4-word run leaks. The FROM = TABLE equivalence is stated only in sql-pipe-syntax.md. sql-migration-guide.md line 373 says standalone `FROM <table>` became invalid in 3.0, which makes it a confusing hard negative but not the same fact."
+  },
+  {
+   "item_id": "q39",
+   "section_id": "s047",
+   "question": "What additional details does DESCRIBE DATABASE EXTENDED show compared to plain DESCRIBE DATABASE?",
+   "answer": "The database properties, in addition to the basic name, comment and location metadata.",
+   "path": "docs/sql-ref-syntax-aux-describe-database.md",
+   "section_path": [
+    "DESCRIBE DATABASE",
+    "Description"
+   ],
+   "quote": "If the optional `EXTENDED` option is specified, it\nreturns the basic metadata information along with the database properties.",
+   "kind": "comparison",
+   "also_in": [
+    "docs/sql-ref-syntax-ddl-create-database.md",
+    "docs/sql-ref-syntax-ddl-alter-database.md"
+   ],
+   "verdict": "keep",
+   "review_note": "The quote is exact and the answer is correct. The other fact here (DATABASE/SCHEMA interchangeable) repeats in show-databases and alter-database, so EXTENDED is the best fact. The create/alter examples do show the Properties row under EXTENDED, so listing them in also_in is defensible."
+  },
+  {
+   "item_id": "q40",
+   "section_id": "s048",
+   "question": "After installing PySpark through pip, which command launches the interactive Python shell?",
+   "answer": "Run `pyspark` (instead of ./bin/pyspark from the Spark directory).",
+   "path": "docs/quick-start.md",
+   "section_path": [
+    "Quick Start",
+    "Interactive Analysis with the Spark Shell",
+    "Basics"
+   ],
+   "quote": "Or if PySpark is installed with pip in your current environment:\n\n    pyspark",
+   "kind": "how-to",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Exact substring with no leakage. The grep confirms the bare pip `pyspark` command appears only here. The quick-start line 232 (run apps with plain python) and rdd-programming-guide `bin/pyspark` are only hard negatives."
+  },
+  {
+   "item_id": "q41",
+   "section_id": "s049",
+   "question": "How can I apply a type-safe Aggregator, written for typed Datasets, to untyped DataFrames?",
+   "answer": "Register the typed aggregation as an untyped aggregating UDF for use with DataFrames.",
+   "path": "docs/sql-ref-functions-udf-aggregate.md",
+   "section_path": [
+    "User Defined Aggregate Functions (UDAFs)",
+    "Examples",
+    "Untyped User-Defined Aggregate Functions"
+   ],
+   "quote": "Typed aggregations, as described above, may also be registered as untyped aggregating UDFs for use with DataFrames.",
+   "kind": "how-to",
+   "also_in": [],
+   "verdict": "fixed",
+   "review_note": "The drafted fact (registering a class from a JAR) is documented canonically in create-function.md. Switched to the section's unique prose fact; the new quote is verified exact and no 4-word run leaks."
+  },
+  {
+   "item_id": "q42",
+   "section_id": "s050",
+   "question": "What happens if I pass the transitive parameter more than once in an ADD JAR Ivy URI?",
+   "answer": "The last transitive parameter specified wins.",
+   "path": "docs/sql-ref-syntax-aux-resource-mgmt-add-jar.md",
+   "section_path": [
+    "ADD JAR",
+    "Parameters"
+   ],
+   "quote": "If multiple transitive parameters are specified, the last one wins.",
+   "kind": "behavior",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Exact substring with no leakage. The grep for 'transitive' and 'last one wins' finds this rule only in the add-jar doc; submitting-applications only says --packages resolves transitive deps."
+  },
+  {
+   "item_id": "q43",
+   "section_id": "s052",
+   "question": "With SET TIME ZONE LOCAL, where does Spark get the session time zone from?",
+   "answer": "From Java's user.timezone property, otherwise the TZ environment variable, otherwise the system time zone.",
+   "path": "docs/sql-ref-syntax-aux-conf-mgmt-set-timezone.md",
+   "section_path": [
+    "SET TIME ZONE",
+    "Parameters"
+   ],
+   "quote": "Set the time zone to the one specified in the java `user.timezone` property, or to the environment variable `TZ` if `user.timezone` is undefined, or to the system time zone if both of them are undefined.",
+   "kind": "config",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Exact substring with no leakage, and the answer matches the fallback order. user.timezone and TZ appear only in this doc."
+  },
+  {
+   "item_id": "q44",
+   "section_id": "s053",
+   "question": "What does CREATE DATABASE do if the LOCATION directory I specify isn't present on the filesystem yet?",
+   "answer": "It creates a directory at that path.",
+   "path": "docs/sql-ref-syntax-ddl-create-database.md",
+   "section_path": [
+    "CREATE DATABASE",
+    "Parameters"
+   ],
+   "quote": "If the specified path does not exist in the underlying file system, this command creates a directory with the path.",
+   "kind": "behavior",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Exact substring with no leakage. The grep for directory creation and 'underlying file system' finds no other doc stating this CREATE DATABASE behavior."
+  },
+  {
+   "item_id": "q45",
+   "section_id": "s054",
+   "question": "Which Spark ML classification model was left out when predictProbability became public in 3.0?",
+   "answer": "LinearSVCModel.",
+   "path": "docs/ml-guide.md",
+   "section_path": [
+    "Machine Learning Library (MLlib) Guide",
+    "Highlights in 3.0"
+   ],
+   "quote": "`predictProbability` is made public in all the Classification models except `LinearSVCModel`",
+   "kind": "fact",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Exact substring with no leakage. predictProbability and SPARK-30358 appear only in ml-guide.md; the other LinearSVCModel mention (ml-migration-guide setWeightCol) is unrelated."
+  },
+  {
+   "item_id": "q46",
+   "section_id": "s055",
+   "question": "When truncating an SVD in MLlib to k singular values, what dimensions do U, Sigma and V have?",
+   "answer": "U is m x k, Sigma is k x k, and V is n x k.",
+   "path": "docs/mllib-dimensionality-reduction.md",
+   "section_path": [
+    "Dimensionality Reduction - RDD-based API",
+    "Singular value decomposition (SVD)"
+   ],
+   "quote": "If we keep the top $k$ singular values, then the dimensions of the resulting low-rank matrix will be:\n\n* `$U$`: `$m \\times k$`,\n* `$\\Sigma$`: `$k \\times k$`,\n* `$V$`: `$n \\times k$`.",
+   "kind": "fact",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Verified exact, backslashes included, with no leakage. The SVD dimension fact appears only in mllib-dimensionality-reduction.md; mllib-data-types and mllib-guide only link to it."
+  },
+  {
+   "item_id": "q47",
+   "section_id": "s056",
+   "question": "Since which Spark release does RDD-based ALS weight lambda by how many ratings each user or product has?",
+   "answer": "Since v1.1 (the ALS-WR approach).",
+   "path": "docs/mllib-collaborative-filtering.md",
+   "section_path": [
+    "Collaborative Filtering - RDD-based API",
+    "Collaborative filtering",
+    "Scaling of the regularization parameter"
+   ],
+   "quote": "Since v1.1, we scale the regularization parameter `lambda` in solving each least squares problem by\nthe number of ratings the user generated in updating user factors,",
+   "kind": "fact",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Exact substring with no leakage. Confirmed that ml-collaborative-filtering.md has the same scaling text without 'v1.1', so the version answer is unique, with that chunk as a hard negative."
+  },
+  {
+   "item_id": "q48",
+   "section_id": "s057",
+   "question": "In the RDD-based MLlib API, which interface does a fitted StandardScaler model implement to standardize vectors?",
+   "answer": "`VectorTransformer`, so it can transform a single Vector or an RDD[Vector].",
+   "path": "docs/mllib-feature-extraction.md",
+   "section_path": [
+    "Feature Extraction and Transformation - RDD-based API",
+    "StandardScaler",
+    "Model Fitting"
+   ],
+   "quote": "This model implements `VectorTransformer`\nwhich can apply the standardization on a `Vector` to produce a transformed `Vector` or on\nan `RDD[Vector]` to produce a transformed `RDD[Vector]`.",
+   "kind": "fact",
+   "also_in": [],
+   "verdict": "fixed",
+   "review_note": "The draft note was wrong: ml-features.md states the same zero-std -> 0.0 behavior. Switched to the section's unique VectorTransformer fact; the new quote is verified exact and no 4-word run leaks."
+  },
+  {
+   "item_id": "q49",
+   "section_id": "s058",
+   "question": "Which cluster managers does Spark currently support for running applications on a cluster?",
+   "answer": "Standalone (bundled with Spark), Hadoop YARN, and Kubernetes.",
+   "path": "docs/cluster-overview.md",
+   "section_path": [
+    "Cluster Mode Overview",
+    "Cluster Manager Types"
+   ],
+   "quote": "The system currently supports several cluster managers:\n\n* Standalone -- a simple cluster manager included with Spark that makes it\n  easy to set up a cluster.\n* Hadoop YARN -- the resource manager in Hadoop 3.\n* Kubernetes",
+   "kind": "fact",
+   "also_in": [
+    "docs/index.md",
+    "docs/submitting-applications.md"
+   ],
+   "verdict": "fixed",
+   "review_note": "Exact substring with no leakage. Added docs/submitting-applications.md to also_in because its master-URL table names the same three managers. This is a widely repeated, low-difficulty fact."
+  },
+  {
+   "item_id": "q50",
+   "section_id": "s059",
+   "question": "If a Structured Streaming query has no aggregations, what does Update output mode behave like?",
+   "answer": "It is equivalent to Append mode.",
+   "path": "docs/streaming/getting-started.md",
+   "section_path": [
+    "Structured Streaming Programming Guide",
+    "Programming Model",
+    "Basic Concepts"
+   ],
+   "quote": "If the query doesn't contain aggregations, it will be equivalent to Append mode.",
+   "kind": "behavior",
+   "also_in": [],
+   "verdict": "keep",
+   "review_note": "Exact substring with no leakage. The Output Modes section and matrix in streaming/apis-on-dataframes-and-datasets.md never state the Update = Append equivalence, so the fact is unique, with that section as a hard negative."
+  }
+ ]
+}
