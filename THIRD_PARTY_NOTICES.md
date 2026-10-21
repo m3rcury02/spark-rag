@@ -14,7 +14,8 @@ https://www.apache.org/licenses/LICENSE-2.0.txt on 2026-10-15).
 ## Apache Spark documentation excerpts
 
 - Files: test fixtures under `tests/` that quote short passages of `docs/*.md` from apache/spark, some of
-  them shortened or edited to isolate one case.
+  them shortened or edited to isolate one case; the retrieval eval under `eval/` (section texts of v4.0.1 and
+  verbatim quotes); and the three canary texts in `src/docs_rag/data/embedding_canary.json`.
 - License: Apache License 2.0. Attribution from Apache Spark's NOTICE file:
 
   > Apache Spark

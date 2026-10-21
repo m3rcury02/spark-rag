@@ -1262,7 +1262,7 @@ the questions only a found in the top 5 against those only b found.
 | 2 | bge vs MiniLM at 128/16 | +0.02 [−0.08, +0.12] | 4 vs 3 | **+0.108 [+0.034, +0.185]** |
 | 3 | bge with vs without the instruction, 254/32 | 0.00 [−0.06, +0.06] | 1 vs 1 | **+0.049 [+0.013, +0.094]** |
 | 3 | the same, 128/16 | +0.04 [0.00, +0.10] | 2 vs 0 | **+0.043 [+0.001, +0.089]** |
-| 4 | gold's vectors vs local, production config | 0 (identical ranks) | 0 vs 0 | 0 |
+| 4 | gold's vectors vs local, production config | 0 (the same hits at every rank up to 10) | 0 vs 0 | 0 |
 | 5 | live index vs exact search, gold's vectors | 0.00 [0.00, 0.00] | 0 vs 0 | +0.003 [0.000, +0.010] |
 
 - **Decision, by the rule fixed in advance:** no recall@5 interval excludes zero. The instruction at 128/16
@@ -1272,8 +1272,11 @@ the questions only a found in the top 5 against those only b found.
   exclude zero. When both models find the answer, bge tends to rank it higher. By the rule, MRR breaks no tie.
 - **Cost of switching to bge:** a new gold table and chain (D-014), at about half MiniLM's embedding speed
   (33.8 against 64.7 chunks/s here at 254/32). A larger set that can resolve recall should come first.
-- **The serving path loses nothing measurable.** Gold's vectors rank exactly like the local ones; their lowest
-  cosine is 0.99997. The live index returned 99.8% of exact search's top 10 per question, with identical top-10
+- **The serving path loses nothing measurable.** Gold's vectors give the same recall@5 and MRR@10 as the local
+  ones on every question; their lowest cosine is 0.99997. *Corrected in the M8 review:* this paragraph first
+  said they rank exactly alike. The first relevant chunk's rank differs for 5 of the 50 questions, every time
+  beyond rank 10 (for example q23: 13 locally, 15 with gold's vectors; `per_item` in `m6_i`), which no metric
+  here counts. The live index returned 99.8% of exact search's top 10 per question, with identical top-10
   lists for 48 of the 50, the same recall@5, and an MRR@10 0.003 higher (one item ranked differently). So the
   numbers for the production config hold for the deployed index, not only for an offline copy.
 - **Descriptive:**
@@ -1295,9 +1298,11 @@ the questions only a found in the top 5 against those only b found.
   short window billed less than that rate. Why is not known.
 
 **Consequences.**
-- Production is unchanged (D-014). Switching models stays open until a larger set can resolve recall. By the
-  normal approximation of the plan, a ±5-point interval needs about four times the items, roughly 200; that
-  is an inference, not a measurement.
+- Production is unchanged (D-014). Switching models stays open until a larger set can resolve recall. Halving
+  the paired intervals (about ±10 points for the model comparisons) needs about four times the items, roughly
+  200, since they shrink with 1/√n; for one config's recall near 0.7 the plan's normal approximation gives
+  about 320 items for ±5 points. Both are inferences, not measurements (the M8 review corrected the first
+  wording, which credited 200 to the normal approximation).
 - The SQL reference is where retrieval fails most. A follow-up would be a page-level signal (the breadcrumb
   is already in each embed text) or hybrid lexical search; neither is tested.
 - Section-aware against whole-page chunking is still unmeasured (D-009).
@@ -1336,12 +1341,13 @@ to v4.2.0 (D-016), so comparison 4 (gold's vectors against local) refuses set v1
 | 2 | bge vs MiniLM at 128/16 | +0.02 [−0.10, +0.14] | 5 vs 4 | **+0.099 [+0.027, +0.174]** |
 | 3 | bge with vs without the instruction, 254/32 | 0.00 [−0.06, +0.06] | 1 vs 1 | **+0.041 [+0.009, +0.082]** |
 | 3 | the same, 128/16 | +0.04 [0.00, +0.10] | 2 vs 0 | **+0.045 [+0.003, +0.092]** |
-| 4 | gold's vectors vs local, production config | 0 (identical ranks) | 0 vs 0 | 0 |
+| 4 | gold's vectors vs local, production config | 0 (the same hits at every rank up to 10) | 0 vs 0 | 0 |
 
 - **By v1's rule, the same decision:** no recall@5 interval excludes zero, so production stays MiniLM at
   254/32.
 - **Comparison 4 holds at the head:** gold's 6,051 vectors (an initial load of v3.5.0, then three incremental runs,
-  D-014, D-016) rank exactly like a fresh local embedding; their lowest cosine is 0.99997.
+  D-014, D-016) give the same recall@5 and MRR@10 as a fresh local embedding on every question; their lowest
+  cosine is 0.99997. Ranks differ beyond rank 10 for 6 questions (v1's 5 and q06).
 - **What moved between releases:** with the same items and code, production's recall@5 went from 0.68 to 0.66.
   That is one item (q37, rank 5 → 6), and 38 of the 50 items kept their exact rank. bge's MRR lead at 254/32 no
   longer clears the bar (+0.080, interval from −0.001), while at 128/16 it still does. So the v1 MRR finding
