@@ -1,0 +1,5414 @@
+{
+  "label": "m7_v1_gate_vs_git",
+  "git_commit": "56f5282127cf2e0cf6709a325d91b11580d8677d",
+  "sink": "gold_chunk_embeddings",
+  "policy": {
+    "tiny_body_tokens": 5,
+    "empty_chunks": 0.0,
+    "tiny_chunks": 0.02,
+    "oversized_chunks": 0.0,
+    "duplicate_chunk_ids": 0.0,
+    "duplicate_embed_text": 0.01,
+    "missing_metadata": 0.0,
+    "drift": 0.1,
+    "drift_patch": 0.05,
+    "drift_feature": 0.1,
+    "max_override_loss": 0.5,
+    "model_input_tokens": 254
+  },
+  "dq_rows": 92,
+  "pre_gate_runs_exempted": [],
+  "log_rows": 8,
+  "checks": [
+    {
+      "scope": "workspace.docs_rag_dev.ops_run_log",
+      "check": "delta.appendOnly",
+      "expected": "true",
+      "logged": "true",
+      "pass": true
+    },
+    {
+      "scope": "workspace.docs_rag_dev.ops_dq_results",
+      "check": "delta.appendOnly",
+      "expected": "true",
+      "logged": "true",
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "its gate version is known from its commit",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "DQ rows come from one attempt, the job's",
+      "expected": [
+        "bdf676a0f32b4a22903a373831c2b2fb"
+      ],
+      "logged": [
+        "bdf676a0f32b4a22903a373831c2b2fb"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "one DQ row per check",
+      "expected": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "logged": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "DQ rows share one config, tags and baseline",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "DQ config = the config the job's code published = the job's",
+      "expected": [
+        "e70bf55c7cf1b856",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        "e70bf55c7cf1b856",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "DQ rows name the job's tag",
+      "expected": "v3.5.0",
+      "logged": "v3.5.0",
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "one run log row",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "DQ rows and run log row agree on config, tags and baseline",
+      "expected": [
+        "e70bf55c7cf1b856",
+        null,
+        "v3.5.0",
+        null
+      ],
+      "logged": [
+        "e70bf55c7cf1b856",
+        null,
+        "v3.5.0",
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "empty_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "empty_chunks denominator",
+      "expected": 5567,
+      "logged": 5567,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "empty_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "empty_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "empty_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "empty_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "tiny_chunks numerator",
+      "expected": 25,
+      "logged": 25,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "tiny_chunks denominator",
+      "expected": 5567,
+      "logged": 5567,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "tiny_chunks threshold = POLICY",
+      "expected": 0.02,
+      "logged": 0.02,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "tiny_chunks observed",
+      "expected": 0.004490749056942698,
+      "logged": 0.004490749056942698,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "tiny_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "tiny_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "oversized_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "oversized_chunks denominator",
+      "expected": 5567,
+      "logged": 5567,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "oversized_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "oversized_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "oversized_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "oversized_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "duplicate_chunk_ids numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "duplicate_chunk_ids denominator",
+      "expected": 5567,
+      "logged": 5567,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "duplicate_chunk_ids threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "duplicate_chunk_ids observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "duplicate_chunk_ids status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "duplicate_chunk_ids override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "duplicate_embed_text numerator",
+      "expected": 14,
+      "logged": 14,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "duplicate_embed_text denominator",
+      "expected": 5567,
+      "logged": 5567,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "duplicate_embed_text threshold = POLICY",
+      "expected": 0.01,
+      "logged": 0.01,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "duplicate_embed_text observed",
+      "expected": 0.002514819471887911,
+      "logged": 0.002514819471887911,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "duplicate_embed_text status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "duplicate_embed_text override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "missing_metadata numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "missing_metadata denominator",
+      "expected": 5567,
+      "logged": 5567,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "missing_metadata threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "missing_metadata observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "missing_metadata status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "missing_metadata override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "drift_docs numerator",
+      "expected": 244,
+      "logged": 244,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "drift_docs denominator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "drift_docs threshold = POLICY",
+      "expected": 0.05,
+      "logged": 0.05,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "drift_docs observed",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "drift_docs status",
+      "expected": "not_applicable",
+      "logged": "not_applicable",
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "drift_docs override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "drift_chunks numerator",
+      "expected": 5567,
+      "logged": 5567,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "drift_chunks denominator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "drift_chunks threshold = POLICY",
+      "expected": 0.05,
+      "logged": 0.05,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "drift_chunks observed",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "drift_chunks status",
+      "expected": "not_applicable",
+      "logged": "not_applicable",
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "drift_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "drift_tokens numerator",
+      "expected": 666786,
+      "logged": 666786,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "drift_tokens denominator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "drift_tokens threshold = POLICY",
+      "expected": 0.05,
+      "logged": 0.05,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "drift_tokens observed",
+      "expected": null,
+      "logged": null,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "drift_tokens status",
+      "expected": "not_applicable",
+      "logged": "not_applicable",
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "drift_tokens override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "vector rows exactly when it embedded (or the failed canary alone)",
+      "expected": [
+        "embedding_canary",
+        "vector_dimension",
+        "vector_finite",
+        "vector_ids",
+        "vector_norm"
+      ],
+      "logged": [
+        "embedding_canary",
+        "vector_dimension",
+        "vector_finite",
+        "vector_ids",
+        "vector_norm"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "vector_ids counts, status and threshold",
+      "expected": [
+        0,
+        5567,
+        "pass",
+        0.0,
+        "v3.5.0",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        0,
+        5567,
+        "pass",
+        0.0,
+        "v3.5.0",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "vector_dimension counts, status and threshold",
+      "expected": [
+        0,
+        5567,
+        "pass",
+        0.0,
+        "v3.5.0",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        0,
+        5567,
+        "pass",
+        0.0,
+        "v3.5.0",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "vector_finite counts, status and threshold",
+      "expected": [
+        0,
+        5567,
+        "pass",
+        0.0,
+        "v3.5.0",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        0,
+        5567,
+        "pass",
+        0.0,
+        "v3.5.0",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "vector_norm counts, status and threshold",
+      "expected": [
+        0,
+        5567,
+        "pass",
+        0.0,
+        "v3.5.0",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        0,
+        5567,
+        "pass",
+        0.0,
+        "v3.5.0",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "embedding_canary counts, status and threshold",
+      "expected": [
+        0,
+        3,
+        "pass",
+        0.0,
+        "v3.5.0",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        0,
+        3,
+        "pass",
+        0.0,
+        "v3.5.0",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "job outcome follows the checks",
+      "expected": "succeeded",
+      "logged": "succeeded",
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "run outcome follows the checks",
+      "expected": "committed",
+      "logged": "committed",
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "dq_override (and dq_override_of) iff the run committed with an override",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "all DQ rows written in one insert",
+      "expected": 9,
+      "logged": 9,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "run log row written once",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "DQ rows written before the run log row",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "vector rows written in one insert",
+      "expected": 5,
+      "logged": 5,
+      "pass": true
+    },
+    {
+      "scope": "job m5_c_detect_v3.5.0_initial.json",
+      "check": "vector rows written after the chunk checks, before the run log row (if any)",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "its gate version is known from its commit",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "DQ rows come from one attempt, the job's",
+      "expected": [
+        "87cda075399348838963b6750eb5117e"
+      ],
+      "logged": [
+        "87cda075399348838963b6750eb5117e"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "one DQ row per check",
+      "expected": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "logged": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "DQ rows share one config, tags and baseline",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "DQ config = the config the job's code published = the job's",
+      "expected": [
+        "e70bf55c7cf1b856",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        "e70bf55c7cf1b856",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "DQ rows name the job's tag",
+      "expected": "v4.0.0",
+      "logged": "v4.0.0",
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "one run log row",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "DQ rows and run log row agree on config, tags and baseline",
+      "expected": [
+        "e70bf55c7cf1b856",
+        "v3.5.0",
+        "v4.0.0",
+        "c2d86236-8f54-486a-b509-9ab0d6046565"
+      ],
+      "logged": [
+        "e70bf55c7cf1b856",
+        "v3.5.0",
+        "v4.0.0",
+        "c2d86236-8f54-486a-b509-9ab0d6046565"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "the baseline is a committed run of the from tag",
+      "expected": "v3.5.0",
+      "logged": "v3.5.0",
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "empty_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "empty_chunks denominator",
+      "expected": 5423,
+      "logged": 5423,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "empty_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "empty_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "empty_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "empty_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "tiny_chunks numerator",
+      "expected": 20,
+      "logged": 20,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "tiny_chunks denominator",
+      "expected": 5423,
+      "logged": 5423,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "tiny_chunks threshold = POLICY",
+      "expected": 0.02,
+      "logged": 0.02,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "tiny_chunks observed",
+      "expected": 0.0036879955744053105,
+      "logged": 0.0036879955744053105,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "tiny_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "tiny_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "oversized_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "oversized_chunks denominator",
+      "expected": 5423,
+      "logged": 5423,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "oversized_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "oversized_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "oversized_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "oversized_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "duplicate_chunk_ids numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "duplicate_chunk_ids denominator",
+      "expected": 5423,
+      "logged": 5423,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "duplicate_chunk_ids threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "duplicate_chunk_ids observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "duplicate_chunk_ids status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "duplicate_chunk_ids override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "duplicate_embed_text numerator",
+      "expected": 5,
+      "logged": 5,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "duplicate_embed_text denominator",
+      "expected": 5423,
+      "logged": 5423,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "duplicate_embed_text threshold = POLICY",
+      "expected": 0.01,
+      "logged": 0.01,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "duplicate_embed_text observed",
+      "expected": 0.0009219988936013276,
+      "logged": 0.0009219988936013276,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "duplicate_embed_text status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "duplicate_embed_text override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "missing_metadata numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "missing_metadata denominator",
+      "expected": 5423,
+      "logged": 5423,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "missing_metadata threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "missing_metadata observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "missing_metadata status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "missing_metadata override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "drift_docs numerator",
+      "expected": 212,
+      "logged": 212,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "drift_docs denominator",
+      "expected": 244,
+      "logged": 244,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "drift_docs threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "drift_docs observed",
+      "expected": -0.1311475409836066,
+      "logged": -0.1311475409836066,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "drift_docs status",
+      "expected": "fail",
+      "logged": "fail",
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "drift_docs override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "drift_chunks numerator",
+      "expected": 5423,
+      "logged": 5423,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "drift_chunks denominator",
+      "expected": 5567,
+      "logged": 5567,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "drift_chunks threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "drift_chunks observed",
+      "expected": -0.025866714567989946,
+      "logged": -0.025866714567989946,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "drift_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "drift_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "drift_tokens numerator",
+      "expected": 689619,
+      "logged": 689619,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "drift_tokens denominator",
+      "expected": 666786,
+      "logged": 666786,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "drift_tokens threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "drift_tokens observed",
+      "expected": 0.03424337043669179,
+      "logged": 0.03424337043669179,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "drift_tokens status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "drift_tokens override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "vector rows exactly when it embedded (or the failed canary alone)",
+      "expected": [],
+      "logged": [],
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "job outcome follows the checks",
+      "expected": "failed",
+      "logged": "failed",
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "run outcome follows the checks",
+      "expected": "failed",
+      "logged": "failed",
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "dq_override (and dq_override_of) iff the run committed with an override",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "the failed row's error is the gate's",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "the error names exactly the failing checks",
+      "expected": [
+        "drift_docs"
+      ],
+      "logged": [
+        "drift_docs"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "all DQ rows written in one insert",
+      "expected": 9,
+      "logged": 9,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "run log row written once",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m5_d_detect_v4.0.0_drift.json",
+      "check": "DQ rows written before the run log row",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "its gate version is known from its commit",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "DQ rows come from one attempt, the job's",
+      "expected": [
+        "790451f50dc64db9ae7c78d19b1194fb"
+      ],
+      "logged": [
+        "790451f50dc64db9ae7c78d19b1194fb"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "one DQ row per check",
+      "expected": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "logged": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "DQ rows share one config, tags and baseline",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "DQ config = the config the job's code published = the job's",
+      "expected": [
+        "e70bf55c7cf1b856",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        "e70bf55c7cf1b856",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "DQ rows name the job's tag",
+      "expected": "v4.0.0",
+      "logged": "v4.0.0",
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "one run log row",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "DQ rows and run log row agree on config, tags and baseline",
+      "expected": [
+        "e70bf55c7cf1b856",
+        "v3.5.0",
+        "v4.0.0",
+        "c2d86236-8f54-486a-b509-9ab0d6046565"
+      ],
+      "logged": [
+        "e70bf55c7cf1b856",
+        "v3.5.0",
+        "v4.0.0",
+        "c2d86236-8f54-486a-b509-9ab0d6046565"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "the accepted run is one failed run that failed the gate in one attempt, on drift alone, for this run's config, tags and baseline",
+      "expected": [
+        [
+          "failed"
+        ],
+        1,
+        [
+          [
+            "e70bf55c7cf1b856",
+            "v3.5.0",
+            "v4.0.0",
+            "c2d86236-8f54-486a-b509-9ab0d6046565"
+          ]
+        ],
+        true
+      ],
+      "logged": [
+        [
+          "failed"
+        ],
+        1,
+        [
+          [
+            "e70bf55c7cf1b856",
+            "v3.5.0",
+            "v4.0.0",
+            "c2d86236-8f54-486a-b509-9ab0d6046565"
+          ]
+        ],
+        true
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "the baseline is a committed run of the from tag",
+      "expected": "v3.5.0",
+      "logged": "v3.5.0",
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "empty_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "empty_chunks denominator",
+      "expected": 5423,
+      "logged": 5423,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "empty_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "empty_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "empty_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "empty_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "tiny_chunks numerator",
+      "expected": 20,
+      "logged": 20,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "tiny_chunks denominator",
+      "expected": 5423,
+      "logged": 5423,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "tiny_chunks threshold = POLICY",
+      "expected": 0.02,
+      "logged": 0.02,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "tiny_chunks observed",
+      "expected": 0.0036879955744053105,
+      "logged": 0.0036879955744053105,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "tiny_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "tiny_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "oversized_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "oversized_chunks denominator",
+      "expected": 5423,
+      "logged": 5423,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "oversized_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "oversized_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "oversized_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "oversized_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "duplicate_chunk_ids numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "duplicate_chunk_ids denominator",
+      "expected": 5423,
+      "logged": 5423,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "duplicate_chunk_ids threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "duplicate_chunk_ids observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "duplicate_chunk_ids status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "duplicate_chunk_ids override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "duplicate_embed_text numerator",
+      "expected": 5,
+      "logged": 5,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "duplicate_embed_text denominator",
+      "expected": 5423,
+      "logged": 5423,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "duplicate_embed_text threshold = POLICY",
+      "expected": 0.01,
+      "logged": 0.01,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "duplicate_embed_text observed",
+      "expected": 0.0009219988936013276,
+      "logged": 0.0009219988936013276,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "duplicate_embed_text status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "duplicate_embed_text override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "missing_metadata numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "missing_metadata denominator",
+      "expected": 5423,
+      "logged": 5423,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "missing_metadata threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "missing_metadata observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "missing_metadata status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "missing_metadata override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "drift_docs numerator",
+      "expected": 212,
+      "logged": 212,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "drift_docs denominator",
+      "expected": 244,
+      "logged": 244,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "drift_docs threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "drift_docs observed",
+      "expected": -0.1311475409836066,
+      "logged": -0.1311475409836066,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "drift_docs status",
+      "expected": "overridden",
+      "logged": "overridden",
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "drift_docs override reason and accepted run",
+      "expected": [
+        "Spark 4.0.0 deleted 51 docs and added 19 (D-002): a release change, not a data fault",
+        "6d680da5-b1d9-4b78-86f7-ee292c0ff1a4"
+      ],
+      "logged": [
+        "Spark 4.0.0 deleted 51 docs and added 19 (D-002): a release change, not a data fault",
+        "6d680da5-b1d9-4b78-86f7-ee292c0ff1a4"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "drift_chunks numerator",
+      "expected": 5423,
+      "logged": 5423,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "drift_chunks denominator",
+      "expected": 5567,
+      "logged": 5567,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "drift_chunks threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "drift_chunks observed",
+      "expected": -0.025866714567989946,
+      "logged": -0.025866714567989946,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "drift_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "drift_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "drift_tokens numerator",
+      "expected": 689619,
+      "logged": 689619,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "drift_tokens denominator",
+      "expected": 666786,
+      "logged": 666786,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "drift_tokens threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "drift_tokens observed",
+      "expected": 0.03424337043669179,
+      "logged": 0.03424337043669179,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "drift_tokens status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "drift_tokens override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "vector rows exactly when it embedded (or the failed canary alone)",
+      "expected": [
+        "embedding_canary",
+        "vector_dimension",
+        "vector_finite",
+        "vector_ids",
+        "vector_norm"
+      ],
+      "logged": [
+        "embedding_canary",
+        "vector_dimension",
+        "vector_finite",
+        "vector_ids",
+        "vector_norm"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "vector_ids counts, status and threshold",
+      "expected": [
+        0,
+        1866,
+        "pass",
+        0.0,
+        "v4.0.0",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        0,
+        1866,
+        "pass",
+        0.0,
+        "v4.0.0",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "vector_dimension counts, status and threshold",
+      "expected": [
+        0,
+        1866,
+        "pass",
+        0.0,
+        "v4.0.0",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        0,
+        1866,
+        "pass",
+        0.0,
+        "v4.0.0",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "vector_finite counts, status and threshold",
+      "expected": [
+        0,
+        1866,
+        "pass",
+        0.0,
+        "v4.0.0",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        0,
+        1866,
+        "pass",
+        0.0,
+        "v4.0.0",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "vector_norm counts, status and threshold",
+      "expected": [
+        0,
+        1866,
+        "pass",
+        0.0,
+        "v4.0.0",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        0,
+        1866,
+        "pass",
+        0.0,
+        "v4.0.0",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "embedding_canary counts, status and threshold",
+      "expected": [
+        0,
+        3,
+        "pass",
+        0.0,
+        "v4.0.0",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        0,
+        3,
+        "pass",
+        0.0,
+        "v4.0.0",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "job outcome follows the checks",
+      "expected": "succeeded",
+      "logged": "succeeded",
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "run outcome follows the checks",
+      "expected": "committed",
+      "logged": "committed",
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "dq_override (and dq_override_of) iff the run committed with an override",
+      "expected": [
+        "Spark 4.0.0 deleted 51 docs and added 19 (D-002): a release change, not a data fault",
+        "6d680da5-b1d9-4b78-86f7-ee292c0ff1a4"
+      ],
+      "logged": [
+        "Spark 4.0.0 deleted 51 docs and added 19 (D-002): a release change, not a data fault",
+        "6d680da5-b1d9-4b78-86f7-ee292c0ff1a4"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "all DQ rows written in one insert",
+      "expected": 9,
+      "logged": 9,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "run log row written once",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "DQ rows written before the run log row",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "vector rows written in one insert",
+      "expected": 5,
+      "logged": 5,
+      "pass": true
+    },
+    {
+      "scope": "job m5_h_detect_v4.0.0_accepted.json",
+      "check": "vector rows written after the chunk checks, before the run log row (if any)",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "its gate version is known from its commit",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "DQ rows come from one attempt, the job's",
+      "expected": [
+        "aef2d187b29e4fae9ee4d597ccb6e7a8"
+      ],
+      "logged": [
+        "aef2d187b29e4fae9ee4d597ccb6e7a8"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "one DQ row per check",
+      "expected": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "logged": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "DQ rows share one config, tags and baseline",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "DQ config = the config the job's code published = the job's",
+      "expected": [
+        "e70bf55c7cf1b856",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        "e70bf55c7cf1b856",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "DQ rows name the job's tag",
+      "expected": "v4.0.0",
+      "logged": "v4.0.0",
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "one run log row",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "DQ rows and run log row agree on config, tags and baseline",
+      "expected": [
+        "e70bf55c7cf1b856",
+        "v4.0.0",
+        "v4.0.0",
+        "700ad316-3830-43bd-a154-21904577c3a5"
+      ],
+      "logged": [
+        "e70bf55c7cf1b856",
+        "v4.0.0",
+        "v4.0.0",
+        "700ad316-3830-43bd-a154-21904577c3a5"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "the baseline is a committed run of the from tag",
+      "expected": "v4.0.0",
+      "logged": "v4.0.0",
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "empty_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "empty_chunks denominator",
+      "expected": 5423,
+      "logged": 5423,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "empty_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "empty_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "empty_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "empty_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "tiny_chunks numerator",
+      "expected": 20,
+      "logged": 20,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "tiny_chunks denominator",
+      "expected": 5423,
+      "logged": 5423,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "tiny_chunks threshold = POLICY",
+      "expected": 0.02,
+      "logged": 0.02,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "tiny_chunks observed",
+      "expected": 0.0036879955744053105,
+      "logged": 0.0036879955744053105,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "tiny_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "tiny_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "oversized_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "oversized_chunks denominator",
+      "expected": 5423,
+      "logged": 5423,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "oversized_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "oversized_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "oversized_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "oversized_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "duplicate_chunk_ids numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "duplicate_chunk_ids denominator",
+      "expected": 5423,
+      "logged": 5423,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "duplicate_chunk_ids threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "duplicate_chunk_ids observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "duplicate_chunk_ids status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "duplicate_chunk_ids override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "duplicate_embed_text numerator",
+      "expected": 5,
+      "logged": 5,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "duplicate_embed_text denominator",
+      "expected": 5423,
+      "logged": 5423,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "duplicate_embed_text threshold = POLICY",
+      "expected": 0.01,
+      "logged": 0.01,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "duplicate_embed_text observed",
+      "expected": 0.0009219988936013276,
+      "logged": 0.0009219988936013276,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "duplicate_embed_text status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "duplicate_embed_text override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "missing_metadata numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "missing_metadata denominator",
+      "expected": 5423,
+      "logged": 5423,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "missing_metadata threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "missing_metadata observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "missing_metadata status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "missing_metadata override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "drift_docs numerator",
+      "expected": 212,
+      "logged": 212,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "drift_docs denominator",
+      "expected": 212,
+      "logged": 212,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "drift_docs threshold = POLICY",
+      "expected": 0.05,
+      "logged": 0.05,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "drift_docs observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "drift_docs status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "drift_docs override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "drift_chunks numerator",
+      "expected": 5423,
+      "logged": 5423,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "drift_chunks denominator",
+      "expected": 5423,
+      "logged": 5423,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "drift_chunks threshold = POLICY",
+      "expected": 0.05,
+      "logged": 0.05,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "drift_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "drift_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "drift_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "drift_tokens numerator",
+      "expected": 689619,
+      "logged": 689619,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "drift_tokens denominator",
+      "expected": 689619,
+      "logged": 689619,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "drift_tokens threshold = POLICY",
+      "expected": 0.05,
+      "logged": 0.05,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "drift_tokens observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "drift_tokens status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "drift_tokens override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "vector rows exactly when it embedded (or the failed canary alone)",
+      "expected": [],
+      "logged": [],
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "job outcome follows the checks",
+      "expected": "succeeded",
+      "logged": "succeeded",
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "run outcome follows the checks",
+      "expected": "committed",
+      "logged": "committed",
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "dq_override (and dq_override_of) iff the run committed with an override",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "all DQ rows written in one insert",
+      "expected": 9,
+      "logged": 9,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "run log row written once",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m5_j_detect_v4.0.0_rerun.json",
+      "check": "DQ rows written before the run log row",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "its gate version is known from its commit",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "DQ rows come from one attempt, the job's",
+      "expected": [
+        "83a9df8b0bb54815ad6c6a999cf04672"
+      ],
+      "logged": [
+        "83a9df8b0bb54815ad6c6a999cf04672"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "one DQ row per check",
+      "expected": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "logged": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "DQ rows share one config, tags and baseline",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "DQ config = the config the job's code published = the job's",
+      "expected": [
+        "e70bf55c7cf1b856",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        "e70bf55c7cf1b856",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "DQ rows name the job's tag",
+      "expected": "v4.0.1",
+      "logged": "v4.0.1",
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "one run log row",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "DQ rows and run log row agree on config, tags and baseline",
+      "expected": [
+        "e70bf55c7cf1b856",
+        "v4.0.0",
+        "v4.0.1",
+        "09cb979c-2baa-47dd-9938-c091d8e8b455"
+      ],
+      "logged": [
+        "e70bf55c7cf1b856",
+        "v4.0.0",
+        "v4.0.1",
+        "09cb979c-2baa-47dd-9938-c091d8e8b455"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "the baseline is a committed run of the from tag",
+      "expected": "v4.0.0",
+      "logged": "v4.0.0",
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "empty_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "empty_chunks denominator",
+      "expected": 5436,
+      "logged": 5436,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "empty_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "empty_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "empty_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "empty_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "tiny_chunks numerator",
+      "expected": 20,
+      "logged": 20,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "tiny_chunks denominator",
+      "expected": 5436,
+      "logged": 5436,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "tiny_chunks threshold = POLICY",
+      "expected": 0.02,
+      "logged": 0.02,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "tiny_chunks observed",
+      "expected": 0.003679175864606328,
+      "logged": 0.003679175864606328,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "tiny_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "tiny_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "oversized_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "oversized_chunks denominator",
+      "expected": 5436,
+      "logged": 5436,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "oversized_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "oversized_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "oversized_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "oversized_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "duplicate_chunk_ids numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "duplicate_chunk_ids denominator",
+      "expected": 5436,
+      "logged": 5436,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "duplicate_chunk_ids threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "duplicate_chunk_ids observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "duplicate_chunk_ids status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "duplicate_chunk_ids override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "duplicate_embed_text numerator",
+      "expected": 5,
+      "logged": 5,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "duplicate_embed_text denominator",
+      "expected": 5436,
+      "logged": 5436,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "duplicate_embed_text threshold = POLICY",
+      "expected": 0.01,
+      "logged": 0.01,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "duplicate_embed_text observed",
+      "expected": 0.000919793966151582,
+      "logged": 0.000919793966151582,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "duplicate_embed_text status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "duplicate_embed_text override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "missing_metadata numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "missing_metadata denominator",
+      "expected": 5436,
+      "logged": 5436,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "missing_metadata threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "missing_metadata observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "missing_metadata status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "missing_metadata override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "drift_docs numerator",
+      "expected": 213,
+      "logged": 213,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "drift_docs denominator",
+      "expected": 212,
+      "logged": 212,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "drift_docs threshold = POLICY",
+      "expected": 0.05,
+      "logged": 0.05,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "drift_docs observed",
+      "expected": 0.004716981132075526,
+      "logged": 0.004716981132075526,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "drift_docs status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "drift_docs override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "drift_chunks numerator",
+      "expected": 5436,
+      "logged": 5436,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "drift_chunks denominator",
+      "expected": 5423,
+      "logged": 5423,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "drift_chunks threshold = POLICY",
+      "expected": 0.05,
+      "logged": 0.05,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "drift_chunks observed",
+      "expected": 0.0023971971233633926,
+      "logged": 0.0023971971233633926,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "drift_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "drift_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "drift_tokens numerator",
+      "expected": 691882,
+      "logged": 691882,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "drift_tokens denominator",
+      "expected": 689619,
+      "logged": 689619,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "drift_tokens threshold = POLICY",
+      "expected": 0.05,
+      "logged": 0.05,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "drift_tokens observed",
+      "expected": 0.0032815221158348784,
+      "logged": 0.0032815221158348784,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "drift_tokens status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "drift_tokens override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "vector rows exactly when it embedded (or the failed canary alone)",
+      "expected": [
+        "embedding_canary",
+        "vector_dimension",
+        "vector_finite",
+        "vector_ids",
+        "vector_norm"
+      ],
+      "logged": [
+        "embedding_canary",
+        "vector_dimension",
+        "vector_finite",
+        "vector_ids",
+        "vector_norm"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "vector_ids counts, status and threshold",
+      "expected": [
+        0,
+        21,
+        "pass",
+        0.0,
+        "v4.0.1",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        0,
+        21,
+        "pass",
+        0.0,
+        "v4.0.1",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "vector_dimension counts, status and threshold",
+      "expected": [
+        0,
+        21,
+        "pass",
+        0.0,
+        "v4.0.1",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        0,
+        21,
+        "pass",
+        0.0,
+        "v4.0.1",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "vector_finite counts, status and threshold",
+      "expected": [
+        0,
+        21,
+        "pass",
+        0.0,
+        "v4.0.1",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        0,
+        21,
+        "pass",
+        0.0,
+        "v4.0.1",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "vector_norm counts, status and threshold",
+      "expected": [
+        0,
+        21,
+        "pass",
+        0.0,
+        "v4.0.1",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        0,
+        21,
+        "pass",
+        0.0,
+        "v4.0.1",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "embedding_canary counts, status and threshold",
+      "expected": [
+        0,
+        3,
+        "pass",
+        0.0,
+        "v4.0.1",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        0,
+        3,
+        "pass",
+        0.0,
+        "v4.0.1",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "job outcome follows the checks",
+      "expected": "succeeded",
+      "logged": "succeeded",
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "run outcome follows the checks",
+      "expected": "committed",
+      "logged": "committed",
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "dq_override (and dq_override_of) iff the run committed with an override",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "all DQ rows written in one insert",
+      "expected": 9,
+      "logged": 9,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "run log row written once",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "DQ rows written before the run log row",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "vector rows written in one insert",
+      "expected": 5,
+      "logged": 5,
+      "pass": true
+    },
+    {
+      "scope": "job m5_k_detect_v4.0.1.json",
+      "check": "vector rows written after the chunk checks, before the run log row (if any)",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "its gate version is known from its commit",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "DQ rows come from one attempt, the job's",
+      "expected": [
+        "1c3c64eeae1248b6984b48833c78fa66"
+      ],
+      "logged": [
+        "1c3c64eeae1248b6984b48833c78fa66"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "one DQ row per check",
+      "expected": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "logged": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "DQ rows share one config, tags and baseline",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "DQ config = the config the job's code published = the job's",
+      "expected": [
+        "e70bf55c7cf1b856",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        "e70bf55c7cf1b856",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "DQ rows name the job's tag",
+      "expected": "v4.2.0",
+      "logged": "v4.2.0",
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "one run log row",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "DQ rows and run log row agree on config, tags and baseline",
+      "expected": [
+        "e70bf55c7cf1b856",
+        "v4.0.1",
+        "v4.2.0",
+        "94970be9-6094-4ff0-85db-85b69f1aafbc"
+      ],
+      "logged": [
+        "e70bf55c7cf1b856",
+        "v4.0.1",
+        "v4.2.0",
+        "94970be9-6094-4ff0-85db-85b69f1aafbc"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "the baseline is a committed run of the from tag",
+      "expected": "v4.0.1",
+      "logged": "v4.0.1",
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "empty_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "empty_chunks denominator",
+      "expected": 6051,
+      "logged": 6051,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "empty_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "empty_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "empty_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "empty_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "tiny_chunks numerator",
+      "expected": 25,
+      "logged": 25,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "tiny_chunks denominator",
+      "expected": 6051,
+      "logged": 6051,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "tiny_chunks threshold = POLICY",
+      "expected": 0.02,
+      "logged": 0.02,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "tiny_chunks observed",
+      "expected": 0.0041315485043794415,
+      "logged": 0.0041315485043794415,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "tiny_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "tiny_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "oversized_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "oversized_chunks denominator",
+      "expected": 6051,
+      "logged": 6051,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "oversized_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "oversized_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "oversized_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "oversized_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "duplicate_chunk_ids numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "duplicate_chunk_ids denominator",
+      "expected": 6051,
+      "logged": 6051,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "duplicate_chunk_ids threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "duplicate_chunk_ids observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "duplicate_chunk_ids status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "duplicate_chunk_ids override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "duplicate_embed_text numerator",
+      "expected": 5,
+      "logged": 5,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "duplicate_embed_text denominator",
+      "expected": 6051,
+      "logged": 6051,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "duplicate_embed_text threshold = POLICY",
+      "expected": 0.01,
+      "logged": 0.01,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "duplicate_embed_text observed",
+      "expected": 0.0008263097008758883,
+      "logged": 0.0008263097008758883,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "duplicate_embed_text status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "duplicate_embed_text override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "missing_metadata numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "missing_metadata denominator",
+      "expected": 6051,
+      "logged": 6051,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "missing_metadata threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "missing_metadata observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "missing_metadata status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "missing_metadata override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "drift_docs numerator",
+      "expected": 238,
+      "logged": 238,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "drift_docs denominator",
+      "expected": 213,
+      "logged": 213,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "drift_docs threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "drift_docs observed",
+      "expected": 0.11737089201877926,
+      "logged": 0.11737089201877926,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "drift_docs status",
+      "expected": "fail",
+      "logged": "fail",
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "drift_docs override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "drift_chunks numerator",
+      "expected": 6051,
+      "logged": 6051,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "drift_chunks denominator",
+      "expected": 5436,
+      "logged": 5436,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "drift_chunks threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "drift_chunks observed",
+      "expected": 0.11313465783664456,
+      "logged": 0.11313465783664456,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "drift_chunks status",
+      "expected": "fail",
+      "logged": "fail",
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "drift_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "drift_tokens numerator",
+      "expected": 775772,
+      "logged": 775772,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "drift_tokens denominator",
+      "expected": 691882,
+      "logged": 691882,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "drift_tokens threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "drift_tokens observed",
+      "expected": 0.121248999106784,
+      "logged": 0.121248999106784,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "drift_tokens status",
+      "expected": "fail",
+      "logged": "fail",
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "drift_tokens override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "vector rows exactly when it embedded (or the failed canary alone)",
+      "expected": [],
+      "logged": [],
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "job outcome follows the checks",
+      "expected": "failed",
+      "logged": "failed",
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "run outcome follows the checks",
+      "expected": "failed",
+      "logged": "failed",
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "dq_override (and dq_override_of) iff the run committed with an override",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "the failed row's error is the gate's",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "the error names exactly the failing checks",
+      "expected": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens"
+      ],
+      "logged": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "all DQ rows written in one insert",
+      "expected": 9,
+      "logged": 9,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "run log row written once",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m7_b_dev_latest_detect.json",
+      "check": "DQ rows written before the run log row",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "its gate version is known from its commit",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "DQ rows come from one attempt, the job's",
+      "expected": [
+        "87fe9ec02ab04319b21b6b3bef1e400c"
+      ],
+      "logged": [
+        "87fe9ec02ab04319b21b6b3bef1e400c"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "one DQ row per check",
+      "expected": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "logged": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "DQ rows share one config, tags and baseline",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "DQ config = the config the job's code published = the job's",
+      "expected": [
+        "e70bf55c7cf1b856",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        "e70bf55c7cf1b856",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "DQ rows name the job's tag",
+      "expected": "v4.2.0",
+      "logged": "v4.2.0",
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "one run log row",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "DQ rows and run log row agree on config, tags and baseline",
+      "expected": [
+        "e70bf55c7cf1b856",
+        "v4.0.1",
+        "v4.2.0",
+        "94970be9-6094-4ff0-85db-85b69f1aafbc"
+      ],
+      "logged": [
+        "e70bf55c7cf1b856",
+        "v4.0.1",
+        "v4.2.0",
+        "94970be9-6094-4ff0-85db-85b69f1aafbc"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "the accepted run is one failed run that failed the gate in one attempt, on drift alone, for this run's config, tags and baseline",
+      "expected": [
+        [
+          "failed"
+        ],
+        1,
+        [
+          [
+            "e70bf55c7cf1b856",
+            "v4.0.1",
+            "v4.2.0",
+            "94970be9-6094-4ff0-85db-85b69f1aafbc"
+          ]
+        ],
+        true
+      ],
+      "logged": [
+        [
+          "failed"
+        ],
+        1,
+        [
+          [
+            "e70bf55c7cf1b856",
+            "v4.0.1",
+            "v4.2.0",
+            "94970be9-6094-4ff0-85db-85b69f1aafbc"
+          ]
+        ],
+        true
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "the baseline is a committed run of the from tag",
+      "expected": "v4.0.1",
+      "logged": "v4.0.1",
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "empty_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "empty_chunks denominator",
+      "expected": 6051,
+      "logged": 6051,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "empty_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "empty_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "empty_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "empty_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "tiny_chunks numerator",
+      "expected": 25,
+      "logged": 25,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "tiny_chunks denominator",
+      "expected": 6051,
+      "logged": 6051,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "tiny_chunks threshold = POLICY",
+      "expected": 0.02,
+      "logged": 0.02,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "tiny_chunks observed",
+      "expected": 0.0041315485043794415,
+      "logged": 0.0041315485043794415,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "tiny_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "tiny_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "oversized_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "oversized_chunks denominator",
+      "expected": 6051,
+      "logged": 6051,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "oversized_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "oversized_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "oversized_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "oversized_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "duplicate_chunk_ids numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "duplicate_chunk_ids denominator",
+      "expected": 6051,
+      "logged": 6051,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "duplicate_chunk_ids threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "duplicate_chunk_ids observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "duplicate_chunk_ids status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "duplicate_chunk_ids override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "duplicate_embed_text numerator",
+      "expected": 5,
+      "logged": 5,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "duplicate_embed_text denominator",
+      "expected": 6051,
+      "logged": 6051,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "duplicate_embed_text threshold = POLICY",
+      "expected": 0.01,
+      "logged": 0.01,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "duplicate_embed_text observed",
+      "expected": 0.0008263097008758883,
+      "logged": 0.0008263097008758883,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "duplicate_embed_text status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "duplicate_embed_text override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "missing_metadata numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "missing_metadata denominator",
+      "expected": 6051,
+      "logged": 6051,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "missing_metadata threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "missing_metadata observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "missing_metadata status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "missing_metadata override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "drift_docs numerator",
+      "expected": 238,
+      "logged": 238,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "drift_docs denominator",
+      "expected": 213,
+      "logged": 213,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "drift_docs threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "drift_docs observed",
+      "expected": 0.11737089201877926,
+      "logged": 0.11737089201877926,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "drift_docs status",
+      "expected": "overridden",
+      "logged": "overridden",
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "drift_docs override reason and accepted run",
+      "expected": [
+        "Spark 4.2.0 adds 25 docs and changes 57 since 4.0.1 (git): three releases of growth, not a data fault",
+        "1113808222076572-detect"
+      ],
+      "logged": [
+        "Spark 4.2.0 adds 25 docs and changes 57 since 4.0.1 (git): three releases of growth, not a data fault",
+        "1113808222076572-detect"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "drift_chunks numerator",
+      "expected": 6051,
+      "logged": 6051,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "drift_chunks denominator",
+      "expected": 5436,
+      "logged": 5436,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "drift_chunks threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "drift_chunks observed",
+      "expected": 0.11313465783664456,
+      "logged": 0.11313465783664456,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "drift_chunks status",
+      "expected": "overridden",
+      "logged": "overridden",
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "drift_chunks override reason and accepted run",
+      "expected": [
+        "Spark 4.2.0 adds 25 docs and changes 57 since 4.0.1 (git): three releases of growth, not a data fault",
+        "1113808222076572-detect"
+      ],
+      "logged": [
+        "Spark 4.2.0 adds 25 docs and changes 57 since 4.0.1 (git): three releases of growth, not a data fault",
+        "1113808222076572-detect"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "drift_tokens numerator",
+      "expected": 775772,
+      "logged": 775772,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "drift_tokens denominator",
+      "expected": 691882,
+      "logged": 691882,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "drift_tokens threshold = POLICY",
+      "expected": 0.1,
+      "logged": 0.1,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "drift_tokens observed",
+      "expected": 0.121248999106784,
+      "logged": 0.121248999106784,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "drift_tokens status",
+      "expected": "overridden",
+      "logged": "overridden",
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "drift_tokens override reason and accepted run",
+      "expected": [
+        "Spark 4.2.0 adds 25 docs and changes 57 since 4.0.1 (git): three releases of growth, not a data fault",
+        "1113808222076572-detect"
+      ],
+      "logged": [
+        "Spark 4.2.0 adds 25 docs and changes 57 since 4.0.1 (git): three releases of growth, not a data fault",
+        "1113808222076572-detect"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "vector rows exactly when it embedded (or the failed canary alone)",
+      "expected": [
+        "embedding_canary",
+        "vector_dimension",
+        "vector_finite",
+        "vector_ids",
+        "vector_norm"
+      ],
+      "logged": [
+        "embedding_canary",
+        "vector_dimension",
+        "vector_finite",
+        "vector_ids",
+        "vector_norm"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "vector_ids counts, status and threshold",
+      "expected": [
+        0,
+        802,
+        "pass",
+        0.0,
+        "v4.2.0",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        0,
+        802,
+        "pass",
+        0.0,
+        "v4.2.0",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "vector_dimension counts, status and threshold",
+      "expected": [
+        0,
+        802,
+        "pass",
+        0.0,
+        "v4.2.0",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        0,
+        802,
+        "pass",
+        0.0,
+        "v4.2.0",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "vector_finite counts, status and threshold",
+      "expected": [
+        0,
+        802,
+        "pass",
+        0.0,
+        "v4.2.0",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        0,
+        802,
+        "pass",
+        0.0,
+        "v4.2.0",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "vector_norm counts, status and threshold",
+      "expected": [
+        0,
+        802,
+        "pass",
+        0.0,
+        "v4.2.0",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        0,
+        802,
+        "pass",
+        0.0,
+        "v4.2.0",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "embedding_canary counts, status and threshold",
+      "expected": [
+        0,
+        3,
+        "pass",
+        0.0,
+        "v4.2.0",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        0,
+        3,
+        "pass",
+        0.0,
+        "v4.2.0",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "job outcome follows the checks",
+      "expected": "succeeded",
+      "logged": "succeeded",
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "run outcome follows the checks",
+      "expected": "committed",
+      "logged": "committed",
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "dq_override (and dq_override_of) iff the run committed with an override",
+      "expected": [
+        "Spark 4.2.0 adds 25 docs and changes 57 since 4.0.1 (git): three releases of growth, not a data fault",
+        "1113808222076572-detect"
+      ],
+      "logged": [
+        "Spark 4.2.0 adds 25 docs and changes 57 since 4.0.1 (git): three releases of growth, not a data fault",
+        "1113808222076572-detect"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "all DQ rows written in one insert",
+      "expected": 9,
+      "logged": 9,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "run log row written once",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "DQ rows written before the run log row",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "vector rows written in one insert",
+      "expected": 5,
+      "logged": 5,
+      "pass": true
+    },
+    {
+      "scope": "job m7_d_dev_v4.2.0_accepted_detect.json",
+      "check": "vector rows written after the chunk checks, before the run log row (if any)",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "its gate version is known from its commit",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "DQ rows come from one attempt, the job's",
+      "expected": [
+        "4f923c3debe84433a0042cf122242e22"
+      ],
+      "logged": [
+        "4f923c3debe84433a0042cf122242e22"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "one DQ row per check",
+      "expected": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "logged": [
+        "drift_chunks",
+        "drift_docs",
+        "drift_tokens",
+        "duplicate_chunk_ids",
+        "duplicate_embed_text",
+        "empty_chunks",
+        "missing_metadata",
+        "oversized_chunks",
+        "tiny_chunks"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "DQ rows share one config, tags and baseline",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "DQ config = the config the job's code published = the job's",
+      "expected": [
+        "e70bf55c7cf1b856",
+        "e70bf55c7cf1b856"
+      ],
+      "logged": [
+        "e70bf55c7cf1b856",
+        "e70bf55c7cf1b856"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "DQ rows name the job's tag",
+      "expected": "v4.2.0",
+      "logged": "v4.2.0",
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "one run log row",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "DQ rows and run log row agree on config, tags and baseline",
+      "expected": [
+        "e70bf55c7cf1b856",
+        "v4.2.0",
+        "v4.2.0",
+        "953993142459221-detect"
+      ],
+      "logged": [
+        "e70bf55c7cf1b856",
+        "v4.2.0",
+        "v4.2.0",
+        "953993142459221-detect"
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "the baseline is a committed run of the from tag",
+      "expected": "v4.2.0",
+      "logged": "v4.2.0",
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "empty_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "empty_chunks denominator",
+      "expected": 6051,
+      "logged": 6051,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "empty_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "empty_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "empty_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "empty_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "tiny_chunks numerator",
+      "expected": 25,
+      "logged": 25,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "tiny_chunks denominator",
+      "expected": 6051,
+      "logged": 6051,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "tiny_chunks threshold = POLICY",
+      "expected": 0.02,
+      "logged": 0.02,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "tiny_chunks observed",
+      "expected": 0.0041315485043794415,
+      "logged": 0.0041315485043794415,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "tiny_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "tiny_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "oversized_chunks numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "oversized_chunks denominator",
+      "expected": 6051,
+      "logged": 6051,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "oversized_chunks threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "oversized_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "oversized_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "oversized_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "duplicate_chunk_ids numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "duplicate_chunk_ids denominator",
+      "expected": 6051,
+      "logged": 6051,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "duplicate_chunk_ids threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "duplicate_chunk_ids observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "duplicate_chunk_ids status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "duplicate_chunk_ids override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "duplicate_embed_text numerator",
+      "expected": 5,
+      "logged": 5,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "duplicate_embed_text denominator",
+      "expected": 6051,
+      "logged": 6051,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "duplicate_embed_text threshold = POLICY",
+      "expected": 0.01,
+      "logged": 0.01,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "duplicate_embed_text observed",
+      "expected": 0.0008263097008758883,
+      "logged": 0.0008263097008758883,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "duplicate_embed_text status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "duplicate_embed_text override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "missing_metadata numerator",
+      "expected": 0,
+      "logged": 0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "missing_metadata denominator",
+      "expected": 6051,
+      "logged": 6051,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "missing_metadata threshold = POLICY",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "missing_metadata observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "missing_metadata status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "missing_metadata override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "drift_docs numerator",
+      "expected": 238,
+      "logged": 238,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "drift_docs denominator",
+      "expected": 238,
+      "logged": 238,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "drift_docs threshold = POLICY",
+      "expected": 0.05,
+      "logged": 0.05,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "drift_docs observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "drift_docs status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "drift_docs override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "drift_chunks numerator",
+      "expected": 6051,
+      "logged": 6051,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "drift_chunks denominator",
+      "expected": 6051,
+      "logged": 6051,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "drift_chunks threshold = POLICY",
+      "expected": 0.05,
+      "logged": 0.05,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "drift_chunks observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "drift_chunks status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "drift_chunks override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "drift_tokens numerator",
+      "expected": 775772,
+      "logged": 775772,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "drift_tokens denominator",
+      "expected": 775772,
+      "logged": 775772,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "drift_tokens threshold = POLICY",
+      "expected": 0.05,
+      "logged": 0.05,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "drift_tokens observed",
+      "expected": 0.0,
+      "logged": 0.0,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "drift_tokens status",
+      "expected": "pass",
+      "logged": "pass",
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "drift_tokens override reason and accepted run",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "vector rows exactly when it embedded (or the failed canary alone)",
+      "expected": [],
+      "logged": [],
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "job outcome follows the checks",
+      "expected": "succeeded",
+      "logged": "succeeded",
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "run outcome follows the checks",
+      "expected": "committed",
+      "logged": "committed",
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "dq_override (and dq_override_of) iff the run committed with an override",
+      "expected": [
+        null,
+        null
+      ],
+      "logged": [
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "all DQ rows written in one insert",
+      "expected": 9,
+      "logged": 9,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "run log row written once",
+      "expected": 1,
+      "logged": 1,
+      "pass": true
+    },
+    {
+      "scope": "job m7_e_dev_latest_again_detect.json",
+      "check": "DQ rows written before the run log row",
+      "expected": true,
+      "logged": true,
+      "pass": true
+    },
+    {
+      "scope": "tables",
+      "check": "DQ rows without a run log row",
+      "expected": [],
+      "logged": [],
+      "pass": true
+    },
+    {
+      "scope": "tables",
+      "check": "committed runs since the gate without a complete passing DQ set",
+      "expected": [],
+      "logged": [],
+      "pass": true
+    },
+    {
+      "scope": "tables",
+      "check": "pre-gate runs with DQ rows",
+      "expected": [],
+      "logged": [],
+      "pass": true
+    },
+    {
+      "scope": "tables",
+      "check": "pre-gate committed runs that finished after the first DQ check",
+      "expected": [],
+      "logged": [],
+      "pass": true
+    }
+  ],
+  "all_pass": true
+}
