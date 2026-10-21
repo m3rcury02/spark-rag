@@ -1,0 +1,209 @@
+{
+  "label": "m7_n_actions_docs_only_pushes",
+  "base_commit": "d0871f0135ea1301bc1e35a812a6bf924186796d",
+  "main_head": "e424819702897c6e6a18784a6c3007416d2b4a1f",
+  "deployed_paths_changed_since_base": "",
+  "files_changed_since_base": [
+    "CLAUDE.md",
+    "DECISIONS.md",
+    "README.md",
+    "THIRD_PARTY_NOTICES.md",
+    "eval/eval_set_v2.json",
+    "runs/m6_m_set_v2_check.json",
+    "runs/m6_n_eval_v2.json",
+    "runs/m7_i_billing_m6_window_m7_runs.json",
+    "runs/m7_j_actions_deploy_prod.json",
+    "runs/m7_k_prod_actions_deployed_latest.json",
+    "runs/m7_k_prod_actions_deployed_latest_detect.json",
+    "runs/m7_l_billing_m7_runs.json",
+    "runs/m7_v7_prod_gate_vs_git.json",
+    "runs/m7_v8_prod_changes_vs_git.json",
+    "runs/m7_v9_prod_gold_vs_git.json"
+  ],
+  "main_commits_since_base": [
+    "e424819702897c6e6a18784a6c3007416d2b4a1f",
+    "547ecec8e304b906c6149c5ff651ec4c44bd82dc",
+    "9ce1dbb19c4028ca4eaf6695de780bb0eb3a5437",
+    "5558b2e21c6441b6c4eff6f685d8c24542125403",
+    "cbec168016e1a00159d6a7797e04dbf2c76b77e1",
+    "5f0b46525e86a91056420d1b7176a9f86e295b44",
+    "57e4f6571b72e4496715f69036836aaf9beea5c4",
+    "417f0e0057f71657f7c765666a50398d7d8efaa2",
+    "16dc318bc821e121ad6d58d44826fea71a88e6f5",
+    "37afc7604535324c0f818ddf389af0448c18d393"
+  ],
+  "actions_runs_since_base": [
+    {
+      "conclusion": "success",
+      "createdAt": "2026-10-21T15:59:42Z",
+      "databaseId": 39630718163,
+      "event": "push",
+      "headBranch": "main",
+      "headSha": "e424819702897c6e6a18784a6c3007416d2b4a1f",
+      "status": "completed",
+      "workflowName": "CI"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-10-21T15:39:43Z",
+      "databaseId": 39627686475,
+      "event": "push",
+      "headBranch": "m8-readme",
+      "headSha": "e424819702897c6e6a18784a6c3007416d2b4a1f",
+      "status": "completed",
+      "workflowName": "CI"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-10-21T15:27:23Z",
+      "databaseId": 39625842801,
+      "event": "push",
+      "headBranch": "m8-readme",
+      "headSha": "547ecec8e304b906c6149c5ff651ec4c44bd82dc",
+      "status": "completed",
+      "workflowName": "CI"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-10-21T15:08:11Z",
+      "databaseId": 39622960388,
+      "event": "push",
+      "headBranch": "m8-readme",
+      "headSha": "9ce1dbb19c4028ca4eaf6695de780bb0eb3a5437",
+      "status": "completed",
+      "workflowName": "CI"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-10-21T15:07:07Z",
+      "databaseId": 39622801609,
+      "event": "push",
+      "headBranch": "m8-readme",
+      "headSha": "5558b2e21c6441b6c4eff6f685d8c24542125403",
+      "status": "completed",
+      "workflowName": "CI"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-10-21T15:06:56Z",
+      "databaseId": 39622776155,
+      "event": "push",
+      "headBranch": "main",
+      "headSha": "cbec168016e1a00159d6a7797e04dbf2c76b77e1",
+      "status": "completed",
+      "workflowName": "CI"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-10-21T15:03:03Z",
+      "databaseId": 39622258745,
+      "event": "push",
+      "headBranch": "m7-bundles",
+      "headSha": "cbec168016e1a00159d6a7797e04dbf2c76b77e1",
+      "status": "completed",
+      "workflowName": "CI"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-10-21T15:01:56Z",
+      "databaseId": 39622095184,
+      "event": "push",
+      "headBranch": "m7-bundles",
+      "headSha": "5f0b46525e86a91056420d1b7176a9f86e295b44",
+      "status": "completed",
+      "workflowName": "CI"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-10-21T12:28:43Z",
+      "databaseId": 39599904955,
+      "event": "push",
+      "headBranch": "m7-bundles",
+      "headSha": "57e4f6571b72e4496715f69036836aaf9beea5c4",
+      "status": "completed",
+      "workflowName": "CI"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-10-21T12:26:58Z",
+      "databaseId": 39599668963,
+      "event": "push",
+      "headBranch": "m7-bundles",
+      "headSha": "417f0e0057f71657f7c765666a50398d7d8efaa2",
+      "status": "completed",
+      "workflowName": "CI"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-10-21T12:24:01Z",
+      "databaseId": 39599280716,
+      "event": "push",
+      "headBranch": "m7-bundles",
+      "headSha": "16dc318bc821e121ad6d58d44826fea71a88e6f5",
+      "status": "completed",
+      "workflowName": "CI"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-10-21T12:18:25Z",
+      "databaseId": 39598545027,
+      "event": "push",
+      "headBranch": "main",
+      "headSha": "37afc7604535324c0f818ddf389af0448c18d393",
+      "status": "completed",
+      "workflowName": "CI"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-10-21T12:18:24Z",
+      "databaseId": 39598541675,
+      "event": "push",
+      "headBranch": "m7-bundles",
+      "headSha": "37afc7604535324c0f818ddf389af0448c18d393",
+      "status": "completed",
+      "workflowName": "CI"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-10-21T12:15:58Z",
+      "databaseId": 39598227251,
+      "event": "workflow_dispatch",
+      "headBranch": "main",
+      "headSha": "d0871f0135ea1301bc1e35a812a6bf924186796d",
+      "status": "completed",
+      "workflowName": "Deploy"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-10-21T12:15:44Z",
+      "databaseId": 39598196803,
+      "event": "push",
+      "headBranch": "main",
+      "headSha": "d0871f0135ea1301bc1e35a812a6bf924186796d",
+      "status": "completed",
+      "workflowName": "Deploy"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-10-21T12:15:44Z",
+      "databaseId": 39598196672,
+      "event": "push",
+      "headBranch": "main",
+      "headSha": "d0871f0135ea1301bc1e35a812a6bf924186796d",
+      "status": "completed",
+      "workflowName": "CI"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-10-21T12:15:43Z",
+      "databaseId": 39598193188,
+      "event": "push",
+      "headBranch": "m7-bundles",
+      "headSha": "d0871f0135ea1301bc1e35a812a6bf924186796d",
+      "status": "completed",
+      "workflowName": "CI"
+    }
+  ],
+  "deploy_runs_since_base": []
+}
+

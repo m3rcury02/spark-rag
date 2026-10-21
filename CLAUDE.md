@@ -163,8 +163,9 @@ uv run --with databricks-sdk==0.152.0 --with sentence-transformers==6.1.0 --with
 
 ## Next session: pick up here
 
-M8 is drafted (README.md; report given to the owner on 2026-10-21) on branch `m8-readme`; the owner decides the
-merge. M0–M7 and the post-M7 items are on `main`. The bundle deploys one job per target: resolve_tag (a tag or
+M8 is complete (README.md; report given to the owner on 2026-10-21) and merged into `main`, with M0–M7 and the
+post-M7 items. This clone has no fetch refspec for origin, so `origin/main` is stale: compare with
+`git ls-remote origin` or `git fetch origin main` + `FETCH_HEAD`. The bundle deploys one job per target: resolve_tag (a tag or
 `latest`, from git's ref advertisement) → bronze → silver_254, then silver_128 and change_detect side by side
 (the two silver MERGEs run in sequence: in parallel they conflicted, runs/m7_b) → index_requested (condition
 on `with_index`) → sync_index.
@@ -172,15 +173,19 @@ on `with_index`) → sync_index.
   job Actions deployed). Verified: dev gate 599/599, changes 126/126, gold 53/53 (`m7_v1`..`v3`); prod 152/152,
   42/42, 22/22 (`m7_v7`..`v9`). Both weekly schedules are paused. No endpoint or index exists.
 - Both deploy paths ran from GitHub Actions: dev on a push to main (m7_h), prod by dispatch (m7_j). `deploy.yml`
-  skips pushes that change only runs/, eval/, docs/ or Markdown. The `prod` environment had no required
-  reviewer at m7_j: the owner should add one (Settings > Environments > prod).
+  skips pushes that change only runs/, eval/, docs/ or Markdown (proven over 10 commits, m7_n). The `prod`
+  environment had no required reviewer at m7_j; the owner was asked to add one. Not re-checked: a dispatch of a
+  prod deploy from this session was refused by the session's permission check, so the owner verifies it
+  (Actions > Deploy > Run workflow, target prod: the run should wait for review).
 - Eval set v2 (v1's items at v4.2.0, one quote reworded by the release) ran against dev gold (m6_n, D-015).
-- Billing: the M6 endpoint window (m7_i) and DBU per M7 job run (m7_l; m7_k was not billed yet when read).
+- Billing: the M6 endpoint window (m7_i), DBU per M7 job run (m7_l) and m7_k's (m7_m: 0.70 against m7_e's
+  0.36 for the same no-op).
 - Do not re-run any existing label in runs/. The CLI here is a downloaded 1.21.0 binary (checksum-verified,
   scratchpad); `scripts/bundle.py` finds it through DATABRICKS_CLI.
 
 **Do not start M9 until the owner says so** (optional FastAPI QA endpoint with citations: it needs an LLM,
-which is a cost decision to flag first). Open items, all listed as limitations in the README:
+which is a cost decision to flag first). The project's own code has no license file: the owner's choice.
+Open items, all listed as limitations in the README:
 - A scheduled run the gate stops fails weekly until accepted (D-012, D-016); fail-fast is not built.
 - Untested: the manual repair after a failure between a gold MERGE and its committed row (D-014); section-aware
   against whole-page chunking (D-009, D-015); `sync_index` inside the bundle's job (only via run_job.py).
@@ -198,5 +203,5 @@ which is a cost decision to flag first). Open items, all listed as limitations i
 - [x] M5 — Embeddings + AI Search index sync (only changed chunks embedded) (2026-10-20; D-014)
 - [x] M6 — Eval set (50 Q/A, owner reviews) + recall@5/MRR, 2 chunk sizes × 2 models (2026-10-21; D-015)
 - [x] M7 — Asset Bundles (dev/prod), Jobs, GitHub Actions (2026-10-21; D-016)
-- [x] M8 — README: Mermaid diagram, how to run, results table, limitations (2026-10-21; branch `m8-readme`)
+- [x] M8 — README: Mermaid diagram, how to run, results table, limitations (2026-10-21; merged)
 - [ ] M9 — (optional) FastAPI QA endpoint with citations

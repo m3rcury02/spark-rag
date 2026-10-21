@@ -1,0 +1,47 @@
+{
+  "label": "m7_m_billing_m7_k",
+  "git_commit": "e424819702897c6e6a18784a6c3007416d2b4a1f",
+  "statements": [
+    {
+      "sql": "SELECT usage_metadata.job_id AS job_id, usage_metadata.job_run_id AS job_run_id, billing_origin_product, sku_name, round(sum(usage_quantity), 4) AS dbu, min(usage_start_time) AS first_start, max(usage_end_time) AS last_end, count(*) AS records FROM system.billing.usage WHERE usage_unit = 'DBU' AND usage_metadata.job_run_id IN ('770308767976003') GROUP BY ALL",
+      "params": {},
+      "columns": [
+        "job_id",
+        "job_run_id",
+        "billing_origin_product",
+        "sku_name",
+        "dbu",
+        "first_start",
+        "last_end",
+        "records"
+      ],
+      "rows": [
+        [
+          "1054940179033075",
+          "770308767976003",
+          "JOBS",
+          "PREMIUM_JOBS_SERVERLESS_COMPUTE_US_EAST_OHIO",
+          "0.7004",
+          "2026-10-21T12:00:00.000Z",
+          "2026-10-21T13:00:00.000Z",
+          "2"
+        ]
+      ]
+    },
+    {
+      "sql": "SELECT max(usage_end_time) AS latest_usage_end, current_timestamp() AS queried_at FROM system.billing.usage",
+      "params": {},
+      "columns": [
+        "latest_usage_end",
+        "queried_at"
+      ],
+      "rows": [
+        [
+          "2026-10-21T13:00:00.000Z",
+          "2026-10-21T16:00:12.484Z"
+        ]
+      ]
+    }
+  ],
+  "error": null
+}

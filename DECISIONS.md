@@ -1435,10 +1435,17 @@ serverless environment 4 pinned (D-005), the index synced only from a committed 
   disjoint, or serialize the tasks. Chosen: serialize. It costs about 90 s a run, and nothing else needs
   parallel writes.
 - *Cost per job run* (`m7_l`, `system.billing.usage` by `job_run_id`, read with usage through 11:10 UTC):
-  b 0.82 DBU, d 0.57, e 0.36, g 1.23 (k was not billed yet). The incremental run d cost 47% of the full load
+  b 0.82 DBU, d 0.57, e 0.36, g 1.23 (k was not billed yet; read later, `m7_m`: 0.70). The incremental run
+  d cost 47% of the full load
   g, but d's bronze and silver were written by b, and b + d (1.39) cost more than g: at about 6,000 chunks the
   per-run work that does not shrink with the change outweighs the embedding saved (d encoded for 31 of its
   308 s). One run each, no repeats.
+- *Repeat cost:* k and e did the same no-op work, yet k billed 0.70 DBU and e 0.36 (`m7_m`, `m7_l`). k was the
+  first run of a newly deployed wheel in prod, while e reused d's; whether that explains the difference was
+  not checked. Single-run costs are read with that spread in mind.
+- *Docs-only pushes skip the deploy:* after the commit that added the filter (`d0871f0`), 10 commits reached
+  main, changing 15 files, all under runs/, eval/ or Markdown. Their pushes started 13 Actions runs, all CI
+  and all green, and no Deploy run; no deployed path changed (`m7_n`).
 - *CI/CD:* both paths of `deploy.yml` ran green (runs h and j), and the job Actions deployed to prod ran (k),
   so a wheel built on a GitHub runner works on serverless as one built here does.
 - *Finding: the prod deploy was not gated.* The `prod` GitHub environment existed but required no reviewer at

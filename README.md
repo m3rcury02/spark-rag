@@ -41,7 +41,7 @@ options considered (D-001 to D-016).
   index returned 99.8% of exact search's top 10.
 - **Cost.** Free Edition charges no money but enforces an undisclosed daily quota. Usage is billed in DBUs
   (Databricks Units), and one refusal fits a limit of roughly 63–90 DBU a day (an inference, D-001). A full
-  run billed 1.23 DBU and a no-op run 0.36. An idle
+  run billed 1.23 DBU; two no-op runs billed 0.36 and 0.70. An idle
   vector endpoint billed 96 DBU a day, so the endpoint and index are created only for demos.
 
 ## Architecture
@@ -346,7 +346,9 @@ quota while the endpoint exists: create it only for a demo and delete it afterwa
 8. **Deployment security is basic.** CI uses a personal access token, not OAuth or OIDC federation, and prod
    runs as the owner, not a service principal. When prod was first deployed from Actions, the `prod` GitHub
    environment required no reviewer ([`m7_j`](runs/m7_j_actions_deploy_prod.json)).
-9. **Cost and timing figures are single runs** on shared serverless compute, with no repeats.
+9. **Cost and timing figures are mostly single runs** on shared serverless compute. The one repeated case, a
+   no-op run, billed 0.36 DBU in dev and 0.70 in prod ([`m7_m`](runs/m7_m_billing_m7_k.json)), so a single
+   run's cost says little about differences smaller than that.
 10. **The two silver writes run in sequence.** Run in parallel, their MERGEs into one table conflicted
     (`m7_b`). Partitioning or clustering silver by config, with the MERGE filtered on it, might allow parallel
     writes; that is untested (D-016).
