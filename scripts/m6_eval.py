@@ -15,7 +15,8 @@
    as the pipeline does); every question too, with the model's query prefix and, for a model that has one,
    without it. Exact search: cosine over all chunks, so ranks are exact (no ANN).
 4. The published config (Config.embedding at Config.chunk) is also ranked with gold's own vectors, read from
-   the gold table, and the local vectors are compared with them: the eval of that config is the index's.
+   the gold table, and the local vectors are compared with them. With --index it is also ranked through the
+   deployed AI Search index (approximate search; run jobs/sync_index.py first), with the same query vectors.
 5. recall@k and MRR@k with bootstrap CIs, and the paired differences named in D-015, from one set of seeded
    resamples. Writes runs/<label>.json; with --write-table also one eval_results row per item and ranking
    (MERGE on the row's key, so a re-run of the same eval_run_id adds nothing).
@@ -61,6 +62,7 @@ from docs_rag.evaluate import (
     relevant_ids,
     resamples,
 )
+from docs_rag.index_sync import SYNCED, index_info, query_keys, summary_of
 from docs_rag.sections import split_sections
 from docs_rag.silver import fingerprint
 
@@ -99,6 +101,7 @@ def main() -> None:
     ap.add_argument(
         "--table", default="eval_results", help="the results table (another name for a smoke test)"
     )
+    ap.add_argument("--index", action="store_true", help="also rank the published config with the live index")
     args = ap.parse_args()
     out_path = REPO / "runs" / f"{args.label}.json"
     if out_path.exists():
@@ -242,6 +245,9 @@ def main() -> None:
                 out["gold_vectors"] = gold_check(w, warehouse, config, info, cv)
                 gv = np.asarray(out["gold_vectors"].pop("_vectors"))
                 rank_all((model_cfg.model_id, prefixes[0], config_id, "gold"), qv[prefixes[0]], gv, info)
+                if args.index:
+                    key = (model_cfg.model_id, prefixes[0], config_id, "index")
+                    out["index"] = rank_index(w, config, es, info, qv[prefixes[0]], rankings, key)
     out["timings"] = timings
 
     # 5. Metrics, CIs and paired differences.
@@ -254,7 +260,7 @@ def main() -> None:
         return (
             f"{name[model_id]} {size[config_id]}"
             + (" +prefix" if prefix else "")
-            + (" gold" if vectors == "gold" else "")
+            + (f" {vectors}" if vectors != "local" else "")
         )
 
     def series(key: tuple[str, str, str, str], metric: str) -> list[float]:
@@ -292,6 +298,9 @@ def main() -> None:
                 pairs.append(((m.model_id, m.query_prefix, cid, "local"), (m.model_id, "", cid, "local")))
     gold_key = (config.embedding.model_id, config.embedding.query_prefix, config.chunk.config_id, "gold")
     pairs.append((gold_key, (gold_key[0], gold_key[1], gold_key[2], "local")))
+    index_key = (*gold_key[:3], "index")
+    if index_key in rankings:  # the deployed index (approximate) against exact search, same vectors
+        pairs.append((index_key, (*gold_key[:3], "gold")))
     out["differences"] = [
         {
             "a": label(x),
@@ -302,6 +311,29 @@ def main() -> None:
         for x, y in pairs
     ]
     out["per_item"] = {label(k): {r["item_id"]: r["rank"] for r in v} for k, v in rankings.items()}
+    # Descriptive only (D-015): the sample leans on the SQL reference pages, which hold many small docs.
+    area = {it.item_id: "sql-ref" if "/sql-ref" in it.path else "other" for it in es.items}
+    out["by_area"] = {
+        label(k): {
+            a: {
+                "items": sum(area[r["item_id"]] == a for r in v),
+                f"recall@{ev.recall_k}": sum(r["hit"] for r in v if area[r["item_id"]] == a)
+                / max(1, sum(area[r["item_id"]] == a for r in v)),
+            }
+            for a in ("sql-ref", "other")
+        }
+        for k, v in rankings.items()
+    }
+    also = {it.item_id for it in es.items if it.also_in}
+    rest = resamples(len(es.items) - len(also), ev.resamples, ev.seed)
+    out["without_also_in"] = {
+        label(k): {
+            "items": len(es.items) - len(also),
+            f"recall@{ev.recall_k}": vars(bootstrap([r["hit"] for r in v if r["item_id"] not in also], rest)),
+            f"mrr@{ev.mrr_k}": vars(bootstrap([r["rr"] for r in v if r["item_id"] not in also], rest)),
+        }
+        for k, v in rankings.items()
+    }
     out["environment"] = {
         "machine": platform.machine(),
         "python": platform.python_version(),
@@ -323,6 +355,49 @@ def main() -> None:
             f"{lab:40s} recall@{ev.recall_k} {rk['mean']:.2f} [{rk['low']:.2f}, {rk['high']:.2f}]  "
             f"MRR@{ev.mrr_k} {mk['mean']:.3f} [{mk['low']:.3f}, {mk['high']:.3f}]"
         )
+
+
+def rank_index(
+    w: WorkspaceClient,
+    config: Config,
+    es: EvalSet,
+    info: dict[str, Any],
+    queries: np.ndarray,
+    rankings: dict[tuple[str, str, str, str], list[dict[str, Any]]],
+    key: tuple[str, str, str, str],
+) -> dict[str, Any]:
+    """The published config through the deployed AI Search index (approximate search), with the same query
+    vectors: its top mrr_k per question, ranked against the same labels. Needs the index synced to exactly
+    this config's chunks (jobs/sync_index.py proves it; checked again here by count and state). Also how many
+    of each question's exact top mrr_k the index returned (ANN agreement)."""
+    ev = config.eval
+    do = w.api_client.do
+    state = summary_of(index_info(do, config.index))
+    if state["detailed_state"] != SYNCED or state["indexed_row_count"] != len(info["chunks"]):
+        raise SystemExit(f"the index is not synced to the {len(info['chunks'])} chunks: {state}")
+    exact = {r["item_id"]: r["top"] for r in rankings[(*key[:3], "gold")]}
+    rows, agreement = [], []
+    for i, it in enumerate(es.items):
+        top = query_keys(do, config.index, "chunk_id", [float(x) for x in queries[i]], ev.mrr_k)
+        rank = first_relevant_rank(top, info["relevant"][it.item_id])  # None beyond the top mrr_k
+        rows.append(
+            {
+                "item_id": it.item_id,
+                "rank": rank,
+                "hit": hit_at(rank, ev.recall_k),
+                "rr": reciprocal_rank_at(rank, ev.mrr_k),
+                "top": top,
+                "relevant": sorted(info["relevant"][it.item_id]),
+            }
+        )
+        agreement.append(len(set(top) & set(exact[it.item_id])) / ev.mrr_k)
+    rankings[key] = rows
+    return {
+        "index": config.index,
+        "state": state,
+        f"mean_share_of_exact_top{ev.mrr_k}_returned": sum(agreement) / len(agreement),
+        "questions_with_identical_top": sum(r["top"] == exact[r["item_id"]] for r in rows),
+    }
 
 
 def gold_check(

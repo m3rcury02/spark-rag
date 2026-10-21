@@ -1217,12 +1217,19 @@ none (`m2_f`).
 2. Model within each chunk size: bge (with the instruction) against MiniLM.
 3. bge's instruction within each size: with it against without it.
 4. The published config with gold's vectors against the same config with local vectors. This should be zero.
+5. The published config through the deployed AI Search index (approximate search, `--index`) against exact
+   search over the same gold vectors, plus how much of each question's exact top 10 the index returns. This
+   needs the endpoint up for one window (about an hour, D-001). The owner chose this on 2026-10-21, while the
+   results were still unknown: the eval then measures the serving path the pipeline syncs, not only an
+   offline copy.
 
 **Decision rule.** With n = 50, a difference counts only if its paired 95% interval for recall@5 excludes zero.
 MRR@10 is reported beside it and breaks no tie. If no comparison clears that bar, production keeps what it has
 (MiniLM at 254/32, D-014), because it is the cheaper model and the config that is already embedded. A result
-the set cannot resolve is reported as such, not as a winner. The `also_in` sensitivity check and per-kind
-counts are descriptive only.
+the set cannot resolve is reported as such, not as a winner. The `also_in` sensitivity check (the set
+without those 8 items) and the split by doc area (SQL reference pages, 23 items, against the rest) are
+descriptive only. Not compared, by the owner's choice: section-aware against whole-page chunking (D-009's
+open question), which stays a stated limitation.
 
 ## Open questions (decide in the milestone noted)
 
