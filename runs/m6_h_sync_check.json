@@ -1,0 +1,109 @@
+{
+  "meta": {
+    "label": "m6_h_sync_check",
+    "git_commit": "6fd90c8a756764742eb0e23f378fcc71501ca2fe",
+    "script": "jobs/sync_index.py",
+    "job_args": [],
+    "target": "workspace.docs_rag_dev",
+    "run_id": "0b07f448-86cd-4875-be1f-55b3207a7d18",
+    "environment_version": "4",
+    "wheel": "docs_rag-0.0.1.dev179+g6fd90c8a7-py3-none-any.whl",
+    "dependencies": [
+      "/Volumes/workspace/docs_rag_dev/artifacts/code/6fd90c8a7567/docs_rag-0.0.1.dev179+g6fd90c8a7-py3-none-any.whl"
+    ],
+    "parent_run_id": 505066123215175,
+    "task_run_id": 1055310737548845,
+    "result_state": "SUCCESS",
+    "state_message": "",
+    "run_start_utc": "2026-10-21T03:49:42Z",
+    "run_end_utc": "2026-10-21T03:51:14Z",
+    "run_duration_seconds": 91.1
+  },
+  "summary": {
+    "run_id": "0b07f448-86cd-4875-be1f-55b3207a7d18",
+    "started_utc": "2026-10-21T03:50:34Z",
+    "gold": "workspace.docs_rag_dev.gold_chunk_embeddings",
+    "index": "workspace.docs_rag_dev.gold_chunk_index",
+    "environment": {
+      "python": "3.12.3",
+      "databricks_runtime_version": "client.4.10",
+      "databricks_connect": "17.3.14",
+      "docs_rag": "0.0.1.dev179+g6fd90c8a7",
+      "tokenizers": "0.23.3",
+      "machine": "aarch64"
+    },
+    "chain_head": {
+      "run_id": "94970be9-6094-4ff0-85db-85b69f1aafbc",
+      "tag": "v4.0.1",
+      "gold_rows": 5436
+    },
+    "index_before": {
+      "detailed_state": "ONLINE_NO_PENDING_UPDATE",
+      "ready": true,
+      "indexed_row_count": 5436,
+      "message": "Index creation succeeded. Check latest status: https://<workspace-host>/explore/data/workspace/docs_rag_dev/gold_chunk_index",
+      "pipeline_id": "85b10638-a0c9-4f56-b0a7-b77f6498dd5d",
+      "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+      "pipeline_type": "TRIGGERED"
+    },
+    "keys_before": {
+      "index_rows": 5436,
+      "gold_rows": 5436,
+      "missing": [],
+      "missing_count": 0,
+      "extra": [],
+      "extra_count": 0,
+      "repeated_count": 0,
+      "equal": true
+    },
+    "sync": "skipped: the index already holds exactly gold's keys",
+    "index_after": {
+      "detailed_state": "ONLINE_NO_PENDING_UPDATE",
+      "ready": true,
+      "indexed_row_count": 5436,
+      "message": "Index creation succeeded. Check latest status: https://<workspace-host>/explore/data/workspace/docs_rag_dev/gold_chunk_index",
+      "pipeline_id": "85b10638-a0c9-4f56-b0a7-b77f6498dd5d",
+      "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+      "pipeline_type": "TRIGGERED"
+    },
+    "probes": [
+      {
+        "chunk_id": "00011d3ee5a94028729040c2828a69f7",
+        "top": [
+          "00011d3ee5a94028729040c2828a69f7",
+          "0a17f43ba7a1c6215ad7e0f8ca758d67",
+          "b1dbb55044ae6d6055f48cc5afe4b94e",
+          "2ffb9f9cc3e547abbce65ed95e3baf91",
+          "364e3021ae4aa318811d0f3479400949"
+        ],
+        "found_itself": true
+      },
+      {
+        "chunk_id": "000f5e5599ae55680c181fd7074c1764",
+        "top": [
+          "000f5e5599ae55680c181fd7074c1764",
+          "1d52e60ab64a3f03f5e96cf1ec5b9063",
+          "41eff79dc0a83fefb2294ef04c18e61b",
+          "c7b2b7bc74a9bfd0436d46a1c9f26634",
+          "2f06a7f0dbb3aaf3c89b446a40efd9fb"
+        ],
+        "found_itself": true
+      },
+      {
+        "chunk_id": "00371a379617a9ec115a3450b777b32b",
+        "top": [
+          "00371a379617a9ec115a3450b777b32b",
+          "66463eb8fcf24a356ff78c049dee7aaa",
+          "e33d387081079b8965243d36d6b982a4",
+          "0c1870677ec914caf791805b1588d130",
+          "7c807ad462de716a037b927b0cd121b5"
+        ],
+        "found_itself": true
+      }
+    ],
+    "status": "succeeded",
+    "finished_utc": "2026-10-21T03:51:09Z"
+  },
+  "error": null,
+  "error_trace": null
+}
