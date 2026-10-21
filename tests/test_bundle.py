@@ -1,5 +1,6 @@
 """The bundle (databricks.yml, resources/) against the code it deploys, without a workspace (M7, D-016)."""
 
+import re
 from pathlib import Path
 from typing import Any
 
@@ -87,3 +88,27 @@ def test_one_run_at_a_time_and_nothing_scheduled_until_the_owner_says_so() -> No
     assert BUNDLE["targets"]["prod"]["presets"]["trigger_pause_status"] == "PAUSED"
     assert BUNDLE["targets"]["dev"]["variables"]["schema"] == Config().schema
     assert BUNDLE["targets"]["prod"]["variables"]["schema"] == "docs_rag_prod"
+
+
+def github_glob(pattern: str) -> re.Pattern[str]:
+    """A GitHub Actions path filter as a regex: `**` crosses directories, `*` and `?` do not."""
+    parts = re.split(r"(\*\*|\*|\?)", pattern)
+    wild = {"**": ".*", "*": "[^/]*", "?": "[^/]"}
+    return re.compile("".join(wild.get(p, re.escape(p)) for p in parts) + r"\Z")
+
+
+def test_a_docs_only_push_skips_the_deploy_but_no_deployed_path_is_ignored() -> None:
+    workflow = load(".github/workflows/deploy.yml")
+    on = workflow.get("on", workflow.get(True))  # YAML 1.1 reads the bare key `on` as true
+    ignored = [github_glob(p) for p in on["push"]["paths-ignore"]]
+    for path in ("runs/m7_h_actions_deploy_dev.json", "eval/eval_set_v1.json", "docs/BRIEF.md", "README.md"):
+        assert any(g.match(path) for g in ignored), path
+    deployed = ["databricks.yml", "pyproject.toml", "uv.lock", ".github/workflows/deploy.yml"] + [
+        p.relative_to(ROOT).as_posix()
+        for d in ("src", "jobs", "resources", "scripts")
+        for p in (ROOT / d).rglob("*")
+        if p.is_file() and "__pycache__" not in p.parts and p.suffix != ".md"
+    ]
+    assert len(deployed) > 20
+    for path in deployed:
+        assert not any(g.match(path) for g in ignored), path

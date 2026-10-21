@@ -1344,9 +1344,11 @@ serverless environment 4 pinned (D-005), the index synced only from a committed 
    repo). Dev resource names carry the user name's local part, which `scripts/redact.py` now masks too.
 10. *CI/CD.* `ci.yml` (lint, types, tests incl. the bundle tests, the corpus golden) is reusable; `deploy.yml`
    runs it, then deploys dev on every push to main, and dev or prod on demand, in a GitHub environment named
-   after the target (prod should require a reviewer). Actions are pinned to commit SHAs. The workspace
-   credentials are repository or environment secrets the owner sets; a personal access token is the only
-   credential tested here (OAuth M2M or GitHub OIDC federation would be better; not checked on Free Edition).
+   after the target (prod should require a reviewer). Actions are pinned to commit SHAs. A push that changes
+   only run records, the eval set, docs or Markdown skips the deploy, so a commit of evidence does not deploy a
+   new wheel version of the same code (added after the first run; `tests/test_bundle.py` checks that no
+   deployed path is ignored). The workspace credentials are repository or environment secrets the owner
+   sets; a personal access token is the only credential tested here (OAuth M2M or GitHub OIDC federation would be better; not checked on Free Edition).
 
 **Evidence** (2026-10-21; dev runs on the gold chain of `docs_rag_dev`, head v4.0.1 before them):
 

@@ -3,11 +3,16 @@
 # Needs the repository (or environment) secrets DATABRICKS_HOST and DATABRICKS_TOKEN, set by the owner. The
 # `prod` environment should require a reviewer (Settings > Environments > prod), so a prod deploy waits for an
 # approval. Deploying changes no data: tables are written only by job runs (scripts/bundle.py run).
+#
+# A push that changes only run records, the eval set, docs or Markdown does not redeploy dev: none of them is
+# deployed code, and each commit would otherwise deploy a new wheel version of the same code. A push that also
+# touches anything else deploys as usual; tests/test_bundle.py checks that no deployed path is ignored.
 name: Deploy
 
 on:
   push:
     branches: [main]
+    paths-ignore: ["runs/**", "eval/**", "docs/**", "**.md"]
   workflow_dispatch:
     inputs:
       target:
