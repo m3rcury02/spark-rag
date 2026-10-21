@@ -5,10 +5,12 @@ serves every chunk config. A chunk is relevant to an item when its slice of the 
 MIN_QUOTE_SHARE of some occurrence of the quote, anywhere in the corpus (language tabs and shared pages repeat
 text). Where chunks overlap, a quote that straddles a boundary still has a chunk covering at least half of it;
 where two meet at a paragraph break without overlap it may not, so the eval checks that every item has a
-relevant chunk under every config rather than assuming it. recall@k is the share of items with at least one
-relevant chunk in the top k (one answer per item, so a chunk config that splits the answer across chunks is
-not penalised for it); MRR@k averages 1/rank of the first relevant chunk, 0 beyond k. Uncertainty: percentile bootstrap over items with one seeded
-set of resamples, shared by every config, so differences between configs are paired. Pure Python.
+relevant chunk under every config rather than assuming it.
+
+recall@k is the share of items with at least one relevant chunk in the top k (one answer per item, so a chunk
+config that splits the answer across chunks is not penalised for it); MRR@k averages 1/rank of the first
+relevant chunk, 0 beyond k. Uncertainty: percentile bootstrap over items with one seeded set of resamples,
+shared by every config, so differences between configs are paired. Pure Python.
 """
 
 import json
