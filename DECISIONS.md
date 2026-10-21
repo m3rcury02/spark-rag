@@ -1171,6 +1171,59 @@ in one task attempt, `m5_o`):
   not capped. Embedding cost is now measured: 28.8–32.2 chunks/s on the two large encodes, about 3 minutes
   of encoding for a full load.
 
+## D-015 — Retrieval evaluation: the eval set, the metrics, and the comparisons
+
+- **Date:** 2026-10-21 · **Status:** Plan fixed before the first eval run (this section is committed before
+  any result exists, so its git history shows the order); results to follow below it.
+
+**The corpus.** Spark v4.0.1 under cleaner 2, chunked locally from git with today's code at both configs of
+`Config.chunk_grid` (254/32: 5,436 chunks; 128/16: 8,767). Each local chunking's fingerprint must equal
+silver's (`m6_b`, `m6_e`): the eval ranks the pipeline's own chunks.
+
+**The set (v1).**
+- Sections are drawn by `scripts/m6_sample_sections.py` (`m6_a`): one section per doc, from the 167 docs with
+  a section of at least 300 characters of prose (stubs, zero-chunk docs, code and table lines excluded),
+  shuffled with seed 6, the first 75.
+- One agent drafted one item per section (question, short answer, a verbatim quote of the cleaned text that
+  contains the answer, kind). A second, skeptical agent reviewed each against the section and the whole
+  cleaned corpus: 49 kept, 16 fixed, 10 dropped (`eval/drafts_v1.json`).
+- The set takes the first 50 usable items in sample order; the other 15 are spares, used in the same order
+  for any item the owner rejects. So which sections the set covers was fixed before any retrieval ran.
+- Checked (`m6_e`): every quote occurs exactly once in the corpus and inside its labelled section, every item
+  has 1–2 relevant chunks under both configs, and no question shares a run of more than 3 words with its
+  quote.
+- 8 items state their answer in another doc too, in other words (`also_in`). Retrieving that doc counts as a
+  miss, so a sensitivity check reports the set without them.
+- The owner reviews every item before the run (a review page; the decisions are saved to `runs/`).
+
+**Definitions.** `Config.eval`, `docs_rag.evaluate`:
+- *Relevant:* a chunk whose slice of the cleaned text covers at least half of an occurrence of the quote. The
+  label is the quote, not chunk ids, so one label serves both chunk sizes (the open question of D-010).
+- *recall@5:* the share of items with a relevant chunk in the top 5.
+- *MRR@10:* the mean of 1/rank of the first relevant chunk, 0 beyond rank 10.
+- *Search:* exact cosine over all chunks (normalized vectors, the full ranking), not the ANN index: the grid
+  cannot have four live indexes (D-001). For the published config the eval also ranks with gold's own vectors,
+  which must give the same ranks.
+- *Uncertainty:* 10,000 bootstrap resamples of the 50 items, seed 15, percentile 95% intervals. Differences
+  are paired: every config uses the same resamples.
+
+**Configurations.** all-MiniLM-L6-v2 and bge-small-en-v1.5, at their pinned revisions, × 254/32 and 128/16,
+embedded on one machine's CPU. bge's queries carry the model card's instruction for short queries against
+passages ("Represent this sentence for searching relevant passages: "); its sentence-transformers config sets
+none (`m2_f`).
+
+**Comparisons, named before the run.**
+1. Chunk size within each model: 254/32 against 128/16.
+2. Model within each chunk size: bge (with the instruction) against MiniLM.
+3. bge's instruction within each size: with it against without it.
+4. The published config with gold's vectors against the same config with local vectors. This should be zero.
+
+**Decision rule.** With n = 50, a difference counts only if its paired 95% interval for recall@5 excludes zero.
+MRR@10 is reported beside it and breaks no tie. If no comparison clears that bar, production keeps what it has
+(MiniLM at 254/32, D-014), because it is the cheaper model and the config that is already embedded. A result
+the set cannot resolve is reported as such, not as a winner. The `also_in` sensitivity check and per-kind
+counts are descriptive only.
+
 ## Open questions (decide in the milestone noted)
 
 - **M2/M5 — chunk size vs model context.** *Answered in M2 (D-009):* sizes are counted in the models' own
