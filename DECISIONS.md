@@ -1451,7 +1451,10 @@ serverless environment 4 pinned (D-005), the index synced only from a committed 
 - *Finding: the prod deploy was not gated.* The `prod` GitHub environment existed but required no reviewer at
   run j, so the dispatch deployed prod with no approval. Deploying changes no data (decision 7), but anyone who
   can run workflows can change prod's code. The fix is a setting, not code: a required reviewer on the
-  environment (Settings > Environments > prod); not re-checked after.
+  environment (Settings > Environments > prod). *Re-checked* (`m7_o`, 2026-10-21): after being asked to add a
+  reviewer, the owner dispatched a prod deploy ([39665077240](https://github.com/m3rcury02/spark-rag/actions/runs/39665077240));
+  it deployed 3 s after its checks with no approval, so the environment still requires none. Prod now pins
+  `0.0.1.dev214+gf862ccc63`, the same code as before (no deployed path changed since `d0871f0`, `m7_n`).
 
 **Consequences.**
 - One command per environment: `scripts/bundle.py deploy|run --target dev|prod`. A schedule, a person and CI
@@ -1465,6 +1468,27 @@ serverless environment 4 pinned (D-005), the index synced only from a committed 
 - Every push to main that touches deployed code redeploys dev; prod changes only when someone dispatches it,
   and until the `prod` environment requires a reviewer, nothing stands between a dispatch and prod. A token stored in GitHub is a long-lived credential: use one made for CI, with an expiry, and
   prefer OAuth or OIDC federation where the workspace allows it.
+
+## D-017 — The project's license, and the end of the milestones
+
+- **Date:** 2026-10-21 · **Status:** Accepted
+
+**Context.** The repository had no license for its own code, only the Apache License 2.0 text for the Spark
+excerpts it redistributes. Without a license, nobody may reuse the code. The owner asked for MIT or Apache
+2.0, whichever fits better, and said M9 (the optional FastAPI question-answering endpoint) is not needed.
+
+**Options.** MIT: short and permissive, with no patent clause. Apache 2.0: permissive, with an explicit patent
+grant and a defined way to carry notices.
+
+**Decision.** Apache 2.0 (`LICENSE`, `license = "Apache-2.0"` in `pyproject.toml`, so the wheel's metadata
+says `License-Expression: Apache-2.0`). It is the license of the Spark documentation the repository
+redistributes and of the Spark ecosystem the project sits in, so the whole repository is under one license.
+Its text was already in `LICENSES/`, copied from apache.org; `LICENSE` is the same file. The patent grant is
+a small extra protection MIT does not give.
+
+**M9 dropped.** The brief lists M9 as optional and last, and it needs an LLM, which is either a cost or a
+weaker local model. With M0–M8 finished and verified, the project ends at M8 ("small and finished beats big
+and half-done").
 
 ## Open questions (decide in the milestone noted)
 

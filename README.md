@@ -15,7 +15,7 @@ Databricks Asset Bundles with dev and prod targets, and GitHub Actions runs the 
 
 Every measured number here comes from a run whose raw output is committed under [`runs/`](runs/). The result
 tables link their files; [`DECISIONS.md`](DECISIONS.md) cites the rest and records each design choice with the
-options considered (D-001 to D-016).
+options considered (D-001 to D-017).
 
 ## Results at a glance
 
@@ -344,8 +344,9 @@ quota while the endpoint exists: create it only for a demo and delete it afterwa
    this one corpus. They say nothing about whether a chunk is good text, and an override's reason is checked
    only for length (D-012, D-013).
 8. **Deployment security is basic.** CI uses a personal access token, not OAuth or OIDC federation, and prod
-   runs as the owner, not a service principal. When prod was first deployed from Actions, the `prod` GitHub
-   environment required no reviewer ([`m7_j`](runs/m7_j_actions_deploy_prod.json)).
+   runs as the owner, not a service principal. The `prod` GitHub environment requires no reviewer: two prod
+   deploys from Actions ran with no approval ([`m7_j`](runs/m7_j_actions_deploy_prod.json),
+   [`m7_o`](runs/m7_o_actions_prod_reviewer_recheck.json)).
 9. **Cost and timing figures are mostly single runs** on shared serverless compute. The one repeated case, a
    no-op run, billed 0.36 DBU in dev and 0.70 in prod ([`m7_m`](runs/m7_m_billing_m7_k.json)), so a single
    run's cost says little about differences smaller than that.
@@ -368,9 +369,9 @@ DECISIONS.md                 every significant choice: options, decision, eviden
 
 CI runs link to GitHub Actions. A few observations in `DECISIONS.md` are marked as not saved.
 
-## Attribution
+## License and attribution
 
-The corpus is the Apache Spark documentation, under the Apache License 2.0. The excerpts this repository
-redistributes (test fixtures, the eval set, the canary texts) are listed in
-[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md), and the license text is in [`LICENSES/`](LICENSES/). The
+The project's code is licensed under the [Apache License 2.0](LICENSE). The corpus is the Apache Spark
+documentation, also under the Apache License 2.0. The excerpts this repository redistributes (test fixtures,
+the eval set, the canary texts) are listed in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md). The
 embedding models are all-MiniLM-L6-v2 and bge-small-en-v1.5, used through sentence-transformers.

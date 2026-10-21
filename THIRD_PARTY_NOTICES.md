@@ -1,6 +1,7 @@
 # Third-party material in this repository
 
-This repository redistributes the following third-party files. Their licenses apply to those files only.
+The project's own code is licensed under the Apache License 2.0 (`LICENSE`). This repository also
+redistributes the following third-party files. Their licenses apply to those files only.
 The full Apache License 2.0 text is in `LICENSES/Apache-2.0.txt` (copied from
 https://www.apache.org/licenses/LICENSE-2.0.txt on 2026-10-15).
 

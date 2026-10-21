@@ -174,17 +174,15 @@ on `with_index`) → sync_index.
   42/42, 22/22 (`m7_v7`..`v9`). Both weekly schedules are paused. No endpoint or index exists.
 - Both deploy paths ran from GitHub Actions: dev on a push to main (m7_h), prod by dispatch (m7_j). `deploy.yml`
   skips pushes that change only runs/, eval/, docs/ or Markdown (proven over 10 commits, m7_n). The `prod`
-  environment had no required reviewer at m7_j; the owner was asked to add one. Not re-checked: a dispatch of a
-  prod deploy from this session was refused by the session's permission check, so the owner verifies it
-  (Actions > Deploy > Run workflow, target prod: the run should wait for review).
+  environment requires no reviewer: the owner's own prod dispatch after being asked to add one also ran with no
+  approval (m7_o). A dispatch of a prod deploy from this session is refused by its permission check.
 - Eval set v2 (v1's items at v4.2.0, one quote reworded by the release) ran against dev gold (m6_n, D-015).
 - Billing: the M6 endpoint window (m7_i), DBU per M7 job run (m7_l) and m7_k's (m7_m: 0.70 against m7_e's
   0.36 for the same no-op).
 - Do not re-run any existing label in runs/. The CLI here is a downloaded 1.21.0 binary (checksum-verified,
   scratchpad); `scripts/bundle.py` finds it through DATABRICKS_CLI.
 
-**Do not start M9 until the owner says so** (optional FastAPI QA endpoint with citations: it needs an LLM,
-which is a cost decision to flag first). The project's own code has no license file: the owner's choice.
+The project is finished: the owner dropped M9 on 2026-10-21, and the code is licensed Apache 2.0 (D-017).
 Open items, all listed as limitations in the README:
 - A scheduled run the gate stops fails weekly until accepted (D-012, D-016); fail-fast is not built.
 - Untested: the manual repair after a failure between a gold MERGE and its committed row (D-014); section-aware
@@ -204,4 +202,4 @@ Open items, all listed as limitations in the README:
 - [x] M6 — Eval set (50 Q/A, owner reviews) + recall@5/MRR, 2 chunk sizes × 2 models (2026-10-21; D-015)
 - [x] M7 — Asset Bundles (dev/prod), Jobs, GitHub Actions (2026-10-21; D-016)
 - [x] M8 — README: Mermaid diagram, how to run, results table, limitations (2026-10-21; merged)
-- [ ] M9 — (optional) FastAPI QA endpoint with citations
+- [-] M9 — (optional) FastAPI QA endpoint with citations: not done, by the owner's decision (2026-10-21; D-017)

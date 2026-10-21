@@ -1,0 +1,42 @@
+{
+  "label": "m7_o_actions_prod_reviewer_recheck",
+  "prod_dispatch": {
+    "conclusion": "success",
+    "createdAt": "2026-10-21T19:50:12Z",
+    "databaseId": 39665077240,
+    "event": "workflow_dispatch",
+    "headBranch": "main",
+    "headSha": "f862ccc639b331d952659e5c4808536d0d213dfe",
+    "jobs": [
+      {
+        "name": "checks / checks",
+        "conclusion": "success",
+        "startedAt": "2026-10-21T19:50:17Z",
+        "completedAt": "2026-10-21T19:51:03Z"
+      },
+      {
+        "name": "deploy",
+        "conclusion": "success",
+        "startedAt": "2026-10-21T19:51:06Z",
+        "completedAt": "2026-10-21T19:51:25Z"
+      }
+    ],
+    "status": "completed",
+    "updatedAt": "2026-10-21T19:51:26Z",
+    "url": "https://github.com/m3rcury02/spark-rag/actions/runs/39665077240",
+    "workflowName": "Deploy"
+  },
+  "approvals": [],
+  "actor": {
+    "actor": "m3rcury02",
+    "triggering_actor": "m3rcury02"
+  },
+  "prod_job_after": {
+    "job_id": 1054940179033075,
+    "expect_version": [
+      "--expect-version=0.0.1.dev214+gf862ccc63"
+    ]
+  },
+  "note": "Dispatched by the owner after being asked to add a required reviewer to the 'prod' environment. The deploy job started 3 s after checks and the run has no approvals: no reviewer gated it."
+}
+
