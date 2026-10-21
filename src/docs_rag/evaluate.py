@@ -105,21 +105,20 @@ def relevant_ids(
 def item_violations(
     item: EvalItem,
     clean_texts: Mapping[str, str],
-    section_spans: Mapping[tuple[str, ...], tuple[int, int]],
+    section_spans: Mapping[tuple[str, ...], Sequence[tuple[int, int]]],
     quote_chars: tuple[int, int],
 ) -> list[str]:
     """What makes an item unusable: a quote that is not where the item says (in its doc, inside its section)
-    or of the wrong length. `section_spans` maps the doc's section paths to their (start, end) offsets."""
+    or of the wrong length. `section_spans` maps the doc's section paths to their (start, end) offsets (a
+    heading path can repeat within a doc)."""
     problems = []
     if not quote_chars[0] <= len(item.quote) <= quote_chars[1]:
         problems.append(f"quote of {len(item.quote)} characters, outside {quote_chars}")
-    span = section_spans.get(item.section_path)
-    if span is None:
+    found = occurrences(item.quote, {item.path: clean_texts.get(item.path, "")})
+    spans = section_spans.get(item.section_path)
+    if not spans:
         problems.append(f"no section {item.section_path} in {item.path}")
-    elif not any(
-        o.path == item.path and span[0] <= o.start and o.end <= span[1]
-        for o in occurrences(item.quote, {item.path: clean_texts.get(item.path, "")})
-    ):
+    elif not any(start <= o.start and o.end <= end for o in found for start, end in spans):
         problems.append("the quote does not occur in its section")
     if not item.question.strip() or not item.answer.strip():
         problems.append("empty question or answer")
@@ -207,3 +206,34 @@ def paired_difference(a: Sequence[float], b: Sequence[float], draws: Sequence[Se
         a_only=sum(x > y for x, y in zip(a, b, strict=True)),
         b_only=sum(y > x for x, y in zip(a, b, strict=True)),
     )
+
+
+# --- the eval_results row ---------------------------------------------------------------------------
+
+EVAL_RESULTS_COLUMNS: tuple[tuple[str, str], ...] = (
+    ("eval_run_id", "STRING NOT NULL"),
+    ("eval_set_version", "STRING NOT NULL"),
+    ("eval_set_sha256", "STRING NOT NULL"),
+    ("item_id", "STRING NOT NULL"),
+    ("model_id", "STRING NOT NULL"),  # model@revision
+    ("query_prefix", "STRING NOT NULL"),  # '' when none
+    ("config_id", "STRING NOT NULL"),
+    ("max_tokens", "INT NOT NULL"),
+    ("overlap_tokens", "INT NOT NULL"),
+    ("version_tag", "STRING NOT NULL"),
+    ("vectors", "STRING NOT NULL"),  # 'local' (embedded by the eval) or 'gold' (read from the gold table)
+    ("rank_first_relevant", "INT"),  # 1-based, over the full exact ranking; NULL if no relevant chunk ranks
+    ("hit_at_k", "DOUBLE NOT NULL"),
+    ("rr_at_k", "DOUBLE NOT NULL"),
+    ("recall_k", "INT NOT NULL"),
+    ("mrr_k", "INT NOT NULL"),
+    ("top_chunk_ids", "ARRAY<STRING> NOT NULL"),  # the mrr_k best, in order
+    ("relevant_chunk_ids", "ARRAY<STRING> NOT NULL"),
+    ("evaluated_at", "TIMESTAMP NOT NULL"),
+    ("code_commit", "STRING NOT NULL"),
+)
+EVAL_RESULTS_KEY = ("eval_run_id", "item_id", "model_id", "query_prefix", "config_id", "vectors")
+
+
+def eval_results_ddl(nullable: bool = False) -> str:
+    return ", ".join(f"{n} {k.removesuffix(' NOT NULL') if nullable else k}" for n, k in EVAL_RESULTS_COLUMNS)

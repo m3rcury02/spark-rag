@@ -46,9 +46,9 @@ def item(**over: object) -> EvalItem:
     return EvalItem(**{**base, **over})  # type: ignore[arg-type]
 
 
-def texts_and_spans() -> tuple[dict[str, str], dict[tuple[str, ...], tuple[int, int]]]:
+def texts_and_spans() -> tuple[dict[str, str], dict[tuple[str, ...], list[tuple[int, int]]]]:
     page = clean_page(PAGE, "tuning")
-    spans = {s.path: (s.start, s.start + len(s.body)) for s in split_sections(page.title, page.text)}
+    spans = {s.path: [(s.start, s.start + len(s.body))] for s in split_sections(page.title, page.text)}
     return {"docs/tuning.md": page.text}, spans
 
 
@@ -71,7 +71,7 @@ def test_quotes_across_overlapping_chunk_boundaries_still_have_a_relevant_chunk(
     texts, sections = texts_and_spans()
     doc = chunk_document("docs/tuning.md", PAGE, ChunkConfig(64, 8))
     spans = [ChunkSpan(c.chunk_id, c.path, c.char_start, c.char_end) for c in doc.chunks]
-    start, end = sections[("Tuning", "Memory")]  # one long paragraph: its chunks overlap
+    ((start, end),) = sections[("Tuning", "Memory")]  # one long paragraph: its chunks overlap
     text = texts["docs/tuning.md"]
     assert len(spans) > 3
     for at in range(start, end - 80, 37):  # quotes everywhere in it, many straddling chunk boundaries

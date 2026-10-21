@@ -1,0 +1,48 @@
+{
+ "version": "smoke",
+ "tag": "v4.0.1",
+ "commit_sha": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+ "cleaner_version": "2",
+ "note": "three hand-written items to test scripts/m6_eval.py end to end; not an eval set",
+ "items": [
+  {
+   "item_id": "smoke1",
+   "question": "What happens to the metastore when I drop an external table?",
+   "answer": "Only its metadata is removed from the metastore.",
+   "path": "docs/sql-ref-syntax-ddl-drop-table.md",
+   "section_path": [
+    "DROP TABLE",
+    "Description"
+   ],
+   "quote": "In case of an external table, only the associated metadata information is removed from the metastore database.",
+   "kind": "behavior",
+   "also_in": []
+  },
+  {
+   "item_id": "smoke2",
+   "question": "How long does Spark wait between retries when reading from Kinesis, by default?",
+   "answer": "100ms",
+   "path": "docs/streaming-kinesis-integration.md",
+   "section_path": [
+    "Spark Streaming + Kinesis Integration",
+    "Kinesis retry configuration"
+   ],
+   "quote": "This configuration can be tweaked to increase the sleep between fetches when a fetch fails to reduce these exceptions. Default is \"100ms\".",
+   "kind": "config",
+   "also_in": []
+  },
+  {
+   "item_id": "smoke3",
+   "question": "Which cluster managers can run Spark applications?",
+   "answer": "Standalone, Hadoop YARN and Kubernetes.",
+   "path": "docs/cluster-overview.md",
+   "section_path": [
+    "Cluster Mode Overview",
+    "Cluster Manager Types"
+   ],
+   "quote": "* Hadoop YARN -- the resource manager in Hadoop 3.",
+   "kind": "fact",
+   "also_in": []
+  }
+ ]
+}
