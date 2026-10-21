@@ -1148,7 +1148,10 @@ in one task attempt, `m5_o`):
 - *Cost of incremental embedding:* the embedded share of tokens was 100% for the initial load, 31.2% for a
   major release and 0.51% for a patch release. The detect jobs took 101–390 s and the sync jobs 97–217 s.
   The endpoint existed from 18:26 to 19:09 UTC (about 43 min; at D-001's 4 DBU/h about 2.9 DBU, an inference).
-  `system.billing.usage` had no rows for the window yet (`m5_p`), so the DBU actually used is still to be read.
+  `system.billing.usage` had no rows for the window yet (`m5_p`). Read again on 2026-10-21 (`m6_l`): the
+  hours 18:00 and 19:00 UTC hold 2.96 DBU of `VECTOR_SEARCH`, of which 1.84 is the endpoint
+  (`REAL_TIME_INFERENCE`) and 1.13 the sync pipelines (`JOBS_SERVERLESS`). Jobs used 3.00 DBU and SQL 3.52 in
+  the same hours. Rows can still arrive late, so these are the rows so far.
 - *Review before the first run* (one agent): no definite bug. Four points were fixed:
   - the gold version is recorded before the post-MERGE checks;
   - maintenance commits are accepted beside the MERGE;
@@ -1230,6 +1233,73 @@ the set cannot resolve is reported as such, not as a winner. The `also_in` sensi
 without those 8 items) and the split by doc area (SQL reference pages, 23 items, against the rest) are
 descriptive only. Not compared, by the owner's choice: section-aware against whole-page chunking (D-009's
 open question), which stays a stated limitation.
+
+**Owner's review** (2026-10-21, `eval/review_v1.json`): all 50 items kept, none rejected or edited, so the
+spares stay unused. The review page's store recorded no clicks; the owner confirmed the decision in chat.
+
+**Results** (`runs/m6_i_eval_v1.json`, 2026-10-21; set v1, sha256 `b19d98fe…`; 400 rows in `eval_results`,
+`eval_run_id` `m6_i_eval_v1-fb215b54`):
+
+| Config | recall@5 [95% CI] | MRR@10 [95% CI] |
+|---|---|---|
+| MiniLM 254/32 (production) | 0.68 [0.54, 0.80] | 0.486 [0.378, 0.597] |
+| MiniLM 254/32, gold's vectors | 0.68 [0.54, 0.80] | 0.486 [0.378, 0.597] |
+| MiniLM 254/32, the live AI Search index | 0.68 [0.54, 0.80] | 0.489 [0.381, 0.600] |
+| MiniLM 128/16 | 0.72 [0.60, 0.84] | 0.500 [0.390, 0.612] |
+| bge-small 254/32, with the instruction | 0.74 [0.62, 0.86] | 0.581 [0.464, 0.696] |
+| bge-small 128/16, with the instruction | 0.74 [0.62, 0.86] | 0.607 [0.485, 0.727] |
+| bge-small 254/32, without | 0.74 [0.62, 0.86] | 0.531 [0.421, 0.644] |
+| bge-small 128/16, without | 0.70 [0.56, 0.82] | 0.564 [0.442, 0.683] |
+
+The comparisons named in the plan. Each is the paired difference a − b with its 95% interval; "items" counts
+the questions only a found in the top 5 against those only b found.
+
+| # | a vs b | recall@5 | items | MRR@10 |
+|---|---|---|---|---|
+| 1 | MiniLM 254/32 vs 128/16 | −0.04 [−0.12, +0.04] | 1 vs 3 | −0.014 [−0.075, +0.043] |
+| 1 | bge 254/32 vs 128/16 | 0.00 [−0.06, +0.06] | 1 vs 1 | −0.027 [−0.093, +0.040] |
+| 2 | bge vs MiniLM at 254/32 | +0.06 [−0.06, +0.18] | 6 vs 3 | **+0.095 [+0.009, +0.186]** |
+| 2 | bge vs MiniLM at 128/16 | +0.02 [−0.08, +0.12] | 4 vs 3 | **+0.108 [+0.034, +0.185]** |
+| 3 | bge with vs without the instruction, 254/32 | 0.00 [−0.06, +0.06] | 1 vs 1 | **+0.049 [+0.013, +0.094]** |
+| 3 | the same, 128/16 | +0.04 [0.00, +0.10] | 2 vs 0 | **+0.043 [+0.001, +0.089]** |
+| 4 | gold's vectors vs local, production config | 0 (identical ranks) | 0 vs 0 | 0 |
+| 5 | live index vs exact search, gold's vectors | 0.00 [0.00, 0.00] | 0 vs 0 | +0.003 [0.000, +0.010] |
+
+- **Decision, by the rule fixed in advance:** no recall@5 interval excludes zero. The instruction at 128/16
+  comes closest, but its interval starts at zero: 2 items against 0, which the set cannot tell from chance. So
+  production keeps MiniLM at 254/32.
+- **What the set does show:** MRR@10 favours bge-small with its instruction at both sizes, and its intervals
+  exclude zero. When both models find the answer, bge tends to rank it higher. By the rule, MRR breaks no tie.
+- **Cost of switching to bge:** a new gold table and chain (D-014), at about half MiniLM's embedding speed
+  (33.8 against 64.7 chunks/s here at 254/32). A larger set that can resolve recall should come first.
+- **The serving path loses nothing measurable.** Gold's vectors rank exactly like the local ones; their lowest
+  cosine is 0.99997. The live index returned 99.8% of exact search's top 10 per question, with identical top-10
+  lists for 48 of the 50, the same recall@5, and an MRR@10 0.003 higher (one item ranked differently). So the
+  numbers for the production config hold for the deployed index, not only for an offline copy.
+- **Descriptive:**
+  - *By doc area:* SQL reference questions reach recall@5 of 0.61–0.70 across configs, the rest 0.70–0.85.
+    bge's lead is entirely outside the SQL reference: 0.85 against MiniLM's 0.70 at 254/32, while on the SQL
+    reference it has 0.61 against 0.65.
+  - *Without the 8 `also_in` items* (n = 42): the order stays the same, 0.69 / 0.69 / 0.74 / 0.74 for MiniLM
+    254, MiniLM 128, bge 254, bge 128.
+  - *Misses:* 28 questions are found by every config and 9 by none, 6 of those 9 on SQL reference pages. Those
+    pages are many short docs built from one template (Description, Syntax, Parameters, Examples), so a question
+    competes with its siblings' near-identical chunks. For three of the nine (q09, q11, q28) the relevant chunk
+    ranks beyond 400 under every config. That suggests the answer sentence sits in a chunk dominated by other
+    text; it has not been checked.
+- **Cost:** the endpoint was up for 28 minutes (03:33–04:01 UTC, `m6_f`..`m6_k`). Local embedding on 4 vCPU
+  x86_64 ran at 64.7 and 113.6 chunks/s for MiniLM (254/32, 128/16) and 33.8 and 57.9 for bge. The whole run
+  took about 10 minutes.
+
+**Consequences.**
+- Production is unchanged (D-014). Switching models stays open until a larger set can resolve recall. By the
+  normal approximation of the plan, a ±5-point interval needs about four times the items, roughly 200; that
+  is an inference, not a measurement.
+- The SQL reference is where retrieval fails most. A follow-up would be a page-level signal (the breadcrumb
+  is already in each embed text) or hybrid lexical search; neither is tested.
+- Section-aware against whole-page chunking is still unmeasured (D-009).
+- The eval harness reuses the pipeline's chunker, embedder and the gold table, and ranks the deployed index
+  with the same labels. A re-run after a corpus or model change is one command.
 
 ## Open questions (decide in the milestone noted)
 

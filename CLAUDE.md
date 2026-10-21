@@ -143,40 +143,45 @@ uv run --with databricks-sdk==0.152.0 python scripts/m4_verify_gate.py --label <
 uv run --with databricks-sdk==0.152.0 python scripts/m3_verify_changes.py --label <label> \
     --sink gold_chunk_embeddings --job-runs runs/m5_*_detect_*.json
 # The embedding canary (one file today, MiniLM; never overwritten): scripts/m5_canary.py, same --with flags.
+# M6 eval (git + local CPU; Databricks for silver's fingerprints, gold's vectors and the table). The set is
+# drawn, drafted and built once (scripts/m6_sample_sections.py, m6_build_set.py); --check-only validates it;
+# --index also ranks through the live index (create it and run sync_index first, delete both afterwards).
+uv run --with databricks-sdk==0.152.0 --with sentence-transformers==6.1.0 --with transformers==5.19.0 \
+    --with torch==2.14.1+cpu --index https://download.pytorch.org/whl/cpu \
+    --index-strategy unsafe-best-match python scripts/m6_eval.py --label <label> --set eval/eval_set_v1.json \
+    [--check-only] [--index] [--write-table]
 ```
 
 ## Next session: pick up here
 
-M5 is complete (D-014; report given to the owner on 2026-10-20) on branch `m5-gold-index` (not yet merged
-into `main`; the owner decides). `Config.sink` is `gold_chunk_embeddings`: `jobs/change_detect.py` checks gold
-holds the chain head, embeds only the added chunks (canary first), logs five vector checks as a second DQ insert,
-MERGEs inserts and deletes (rows never change), checks gold equals the target, then commits. `jobs/sync_index.py`
-syncs the index from a committed state and proves it equal by key scan. The gold chain has 4 committed runs:
-v3.5.0 (5,567 embedded) → v4.0.0 (drift accepted, 1,866 embedded) → v4.0.0 (0) → v4.0.1 (21 embedded); gold
-holds 5,436 rows at version 4. `ops_run_log` has 53 columns (`runs/m5_b` added six). The chain for sink `none`
-(15 runs, M3/M4) is unchanged. Evidence: `runs/m5_*`, verified by `m5_v1` (42/42, incl. the index scan),
-`m5_v2`/`m5_v2b` (379/379) and `m5_v3b` (85/85; `m5_v3` failed on a verifier defect, kept as history; `m2_e`
-has no cleaner-2 numbers, so no `m2_e` comparison applies to this chain). The index and the
-endpoint were deleted afterwards (`m5_m`, `m5_n`); gold stays. Do not re-run the `m3_*`, `m4_*`, `m4x_*` or
-`m5_*` labels.
+M6 is complete (D-015; report given to the owner on 2026-10-21) on branch `m6-eval` (not yet merged into
+`main`; the owner decides). M5 (D-014) is merged. The eval set v1 (`eval/eval_set_v1.json`, 50 items, owner
+reviewed: all kept, `eval/review_v1.json`) labels each answer as a verbatim quote of the cleaned text;
+`scripts/m6_eval.py` chunks git (pinned to silver's fingerprints), embeds both models locally, ranks exactly,
+and also ranks the production config with gold's vectors and the live index. Results (`runs/m6_i`, 400 rows in
+`eval_results`): recall@5 0.68–0.74 across the 2×2 grid, no recall difference resolved at n = 50, so production
+stays MiniLM 254/32 (the rule fixed in advance); MRR@10 favours bge-small with its query instruction (intervals
+exclude zero); the live index matches exact search (99.8% of the top 10). The endpoint and index were deleted
+afterwards (`m6_j`, `m6_k`); gold stays at v4.0.1. Do not re-run the `m3_*`, `m4_*`, `m4x_*`, `m5_*` or `m6_*`
+labels.
 
-**Do not start M6 until the owner says so.** Open items:
-- Read the DBU the M5 window used (endpoint 18:26–19:09 UTC on 2026-10-20) from `system.billing.usage` once it
-  has rows (`m5_p` found none yet); the m2_d0d query works.
-- Untested: the manual repair after a failure between a gold MERGE and its committed row (D-014, decision 5).
+**Do not start M7 until the owner says so.** Open items:
+- Read the M6 endpoint window's DBU (03:33–04:01 UTC on 2026-10-21) once `system.billing.usage` has rows; M5's
+  window is in D-014 (`m6_l`).
+- A model switch (bge-small) needs a larger eval set to resolve recall (about 200 items for ±5 points), then a
+  new gold table and chain. The SQL reference pages are where retrieval fails most (D-015).
+- Untested: the manual repair after a failure between a gold MERGE and its committed row (D-014, decision 5);
+  section-aware against whole-page chunking (D-009, D-015).
 - Still open (D-012, D-013): the override's reason test is lexical and nothing records who overrode; gains are
-  not capped; the checks are structural (a leftover-markup check is a cheap next one); positions of a stored
-  baseline are pinned by nothing and no verifier checks `chunks_kept_relocated`; refusals before the gate are
-  evidenced only by the job's own error messages.
-- For M6: the 2×2 grid (254/32 and 128/16 × MiniLM and bge-small) cannot have four live indexes (one endpoint,
-  quota): rank exactly over gold-like tables, or locally. Silver holds both sizes under cleaner 2; bge needs its
-  own canary (revision `5c38ec7c405ec4b44b94cc5a9bb96e735b38267a`), which first needs one canary file per model
-  (today `m5_canary.py` and `load_canary` handle one), and its query prefix decided. Anything that reads the live
-  index should run `sync_index` first: a committed head does not mean the index caught up, and the sync job
-  writes no table row (D-014, decision 4).
-- Unit-tested only (added after the demo runs, `860e3e1`): a failing canary logged alone as its DQ row; the
+  not capped; the checks are structural; positions of a stored baseline are pinned by nothing; refusals before
+  the gate are evidenced only by the job's own error messages.
+- Unit-tested only (added after the M5 demo runs, `860e3e1`): a failing canary logged alone as its DQ row; the
   failed-index check in the two sync waits that lacked it.
+- Anything that reads the live index should run `sync_index` first: a committed head does not mean the index
+  caught up, and the sync job writes no table row (D-014).
 - Never read "we wrote" from a gold version bump: Databricks commits its own OPTIMIZE/VACUUM (gold v3, D-010).
+- M7 (for the owner's resume, a data-engineering reader): Asset Bundles with dev/prod targets, a Jobs graph
+  `change_detect` → `sync_index`, GitHub Actions running the tests (CI already runs pytest/ruff/mypy).
 
 ## Milestones (status)
 
@@ -186,7 +191,7 @@ endpoint were deleted afterwards (`m5_m`, `m5_n`); gold stays. Do not re-run the
 - [x] M3 — Change detection (doc + chunk level) and run log; v1 → v2 → re-run (2026-10-20; D-011)
 - [x] M4 — DQ checks as a gate between silver and gold (2026-10-20; D-012; follow-ups D-012 v2, D-013)
 - [x] M5 — Embeddings + AI Search index sync (only changed chunks embedded) (2026-10-20; D-014)
-- [ ] M6 — Eval set (50 Q/A, owner reviews) + recall@5/MRR, 2 chunk sizes × 2 models
+- [x] M6 — Eval set (50 Q/A, owner reviews) + recall@5/MRR, 2 chunk sizes × 2 models (2026-10-21; D-015)
 - [ ] M7 — Asset Bundles (dev/prod), Jobs, GitHub Actions
 - [ ] M8 — README: Mermaid diagram, how to run, results table, limitations
 - [ ] M9 — (optional) FastAPI QA endpoint with citations
