@@ -1301,6 +1301,91 @@ the questions only a found in the top 5 against those only b found.
 - The eval harness reuses the pipeline's chunker, embedder and the gold table, and ranks the deployed index
   with the same labels. A re-run after a corpus or model change is one command.
 
+## D-016 — Orchestration and deployment: one bundle, one job, dev and prod
+
+- **Date:** 2026-10-21 · **Status:** Accepted (evidence: `runs/m7_*`)
+
+**Context.** Brief item 7: Databricks Jobs deployed with Asset Bundles, dev and prod targets, and a GitHub
+Actions workflow that runs the tests. Carried in: one concurrent run per job (D-007, D-011), no task retries
+without a per-attempt key (D-011), a failure notification for a scheduled run that the gate stops (D-012),
+serverless environment 4 pinned (D-005), the index synced only from a committed state (D-014).
+
+**Decisions.**
+1. *One bundle (`databricks.yml`, CLI 1.21.0), two targets.* `dev` (development mode: resources named
+   "[dev <user>] ...", deployed under the user's home, schedules paused) on `docs_rag_dev`; `prod` (production
+   mode) on `docs_rag_prod`, run as the deploying user. A service principal is the usual prod identity; this
+   project has none (Free Edition, not checked whether one can be made), so prod runs as the owner.
+2. *One job, the existing scripts as tasks* (`resources/pipeline.job.yml`): resolve_tag → bronze → silver
+   254/32 → silver 128/16 → change_detect → index_requested (condition) → sync_index. No pipeline logic moved:
+   each task writes the same summary JSON as a `run_job.py` run, so the M3–M5 verifiers check orchestrated runs
+   unchanged (`scripts/bundle.py run` writes the detect task in run_job's shape).
+3. *The tag.* A job parameter, `latest` by default: resolve_tag reads the newest plain release from git's
+   smart-HTTP ref advertisement (no API rate limit) and hands it to the other tasks as a task value, so every
+   task runs on one tag even if a release lands mid-run. A weekly schedule (Mondays 06:15 UTC) therefore picks
+   up a new Spark release by itself; it is paused in both targets, because each run spends quota: unpausing it
+   is the owner's call.
+4. *Switches are job parameters* (`initial`, `allow_backwards`, `allow_config_change`, `accept_drift`,
+   `accept_drift_of`, `with_index`): the scripts accept `--flag=true|false` and an empty text as "not given"
+   (`docs_rag.jobenv.add_flag`, `optional_text`), and keep working from `run_job.py`. The gate's override is a
+   rerun naming the failed run, whose id is "<job run id>-detect".
+5. *Index sync is opt-in* (`with_index`, default false): the endpoint exists only while needed (D-001, D-014),
+   so a scheduled run updates gold and a condition task leaves the sync out.
+6. *Deployment pins the code.* `scripts/bundle.py deploy` refuses uncommitted code, builds the wheel, and
+   deploys with its version as a bundle variable; every task checks it imports exactly that version (D-005).
+   The variable's default fails closed. The embedding packages are the same lines as `run_job.py`'s
+   (`docs_rag.deps`), and `tests/test_bundle.py` checks the YAML against the code (environments, scripts,
+   parameters, concurrency, paused schedule) in CI without a workspace.
+7. *Data stays outside the bundle.* The schema and the artifacts Volume are made by `scripts/bundle.py`
+   (as by `run_job.py`) and tables by the jobs, so `bundle destroy` removes a job and its files, never data.
+8. *Concurrency.* `max_concurrent_runs: 1` (and the same preset in both targets), no retries on any task. The
+   two silver tasks first ran side by side and Delta aborted one MERGE (finding below), so they run one after
+   the other.
+9. *Failure email* to the deploying user (`${workspace.current_user.userName}`, resolved at deploy, not in the
+   repo). Dev resource names carry the user name's local part, which `scripts/redact.py` now masks too.
+10. *CI/CD.* `ci.yml` (lint, types, tests incl. the bundle tests, the corpus golden) is reusable; `deploy.yml`
+   runs it, then deploys dev on every push to main, and dev or prod on demand, in a GitHub environment named
+   after the target (prod should require a reviewer). Actions are pinned to commit SHAs. The workspace
+   credentials are repository or environment secrets the owner sets; a personal access token is the only
+   credential tested here (OAuth M2M or GitHub OIDC federation would be better; not checked on Free Edition).
+
+**Evidence** (2026-10-21; dev runs on the gold chain of `docs_rag_dev`, head v4.0.1 before them):
+
+| Run | What happened | File |
+|---|---|---|
+| a | dev deployed (5.0 s; wheel `0.0.1.dev187+g6f75214b3`) | `m7_a_*` |
+| b | dev job, `tag=latest`: resolve_tag read 97 release tags and chose v4.2.0. Bronze and silver_254 ingested it. The gate stopped change_detect before gold, on all three drifts against the 10% of a minor release: docs 213 → 238 (+11.7%), chunks 5,436 → 6,051 (+11.3%), tokens 691,882 → 775,772 (+12.1%). The job failed, which sends the failure email (its arrival not checked here). silver_128, run beside silver_254, lost a write conflict (below) | `m7_b_*` |
+| c | dev redeployed with the silver tasks in sequence | `m7_c_*` |
+| d | dev job, `tag=v4.2.0` accepting run b's drift (`accept_drift_of=<b's job run>-detect`). Bronze and silver_254 were skipped as identical; silver_128 inserted 9,852 rows. Docs +25 / ~57 / −0. **802 chunks embedded** (109,328 of 775,772 tokens, 14.1%), 5,249 kept, 187 deleted; gold version 5. The sync was left out by its condition; the job took 308 s | `m7_d_*` |
+| e | dev job, `tag=latest` again, as the schedule would run it: every step skipped, nothing embedded, no gold version (219 s) | `m7_e_*` |
+| f | prod deployed (6.3 s): job `docs_rag_pipeline`, schema `docs_rag_prod` | `m7_f_*` |
+| g | prod job, `tag=latest initial=true`: v4.2.0 into an empty prod schema; 6,051 chunks embedded in 221 s (27.4 chunks/s); gold version 1; 455 s | `m7_g_*` |
+
+- *Checks:* every orchestrated run passes the verifiers written for the `run_job.py` runs.
+  - dev: gate 599/599 (`m7_v1`, the M5 and M7 runs), changes 126/126 (`m7_v2`), gold against git 53/53 (`m7_v3`, incl. run d: only its 802 added chunks carry its run id).
+  - prod: gate 82/82, changes 22/22, gold against git 18/18 (`m7_v4`..`m7_v6`).
+  - CI (lint, types, tests incl. `tests/test_bundle.py`, the corpus golden) passed on every M7 commit, e.g. [39579282118](https://github.com/m3rcury02/spark-rag/actions/runs/39579282118).
+- *Finding: two writers to silver conflict.* In run b, silver_128 failed with `ConcurrentAppendException`
+  (`DELTA_CONCURRENT_APPEND.WHOLE_TABLE_READ`): its MERGE reads the whole table, so a concurrent MERGE by
+  silver_254 conflicts even though the two write different (config_id, tag) rows. The failed MERGE committed
+  nothing, and run d inserted those rows. Options: partition or cluster silver by config_id so the reads are
+  disjoint, or serialize the tasks. Chosen: serialize. It costs about 90 s a run, and nothing else needs
+  parallel writes.
+- *Not run yet:* `deploy.yml` in GitHub Actions. It needs the workspace secrets, which the owner sets, and
+  the workflow on the default branch.
+
+**Consequences.**
+- One command per environment: `scripts/bundle.py deploy|run --target dev|prod`. A schedule, a person and CI
+  all go through the same job, and its runs are checked like any other.
+- Dev's chain head is now v4.2.0, while the M6 eval set is labelled at v4.0.1. `scripts/m6_eval.py` still
+  ranks git's v4.0.1 chunks, but its comparison with gold's vectors refuses until the set is relabelled at
+  the head's tag; a new set version is the way to do that, and the old results stay as they are.
+- Prod holds only v4.2.0 (one initial run): its chain and gold are independent of dev's. Prod has no eval
+  results and no index; creating an index for it follows D-014 (after the backfill; delete it when idle).
+- Still open: a scheduled run that the gate stops fails every week until someone accepts the drift (D-012).
+  The failure email is the signal; failing fast on a repeat of the same failed target is not built.
+- The first Actions deploy waits for the owner's secrets. A token stored in GitHub is a long-lived credential:
+  use one made for CI, with an expiry, and prefer OAuth or OIDC federation where the workspace allows it.
+
 ## Open questions (decide in the milestone noted)
 
 - **M2/M5 — chunk size vs model context.** *Answered in M2 (D-009):* sizes are counted in the models' own

@@ -37,7 +37,9 @@ Read both before starting any milestone.
   comes from git (hatch-vcs), so serverless never runs a cached older wheel.
 - Embeddings: open-source sentence-transformers models, computed by us: all-MiniLM-L6-v2 at a pinned revision,
   CPU torch pinned by sha256, checked against a shipped canary before gold is touched (D-014).
-- Deployment: Databricks Asset Bundles (dev/prod targets). CI: GitHub Actions.
+- Deployment: Databricks Asset Bundles (`databricks.yml`, `resources/`; CLI ≥ 1.21.0), targets dev
+  (`docs_rag_dev`) and prod (`docs_rag_prod`), one pipeline job (D-016). CI: GitHub Actions (`ci.yml`;
+  `deploy.yml` deploys dev on push to main and dev/prod by hand, once the owner sets the workspace secrets).
 
 ## Code conventions
 
@@ -143,6 +145,12 @@ uv run --with databricks-sdk==0.152.0 python scripts/m4_verify_gate.py --label <
 uv run --with databricks-sdk==0.152.0 python scripts/m3_verify_changes.py --label <label> \
     --sink gold_chunk_embeddings --job-runs runs/m5_*_detect_*.json
 # The embedding canary (one file today, MiniLM; never overwritten): scripts/m5_canary.py, same --with flags.
+# M7 bundle (D-016): deploy builds the wheel, makes the schema and Volume, deploys with the wheel's version;
+# run starts the job with job parameters (tag defaults to `latest`) and saves every task's summary to runs/.
+# The gate's override is a rerun: accept_drift="<reason>" accept_drift_of=<failed job run id>-detect.
+uv run --with databricks-sdk==0.152.0 python scripts/bundle.py deploy --target dev [--label <label>]
+uv run --with databricks-sdk==0.152.0 python scripts/bundle.py run --target dev --label <label> \
+    -- tag=latest [initial=true] [accept_drift="..." accept_drift_of=<id>] [with_index=true]
 # M6 eval (git + local CPU; Databricks for silver's fingerprints, gold's vectors and the table). The set is
 # drawn, drafted and built once (scripts/m6_sample_sections.py, m6_build_set.py); --check-only validates it;
 # --index also ranks through the live index (create it and run sync_index first, delete both afterwards).
@@ -154,34 +162,30 @@ uv run --with databricks-sdk==0.152.0 --with sentence-transformers==6.1.0 --with
 
 ## Next session: pick up here
 
-M6 is complete (D-015; report given to the owner on 2026-10-21) on branch `m6-eval` (not yet merged into
-`main`; the owner decides). M5 (D-014) is merged. The eval set v1 (`eval/eval_set_v1.json`, 50 items, owner
-reviewed: all kept, `eval/review_v1.json`) labels each answer as a verbatim quote of the cleaned text;
-`scripts/m6_eval.py` chunks git (pinned to silver's fingerprints), embeds both models locally, ranks exactly,
-and also ranks the production config with gold's vectors and the live index. Results (`runs/m6_i`, 400 rows in
-`eval_results`): recall@5 0.68–0.74 across the 2×2 grid, no recall difference resolved at n = 50, so production
-stays MiniLM 254/32 (the rule fixed in advance); MRR@10 favours bge-small with its query instruction (intervals
-exclude zero); the live index matches exact search (99.8% of the top 10). The endpoint and index were deleted
-afterwards (`m6_j`, `m6_k`); gold stays at v4.0.1. Do not re-run the `m3_*`, `m4_*`, `m4x_*`, `m5_*` or `m6_*`
-labels.
+M7 is complete (D-016; report given to the owner on 2026-10-21) on branch `m7-bundles` (not yet merged into
+`main`; the owner decides). M6 (D-015) is merged. The bundle deploys one job per target: resolve_tag (a tag or
+`latest`, from git's ref advertisement) → bronze → silver 254/32 → silver 128/16 (in sequence: parallel MERGEs
+into silver conflicted, runs/m7_b) → change_detect → index_requested (condition on `with_index`) → sync_index.
+Dev's gold chain now ends at v4.2.0 (runs m7_b failed on drift, m7_d accepted it: 802 embedded, m7_e a no-op);
+prod (`docs_rag_prod`) holds one initial load of v4.2.0 (m7_g, 6,051 embedded). Verified: dev gate 599/599,
+changes 126/126, gold 53/53; prod 82/82, 22/22, 18/18 (`m7_v1`..`m7_v6`). Both jobs' weekly schedules are
+paused. No endpoint or index exists. Do not re-run the `m3_*` .. `m7_*` labels.
 
-**Do not start M7 until the owner says so.** Open items:
-- Read the M6 endpoint window's DBU (03:33–04:01 UTC on 2026-10-21) once `system.billing.usage` has rows; M5's
-  window is in D-014 (`m6_l`).
-- A model switch (bge-small) needs a larger eval set to resolve recall (about 200 items for ±5 points), then a
-  new gold table and chain. The SQL reference pages are where retrieval fails most (D-015).
-- Untested: the manual repair after a failure between a gold MERGE and its committed row (D-014, decision 5);
-  section-aware against whole-page chunking (D-009, D-015).
-- Still open (D-012, D-013): the override's reason test is lexical and nothing records who overrode; gains are
-  not capped; the checks are structural; positions of a stored baseline are pinned by nothing; refusals before
-  the gate are evidenced only by the job's own error messages.
-- Unit-tested only (added after the M5 demo runs, `860e3e1`): a failing canary logged alone as its DQ row; the
-  failed-index check in the two sync waits that lacked it.
-- Anything that reads the live index should run `sync_index` first: a committed head does not mean the index
-  caught up, and the sync job writes no table row (D-014).
-- Never read "we wrote" from a gold version bump: Databricks commits its own OPTIMIZE/VACUUM (gold v3, D-010).
-- M7 (for the owner's resume, a data-engineering reader): Asset Bundles with dev/prod targets, a Jobs graph
-  `change_detect` → `sync_index`, GitHub Actions running the tests (CI already runs pytest/ruff/mypy).
+**Do not start M8 until the owner says so.** Open items:
+- The owner sets the GitHub secrets DATABRICKS_HOST and DATABRICKS_TOKEN (a CI-only token with an expiry) and a
+  `prod` environment with a required reviewer; then the first `deploy.yml` run (on the merge to main) is the
+  evidence that is still missing. The CLI here is a downloaded 1.21.0 binary (checksum-verified, scratchpad).
+- The M6 eval set is labelled at v4.0.1 and dev's gold is at v4.2.0: the eval's gold-vector check refuses until a
+  new set version is labelled at the head's tag (D-016).
+- Read the M6 endpoint window's DBU (03:33–04:01 UTC on 2026-10-21) from `system.billing.usage`.
+- A scheduled run the gate stops fails weekly until accepted (D-012, D-016); fail-fast is not built.
+- Untested: the manual repair after a failure between a gold MERGE and its committed row (D-014); section-aware
+  against whole-page chunking (D-009, D-015).
+- Still open (D-012, D-013): lexical override reasons, uncapped gains, structural checks only, unpinned positions
+  of a stored baseline, refusals evidenced only by the job's own messages.
+- Never read "we wrote" from a gold version bump: Databricks commits its own OPTIMIZE/VACUUM (D-010).
+- M8 (README for a data-engineering reader): Mermaid diagram of the job graph and medallion tables, how to run
+  (bundle commands), the results table from runs/ (incremental share embedded, DQ gate, eval), limitations.
 
 ## Milestones (status)
 
@@ -192,6 +196,6 @@ labels.
 - [x] M4 — DQ checks as a gate between silver and gold (2026-10-20; D-012; follow-ups D-012 v2, D-013)
 - [x] M5 — Embeddings + AI Search index sync (only changed chunks embedded) (2026-10-20; D-014)
 - [x] M6 — Eval set (50 Q/A, owner reviews) + recall@5/MRR, 2 chunk sizes × 2 models (2026-10-21; D-015)
-- [ ] M7 — Asset Bundles (dev/prod), Jobs, GitHub Actions
+- [x] M7 — Asset Bundles (dev/prod), Jobs, GitHub Actions (2026-10-21; D-016; Actions deploy awaits secrets)
 - [ ] M8 — README: Mermaid diagram, how to run, results table, limitations
 - [ ] M9 — (optional) FastAPI QA endpoint with citations
