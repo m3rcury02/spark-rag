@@ -1,0 +1,8 @@
+{
+ "set": "eval/eval_set_v1.json",
+ "set_sha256": "b19d98fea704fd5e077cfd8e565b5b579c5c2184fb4b4402bf33a1bd68cb7d9a",
+ "reviewer": "project owner",
+ "date": "2026-10-21",
+ "decision": "all 50 items kept; none rejected or edited; the 15 spares stay unused",
+ "how": "Reviewed on a review page (a claude.ai artifact listing each item with its quote in context). The page's decision store stayed empty (no clicks saved), so the decision was confirmed in chat on 2026-10-21: 'Keep all 50 as they are'."
+}
