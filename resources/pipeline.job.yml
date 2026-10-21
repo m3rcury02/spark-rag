@@ -105,7 +105,9 @@ resources:
 
         - task_key: silver_128
           depends_on:
-            - task_key: bronze
+            # Not beside silver_254: both MERGE into silver_chunks, and Delta aborted the second one
+            # (ConcurrentAppendException, WHOLE_TABLE_READ: the MERGE reads the whole table), runs/m7_b (D-016)
+            - task_key: silver_254
           environment_key: default
           max_retries: 0
           disable_auto_optimization: true

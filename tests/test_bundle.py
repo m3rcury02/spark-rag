@@ -60,6 +60,8 @@ def test_one_tag_for_every_task_and_the_published_config_feeds_change_detection(
     s128 = params(by_key["silver_128"])
     assert (int(s128["max-tokens"]), int(s128["overlap-tokens"])) in sizes
     assert [d["task_key"] for d in by_key["change_detect"]["depends_on"]] == ["silver_254"]
+    # One writer to silver at a time: two parallel MERGEs into silver_chunks conflicted (runs/m7_b, D-016)
+    assert [d["task_key"] for d in by_key["silver_128"]["depends_on"]] == ["silver_254"]
     assert by_key["change_detect"]["environment_key"] == "embed"
 
 

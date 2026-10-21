@@ -1,0 +1,694 @@
+{
+  "meta": {
+    "label": "m7_b_dev_latest",
+    "git_commit": "6f75214b38ca251cf02b4f4862d5209862417a77",
+    "local_head": "37fc05395f691cbbd7d114d867a1597537aafd2b",
+    "target": "dev",
+    "job": {
+      "id": 541855458002088,
+      "name": "[dev <owner-name>] docs_rag_pipeline",
+      "url": "https://<workspace-host>/jobs/541855458002088?w=<workspace-id>"
+    },
+    "job_run_id": 1113808222076572,
+    "job_parameters": {
+      "tag": "latest",
+      "initial": "false",
+      "allow_backwards": "false",
+      "allow_config_change": "false",
+      "accept_drift": "",
+      "accept_drift_of": "",
+      "with_index": "false"
+    },
+    "wheel_version": "0.0.1.dev187+g6f75214b3",
+    "result_state": "FAILED",
+    "state_message": "Task silver_128 failed with message: Workload failed, see run output for details. This caused all downstream tasks to get skipped.",
+    "run_start_utc": "2026-10-21T09:22:44Z",
+    "run_end_utc": "2026-10-21T09:27:54Z",
+    "run_duration_seconds": 310.3,
+    "sink": "gold_chunk_embeddings"
+  },
+  "tasks": {
+    "resolve_tag": {
+      "task_run_id": 87084142158066,
+      "state": "SUCCESS",
+      "life_cycle": "TERMINATED",
+      "message": "",
+      "start_utc": "2026-10-21T09:22:44Z",
+      "end_utc": "2026-10-21T09:23:17Z",
+      "seconds": 30.0,
+      "summary": {
+        "run_id": "1113808222076572-resolve",
+        "started_utc": "2026-10-21T09:23:07Z",
+        "environment": {
+          "python": "3.12.3",
+          "databricks_runtime_version": "client.4.10",
+          "databricks_connect": "17.3.14",
+          "docs_rag": "0.0.1.dev187+g6f75214b3",
+          "tokenizers": "0.23.3",
+          "machine": "aarch64"
+        },
+        "releases_seen": 97,
+        "requested": "latest",
+        "tag": "v4.2.0",
+        "status": "succeeded",
+        "finished_utc": "2026-10-21T09:23:08Z"
+      }
+    },
+    "silver_254": {
+      "task_run_id": 111386180126642,
+      "state": "SUCCESS",
+      "life_cycle": "TERMINATED",
+      "message": "",
+      "start_utc": "2026-10-21T09:24:36Z",
+      "end_utc": "2026-10-21T09:26:12Z",
+      "seconds": 94.0,
+      "summary": {
+        "run_id": "1113808222076572-silver254",
+        "started_utc": "2026-10-21T09:24:50Z",
+        "tag": "v4.2.0",
+        "chunk_config": {
+          "config_id": "e70bf55c7cf1b856",
+          "cleaner_version": "2",
+          "chunker_version": "1",
+          "max_tokens": 254,
+          "overlap_tokens": 32
+        },
+        "environment": {
+          "python": "3.12.3",
+          "databricks_runtime_version": "client.4.10",
+          "databricks_connect": "17.3.14",
+          "docs_rag": "0.0.1.dev187+g6f75214b3",
+          "tokenizers": "0.23.3",
+          "machine": "aarch64",
+          "spark": "4.2.0"
+        },
+        "bronze": {
+          "docs": 238,
+          "commit_sha": "32f7299601108917fb01920a54e084595b7b3bf8"
+        },
+        "chunking": {
+          "seconds": 11.3,
+          "fingerprint": "671b1434536234be9ff44ade4f732ba5c80d3d9fae969f70476e96080927b023",
+          "chunks": 6051,
+          "n_tokens_min": 6,
+          "n_tokens_median": 111,
+          "n_tokens_max": 254,
+          "n_tokens_histogram": {
+            "1-16": 75,
+            "17-32": 244,
+            "33-64": 1496,
+            "65-128": 1543,
+            "129-192": 987,
+            "193-224": 571,
+            "225-254": 1135
+          },
+          "body_tokens_under": {
+            "5": 25,
+            "10": 67,
+            "20": 309
+          },
+          "docs": 238,
+          "docs_with_no_chunks": [],
+          "sections": 2276,
+          "empty_sections": 242,
+          "single_small_chunk_docs": [
+            "docs/404.md",
+            "docs/ml-ann.md",
+            "docs/ml-decision-tree.md",
+            "docs/ml-ensembles.md",
+            "docs/ml-linear-methods.md",
+            "docs/ml-survival-regression.md",
+            "docs/programming-guide.md",
+            "docs/pyspark-migration-guide.md",
+            "docs/sql-error-conditions.md",
+            "docs/sql-pyspark-pandas-with-arrow.md",
+            "docs/sql-ref-syntax-aux-cache.md",
+            "docs/sql-ref-syntax-aux-conf-mgmt.md",
+            "docs/sql-ref-syntax-aux-describe.md",
+            "docs/sql-ref-syntax-aux-resource-mgmt.md",
+            "docs/sql-ref-syntax-aux-show.md",
+            "docs/sql-ref-syntax-qry-select-subqueries.md",
+            "docs/ss-migration-guide.md",
+            "docs/structured-streaming-kafka-integration.md",
+            "docs/structured-streaming-programming-guide.md"
+          ],
+          "violations": []
+        },
+        "check": {
+          "status": "new",
+          "stored_chunks": 0,
+          "computed_chunks": 6051,
+          "only_stored": 0,
+          "only_computed": 6051
+        },
+        "other_tags_reproduced": {
+          "v3.5.0": {
+            "status": "identical",
+            "stored_chunks": 5567,
+            "computed_chunks": 5567,
+            "only_stored": 0,
+            "only_computed": 0
+          },
+          "v4.0.0": {
+            "status": "identical",
+            "stored_chunks": 5423,
+            "computed_chunks": 5423,
+            "only_stored": 0,
+            "only_computed": 0
+          },
+          "v4.0.1": {
+            "status": "identical",
+            "stored_chunks": 5436,
+            "computed_chunks": 5436,
+            "only_stored": 0,
+            "only_computed": 0
+          }
+        },
+        "merge": {
+          "num_affected_rows": 6051,
+          "num_updated_rows": 0,
+          "num_deleted_rows": 0,
+          "num_inserted_rows": 6051
+        },
+        "table": {
+          "name": "workspace.docs_rag_dev.silver_chunks",
+          "version_before_merge": 20,
+          "version_after_merge": 21,
+          "merge_made_a_commit": true,
+          "commits": [
+            {
+              "version": 21,
+              "operation": "MERGE",
+              "metrics": {
+                "numTargetRowsCopied": "0",
+                "numTargetRowsDeleted": "0",
+                "numTargetBytesRemoved": "0",
+                "numTargetDeletionVectorsAdded": "0",
+                "numTargetRowsMatchedUpdated": "0",
+                "numTargetRowsMatchedDeleted": "0",
+                "numTargetRowsUpdated": "0",
+                "numTargetChangeFilesAdded": "0",
+                "numTargetRowsNotMatchedBySourceDeleted": "0",
+                "rewriteTimeMs": "3212",
+                "numTargetFilesAdded": "6",
+                "numTargetBytesAdded": "1662254",
+                "executionTimeMs": "3303",
+                "materializeSourceTimeMs": "12",
+                "numTargetRowsInserted": "6051",
+                "numTargetDeletionVectorsUpdated": "0",
+                "scanTimeMs": "0",
+                "numOutputRows": "6051",
+                "numTargetDeletionVectorsRemoved": "0",
+                "numTargetRowsNotMatchedBySourceUpdated": "0",
+                "numSourceRows": "6051",
+                "numTargetFilesRemoved": "0"
+              }
+            }
+          ]
+        },
+        "tags_after": {
+          "v3.5.0": {
+            "chunks": 5567,
+            "distinct_chunk_ids": 5567,
+            "docs": 243,
+            "commits": 1,
+            "max_n_tokens": 254,
+            "chunks_over_max": 0
+          },
+          "v4.0.0": {
+            "chunks": 5423,
+            "distinct_chunk_ids": 5423,
+            "docs": 211,
+            "commits": 1,
+            "max_n_tokens": 254,
+            "chunks_over_max": 0
+          },
+          "v4.0.1": {
+            "chunks": 5436,
+            "distinct_chunk_ids": 5436,
+            "docs": 212,
+            "commits": 1,
+            "max_n_tokens": 254,
+            "chunks_over_max": 0
+          },
+          "v4.2.0": {
+            "chunks": 6051,
+            "distinct_chunk_ids": 6051,
+            "docs": 238,
+            "commits": 1,
+            "max_n_tokens": 254,
+            "chunks_over_max": 0
+          }
+        },
+        "invariant_violations": [],
+        "status": "succeeded",
+        "finished_utc": "2026-10-21T09:26:09Z"
+      }
+    },
+    "bronze": {
+      "task_run_id": 608448812538104,
+      "state": "SUCCESS",
+      "life_cycle": "TERMINATED",
+      "message": "",
+      "start_utc": "2026-10-21T09:23:18Z",
+      "end_utc": "2026-10-21T09:24:36Z",
+      "seconds": 76.0,
+      "summary": {
+        "run_id": "1113808222076572-bronze",
+        "started_utc": "2026-10-21T09:23:31Z",
+        "tag": "v4.2.0",
+        "environment": {
+          "python": "3.12.3",
+          "databricks_runtime_version": "client.4.10",
+          "databricks_connect": "17.3.14",
+          "docs_rag": "0.0.1.dev187+g6f75214b3",
+          "tokenizers": "0.23.3",
+          "machine": "aarch64",
+          "spark": "4.2.0"
+        },
+        "download": {
+          "url": "https://codeload.github.com/apache/spark/tar.gz/refs/tags/v4.2.0",
+          "bytes": 50236691,
+          "seconds": 6.4
+        },
+        "snapshot": {
+          "commit_sha": "32f7299601108917fb01920a54e084595b7b3bf8",
+          "docs": 238,
+          "nested_docs": 21,
+          "bytes": 3075227,
+          "largest_bytes": 168333,
+          "docs_with_crlf": 0,
+          "docs_with_bom": 0
+        },
+        "check": {
+          "status": "new",
+          "stored": 0,
+          "source": 238
+        },
+        "merge": {
+          "num_affected_rows": 238,
+          "num_updated_rows": 0,
+          "num_deleted_rows": 0,
+          "num_inserted_rows": 238
+        },
+        "table": {
+          "name": "workspace.docs_rag_dev.bronze_docs",
+          "version_before_merge": 10,
+          "version_after_merge": 11,
+          "merge_made_a_commit": true,
+          "commits": [
+            {
+              "version": 11,
+              "operation": "MERGE",
+              "metrics": {
+                "numTargetRowsCopied": "0",
+                "numTargetRowsDeleted": "0",
+                "numTargetBytesRemoved": "0",
+                "numTargetDeletionVectorsAdded": "0",
+                "numTargetRowsMatchedUpdated": "0",
+                "numTargetRowsMatchedDeleted": "0",
+                "numTargetRowsUpdated": "0",
+                "numTargetChangeFilesAdded": "0",
+                "numTargetRowsNotMatchedBySourceDeleted": "0",
+                "rewriteTimeMs": "3812",
+                "numTargetFilesAdded": "1",
+                "numTargetBytesAdded": "765857",
+                "executionTimeMs": "3937",
+                "materializeSourceTimeMs": "23",
+                "numTargetRowsInserted": "238",
+                "numTargetDeletionVectorsUpdated": "0",
+                "scanTimeMs": "0",
+                "numOutputRows": "238",
+                "numTargetDeletionVectorsRemoved": "0",
+                "numTargetRowsNotMatchedBySourceUpdated": "0",
+                "numSourceRows": "238",
+                "numTargetFilesRemoved": "0"
+              }
+            }
+          ]
+        },
+        "tags_after": {
+          "v3.5.0": {
+            "docs": 244,
+            "distinct_paths": 244,
+            "bytes": 2749091,
+            "commits": 1,
+            "commit_sha": "ce5ddad990373636e94071e7cef2f31021add07b",
+            "hash_mismatches": 0,
+            "size_mismatches": 0
+          },
+          "v4.0.0": {
+            "docs": 212,
+            "distinct_paths": 212,
+            "bytes": 2767372,
+            "commits": 1,
+            "commit_sha": "fa33ea000a0bda9e5a3fa1af98e8e85b8cc5e4d4",
+            "hash_mismatches": 0,
+            "size_mismatches": 0
+          },
+          "v4.0.1": {
+            "docs": 213,
+            "distinct_paths": 213,
+            "bytes": 2777551,
+            "commits": 1,
+            "commit_sha": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+            "hash_mismatches": 0,
+            "size_mismatches": 0
+          },
+          "v4.2.0": {
+            "docs": 238,
+            "distinct_paths": 238,
+            "bytes": 3075227,
+            "commits": 1,
+            "commit_sha": "32f7299601108917fb01920a54e084595b7b3bf8",
+            "hash_mismatches": 0,
+            "size_mismatches": 0
+          }
+        },
+        "invariant_violations": [],
+        "status": "succeeded",
+        "finished_utc": "2026-10-21T09:24:32Z"
+      }
+    },
+    "sync_index": {
+      "task_run_id": 126087834011474,
+      "state": "UPSTREAM_FAILED",
+      "life_cycle": "SKIPPED",
+      "message": "An upstream task failed.",
+      "start_utc": "2026-10-21T09:27:54Z",
+      "end_utc": "2026-10-21T09:27:54Z",
+      "seconds": null,
+      "error": "Run result unavailable: The task was skipped because not all its dependencies were executed and succeeded.",
+      "error_trace": null
+    },
+    "silver_128": {
+      "task_run_id": 49135282164600,
+      "state": "FAILED",
+      "life_cycle": "TERMINATED",
+      "message": "Workload failed, see run output for details",
+      "start_utc": "2026-10-21T09:24:36Z",
+      "end_utc": "2026-10-21T09:26:10Z",
+      "seconds": 92.0,
+      "summary": {
+        "run_id": "1113808222076572-silver128",
+        "started_utc": "2026-10-21T09:24:52Z",
+        "tag": "v4.2.0",
+        "chunk_config": {
+          "config_id": "ece77f296d18fbd5",
+          "cleaner_version": "2",
+          "chunker_version": "1",
+          "max_tokens": 128,
+          "overlap_tokens": 16
+        },
+        "environment": {
+          "python": "3.12.3",
+          "databricks_runtime_version": "client.4.10",
+          "databricks_connect": "17.3.14",
+          "docs_rag": "0.0.1.dev187+g6f75214b3",
+          "tokenizers": "0.23.3",
+          "machine": "aarch64",
+          "spark": "4.2.0"
+        },
+        "bronze": {
+          "docs": 238,
+          "commit_sha": "32f7299601108917fb01920a54e084595b7b3bf8"
+        },
+        "chunking": {
+          "seconds": 12.3,
+          "fingerprint": "624a43926f9d4b105535cd839e3f33f79ca09d10966fa8405f61575ce785e1a8",
+          "chunks": 9852,
+          "n_tokens_min": 6,
+          "n_tokens_median": 96,
+          "n_tokens_max": 128,
+          "n_tokens_histogram": {
+            "1-16": 80,
+            "17-32": 304,
+            "33-64": 2179,
+            "65-128": 7289,
+            "129-192": 0,
+            "193-224": 0,
+            "225-254": 0
+          },
+          "body_tokens_under": {
+            "5": 38,
+            "10": 96,
+            "20": 446
+          },
+          "docs": 238,
+          "docs_with_no_chunks": [],
+          "sections": 2276,
+          "empty_sections": 242,
+          "single_small_chunk_docs": [
+            "docs/404.md",
+            "docs/ml-ann.md",
+            "docs/ml-decision-tree.md",
+            "docs/ml-ensembles.md",
+            "docs/ml-linear-methods.md",
+            "docs/ml-survival-regression.md",
+            "docs/programming-guide.md",
+            "docs/pyspark-migration-guide.md",
+            "docs/sql-error-conditions.md",
+            "docs/sql-pyspark-pandas-with-arrow.md",
+            "docs/sql-ref-syntax-aux-cache.md",
+            "docs/sql-ref-syntax-aux-conf-mgmt.md",
+            "docs/sql-ref-syntax-aux-describe.md",
+            "docs/sql-ref-syntax-aux-resource-mgmt.md",
+            "docs/sql-ref-syntax-aux-show.md",
+            "docs/sql-ref-syntax-qry-select-subqueries.md",
+            "docs/ss-migration-guide.md",
+            "docs/structured-streaming-kafka-integration.md",
+            "docs/structured-streaming-programming-guide.md"
+          ],
+          "violations": []
+        },
+        "check": {
+          "status": "new",
+          "stored_chunks": 0,
+          "computed_chunks": 9852,
+          "only_stored": 0,
+          "only_computed": 9852
+        },
+        "other_tags_reproduced": {
+          "v3.5.0": {
+            "status": "identical",
+            "stored_chunks": 8629,
+            "computed_chunks": 8629,
+            "only_stored": 0,
+            "only_computed": 0
+          },
+          "v4.0.0": {
+            "status": "identical",
+            "stored_chunks": 8744,
+            "computed_chunks": 8744,
+            "only_stored": 0,
+            "only_computed": 0
+          },
+          "v4.0.1": {
+            "status": "identical",
+            "stored_chunks": 8767,
+            "computed_chunks": 8767,
+            "only_stored": 0,
+            "only_computed": 0
+          }
+        },
+        "status": "failed",
+        "error": "ConcurrentAppendException: [DELTA_CONCURRENT_APPEND.WHOLE_TABLE_READ] Transaction conflict detected. A concurrent MERGE added data to table workspace.docs_rag_dev.silver_chunks committed at version 21. This transaction attempted to read the entire table, conflicting with the concurrent modification. Consider adding filters to your query to narrow the data scope or retrying the operation. Refer to https://docs.databricks.com/delta/concurrency-control.html for more information.",
+        "finished_utc": "2026-10-21T09:26:04Z"
+      },
+      "error": "ConcurrentAppendException: [DELTA_CONCURRENT_APPEND.WHOLE_TABLE_READ] Transaction conflict detected. A concurrent MERGE added data to table workspace.docs_rag_dev.silver_chunks committed at version 21. This transaction attempted to read the entire table, conflicting with the concurrent modification. Consider adding filters to your query to narrow the data scope or retrying the operation. Refer to https://docs.databricks.com/delta/concurrency-control.html for more information.",
+      "error_trace": "bservations, extra_request_metadata, progress)\u001b[0m\n\u001b[1;32m   2115\u001b[0m     \u001b[38;5;28;01mraise\u001b[39;00m kb\n\u001b[1;32m   2116\u001b[0m \u001b[38;5;28;01mexcept\u001b[39;00m \u001b[38;5;167;01mException\u001b[39;00m \u001b[38;5;28;01mas\u001b[39;00m error:\n\u001b[0;32m-> 2117\u001b[0m     \u001b[38;5;28mself\u001b[39m\u001b[38;5;241m.\u001b[39m_handle_error(error)\n\nFile \u001b[0;32m/databricks/python/lib/python3.12/site-packages/pyspark/sql/connect/client/core.py:2435\u001b[0m, in \u001b[0;36mSparkConnectClient._handle_error\u001b[0;34m(self, error)\u001b[0m\n\u001b[1;32m   2433\u001b[0m     \u001b[38;5;28mself\u001b[39m\u001b[38;5;241m.\u001b[39mthread_local\u001b[38;5;241m.\u001b[39minside_error_handling \u001b[38;5;241m=\u001b[39m \u001b[38;5;28;01mTrue\u001b[39;00m\n\u001b[1;32m   2434\u001b[0m     \u001b[38;5;28;01mif\u001b[39;00m \u001b[38;5;28misinstance\u001b[39m(error, grpc\u001b[38;5;241m.\u001b[39mRpcError):\n\u001b[0;32m-> 2435\u001b[0m         \u001b[38;5;28mself\u001b[39m\u001b[38;5;241m.\u001b[39m_handle_rpc_error(error)\n\u001b[1;32m   2436\u001b[0m     \u001b[38;5;28;01mraise\u001b[39;00m error\n\u001b[1;32m   2437\u001b[0m \u001b[38;5;28;01mfinally\u001b[39;00m:\n\nFile \u001b[0;32m/databricks/python/lib/python3.12/site-packages/pyspark/sql/connect/client/core.py:2513\u001b[0m, in \u001b[0;36mSparkConnectClient._handle_rpc_error\u001b[0;34m(self, rpc_error)\u001b[0m\n\u001b[1;32m   2509\u001b[0m             logger\u001b[38;5;241m.\u001b[39mdebug(\u001b[38;5;124mf\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mReceived ErrorInfo: \u001b[39m\u001b[38;5;132;01m{\u001b[39;00minfo\u001b[38;5;132;01m}\u001b[39;00m\u001b[38;5;124m\"\u001b[39m)\n\u001b[1;32m   2511\u001b[0m             \u001b[38;5;28mself\u001b[39m\u001b[38;5;241m.\u001b[39m_handle_rpc_error_with_error_info(info, status\u001b[38;5;241m.\u001b[39mmessage, status_code)  \u001b[38;5;66;03m# EDGE\u001b[39;00m\n\u001b[0;32m-> 2513\u001b[0m             \u001b[38;5;28;01mraise\u001b[39;00m convert_exception(\n\u001b[1;32m   2514\u001b[0m                 info,\n\u001b[1;32m   2515\u001b[0m                 status\u001b[38;5;241m.\u001b[39mmessage,\n\u001b[1;32m   2516\u001b[0m                 \u001b[38;5;28mself\u001b[39m\u001b[38;5;241m.\u001b[39m_fetch_enriched_error(info),\n\u001b[1;32m   2517\u001b[0m                 \u001b[38;5;28mself\u001b[39m\u001b[38;5;241m.\u001b[39m_display_server_stack_trace(),\n\u001b[1;32m   2518\u001b[0m                 status_code,\n\u001b[1;32m   2519\u001b[0m             ) \u001b[38;5;28;01mfrom\u001b[39;00m \u001b[38;5;28;01mNone\u001b[39;00m\n\u001b[1;32m   2521\u001b[0m     \u001b[38;5;28;01mraise\u001b[39;00m SparkConnectGrpcException(\n\u001b[1;32m   2522\u001b[0m         message\u001b[38;5;241m=\u001b[39mstatus\u001b[38;5;241m.\u001b[39mmessage,\n\u001b[1;32m   2523\u001b[0m         sql_state\u001b[38;5;241m=\u001b[39mErrorCode\u001b[38;5;241m.\u001b[39mCLIENT_UNEXPECTED_MISSING_SQL_STATE,  \u001b[38;5;66;03m# EDGE\u001b[39;00m\n\u001b[1;32m   2524\u001b[0m         grpc_status_code\u001b[38;5;241m=\u001b[39mstatus_code,\n\u001b[1;32m   2525\u001b[0m     ) \u001b[38;5;28;01mfrom\u001b[39;00m \u001b[38;5;28;01mNone\u001b[39;00m\n\u001b[1;32m   2526\u001b[0m \u001b[38;5;28;01melse\u001b[39;00m:\n\n\u001b[0;31mConcurrentAppendException\u001b[0m: [DELTA_CONCURRENT_APPEND.WHOLE_TABLE_READ] Transaction conflict detected. A concurrent MERGE added data to table workspace.docs_rag_dev.silver_chunks committed at version 21. This transaction attempted to read the entire table, conflicting with the concurrent modification. Consider adding filters to your query to narrow the data scope or retrying the operation. Refer to https://docs.databricks.com/delta/concurrency-control.html for more information."
+    },
+    "index_requested": {
+      "task_run_id": 160878415665507,
+      "state": "UPSTREAM_FAILED",
+      "life_cycle": "SKIPPED",
+      "message": "An upstream task failed.",
+      "start_utc": "2026-10-21T09:27:54Z",
+      "end_utc": "2026-10-21T09:27:54Z",
+      "seconds": null,
+      "error": "Run result unavailable: The task was skipped because not all its dependencies were executed and succeeded.",
+      "error_trace": null,
+      "condition": {
+        "left": "{{job.parameters.with_index}}",
+        "right": "true"
+      }
+    },
+    "change_detect": {
+      "task_run_id": 107828058757206,
+      "state": "FAILED",
+      "life_cycle": "TERMINATED",
+      "message": "Workload failed, see run output for details",
+      "start_utc": "2026-10-21T09:26:12Z",
+      "end_utc": "2026-10-21T09:27:54Z",
+      "seconds": 100.0,
+      "summary": {
+        "run_id": "1113808222076572-detect",
+        "started_utc": "2026-10-21T09:27:06Z",
+        "tag": "v4.2.0",
+        "sink": "gold_chunk_embeddings",
+        "config_id": "e70bf55c7cf1b856",
+        "accept_drift": null,
+        "accept_drift_of": null,
+        "attempt_id": "1c3c64eeae1248b6984b48833c78fa66",
+        "environment": {
+          "python": "3.12.3",
+          "databricks_runtime_version": "client.4.10",
+          "databricks_connect": "17.3.14",
+          "docs_rag": "0.0.1.dev187+g6f75214b3",
+          "tokenizers": "0.23.3",
+          "machine": "aarch64",
+          "embedding_packages": {
+            "torch": "2.14.1+cpu",
+            "sentence-transformers": "6.1.0",
+            "transformers": "5.19.0"
+          },
+          "spark": "4.2.0"
+        },
+        "earlier_attempts": [],
+        "baseline": {
+          "run_id": "94970be9-6094-4ff0-85db-85b69f1aafbc",
+          "baseline_run_id": "09cb979c-2baa-47dd-9938-c091d8e8b455",
+          "status": "committed",
+          "to_version_tag": "v4.0.1",
+          "to_commit_sha": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+          "to_config_id": "e70bf55c7cf1b856",
+          "to_docs_fingerprint": "5b1534b24125aa7d7131d72727e2b28ff85b072262ed48dceedb3b40ba798c02",
+          "to_chunks_fingerprint": "bdbdafdf9940d65f1d916659117ed92ef247ae3890a0b1b9a435f6fe520afb6f"
+        },
+        "baseline_check": "rechunked",
+        "dq": [
+          {
+            "check": "empty_chunks",
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 6051,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "body with no token (blank, or only characters the tokenizer drops), or blank embed text; fails if any",
+            "examples": [],
+            "override_reason": null,
+            "override_of": null
+          },
+          {
+            "check": "tiny_chunks",
+            "status": "pass",
+            "numerator": 25,
+            "denominator": 6051,
+            "observed": 0.0041315485043794415,
+            "threshold": 0.02,
+            "rule": "body under 5 tokens; fails above 2% of chunks",
+            "examples": [
+              "docs/sql-ref-datatypes.md #91: 2 tokens 'r:'",
+              "docs/sql-ref-functions.md #4: 3 tokens '* Generator Functions'",
+              "docs/sql-ref-parameter-markers.md #8: 2 tokens '- Java'",
+              "docs/sql-ref-parameter-markers.md #19: 2 tokens '- Java'",
+              "docs/sql-ref-sketch-aggregates.md #12: 3 tokens '---'",
+              "docs/sql-ref-syntax-aux-conf-mgmt-reset.md #4: 2 tokens '* SET'",
+              "docs/sql-ref-syntax-aux-conf-mgmt-set-timezone.md #5: 2 tokens '* SET'",
+              "docs/sql-ref-syntax-aux-set-var.md #5: 2 tokens '* SET'",
+              "docs/sql-ref-syntax-aux-show-collations.md #17: 3 tokens '* STRING TYPE'",
+              "docs/sql-ref-syntax-aux-show-functions.md #5: 3 tokens '* DESCRIBE FUNCTION'"
+            ],
+            "override_reason": null,
+            "override_of": null
+          },
+          {
+            "check": "oversized_chunks",
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 6051,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "embed text over 254 tokens (max_tokens 254; the embedding models' 256 less [CLS] and [SEP]); fails if any",
+            "examples": [],
+            "override_reason": null,
+            "override_of": null
+          },
+          {
+            "check": "duplicate_chunk_ids",
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 6051,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "rows beyond the first of a repeated chunk_id; fails if any",
+            "examples": [],
+            "override_reason": null,
+            "override_of": null
+          },
+          {
+            "check": "duplicate_embed_text",
+            "status": "pass",
+            "numerator": 5,
+            "denominator": 6051,
+            "observed": 0.0008263097008758883,
+            "threshold": 0.01,
+            "rule": "copies beyond the first of a repeated embed text; fails above 1% of chunks",
+            "examples": [
+              "3x in ['docs/streaming-programming-guide.md']: 'Spark Streaming Programming Guide > Basic Concepts > Accumulators, Broadcast Var'",
+              "2x in ['docs/sql-ref-syntax-ddl-alter-view.md']: 'ALTER VIEW > Description > Parameters\\n\\n* **view_identifier**\\n\\n    Specifies a vi'",
+              "2x in ['docs/sql-migration-guide.md']: 'Migration Guide: SQL, Datasets and DataFrame > Upgrading from Spark SQL 2.4 to 3'",
+              "2x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Shared Variables > Accumulators\\n\\nWhile this code used th'"
+            ],
+            "override_reason": null,
+            "override_of": null
+          },
+          {
+            "check": "missing_metadata",
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 6051,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "a docs/*.md path, non-blank section names (the title first), version_tag v4.2.0, a 40-hex commit_sha; fails if any row misses one",
+            "examples": [],
+            "override_reason": null,
+            "override_of": null
+          },
+          {
+            "check": "drift_docs",
+            "status": "fail",
+            "numerator": 238,
+            "denominator": 213,
+            "observed": 0.11737089201877926,
+            "threshold": 0.1,
+            "rule": "minor release: |to/from - 1| over 10% fails unless this run accepts the drift of a failed run with exactly these numbers; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": [],
+            "override_reason": null,
+            "override_of": null
+          },
+          {
+            "check": "drift_chunks",
+            "status": "fail",
+            "numerator": 6051,
+            "denominator": 5436,
+            "observed": 0.11313465783664456,
+            "threshold": 0.1,
+            "rule": "minor release: |to/from - 1| over 10% fails unless this run accepts the drift of a failed run with exactly these numbers; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": [],
+            "override_reason": null,
+            "override_of": null
+          },
+          {
+            "check": "drift_tokens",
+            "status": "fail",
+            "numerator": 775772,
+            "denominator": 691882,
+            "observed": 0.121248999106784,
+            "threshold": 0.1,
+            "rule": "minor release: |to/from - 1| over 10% fails unless this run accepts the drift of a failed run with exactly these numbers; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": [],
+            "override_reason": null,
+            "override_of": null
+          }
+        ],
+        "logged": "failed",
+        "status": "failed",
+        "error": "DqFailed: DQ gate failed: drift_docs fail: 213 -> 238 (+11.7%, limit 10%); drift_chunks fail: 5436 -> 6051 (+11.3%, limit 10%); drift_tokens fail: 691882 -> 775772 (+12.1%, limit 10%)",
+        "finished_utc": "2026-10-21T09:27:49Z"
+      },
+      "error": "DqFailed: DQ gate failed: drift_docs fail: 213 -> 238 (+11.7%, limit 10%); drift_chunks fail: 5436 -> 6051 (+11.3%, limit 10%); drift_tokens fail: 691882 -> 775772 (+12.1%, limit 10%)",
+      "error_trace": "9m[\u001b[38;5;28mstr\u001b[39m, Any] \u001b[38;5;241m=\u001b[39m {\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mrun_id\u001b[39m\u001b[38;5;124m\"\u001b[39m: args\u001b[38;5;241m.\u001b[39mrun_id, \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstarted_utc\u001b[39m\u001b[38;5;124m\"\u001b[39m: utc_now()}\n\u001b[1;32m    123\u001b[0m \u001b[38;5;28;01mtry\u001b[39;00m:\n\u001b[0;32m--> 124\u001b[0m     job(args, summary)\n\u001b[1;32m    125\u001b[0m     summary[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mstatus\u001b[39m\u001b[38;5;124m\"\u001b[39m] \u001b[38;5;241m=\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124msucceeded\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m    126\u001b[0m \u001b[38;5;28;01mexcept\u001b[39;00m \u001b[38;5;167;01mException\u001b[39;00m \u001b[38;5;28;01mas\u001b[39;00m e:\n\nFile \u001b[0;32m/Workspace/Users/<owner>/.bundle/docs_rag/dev/files/jobs/change_detect.py:587\u001b[0m, in \u001b[0;36mdetect\u001b[0;34m(args, summary)\u001b[0m\n\u001b[1;32m    574\u001b[0m context \u001b[38;5;241m=\u001b[39m DqRunContext(\n\u001b[1;32m    575\u001b[0m     run_id\u001b[38;5;241m=\u001b[39margs\u001b[38;5;241m.\u001b[39mrun_id,\n\u001b[1;32m    576\u001b[0m     attempt_id\u001b[38;5;241m=\u001b[39mattempt_id,\n\u001b[0;32m   (...)\u001b[0m\n\u001b[1;32m    584\u001b[0m     code_version\u001b[38;5;241m=\u001b[39mcode_version,\n\u001b[1;32m    585\u001b[0m )\n\u001b[1;32m    586\u001b[0m write_dq_results(spark, config\u001b[38;5;241m.\u001b[39mdq_results_table, results, context)\n\u001b[0;32m--> 587\u001b[0m passed \u001b[38;5;241m=\u001b[39m gate(results, accept)\n\u001b[1;32m    588\u001b[0m summary[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mgate\u001b[39m\u001b[38;5;124m\"\u001b[39m] \u001b[38;5;241m=\u001b[39m {\n\u001b[1;32m    589\u001b[0m     \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124moverridden\u001b[39m\u001b[38;5;124m\"\u001b[39m: passed\u001b[38;5;241m.\u001b[39moverridden,\n\u001b[1;32m    590\u001b[0m     \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124moverride_reason\u001b[39m\u001b[38;5;124m\"\u001b[39m: passed\u001b[38;5;241m.\u001b[39moverride_reason,\n\u001b[1;32m    591\u001b[0m     \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124moverride_of\u001b[39m\u001b[38;5;124m\"\u001b[39m: passed\u001b[38;5;241m.\u001b[39moverride_of,\n\u001b[1;32m    592\u001b[0m }\n\u001b[1;32m    594\u001b[0m \u001b[38;5;66;03m# 7-9. Publish to gold: embed the added chunks, check the vectors, MERGE.\u001b[39;00m\n\nFile \u001b[0;32m/local_disk0/.ephemeral_nfs/envs/pythonEnv-dc107e84-e79d-43a9-a9ff-7bd92d68d183/lib/python3.12/site-packages/docs_rag/dq.py:372\u001b[0m, in \u001b[0;36mgate\u001b[0;34m(results, accept)\u001b[0m\n\u001b[1;32m    370\u001b[0m failed \u001b[38;5;241m=\u001b[39m [r \u001b[38;5;28;01mfor\u001b[39;00m r \u001b[38;5;129;01min\u001b[39;00m results \u001b[38;5;28;01mif\u001b[39;00m r\u001b[38;5;241m.\u001b[39mstatus \u001b[38;5;241m==\u001b[39m FAIL]\n\u001b[1;32m    371\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m failed:\n\u001b[0;32m--> 372\u001b[0m     \u001b[38;5;28;01mraise\u001b[39;00m DqFailed(\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mDQ gate failed: \u001b[39m\u001b[38;5;124m\"\u001b[39m \u001b[38;5;241m+\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m; \u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;241m.\u001b[39mjoin(describe(r) \u001b[38;5;28;01mfor\u001b[39;00m r \u001b[38;5;129;01min\u001b[39;00m failed))\n\u001b[1;32m    373\u001b[0m overridden \u001b[38;5;241m=\u001b[39m [r \u001b[38;5;28;01mfor\u001b[39;00m r \u001b[38;5;129;01min\u001b[39;00m results \u001b[38;5;28;01mif\u001b[39;00m r\u001b[38;5;241m.\u001b[39mstatus \u001b[38;5;241m==\u001b[39m OVERRIDDEN]\n\u001b[1;32m    374\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m accept \u001b[38;5;129;01mis\u001b[39;00m \u001b[38;5;28;01mNone\u001b[39;00m:\n\n\u001b[0;31mDqFailed\u001b[0m: DQ gate failed: drift_docs fail: 213 -> 238 (+11.7%, limit 10%); drift_chunks fail: 5436 -> 6051 (+11.3%, limit 10%); drift_tokens fail: 691882 -> 775772 (+12.1%, limit 10%)"
+    }
+  }
+}

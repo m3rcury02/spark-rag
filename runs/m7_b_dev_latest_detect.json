@@ -1,0 +1,199 @@
+{
+  "meta": {
+    "label": "m7_b_dev_latest",
+    "git_commit": "6f75214b38ca251cf02b4f4862d5209862417a77",
+    "local_head": "37fc05395f691cbbd7d114d867a1597537aafd2b",
+    "target": "dev",
+    "job": {
+      "id": 541855458002088,
+      "name": "[dev <owner-name>] docs_rag_pipeline",
+      "url": "https://<workspace-host>/jobs/541855458002088?w=<workspace-id>"
+    },
+    "job_run_id": 1113808222076572,
+    "job_parameters": {
+      "tag": "latest",
+      "initial": "false",
+      "allow_backwards": "false",
+      "allow_config_change": "false",
+      "accept_drift": "",
+      "accept_drift_of": "",
+      "with_index": "false"
+    },
+    "wheel_version": "0.0.1.dev187+g6f75214b3",
+    "result_state": "FAILED",
+    "state_message": "Task silver_128 failed with message: Workload failed, see run output for details. This caused all downstream tasks to get skipped.",
+    "run_start_utc": "2026-10-21T09:22:44Z",
+    "run_end_utc": "2026-10-21T09:27:54Z",
+    "run_duration_seconds": 310.3,
+    "sink": "gold_chunk_embeddings",
+    "script": "jobs/change_detect.py",
+    "run_id": "1113808222076572-detect"
+  },
+  "summary": {
+    "run_id": "1113808222076572-detect",
+    "started_utc": "2026-10-21T09:27:06Z",
+    "tag": "v4.2.0",
+    "sink": "gold_chunk_embeddings",
+    "config_id": "e70bf55c7cf1b856",
+    "accept_drift": null,
+    "accept_drift_of": null,
+    "attempt_id": "1c3c64eeae1248b6984b48833c78fa66",
+    "environment": {
+      "python": "3.12.3",
+      "databricks_runtime_version": "client.4.10",
+      "databricks_connect": "17.3.14",
+      "docs_rag": "0.0.1.dev187+g6f75214b3",
+      "tokenizers": "0.23.3",
+      "machine": "aarch64",
+      "embedding_packages": {
+        "torch": "2.14.1+cpu",
+        "sentence-transformers": "6.1.0",
+        "transformers": "5.19.0"
+      },
+      "spark": "4.2.0"
+    },
+    "earlier_attempts": [],
+    "baseline": {
+      "run_id": "94970be9-6094-4ff0-85db-85b69f1aafbc",
+      "baseline_run_id": "09cb979c-2baa-47dd-9938-c091d8e8b455",
+      "status": "committed",
+      "to_version_tag": "v4.0.1",
+      "to_commit_sha": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+      "to_config_id": "e70bf55c7cf1b856",
+      "to_docs_fingerprint": "5b1534b24125aa7d7131d72727e2b28ff85b072262ed48dceedb3b40ba798c02",
+      "to_chunks_fingerprint": "bdbdafdf9940d65f1d916659117ed92ef247ae3890a0b1b9a435f6fe520afb6f"
+    },
+    "baseline_check": "rechunked",
+    "dq": [
+      {
+        "check": "empty_chunks",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 6051,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "body with no token (blank, or only characters the tokenizer drops), or blank embed text; fails if any",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "tiny_chunks",
+        "status": "pass",
+        "numerator": 25,
+        "denominator": 6051,
+        "observed": 0.0041315485043794415,
+        "threshold": 0.02,
+        "rule": "body under 5 tokens; fails above 2% of chunks",
+        "examples": [
+          "docs/sql-ref-datatypes.md #91: 2 tokens 'r:'",
+          "docs/sql-ref-functions.md #4: 3 tokens '* Generator Functions'",
+          "docs/sql-ref-parameter-markers.md #8: 2 tokens '- Java'",
+          "docs/sql-ref-parameter-markers.md #19: 2 tokens '- Java'",
+          "docs/sql-ref-sketch-aggregates.md #12: 3 tokens '---'",
+          "docs/sql-ref-syntax-aux-conf-mgmt-reset.md #4: 2 tokens '* SET'",
+          "docs/sql-ref-syntax-aux-conf-mgmt-set-timezone.md #5: 2 tokens '* SET'",
+          "docs/sql-ref-syntax-aux-set-var.md #5: 2 tokens '* SET'",
+          "docs/sql-ref-syntax-aux-show-collations.md #17: 3 tokens '* STRING TYPE'",
+          "docs/sql-ref-syntax-aux-show-functions.md #5: 3 tokens '* DESCRIBE FUNCTION'"
+        ],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "oversized_chunks",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 6051,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "embed text over 254 tokens (max_tokens 254; the embedding models' 256 less [CLS] and [SEP]); fails if any",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "duplicate_chunk_ids",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 6051,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "rows beyond the first of a repeated chunk_id; fails if any",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "duplicate_embed_text",
+        "status": "pass",
+        "numerator": 5,
+        "denominator": 6051,
+        "observed": 0.0008263097008758883,
+        "threshold": 0.01,
+        "rule": "copies beyond the first of a repeated embed text; fails above 1% of chunks",
+        "examples": [
+          "3x in ['docs/streaming-programming-guide.md']: 'Spark Streaming Programming Guide > Basic Concepts > Accumulators, Broadcast Var'",
+          "2x in ['docs/sql-ref-syntax-ddl-alter-view.md']: 'ALTER VIEW > Description > Parameters\\n\\n* **view_identifier**\\n\\n    Specifies a vi'",
+          "2x in ['docs/sql-migration-guide.md']: 'Migration Guide: SQL, Datasets and DataFrame > Upgrading from Spark SQL 2.4 to 3'",
+          "2x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Shared Variables > Accumulators\\n\\nWhile this code used th'"
+        ],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "missing_metadata",
+        "status": "pass",
+        "numerator": 0,
+        "denominator": 6051,
+        "observed": 0.0,
+        "threshold": 0.0,
+        "rule": "a docs/*.md path, non-blank section names (the title first), version_tag v4.2.0, a 40-hex commit_sha; fails if any row misses one",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "drift_docs",
+        "status": "fail",
+        "numerator": 238,
+        "denominator": 213,
+        "observed": 0.11737089201877926,
+        "threshold": 0.1,
+        "rule": "minor release: |to/from - 1| over 10% fails unless this run accepts the drift of a failed run with exactly these numbers; a loss over 50% fails anyway; not applicable without a baseline",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "drift_chunks",
+        "status": "fail",
+        "numerator": 6051,
+        "denominator": 5436,
+        "observed": 0.11313465783664456,
+        "threshold": 0.1,
+        "rule": "minor release: |to/from - 1| over 10% fails unless this run accepts the drift of a failed run with exactly these numbers; a loss over 50% fails anyway; not applicable without a baseline",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      },
+      {
+        "check": "drift_tokens",
+        "status": "fail",
+        "numerator": 775772,
+        "denominator": 691882,
+        "observed": 0.121248999106784,
+        "threshold": 0.1,
+        "rule": "minor release: |to/from - 1| over 10% fails unless this run accepts the drift of a failed run with exactly these numbers; a loss over 50% fails anyway; not applicable without a baseline",
+        "examples": [],
+        "override_reason": null,
+        "override_of": null
+      }
+    ],
+    "logged": "failed",
+    "status": "failed",
+    "error": "DqFailed: DQ gate failed: drift_docs fail: 213 -> 238 (+11.7%, limit 10%); drift_chunks fail: 5436 -> 6051 (+11.3%, limit 10%); drift_tokens fail: 691882 -> 775772 (+12.1%, limit 10%)",
+    "finished_utc": "2026-10-21T09:27:49Z"
+  },
+  "error": "DqFailed: DQ gate failed: drift_docs fail: 213 -> 238 (+11.7%, limit 10%); drift_chunks fail: 5436 -> 6051 (+11.3%, limit 10%); drift_tokens fail: 691882 -> 775772 (+12.1%, limit 10%)"
+}
