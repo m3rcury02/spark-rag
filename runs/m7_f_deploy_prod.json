@@ -1,0 +1,16 @@
+{
+  "label": "m7_f_deploy_prod",
+  "git_commit": "548db3d5c05b8592d819f01fe7ffe4663a6a7398",
+  "target": "prod",
+  "schema": "docs_rag_prod",
+  "wheel": "docs_rag-0.0.1.dev193+g548db3d5c-py3-none-any.whl",
+  "wheel_version": "0.0.1.dev193+g548db3d5c",
+  "cli": "Databricks CLI v1.21.0",
+  "job": {
+    "id": 1054940179033075,
+    "name": "docs_rag_pipeline",
+    "url": "https://<workspace-host>/jobs/1054940179033075?w=<workspace-id>"
+  },
+  "deploy_seconds": 6.3,
+  "deployed_utc": "2026-10-21T09:35:26Z"
+}
