@@ -1,0 +1,79 @@
+{
+  "label": "m6_l_billing_m5_m6",
+  "git_commit": "03fb534cffddfdcb7fefcd530e2cf23f244f3039",
+  "statements": [
+    {
+      "sql": "SELECT date_trunc('HOUR', usage_start_time) AS hour_utc, billing_origin_product, sku_name, round(sum(usage_quantity), 4) AS dbu FROM system.billing.usage WHERE usage_unit = 'DBU' AND usage_start_time >= '2026-10-20T17:00:00Z' GROUP BY ALL ORDER BY hour_utc, billing_origin_product",
+      "params": {},
+      "columns": [
+        "hour_utc",
+        "billing_origin_product",
+        "sku_name",
+        "dbu"
+      ],
+      "rows": [
+        [
+          "2026-10-20T18:00:00.000Z",
+          "JOBS",
+          "PREMIUM_JOBS_SERVERLESS_COMPUTE_US_EAST_OHIO",
+          "2.2934"
+        ],
+        [
+          "2026-10-20T18:00:00.000Z",
+          "SQL",
+          "PREMIUM_SERVERLESS_SQL_COMPUTE_US_EAST_OHIO",
+          "1.5961"
+        ],
+        [
+          "2026-10-20T18:00:00.000Z",
+          "VECTOR_SEARCH",
+          "PREMIUM_SERVERLESS_REAL_TIME_INFERENCE_US_EAST_OHIO",
+          "0.9820"
+        ],
+        [
+          "2026-10-20T18:00:00.000Z",
+          "VECTOR_SEARCH",
+          "PREMIUM_JOBS_SERVERLESS_COMPUTE_US_EAST_OHIO",
+          "0.8396"
+        ],
+        [
+          "2026-10-20T19:00:00.000Z",
+          "JOBS",
+          "PREMIUM_JOBS_SERVERLESS_COMPUTE_US_EAST_OHIO",
+          "0.7030"
+        ],
+        [
+          "2026-10-20T19:00:00.000Z",
+          "PREDICTIVE_OPTIMIZATION",
+          "PREMIUM_JOBS_SERVERLESS_COMPUTE_US_EAST_OHIO",
+          "0.0947"
+        ],
+        [
+          "2026-10-20T19:00:00.000Z",
+          "SQL",
+          "PREMIUM_SERVERLESS_SQL_COMPUTE_US_EAST_OHIO",
+          "1.9200"
+        ],
+        [
+          "2026-10-20T19:00:00.000Z",
+          "VECTOR_SEARCH",
+          "PREMIUM_JOBS_SERVERLESS_COMPUTE_US_EAST_OHIO",
+          "0.2857"
+        ],
+        [
+          "2026-10-20T19:00:00.000Z",
+          "VECTOR_SEARCH",
+          "PREMIUM_SERVERLESS_REAL_TIME_INFERENCE_US_EAST_OHIO",
+          "0.8557"
+        ],
+        [
+          "2026-10-20T23:00:00.000Z",
+          "PREDICTIVE_OPTIMIZATION",
+          "PREMIUM_JOBS_SERVERLESS_COMPUTE_US_EAST_OHIO",
+          "0.1899"
+        ]
+      ]
+    }
+  ],
+  "error": null
+}
