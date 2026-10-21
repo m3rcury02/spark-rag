@@ -1,0 +1,42 @@
+{
+  "label": "m7_h_actions_deploy_dev",
+  "actions_run": {
+    "databaseId": 39594001897,
+    "workflowName": "Deploy",
+    "event": "push",
+    "headBranch": "main",
+    "headSha": "cbf16517e65bed7c4221796ef4fa373cfc01c474",
+    "conclusion": "success",
+    "createdAt": "2026-10-21T11:42:58Z",
+    "updatedAt": "2026-10-21T11:44:16Z",
+    "url": "https://github.com/m3rcury02/spark-rag/actions/runs/39594001897"
+  },
+  "jobs": [
+    {
+      "name": "checks / checks",
+      "conclusion": "success",
+      "startedAt": "2026-10-21T11:43:01Z",
+      "completedAt": "2026-10-21T11:43:48Z"
+    },
+    {
+      "name": "deploy",
+      "conclusion": "success",
+      "startedAt": "2026-10-21T11:43:52Z",
+      "completedAt": "2026-10-21T11:44:16Z"
+    }
+  ],
+  "dev_job_after": {
+    "job_id": 541855458002088,
+    "expect_version": [
+      "--expect-version=0.0.1.dev200+gcbf16517e"
+    ]
+  },
+  "prod_job_after": {
+    "job_id": 1054940179033075,
+    "expect_version": [
+      "--expect-version=0.0.1.dev193+g548db3d5c"
+    ],
+    "note": "prod deploys only on workflow_dispatch; unchanged by this push"
+  }
+}
+
