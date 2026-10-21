@@ -34,26 +34,13 @@ from databricks.sdk.service import catalog, compute, jobs
 from redact import Redactor
 
 from docs_rag.config import Config
+from docs_rag.deps import embedding_requirements
 
 REPO = pathlib.Path(__file__).resolve().parents[1]
 ARTIFACTS = "artifacts"  # Volume in the target schema: wheels, job scripts, run summaries
 # Every job runs on one environment. Versions 3-6 all ship Python 3.12.3; 4 is the most mature (D-005).
 ENVIRONMENT_VERSION = "4"
 TERMINAL = {"TERMINATED", "SKIPPED", "INTERNAL_ERROR"}
-# The CPU build of the torch Config.embedding.packages pins, per machine (serverless jobs have run on
-# aarch64), with the sha256 the index lists (https://download.pytorch.org/whl/cpu/torch/, read 2026-10-20).
-# From PyPI, pip took a CUDA build in M0 (torch 2.14.1+cu130, runs/m0_smoke_test.json): large, unused on CPU.
-TORCH_INDEX = "https://download.pytorch.org/whl/cpu"
-TORCH_CPU_WHEELS = {
-    "x86_64": (
-        "torch-2.14.1%2Bcpu-cp312-cp312-manylinux_2_28_x86_64.whl",
-        "5a6363570c753812540a05eb82380e329469cbe668643e88111414c12627711f",
-    ),
-    "aarch64": (
-        "torch-2.14.1%2Bcpu-cp312-cp312-manylinux_2_28_aarch64.whl",
-        "2af649994b36dffc627175c3f306d9e513a309b58d4619ac7107577613336454",
-    ),
-}
 
 
 def git(*args: str) -> str:
@@ -81,14 +68,7 @@ def job_dependencies(script: str, config: Config) -> list[str]:
     """pip requirements a job needs beyond the wheel: change_detect embeds when it publishes to a sink."""
     if script != "change_detect.py" or config.gold_table is None:
         return []
-    pins = dict(config.embedding.packages)
-    torch = pins.pop("torch")
-    lines = []
-    for machine, (wheel, sha256) in TORCH_CPU_WHEELS.items():
-        if not wheel.startswith(f"torch-{torch.replace('+', '%2B')}-"):
-            sys.exit(f"TORCH_CPU_WHEELS {wheel} is not the pinned torch {torch}")
-        lines.append(f'torch @ {TORCH_INDEX}/{wheel}#sha256={sha256} ; platform_machine == "{machine}"')
-    return lines + [f"{name}=={version}" for name, version in pins.items()]
+    return embedding_requirements(config.embedding)
 
 
 def ensure_volume(w: WorkspaceClient, config: Config) -> None:

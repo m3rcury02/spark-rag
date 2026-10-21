@@ -15,8 +15,11 @@ from databricks.sdk import WorkspaceClient
 class Redactor:
     def __init__(self, w: WorkspaceClient) -> None:
         host = (w.config.host or "").removeprefix("https://").rstrip("/")
+        user = w.current_user.me().user_name or ""
         self.pairs = [
-            (w.current_user.me().user_name or "", "<owner>"),
+            (user, "<owner>"),
+            # Bundle dev mode names resources "[dev <user name without the domain>] ..." (M7)
+            (user.split("@")[0] if "@" in user else "", "<owner-name>"),
             (host, "<workspace-host>"),
             (str(w.get_workspace_id()), "<workspace-id>"),
         ]

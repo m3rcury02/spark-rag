@@ -1,0 +1,170 @@
+# The pipeline as one job (M7, D-016): resolve the tag -> bronze -> silver at both chunk sizes -> change
+# detection, DQ gate, embedding and gold MERGE -> (only if asked) index sync.
+#
+# Every task is one script of jobs/ on serverless environment 4 with the deployed wheel; change_detect's
+# environment adds the pinned embedding packages (docs_rag.deps; tests/test_bundle.py checks they match).
+# Task run ids are "<job run id>-<task>": stable across a repair of the same job run, which is what
+# change_detect's "an earlier attempt already committed" check relies on (D-011). The drift override of the
+# gate (D-012) is two job parameters: rerun with accept_drift (the reason) and accept_drift_of (the failed
+# run's id, "<job run id>-detect").
+resources:
+  jobs:
+    docs_pipeline:
+      name: docs_rag_pipeline
+      description: Incremental RAG ingestion of the Apache Spark docs (bronze, silver, DQ gate, gold, index).
+      max_concurrent_runs: 1
+      timeout_seconds: 7200
+      email_notifications:
+        on_failure:
+          - ${workspace.current_user.userName}
+      schedule:
+        quartz_cron_expression: "0 15 6 ? * MON"  # Mondays 06:15 UTC: picks up a new Spark release
+        timezone_id: UTC
+        pause_status: PAUSED
+      parameters:
+        - name: tag
+          default: latest  # or a release tag such as v4.0.1
+        - name: initial
+          default: "false"
+        - name: allow_backwards
+          default: "false"
+        - name: allow_config_change
+          default: "false"
+        - name: accept_drift
+          default: ""
+        - name: accept_drift_of
+          default: ""
+        - name: with_index
+          default: "false"  # the AI Search endpoint exists only when needed (D-001, D-014)
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "4"
+            dependencies:
+              - ../dist/docs_rag-*.whl
+        - environment_key: embed
+          spec:
+            environment_version: "4"
+            dependencies:
+              - ../dist/docs_rag-*.whl
+              - 'torch @ https://download.pytorch.org/whl/cpu/torch-2.14.1%2Bcpu-cp312-cp312-manylinux_2_28_x86_64.whl#sha256=5a6363570c753812540a05eb82380e329469cbe668643e88111414c12627711f ; platform_machine == "x86_64"'
+              - 'torch @ https://download.pytorch.org/whl/cpu/torch-2.14.1%2Bcpu-cp312-cp312-manylinux_2_28_aarch64.whl#sha256=2af649994b36dffc627175c3f306d9e513a309b58d4619ac7107577613336454 ; platform_machine == "aarch64"'
+              - sentence-transformers==6.1.0
+              - transformers==5.19.0
+      tasks:
+        - task_key: resolve_tag
+          environment_key: default
+          max_retries: 0
+          disable_auto_optimization: true
+          spark_python_task:
+            python_file: ../jobs/resolve_tag.py
+            parameters:
+              - --tag={{job.parameters.tag}}
+              - --catalog=workspace
+              - --schema=${var.schema}
+              - --run-id={{job.run_id}}-resolve
+              - --summary-dir=/Volumes/workspace/${var.schema}/artifacts/summaries
+              - --expect-env=4
+              - --expect-version=${var.wheel_version}
+
+        - task_key: bronze
+          depends_on:
+            - task_key: resolve_tag
+          environment_key: default
+          max_retries: 0
+          disable_auto_optimization: true
+          spark_python_task:
+            python_file: ../jobs/bronze_ingest.py
+            parameters:
+              - --tag={{tasks.resolve_tag.values.tag}}
+              - --catalog=workspace
+              - --schema=${var.schema}
+              - --run-id={{job.run_id}}-bronze
+              - --summary-dir=/Volumes/workspace/${var.schema}/artifacts/summaries
+              - --expect-env=4
+              - --expect-version=${var.wheel_version}
+
+        - task_key: silver_254
+          depends_on:
+            - task_key: bronze
+          environment_key: default
+          max_retries: 0
+          disable_auto_optimization: true
+          spark_python_task:
+            python_file: ../jobs/silver_chunk.py
+            parameters:
+              - --tag={{tasks.resolve_tag.values.tag}}
+              - --max-tokens=254
+              - --overlap-tokens=32
+              - --catalog=workspace
+              - --schema=${var.schema}
+              - --run-id={{job.run_id}}-silver254
+              - --summary-dir=/Volumes/workspace/${var.schema}/artifacts/summaries
+              - --expect-env=4
+              - --expect-version=${var.wheel_version}
+
+        - task_key: silver_128
+          depends_on:
+            - task_key: bronze
+          environment_key: default
+          max_retries: 0
+          disable_auto_optimization: true
+          spark_python_task:
+            python_file: ../jobs/silver_chunk.py
+            parameters:
+              - --tag={{tasks.resolve_tag.values.tag}}
+              - --max-tokens=128
+              - --overlap-tokens=16
+              - --catalog=workspace
+              - --schema=${var.schema}
+              - --run-id={{job.run_id}}-silver128
+              - --summary-dir=/Volumes/workspace/${var.schema}/artifacts/summaries
+              - --expect-env=4
+              - --expect-version=${var.wheel_version}
+
+        - task_key: change_detect
+          depends_on:
+            - task_key: silver_254  # the published config; 128/16 is for the eval (D-015) and never published
+          environment_key: embed
+          max_retries: 0
+          disable_auto_optimization: true
+          spark_python_task:
+            python_file: ../jobs/change_detect.py
+            parameters:
+              - --tag={{tasks.resolve_tag.values.tag}}
+              - --initial={{job.parameters.initial}}
+              - --allow-backwards={{job.parameters.allow_backwards}}
+              - --allow-config-change={{job.parameters.allow_config_change}}
+              - --accept-drift={{job.parameters.accept_drift}}
+              - --accept-drift-of={{job.parameters.accept_drift_of}}
+              - --catalog=workspace
+              - --schema=${var.schema}
+              - --run-id={{job.run_id}}-detect
+              - --summary-dir=/Volumes/workspace/${var.schema}/artifacts/summaries
+              - --expect-env=4
+              - --expect-version=${var.wheel_version}
+
+        - task_key: index_requested
+          depends_on:
+            - task_key: change_detect
+          condition_task:
+            left: "{{job.parameters.with_index}}"
+            op: EQUAL_TO
+            right: "true"
+
+        - task_key: sync_index
+          depends_on:
+            - task_key: index_requested
+              outcome: "true"
+          environment_key: default
+          max_retries: 0
+          disable_auto_optimization: true
+          spark_python_task:
+            python_file: ../jobs/sync_index.py
+            parameters:
+              - --catalog=workspace
+              - --schema=${var.schema}
+              - --run-id={{job.run_id}}-sync
+              - --summary-dir=/Volumes/workspace/${var.schema}/artifacts/summaries
+              - --expect-env=4
+              - --expect-version=${var.wheel_version}

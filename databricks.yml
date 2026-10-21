@@ -1,0 +1,63 @@
+# Databricks Asset Bundle for the docs_rag pipeline (M7, D-016).
+#
+# Deploy and run with scripts/bundle.py, which builds the wheel first and passes its version, so every task can
+# assert it imports exactly the deployed code (D-005):
+#   uv run --with databricks-sdk==0.152.0 python scripts/bundle.py deploy --target dev --label <label>
+#   uv run --with databricks-sdk==0.152.0 python scripts/bundle.py run --target dev --label <label> -- tag=latest
+# Data lives outside the bundle: the schema and the artifacts Volume are created by scripts/bundle.py (as by
+# scripts/run_job.py) and the tables by the jobs (CREATE TABLE IF NOT EXISTS), so `bundle destroy` removes the
+# job and the deployed files, never data.
+bundle:
+  name: docs_rag
+  databricks_cli_version: ">= 1.21.0"
+
+include:
+  - resources/*.yml
+
+variables:
+  schema:
+    description: Unity Catalog schema in catalog `workspace` the pipeline reads and writes.
+  wheel_version:
+    description: The docs_rag wheel version this deployment uploads; each task checks it imports exactly it.
+
+artifacts:
+  docs_rag:
+    type: whl
+    path: .
+    build: uv build --wheel --out-dir dist
+    files:
+      - source: dist/docs_rag-*.whl
+
+sync:
+  # The jobs need only their scripts (jobs/) and the wheel (uploaded as an artifact).
+  exclude:
+    - runs/**
+    - eval/**
+    - docs/**
+    - notebooks/**
+    - tests/**
+    - scripts/**
+    - LICENSES/**
+    - src/**
+    - dist/**
+
+targets:
+  dev:
+    mode: development  # resources named "[dev <user>] ...", deployed under the user's home, schedules paused
+    default: true
+    variables:
+      schema: docs_rag_dev
+    presets:
+      jobs_max_concurrent_runs: 1  # one run at a time: two could both read the chain head and fork it (D-011)
+
+  prod:
+    mode: production
+    variables:
+      schema: docs_rag_prod
+    workspace:
+      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
+    run_as:
+      user_name: ${workspace.current_user.userName}  # Free Edition: no service principal to run as (D-016)
+    presets:
+      jobs_max_concurrent_runs: 1
+      trigger_pause_status: PAUSED  # unpausing the weekly schedule spends quota: the owner's call
