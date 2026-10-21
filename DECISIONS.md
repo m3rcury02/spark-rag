@@ -1315,6 +1315,43 @@ to v4.2.0 (D-016), so comparison 4 (gold's vectors against local) refuses set v1
   release, read with v1's decision rule. No new comparison and no decision depends on it, and v1's results
   stand. Not run: the live index (it needs the endpoint, D-001).
 
+**Results of set v2** (`runs/m6_n_eval_v2.json`, 2026-10-21; v4.2.0 with 6,051 chunks at 254/32 and 9,852 at
+128/16, both equal to silver (`m6_m`); 350 rows in `eval_results`, `eval_run_id` `m6_n_eval_v2-bcad9021`):
+
+| Config | recall@5 [95% CI] | MRR@10 [95% CI] |
+|---|---|---|
+| MiniLM 254/32 (production) | 0.66 [0.52, 0.78] | 0.462 [0.352, 0.575] |
+| MiniLM 254/32, gold's vectors | 0.66 [0.52, 0.78] | 0.462 [0.352, 0.575] |
+| MiniLM 128/16 | 0.70 [0.56, 0.82] | 0.477 [0.365, 0.590] |
+| bge-small 254/32, with the instruction | 0.74 [0.62, 0.86] | 0.541 [0.427, 0.656] |
+| bge-small 128/16, with the instruction | 0.72 [0.58, 0.84] | 0.576 [0.453, 0.694] |
+| bge-small 254/32, without | 0.74 [0.62, 0.86] | 0.500 [0.391, 0.611] |
+| bge-small 128/16, without | 0.68 [0.54, 0.80] | 0.531 [0.410, 0.649] |
+
+| # | a vs b | recall@5 | items | MRR@10 |
+|---|---|---|---|---|
+| 1 | MiniLM 254/32 vs 128/16 | −0.04 [−0.12, +0.04] | 1 vs 3 | −0.015 [−0.075, +0.043] |
+| 1 | bge 254/32 vs 128/16 | +0.02 [−0.04, +0.08] | 2 vs 1 | −0.034 [−0.098, +0.029] |
+| 2 | bge vs MiniLM at 254/32 | +0.08 [−0.02, +0.18] | 6 vs 2 | +0.080 [−0.001, +0.164] |
+| 2 | bge vs MiniLM at 128/16 | +0.02 [−0.10, +0.14] | 5 vs 4 | **+0.099 [+0.027, +0.174]** |
+| 3 | bge with vs without the instruction, 254/32 | 0.00 [−0.06, +0.06] | 1 vs 1 | **+0.041 [+0.009, +0.082]** |
+| 3 | the same, 128/16 | +0.04 [0.00, +0.10] | 2 vs 0 | **+0.045 [+0.003, +0.092]** |
+| 4 | gold's vectors vs local, production config | 0 (identical ranks) | 0 vs 0 | 0 |
+
+- **By v1's rule, the same decision:** no recall@5 interval excludes zero, so production stays MiniLM at
+  254/32.
+- **Comparison 4 holds at the head:** gold's 6,051 vectors (an initial load of v3.5.0, then three incremental runs,
+  D-014, D-016) rank exactly like a fresh local embedding; their lowest cosine is 0.99997.
+- **What moved between releases:** with the same items and code, production's recall@5 went from 0.68 to 0.66.
+  That is one item (q37, rank 5 → 6), and 38 of the 50 items kept their exact rank. bge's MRR lead at 254/32 no
+  longer clears the bar (+0.080, interval from −0.001), while at 128/16 it still does. So the v1 MRR finding
+  is not stable across releases at n = 50, which supports the rule that MRR breaks no tie.
+- *Descriptive:* SQL reference items 0.57–0.65 recall@5, the rest 0.70–0.85. bge's lead is still outside the
+  SQL reference (0.85 against 0.70 at 254/32). Without the 8 `also_in` items: 0.67 / 0.69 / 0.74 / 0.71 for
+  MiniLM 254, MiniLM 128, bge 254, bge 128 (with the instruction).
+- The embedding speeds of this run (45.2 chunks/s for MiniLM at 254/32, against 64.7 in v1) are not a
+  measurement: other work ran on the machine at the same time. v1's figures stand.
+
 ## D-016 — Orchestration and deployment: one bundle, one job, dev and prod
 
 - **Date:** 2026-10-21 · **Status:** Accepted (evidence: `runs/m7_*`)
@@ -1330,7 +1367,8 @@ serverless environment 4 pinned (D-005), the index synced only from a committed 
    mode) on `docs_rag_prod`, run as the deploying user. A service principal is the usual prod identity; this
    project has none (Free Edition, not checked whether one can be made), so prod runs as the owner.
 2. *One job, the existing scripts as tasks* (`resources/pipeline.job.yml`): resolve_tag → bronze → silver
-   254/32 → silver 128/16 → change_detect → index_requested (condition) → sync_index. No pipeline logic moved:
+   254/32, then silver 128/16 and change_detect side by side (change_detect reads only the published 254/32
+   chunks), then index_requested (condition) → sync_index. No pipeline logic moved:
    each task writes the same summary JSON as a `run_job.py` run, so the M3–M5 verifiers check orchestrated runs
    unchanged (`scripts/bundle.py run` writes the detect task in run_job's shape).
 3. *The tag.* A job parameter, `latest` by default: resolve_tag reads the newest plain release from git's

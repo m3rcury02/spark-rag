@@ -1,0 +1,1455 @@
+{
+  "label": "m6_n_eval_v2",
+  "git_commit": "417f0e0057f71657f7c765666a50398d7d8efaa2",
+  "eval_set": {
+    "file": "eval/eval_set_v2.json",
+    "version": "2",
+    "sha256": "ff6fb769cfb2fc42aa4f8aaa80a3f71c172705771c10160f82c6722737d7e8a6",
+    "items": 50
+  },
+  "eval_config": {
+    "recall_k": 5,
+    "mrr_k": 10,
+    "resamples": 10000,
+    "seed": 15,
+    "min_quote_share": 0.5,
+    "quote_chars": [
+      30,
+      250
+    ]
+  },
+  "started_utc": "2026-10-21T12:27:00+00:00",
+  "items": {
+    "q01": {
+      "path": "docs/mllib-statistics.md",
+      "kind": "behavior",
+      "quote_chars": 180,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q02": {
+      "path": "docs/streaming/structured-streaming-kafka-integration.md",
+      "kind": "config",
+      "quote_chars": 175,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q03": {
+      "path": "docs/mllib-isotonic-regression.md",
+      "kind": "behavior",
+      "quote_chars": 55,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q04": {
+      "path": "docs/sql-ref-syntax-qry-select-case.md",
+      "kind": "fact",
+      "quote_chars": 169,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [
+        "docs/sql-ref-ansi-compliance.md"
+      ],
+      "longest_shared_word_run": 2
+    },
+    "q05": {
+      "path": "docs/sql-ref-syntax-ddl-declare-variable.md",
+      "kind": "behavior",
+      "quote_chars": 158,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q06": {
+      "path": "docs/sql-ref-syntax-ddl-drop-table.md",
+      "kind": "behavior",
+      "quote_chars": 78,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q07": {
+      "path": "docs/streaming-programming-guide.md",
+      "kind": "fact",
+      "quote_chars": 82,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q08": {
+      "path": "docs/ml-frequent-pattern-mining.md",
+      "kind": "fact",
+      "quote_chars": 172,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q09": {
+      "path": "docs/sql-ref-syntax-aux-show-functions.md",
+      "kind": "how-to",
+      "quote_chars": 73,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q10": {
+      "path": "docs/sql-data-sources-json.md",
+      "kind": "how-to",
+      "quote_chars": 76,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q11": {
+      "path": "docs/sql-ref-functions-udf-scalar.md",
+      "kind": "how-to",
+      "quote_chars": 99,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 0
+    },
+    "q12": {
+      "path": "docs/sql-ref-syntax-ddl-create-table-like.md",
+      "kind": "syntax",
+      "quote_chars": 166,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [
+        "docs/sql-ref-syntax-ddl-create-table-like.md"
+      ],
+      "longest_shared_word_run": 1
+    },
+    "q13": {
+      "path": "docs/streaming/structured-streaming-state-data-source.md",
+      "kind": "fact",
+      "quote_chars": 155,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [
+        "docs/streaming/apis-on-dataframes-and-datasets.md"
+      ],
+      "longest_shared_word_run": 3
+    },
+    "q14": {
+      "path": "docs/sql-ref-syntax-qry-select-transform.md",
+      "kind": "config",
+      "quote_chars": 89,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q15": {
+      "path": "docs/sql-data-sources-text.md",
+      "kind": "behavior",
+      "quote_chars": 95,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q16": {
+      "path": "docs/tuning.md",
+      "kind": "how-to",
+      "quote_chars": 80,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q17": {
+      "path": "docs/rdd-programming-guide.md",
+      "kind": "behavior",
+      "quote_chars": 85,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 3
+    },
+    "q18": {
+      "path": "docs/sql-data-sources-load-save-functions.md",
+      "kind": "config",
+      "quote_chars": 149,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [
+        "docs/sql-ref-syntax-ddl-create-table-datasource.md"
+      ],
+      "longest_shared_word_run": 0
+    },
+    "q19": {
+      "path": "docs/sql-ref-syntax-aux-exec-imm.md",
+      "kind": "behavior",
+      "quote_chars": 50,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q20": {
+      "path": "docs/sql-ref-syntax-aux-conf-mgmt-reset.md",
+      "kind": "behavior",
+      "quote_chars": 75,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q21": {
+      "path": "docs/sql-data-sources-orc.md",
+      "kind": "config",
+      "quote_chars": 55,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q22": {
+      "path": "docs/sql-ref-syntax-qry-select-lateral-subquery.md",
+      "kind": "comparison",
+      "quote_chars": 188,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q23": {
+      "path": "docs/hadoop-provided.md",
+      "kind": "how-to",
+      "quote_chars": 96,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q24": {
+      "path": "docs/mllib-pmml-model-export.md",
+      "kind": "fact",
+      "quote_chars": 85,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q25": {
+      "path": "docs/mllib-decision-tree.md",
+      "kind": "fact",
+      "quote_chars": 101,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [
+        "docs/ml-classification-regression.md"
+      ],
+      "longest_shared_word_run": 1
+    },
+    "q26": {
+      "path": "docs/sql-ref-syntax-aux-show-tblproperties.md",
+      "kind": "behavior",
+      "quote_chars": 193,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q27": {
+      "path": "docs/sql-data-sources-avro.md",
+      "kind": "how-to",
+      "quote_chars": 193,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q28": {
+      "path": "docs/sql-ref-syntax-ddl-create-function.md",
+      "kind": "how-to",
+      "quote_chars": 173,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q29": {
+      "path": "docs/sql-ref-syntax-ddl-alter-view.md",
+      "kind": "fact",
+      "quote_chars": 54,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [
+        "docs/sql-ref-syntax-ddl-create-view.md"
+      ],
+      "longest_shared_word_run": 1
+    },
+    "q30": {
+      "path": "docs/sql-migration-guide.md",
+      "kind": "config",
+      "quote_chars": 232,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q31": {
+      "path": "docs/sql-ref-syntax-qry-select-having.md",
+      "kind": "syntax",
+      "quote_chars": 154,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q32": {
+      "path": "docs/streaming-kinesis-integration.md",
+      "kind": "config",
+      "quote_chars": 138,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q33": {
+      "path": "docs/graphx-programming-guide.md",
+      "kind": "fact",
+      "quote_chars": 74,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 0
+    },
+    "q34": {
+      "path": "docs/sql-ref-syntax-aux-show-columns.md",
+      "kind": "syntax",
+      "quote_chars": 108,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q35": {
+      "path": "docs/sql-ref-null-semantics.md",
+      "kind": "fact",
+      "quote_chars": 138,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q36": {
+      "path": "docs/sql-ref-syntax-aux-cache-refresh-function.md",
+      "kind": "behavior",
+      "quote_chars": 140,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q37": {
+      "path": "docs/sql-ref-syntax-dml-load.md",
+      "kind": "comparison",
+      "quote_chars": 118,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q38": {
+      "path": "docs/sql-pipe-syntax.md",
+      "kind": "syntax",
+      "quote_chars": 101,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q39": {
+      "path": "docs/sql-ref-syntax-aux-describe-database.md",
+      "kind": "comparison",
+      "quote_chars": 125,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [
+        "docs/sql-ref-syntax-ddl-create-database.md",
+        "docs/sql-ref-syntax-ddl-alter-database.md"
+      ],
+      "longest_shared_word_run": 1
+    },
+    "q40": {
+      "path": "docs/quick-start.md",
+      "kind": "how-to",
+      "quote_chars": 77,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q41": {
+      "path": "docs/sql-ref-functions-udf-aggregate.md",
+      "kind": "how-to",
+      "quote_chars": 115,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q42": {
+      "path": "docs/sql-ref-syntax-aux-resource-mgmt-add-jar.md",
+      "kind": "behavior",
+      "quote_chars": 67,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q43": {
+      "path": "docs/sql-ref-syntax-aux-conf-mgmt-set-timezone.md",
+      "kind": "config",
+      "quote_chars": 203,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q44": {
+      "path": "docs/sql-ref-syntax-ddl-create-database.md",
+      "kind": "behavior",
+      "quote_chars": 115,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q45": {
+      "path": "docs/ml-guide.md",
+      "kind": "fact",
+      "quote_chars": 92,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q46": {
+      "path": "docs/mllib-dimensionality-reduction.md",
+      "kind": "fact",
+      "quote_chars": 182,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q47": {
+      "path": "docs/mllib-collaborative-filtering.md",
+      "kind": "fact",
+      "quote_chars": 166,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q48": {
+      "path": "docs/mllib-feature-extraction.md",
+      "kind": "fact",
+      "quote_chars": 188,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q49": {
+      "path": "docs/cluster-overview.md",
+      "kind": "fact",
+      "quote_chars": 223,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [
+        "docs/index.md",
+        "docs/submitting-applications.md"
+      ],
+      "longest_shared_word_run": 2
+    },
+    "q50": {
+      "path": "docs/streaming/getting-started.md",
+      "kind": "behavior",
+      "quote_chars": 80,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    }
+  },
+  "configs": {
+    "e70bf55c7cf1b856": {
+      "max_tokens": 254,
+      "overlap_tokens": 32,
+      "chunks": 6051,
+      "silver_rows": 6051,
+      "fingerprint_equals_silver": true,
+      "relevant_chunks_per_item": {
+        "q01": 1,
+        "q02": 1,
+        "q03": 1,
+        "q04": 1,
+        "q05": 1,
+        "q06": 1,
+        "q07": 1,
+        "q08": 2,
+        "q09": 1,
+        "q10": 1,
+        "q11": 1,
+        "q12": 1,
+        "q13": 1,
+        "q14": 1,
+        "q15": 1,
+        "q16": 1,
+        "q17": 1,
+        "q18": 1,
+        "q19": 1,
+        "q20": 1,
+        "q21": 1,
+        "q22": 1,
+        "q23": 1,
+        "q24": 1,
+        "q25": 1,
+        "q26": 1,
+        "q27": 1,
+        "q28": 1,
+        "q29": 1,
+        "q30": 1,
+        "q31": 1,
+        "q32": 1,
+        "q33": 1,
+        "q34": 1,
+        "q35": 1,
+        "q36": 1,
+        "q37": 1,
+        "q38": 1,
+        "q39": 1,
+        "q40": 1,
+        "q41": 1,
+        "q42": 1,
+        "q43": 1,
+        "q44": 1,
+        "q45": 1,
+        "q46": 1,
+        "q47": 1,
+        "q48": 1,
+        "q49": 1,
+        "q50": 1
+      }
+    },
+    "ece77f296d18fbd5": {
+      "max_tokens": 128,
+      "overlap_tokens": 16,
+      "chunks": 9852,
+      "silver_rows": 9852,
+      "fingerprint_equals_silver": true,
+      "relevant_chunks_per_item": {
+        "q01": 1,
+        "q02": 1,
+        "q03": 1,
+        "q04": 1,
+        "q05": 1,
+        "q06": 1,
+        "q07": 1,
+        "q08": 1,
+        "q09": 1,
+        "q10": 1,
+        "q11": 1,
+        "q12": 1,
+        "q13": 1,
+        "q14": 1,
+        "q15": 1,
+        "q16": 1,
+        "q17": 1,
+        "q18": 1,
+        "q19": 1,
+        "q20": 1,
+        "q21": 1,
+        "q22": 1,
+        "q23": 1,
+        "q24": 1,
+        "q25": 1,
+        "q26": 1,
+        "q27": 1,
+        "q28": 1,
+        "q29": 1,
+        "q30": 1,
+        "q31": 1,
+        "q32": 1,
+        "q33": 1,
+        "q34": 2,
+        "q35": 1,
+        "q36": 1,
+        "q37": 1,
+        "q38": 1,
+        "q39": 1,
+        "q40": 1,
+        "q41": 1,
+        "q42": 1,
+        "q43": 1,
+        "q44": 1,
+        "q45": 1,
+        "q46": 2,
+        "q47": 1,
+        "q48": 1,
+        "q49": 1,
+        "q50": 1
+      }
+    }
+  },
+  "gold_vectors": {
+    "rows": 6051,
+    "min_cosine": 0.999973030815076,
+    "mean_cosine": 0.9999888591002346
+  },
+  "timings": {
+    "sentence-transformers/all-MiniLM-L6-v2@1110a243fdf4706b3f48f1d95db1a4f5529b4d41": {
+      "load_and_queries_seconds": 7.5,
+      "e70bf55c7cf1b856": {
+        "chunks": 6051,
+        "encode_seconds": 133.8,
+        "chunks_per_second": 45.2
+      },
+      "ece77f296d18fbd5": {
+        "chunks": 9852,
+        "encode_seconds": 113.3,
+        "chunks_per_second": 86.9
+      }
+    },
+    "BAAI/bge-small-en-v1.5@5c38ec7c405ec4b44b94cc5a9bb96e735b38267a": {
+      "load_and_queries_seconds": 14.7,
+      "e70bf55c7cf1b856": {
+        "chunks": 6051,
+        "encode_seconds": 217.5,
+        "chunks_per_second": 27.8
+      },
+      "ece77f296d18fbd5": {
+        "chunks": 9852,
+        "encode_seconds": 225.1,
+        "chunks_per_second": 43.8
+      }
+    }
+  },
+  "results": {
+    "all-MiniLM-L6-v2 254/32": {
+      "model_id": "sentence-transformers/all-MiniLM-L6-v2@1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "query_prefix": "",
+      "config_id": "e70bf55c7cf1b856",
+      "vectors": "local",
+      "recall@5": {
+        "mean": 0.66,
+        "low": 0.52,
+        "high": 0.78
+      },
+      "mrr@10": {
+        "mean": 0.4618333333333333,
+        "low": 0.35200000000000004,
+        "high": 0.5746708333333332
+      }
+    },
+    "all-MiniLM-L6-v2 254/32 gold": {
+      "model_id": "sentence-transformers/all-MiniLM-L6-v2@1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "query_prefix": "",
+      "config_id": "e70bf55c7cf1b856",
+      "vectors": "gold",
+      "recall@5": {
+        "mean": 0.66,
+        "low": 0.52,
+        "high": 0.78
+      },
+      "mrr@10": {
+        "mean": 0.4618333333333333,
+        "low": 0.35200000000000004,
+        "high": 0.5746708333333332
+      }
+    },
+    "all-MiniLM-L6-v2 128/16": {
+      "model_id": "sentence-transformers/all-MiniLM-L6-v2@1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "query_prefix": "",
+      "config_id": "ece77f296d18fbd5",
+      "vectors": "local",
+      "recall@5": {
+        "mean": 0.7,
+        "low": 0.56,
+        "high": 0.82
+      },
+      "mrr@10": {
+        "mean": 0.4765238095238095,
+        "low": 0.3648571428571429,
+        "high": 0.59
+      }
+    },
+    "bge-small-en-v1.5 254/32 +prefix": {
+      "model_id": "BAAI/bge-small-en-v1.5@5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
+      "query_prefix": "Represent this sentence for searching relevant passages: ",
+      "config_id": "e70bf55c7cf1b856",
+      "vectors": "local",
+      "recall@5": {
+        "mean": 0.74,
+        "low": 0.62,
+        "high": 0.86
+      },
+      "mrr@10": {
+        "mean": 0.5413333333333333,
+        "low": 0.42666666666666664,
+        "high": 0.6556666666666666
+      }
+    },
+    "bge-small-en-v1.5 254/32": {
+      "model_id": "BAAI/bge-small-en-v1.5@5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
+      "query_prefix": "",
+      "config_id": "e70bf55c7cf1b856",
+      "vectors": "local",
+      "recall@5": {
+        "mean": 0.74,
+        "low": 0.62,
+        "high": 0.86
+      },
+      "mrr@10": {
+        "mean": 0.4998571428571429,
+        "low": 0.39066428571428563,
+        "high": 0.6113380952380951
+      }
+    },
+    "bge-small-en-v1.5 128/16 +prefix": {
+      "model_id": "BAAI/bge-small-en-v1.5@5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
+      "query_prefix": "Represent this sentence for searching relevant passages: ",
+      "config_id": "ece77f296d18fbd5",
+      "vectors": "local",
+      "recall@5": {
+        "mean": 0.72,
+        "low": 0.58,
+        "high": 0.84
+      },
+      "mrr@10": {
+        "mean": 0.5757142857142857,
+        "low": 0.45285714285714285,
+        "high": 0.6935833333333332
+      }
+    },
+    "bge-small-en-v1.5 128/16": {
+      "model_id": "BAAI/bge-small-en-v1.5@5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
+      "query_prefix": "",
+      "config_id": "ece77f296d18fbd5",
+      "vectors": "local",
+      "recall@5": {
+        "mean": 0.68,
+        "low": 0.54,
+        "high": 0.8
+      },
+      "mrr@10": {
+        "mean": 0.5306904761904762,
+        "low": 0.4096666666666667,
+        "high": 0.6493380952380952
+      }
+    }
+  },
+  "differences": [
+    {
+      "a": "all-MiniLM-L6-v2 254/32",
+      "b": "all-MiniLM-L6-v2 128/16",
+      "recall@5": {
+        "mean": -0.04,
+        "low": -0.12,
+        "high": 0.04,
+        "share_above_zero": 0.093,
+        "a_only": 1,
+        "b_only": 3
+      },
+      "mrr@10": {
+        "mean": -0.014690476190476193,
+        "low": -0.0753577380952381,
+        "high": 0.04267023809523804,
+        "share_above_zero": 0.3116,
+        "a_only": 9,
+        "b_only": 10
+      }
+    },
+    {
+      "a": "bge-small-en-v1.5 254/32 +prefix",
+      "b": "bge-small-en-v1.5 128/16 +prefix",
+      "recall@5": {
+        "mean": 0.02,
+        "low": -0.04,
+        "high": 0.08,
+        "share_above_zero": 0.6147,
+        "a_only": 2,
+        "b_only": 1
+      },
+      "mrr@10": {
+        "mean": -0.03438095238095238,
+        "low": -0.09809761904761904,
+        "high": 0.02895238095238095,
+        "share_above_zero": 0.1414,
+        "a_only": 9,
+        "b_only": 9
+      }
+    },
+    {
+      "a": "bge-small-en-v1.5 254/32 +prefix",
+      "b": "all-MiniLM-L6-v2 254/32",
+      "recall@5": {
+        "mean": 0.08,
+        "low": -0.02,
+        "high": 0.18,
+        "share_above_zero": 0.8985,
+        "a_only": 6,
+        "b_only": 2
+      },
+      "mrr@10": {
+        "mean": 0.0795,
+        "low": -0.000504166666666655,
+        "high": 0.16399999999999998,
+        "share_above_zero": 0.974,
+        "a_only": 17,
+        "b_only": 8
+      }
+    },
+    {
+      "a": "bge-small-en-v1.5 128/16 +prefix",
+      "b": "all-MiniLM-L6-v2 128/16",
+      "recall@5": {
+        "mean": 0.02,
+        "low": -0.1,
+        "high": 0.14,
+        "share_above_zero": 0.562,
+        "a_only": 5,
+        "b_only": 4
+      },
+      "mrr@10": {
+        "mean": 0.09919047619047619,
+        "low": 0.026714285714285718,
+        "high": 0.1743345238095238,
+        "share_above_zero": 0.997,
+        "a_only": 18,
+        "b_only": 5
+      }
+    },
+    {
+      "a": "bge-small-en-v1.5 254/32 +prefix",
+      "b": "bge-small-en-v1.5 254/32",
+      "recall@5": {
+        "mean": 0.0,
+        "low": -0.06,
+        "high": 0.06,
+        "share_above_zero": 0.3536,
+        "a_only": 1,
+        "b_only": 1
+      },
+      "mrr@10": {
+        "mean": 0.04147619047619048,
+        "low": 0.009282142857142859,
+        "high": 0.08214285714285713,
+        "share_above_zero": 0.9966,
+        "a_only": 7,
+        "b_only": 2
+      }
+    },
+    {
+      "a": "bge-small-en-v1.5 128/16 +prefix",
+      "b": "bge-small-en-v1.5 128/16",
+      "recall@5": {
+        "mean": 0.04,
+        "low": 0.0,
+        "high": 0.1,
+        "share_above_zero": 0.8629,
+        "a_only": 2,
+        "b_only": 0
+      },
+      "mrr@10": {
+        "mean": 0.04502380952380952,
+        "low": 0.0026898809523809523,
+        "high": 0.09152380952380952,
+        "share_above_zero": 0.9814,
+        "a_only": 11,
+        "b_only": 2
+      }
+    },
+    {
+      "a": "all-MiniLM-L6-v2 254/32 gold",
+      "b": "all-MiniLM-L6-v2 254/32",
+      "recall@5": {
+        "mean": 0.0,
+        "low": 0.0,
+        "high": 0.0,
+        "share_above_zero": 0.0,
+        "a_only": 0,
+        "b_only": 0
+      },
+      "mrr@10": {
+        "mean": 0.0,
+        "low": 0.0,
+        "high": 0.0,
+        "share_above_zero": 0.0,
+        "a_only": 0,
+        "b_only": 0
+      }
+    }
+  ],
+  "per_item": {
+    "all-MiniLM-L6-v2 254/32": {
+      "q01": 1,
+      "q02": 2,
+      "q03": 1,
+      "q04": 3,
+      "q05": 3,
+      "q06": 42,
+      "q07": 1,
+      "q08": 2,
+      "q09": 2535,
+      "q10": 3,
+      "q11": 936,
+      "q12": 1,
+      "q13": 3,
+      "q14": 6,
+      "q15": 1,
+      "q16": 3,
+      "q17": 3,
+      "q18": 27,
+      "q19": 5,
+      "q20": 11,
+      "q21": 1,
+      "q22": 1,
+      "q23": 13,
+      "q24": 1,
+      "q25": 8,
+      "q26": 4,
+      "q27": 1,
+      "q28": 3493,
+      "q29": 11,
+      "q30": 28,
+      "q31": 2,
+      "q32": 1,
+      "q33": 2,
+      "q34": 4,
+      "q35": 2,
+      "q36": 2,
+      "q37": 6,
+      "q38": 6,
+      "q39": 1,
+      "q40": 144,
+      "q41": 1,
+      "q42": 1,
+      "q43": 63,
+      "q44": 1,
+      "q45": 1,
+      "q46": 3,
+      "q47": 63,
+      "q48": 1,
+      "q49": 3,
+      "q50": 10
+    },
+    "all-MiniLM-L6-v2 254/32 gold": {
+      "q01": 1,
+      "q02": 2,
+      "q03": 1,
+      "q04": 3,
+      "q05": 3,
+      "q06": 41,
+      "q07": 1,
+      "q08": 2,
+      "q09": 2528,
+      "q10": 3,
+      "q11": 946,
+      "q12": 1,
+      "q13": 3,
+      "q14": 6,
+      "q15": 1,
+      "q16": 3,
+      "q17": 3,
+      "q18": 27,
+      "q19": 5,
+      "q20": 11,
+      "q21": 1,
+      "q22": 1,
+      "q23": 15,
+      "q24": 1,
+      "q25": 8,
+      "q26": 4,
+      "q27": 1,
+      "q28": 3490,
+      "q29": 11,
+      "q30": 28,
+      "q31": 2,
+      "q32": 1,
+      "q33": 2,
+      "q34": 4,
+      "q35": 2,
+      "q36": 2,
+      "q37": 6,
+      "q38": 6,
+      "q39": 1,
+      "q40": 144,
+      "q41": 1,
+      "q42": 1,
+      "q43": 63,
+      "q44": 1,
+      "q45": 1,
+      "q46": 3,
+      "q47": 64,
+      "q48": 1,
+      "q49": 3,
+      "q50": 10
+    },
+    "all-MiniLM-L6-v2 128/16": {
+      "q01": 1,
+      "q02": 2,
+      "q03": 2,
+      "q04": 2,
+      "q05": 5,
+      "q06": 55,
+      "q07": 1,
+      "q08": 390,
+      "q09": 2044,
+      "q10": 4,
+      "q11": 1435,
+      "q12": 1,
+      "q13": 3,
+      "q14": 6,
+      "q15": 1,
+      "q16": 1,
+      "q17": 3,
+      "q18": 51,
+      "q19": 4,
+      "q20": 15,
+      "q21": 1,
+      "q22": 1,
+      "q23": 27,
+      "q24": 1,
+      "q25": 5,
+      "q26": 5,
+      "q27": 1,
+      "q28": 5647,
+      "q29": 6,
+      "q30": 11,
+      "q31": 2,
+      "q32": 1,
+      "q33": 4,
+      "q34": 1,
+      "q35": 1,
+      "q36": 2,
+      "q37": 4,
+      "q38": 7,
+      "q39": 1,
+      "q40": 55,
+      "q41": 1,
+      "q42": 1,
+      "q43": 28,
+      "q44": 2,
+      "q45": 1,
+      "q46": 2,
+      "q47": 92,
+      "q48": 1,
+      "q49": 4,
+      "q50": 3
+    },
+    "bge-small-en-v1.5 254/32 +prefix": {
+      "q01": 1,
+      "q02": 5,
+      "q03": 1,
+      "q04": 15,
+      "q05": 5,
+      "q06": 36,
+      "q07": 1,
+      "q08": 4,
+      "q09": 1355,
+      "q10": 2,
+      "q11": 2830,
+      "q12": 1,
+      "q13": 2,
+      "q14": 4,
+      "q15": 1,
+      "q16": 2,
+      "q17": 3,
+      "q18": 49,
+      "q19": 3,
+      "q20": 178,
+      "q21": 2,
+      "q22": 1,
+      "q23": 23,
+      "q24": 1,
+      "q25": 2,
+      "q26": 3,
+      "q27": 1,
+      "q28": 2539,
+      "q29": 2,
+      "q30": 18,
+      "q31": 61,
+      "q32": 1,
+      "q33": 2,
+      "q34": 1,
+      "q35": 1,
+      "q36": 1,
+      "q37": 6,
+      "q38": 3,
+      "q39": 1,
+      "q40": 2,
+      "q41": 2,
+      "q42": 1,
+      "q43": 6,
+      "q44": 1,
+      "q45": 1,
+      "q46": 1,
+      "q47": 1,
+      "q48": 1,
+      "q49": 1,
+      "q50": 31
+    },
+    "bge-small-en-v1.5 254/32": {
+      "q01": 1,
+      "q02": 5,
+      "q03": 1,
+      "q04": 39,
+      "q05": 5,
+      "q06": 54,
+      "q07": 1,
+      "q08": 4,
+      "q09": 1222,
+      "q10": 2,
+      "q11": 2461,
+      "q12": 1,
+      "q13": 2,
+      "q14": 4,
+      "q15": 1,
+      "q16": 2,
+      "q17": 3,
+      "q18": 64,
+      "q19": 3,
+      "q20": 612,
+      "q21": 2,
+      "q22": 1,
+      "q23": 21,
+      "q24": 1,
+      "q25": 2,
+      "q26": 2,
+      "q27": 2,
+      "q28": 3053,
+      "q29": 3,
+      "q30": 43,
+      "q31": 149,
+      "q32": 1,
+      "q33": 2,
+      "q34": 2,
+      "q35": 1,
+      "q36": 1,
+      "q37": 5,
+      "q38": 7,
+      "q39": 1,
+      "q40": 3,
+      "q41": 4,
+      "q42": 1,
+      "q43": 6,
+      "q44": 1,
+      "q45": 1,
+      "q46": 1,
+      "q47": 2,
+      "q48": 1,
+      "q49": 1,
+      "q50": 63
+    },
+    "bge-small-en-v1.5 128/16 +prefix": {
+      "q01": 1,
+      "q02": 4,
+      "q03": 2,
+      "q04": 20,
+      "q05": 6,
+      "q06": 47,
+      "q07": 1,
+      "q08": 20,
+      "q09": 558,
+      "q10": 3,
+      "q11": 4757,
+      "q12": 1,
+      "q13": 1,
+      "q14": 4,
+      "q15": 1,
+      "q16": 1,
+      "q17": 1,
+      "q18": 54,
+      "q19": 4,
+      "q20": 227,
+      "q21": 1,
+      "q22": 1,
+      "q23": 38,
+      "q24": 1,
+      "q25": 1,
+      "q26": 4,
+      "q27": 1,
+      "q28": 5049,
+      "q29": 2,
+      "q30": 7,
+      "q31": 81,
+      "q32": 1,
+      "q33": 3,
+      "q34": 1,
+      "q35": 1,
+      "q36": 1,
+      "q37": 2,
+      "q38": 3,
+      "q39": 1,
+      "q40": 2,
+      "q41": 1,
+      "q42": 1,
+      "q43": 7,
+      "q44": 1,
+      "q45": 1,
+      "q46": 1,
+      "q47": 3,
+      "q48": 1,
+      "q49": 1,
+      "q50": 13
+    },
+    "bge-small-en-v1.5 128/16": {
+      "q01": 1,
+      "q02": 6,
+      "q03": 2,
+      "q04": 74,
+      "q05": 6,
+      "q06": 72,
+      "q07": 1,
+      "q08": 29,
+      "q09": 551,
+      "q10": 3,
+      "q11": 4350,
+      "q12": 1,
+      "q13": 1,
+      "q14": 5,
+      "q15": 1,
+      "q16": 1,
+      "q17": 1,
+      "q18": 59,
+      "q19": 5,
+      "q20": 656,
+      "q21": 1,
+      "q22": 1,
+      "q23": 36,
+      "q24": 1,
+      "q25": 1,
+      "q26": 8,
+      "q27": 2,
+      "q28": 6283,
+      "q29": 5,
+      "q30": 13,
+      "q31": 183,
+      "q32": 1,
+      "q33": 2,
+      "q34": 2,
+      "q35": 1,
+      "q36": 1,
+      "q37": 1,
+      "q38": 3,
+      "q39": 1,
+      "q40": 3,
+      "q41": 2,
+      "q42": 2,
+      "q43": 7,
+      "q44": 1,
+      "q45": 1,
+      "q46": 1,
+      "q47": 3,
+      "q48": 1,
+      "q49": 1,
+      "q50": 11
+    }
+  },
+  "by_area": {
+    "all-MiniLM-L6-v2 254/32": {
+      "sql-ref": {
+        "items": 23,
+        "recall@5": 0.6086956521739131
+      },
+      "other": {
+        "items": 27,
+        "recall@5": 0.7037037037037037
+      }
+    },
+    "all-MiniLM-L6-v2 254/32 gold": {
+      "sql-ref": {
+        "items": 23,
+        "recall@5": 0.6086956521739131
+      },
+      "other": {
+        "items": 27,
+        "recall@5": 0.7037037037037037
+      }
+    },
+    "all-MiniLM-L6-v2 128/16": {
+      "sql-ref": {
+        "items": 23,
+        "recall@5": 0.6521739130434783
+      },
+      "other": {
+        "items": 27,
+        "recall@5": 0.7407407407407407
+      }
+    },
+    "bge-small-en-v1.5 254/32 +prefix": {
+      "sql-ref": {
+        "items": 23,
+        "recall@5": 0.6086956521739131
+      },
+      "other": {
+        "items": 27,
+        "recall@5": 0.8518518518518519
+      }
+    },
+    "bge-small-en-v1.5 254/32": {
+      "sql-ref": {
+        "items": 23,
+        "recall@5": 0.6521739130434783
+      },
+      "other": {
+        "items": 27,
+        "recall@5": 0.8148148148148148
+      }
+    },
+    "bge-small-en-v1.5 128/16 +prefix": {
+      "sql-ref": {
+        "items": 23,
+        "recall@5": 0.6086956521739131
+      },
+      "other": {
+        "items": 27,
+        "recall@5": 0.8148148148148148
+      }
+    },
+    "bge-small-en-v1.5 128/16": {
+      "sql-ref": {
+        "items": 23,
+        "recall@5": 0.5652173913043478
+      },
+      "other": {
+        "items": 27,
+        "recall@5": 0.7777777777777778
+      }
+    }
+  },
+  "without_also_in": {
+    "all-MiniLM-L6-v2 254/32": {
+      "items": 42,
+      "recall@5": {
+        "mean": 0.6666666666666666,
+        "low": 0.5238095238095238,
+        "high": 0.8095238095238095
+      },
+      "mrr@10": {
+        "mean": 0.4753968253968254,
+        "low": 0.3547619047619048,
+        "high": 0.5992063492063492
+      }
+    },
+    "all-MiniLM-L6-v2 254/32 gold": {
+      "items": 42,
+      "recall@5": {
+        "mean": 0.6666666666666666,
+        "low": 0.5238095238095238,
+        "high": 0.8095238095238095
+      },
+      "mrr@10": {
+        "mean": 0.4753968253968254,
+        "low": 0.3547619047619048,
+        "high": 0.5992063492063492
+      }
+    },
+    "all-MiniLM-L6-v2 128/16": {
+      "items": 42,
+      "recall@5": {
+        "mean": 0.6904761904761905,
+        "low": 0.5476190476190477,
+        "high": 0.8333333333333334
+      },
+      "mrr@10": {
+        "mean": 0.48514739229024945,
+        "low": 0.3591170634920635,
+        "high": 0.6126984126984127
+      }
+    },
+    "bge-small-en-v1.5 254/32 +prefix": {
+      "items": 42,
+      "recall@5": {
+        "mean": 0.7380952380952381,
+        "low": 0.5952380952380952,
+        "high": 0.8571428571428571
+      },
+      "mrr@10": {
+        "mean": 0.5373015873015873,
+        "low": 0.4130952380952381,
+        "high": 0.6611210317460315
+      }
+    },
+    "bge-small-en-v1.5 254/32": {
+      "items": 42,
+      "recall@5": {
+        "mean": 0.7380952380952381,
+        "low": 0.5952380952380952,
+        "high": 0.8571428571428571
+      },
+      "mrr@10": {
+        "mean": 0.49189342403628117,
+        "low": 0.3742630385487528,
+        "high": 0.6113378684807257
+      }
+    },
+    "bge-small-en-v1.5 128/16 +prefix": {
+      "items": 42,
+      "recall@5": {
+        "mean": 0.7142857142857143,
+        "low": 0.5714285714285714,
+        "high": 0.8571428571428571
+      },
+      "mrr@10": {
+        "mean": 0.5544217687074829,
+        "low": 0.4257369614512471,
+        "high": 0.6828373015873014
+      }
+    },
+    "bge-small-en-v1.5 128/16": {
+      "items": 42,
+      "recall@5": {
+        "mean": 0.6666666666666666,
+        "low": 0.5238095238095238,
+        "high": 0.8095238095238095
+      },
+      "mrr@10": {
+        "mean": 0.5079648526077097,
+        "low": 0.3813725907029478,
+        "high": 0.6342431972789115
+      }
+    }
+  },
+  "environment": {
+    "machine": "x86_64",
+    "python": "3.12.3",
+    "packages": {
+      "torch": "2.14.1+cpu",
+      "sentence-transformers": "6.1.0",
+      "transformers": "5.19.0"
+    },
+    "numpy": "2.5.4"
+  },
+  "eval_run_id": "m6_n_eval_v2-bcad9021",
+  "finished_utc": "2026-10-21T12:39:21+00:00",
+  "table": {
+    "table": "workspace.docs_rag_dev.eval_results",
+    "rows": 350,
+    "merge": {
+      "num_affected_rows": "350",
+      "num_updated_rows": "0",
+      "num_deleted_rows": "0",
+      "num_inserted_rows": "350"
+    },
+    "file": "/Volumes/workspace/docs_rag_dev/artifacts/eval/m6_n_eval_v2-bcad9021.json"
+  }
+}
