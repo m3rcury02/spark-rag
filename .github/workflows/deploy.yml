@@ -1,0 +1,52 @@
+# Deploy the Databricks Asset Bundle (M7, D-016): dev on every push to main, prod only by hand.
+#
+# Needs the repository (or environment) secrets DATABRICKS_HOST and DATABRICKS_TOKEN, set by the owner. The
+# `prod` environment should require a reviewer (Settings > Environments > prod), so a prod deploy waits for an
+# approval. Deploying changes no data: tables are written only by job runs (scripts/bundle.py run).
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Bundle target
+        type: choice
+        options: [dev, prod]
+        default: dev
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ inputs.target || 'dev' }}
+  cancel-in-progress: false
+
+jobs:
+  checks:
+    uses: ./.github/workflows/ci.yml
+
+  deploy:
+    needs: checks
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.target || 'dev' }}
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+      TARGET: ${{ inputs.target || 'dev' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          fetch-depth: 0  # the wheel's version comes from git history (hatch-vcs)
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884  # v10.3.0
+      - uses: databricks/setup-cli@2bf4520fd10723ed5a22eca62a8c8a63714a7ba9  # v1.21.0
+      - name: Check the workspace credentials are set
+        run: |
+          if [ -z "$DATABRICKS_HOST" ] || [ -z "$DATABRICKS_TOKEN" ]; then
+            echo "::error::Set the secrets DATABRICKS_HOST and DATABRICKS_TOKEN (repository or '$TARGET' environment)"
+            exit 1
+          fi
+      - run: uv sync --locked
+      - name: Deploy the bundle
+        run: uv run --with databricks-sdk==0.152.0 python scripts/bundle.py deploy --target "$TARGET"
