@@ -1289,7 +1289,10 @@ the questions only a found in the top 5 against those only b found.
     text; it has not been checked.
 - **Cost:** the endpoint was up for 28 minutes (03:33–04:01 UTC, `m6_f`..`m6_k`). Local embedding on 4 vCPU
   x86_64 ran at 64.7 and 113.6 chunks/s for MiniLM (254/32, 128/16) and 33.8 and 57.9 for bge. The whole run
-  took about 10 minutes.
+  took about 10 minutes. Billing, read later that day (`m7_i`): the 03:00 and 04:00 UTC hours hold 1.33 DBU of
+  `VECTOR_SEARCH`, 0.90 of it the endpoint (`REAL_TIME_INFERENCE`, 0.59 + 0.31) and 0.43 the sync pipelines.
+  At D-001's 4 DBU/h, 28 minutes would be about 1.87 DBU; like M5's window (1.84 for 43 minutes, D-014), a
+  short window billed less than that rate. Why is not known.
 
 **Consequences.**
 - Production is unchanged (D-014). Switching models stays open until a larger set can resolve recall. By the
@@ -1372,10 +1375,14 @@ serverless environment 4 pinned (D-005), the index synced only from a committed 
 | e | dev job, `tag=latest` again, as the schedule would run it: every step skipped, nothing embedded, no gold version (219 s) | `m7_e_*` |
 | f | prod deployed (6.3 s): job `docs_rag_pipeline`, schema `docs_rag_prod` | `m7_f_*` |
 | g | prod job, `tag=latest initial=true`: v4.2.0 into an empty prod schema; 6,051 chunks embedded in 221 s (27.4 chunks/s); gold version 1; 455 s | `m7_g_*` |
+| h | GitHub Actions, on the merge of M7 into main: `deploy.yml` run [39594001897](https://github.com/m3rcury02/spark-rag/actions/runs/39594001897), checks 47 s, dev deploy 24 s. Dev then pins main's commit (`0.0.1.dev200+gcbf16517e`); prod was untouched | `m7_h_*` |
+| j | GitHub Actions, prod by `workflow_dispatch`: run [39598227251](https://github.com/m3rcury02/spark-rag/actions/runs/39598227251), checks 60 s, deploy 23 s; the push of the same commit deployed dev ([39598196803](https://github.com/m3rcury02/spark-rag/actions/runs/39598196803)). Both jobs then pin `0.0.1.dev203+gd0871f013`. The prod deploy started 4 s after its checks and the run has no approvals: the `prod` environment required no reviewer | `m7_j_*` |
+| k | the prod job as Actions deployed it, `tag=latest`: v4.2.0 again, a no-op (238 docs unchanged, 6,051 chunks kept, 0 embedded, no gold rows deleted); 252 s | `m7_k_*` |
 
 - *Checks:* every orchestrated run passes the verifiers written for the `run_job.py` runs.
   - dev: gate 599/599 (`m7_v1`, the M5 and M7 runs), changes 126/126 (`m7_v2`), gold against git 53/53 (`m7_v3`, incl. run d: only its 802 added chunks carry its run id).
-  - prod: gate 82/82, changes 22/22, gold against git 18/18 (`m7_v4`..`m7_v6`).
+  - prod: gate 82/82, changes 22/22, gold against git 18/18 (`m7_v4`..`m7_v6`); after run k, 152/152,
+    42/42 and 22/22 (`m7_v7`..`m7_v9`).
   - CI (lint, types, tests incl. `tests/test_bundle.py`, the corpus golden) passed on every M7 commit, e.g. [39579282118](https://github.com/m3rcury02/spark-rag/actions/runs/39579282118).
 - *Finding: two writers to silver conflict.* In run b, silver_128 failed with `ConcurrentAppendException`
   (`DELTA_CONCURRENT_APPEND.WHOLE_TABLE_READ`): its MERGE reads the whole table, so a concurrent MERGE by
@@ -1383,24 +1390,24 @@ serverless environment 4 pinned (D-005), the index synced only from a committed 
   nothing, and run d inserted those rows. Options: partition or cluster silver by config_id so the reads are
   disjoint, or serialize the tasks. Chosen: serialize. It costs about 90 s a run, and nothing else needs
   parallel writes.
-- *CI/CD:* the merge of M7 into main started `deploy.yml`'s first run,
-  [39594001897](https://github.com/m3rcury02/spark-rag/actions/runs/39594001897): checks 47 s, deploy 24 s,
-  both green. Afterwards the dev job pins `0.0.1.dev200+gcbf16517e` (main's commit) and prod still pins
-  `0.0.1.dev193+g548db3d5c` (prod deploys only by hand) (`m7_h`). Not checked: whether the `prod` GitHub
-  environment requires a reviewer (this session cannot read environment settings), and a prod deploy from Actions.
+- *CI/CD:* both paths of `deploy.yml` ran green (runs h and j), and the job Actions deployed to prod ran (k),
+  so a wheel built on a GitHub runner works on serverless as one built here does.
+- *Finding: the prod deploy was not gated.* The `prod` GitHub environment existed but required no reviewer at
+  run j, so the dispatch deployed prod with no approval. Deploying changes no data (decision 7), but anyone who
+  can run workflows can change prod's code. The fix is a setting, not code: a required reviewer on the
+  environment (Settings > Environments > prod); not re-checked after.
 
 **Consequences.**
 - One command per environment: `scripts/bundle.py deploy|run --target dev|prod`. A schedule, a person and CI
   all go through the same job, and its runs are checked like any other.
-- Dev's chain head is now v4.2.0, while the M6 eval set is labelled at v4.0.1. `scripts/m6_eval.py` still
-  ranks git's v4.0.1 chunks, but its comparison with gold's vectors refuses until the set is relabelled at
-  the head's tag; a new set version is the way to do that, and the old results stay as they are.
+- Dev's chain head is now v4.2.0, while the M6 eval set v1 is labelled at v4.0.1, so its comparison with
+  gold's vectors refuses. Set v2 carries the same items at v4.2.0 (D-015); v1's results stay as they are.
 - Prod holds only v4.2.0 (one initial run): its chain and gold are independent of dev's. Prod has no eval
   results and no index; creating an index for it follows D-014 (after the backfill; delete it when idle).
 - Still open: a scheduled run that the gate stops fails every week until someone accepts the drift (D-012).
   The failure email is the signal; failing fast on a repeat of the same failed target is not built.
-- Every push to main redeploys dev, so dev's job always runs main's code; prod changes only when someone
-  dispatches it. A token stored in GitHub is a long-lived credential: use one made for CI, with an expiry, and
+- Every push to main that touches deployed code redeploys dev; prod changes only when someone dispatches it,
+  and until the `prod` environment requires a reviewer, nothing stands between a dispatch and prod. A token stored in GitHub is a long-lived credential: use one made for CI, with an expiry, and
   prefer OAuth or OIDC federation where the workspace allows it.
 
 ## Open questions (decide in the milestone noted)
