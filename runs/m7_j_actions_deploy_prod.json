@@ -1,0 +1,74 @@
+{
+  "label": "m7_j_actions_deploy_prod",
+  "prod_dispatch": {
+    "conclusion": "success",
+    "createdAt": "2026-10-21T12:15:58Z",
+    "databaseId": 39598227251,
+    "event": "workflow_dispatch",
+    "headBranch": "main",
+    "headSha": "d0871f0135ea1301bc1e35a812a6bf924186796d",
+    "jobs": [
+      {
+        "name": "checks / checks",
+        "conclusion": "success",
+        "startedAt": "2026-10-21T12:16:02Z",
+        "completedAt": "2026-10-21T12:17:02Z"
+      },
+      {
+        "name": "deploy",
+        "conclusion": "success",
+        "startedAt": "2026-10-21T12:17:06Z",
+        "completedAt": "2026-10-21T12:17:29Z"
+      }
+    ],
+    "status": "completed",
+    "updatedAt": "2026-10-21T12:17:29Z",
+    "url": "https://github.com/m3rcury02/spark-rag/actions/runs/39598227251",
+    "workflowName": "Deploy"
+  },
+  "prod_dispatch_approvals": [],
+  "prod_dispatch_actor": {
+    "actor": "m3rcury02",
+    "triggering_actor": "m3rcury02"
+  },
+  "dev_push_same_commit": {
+    "conclusion": "success",
+    "createdAt": "2026-10-21T12:15:44Z",
+    "databaseId": 39598196803,
+    "event": "push",
+    "headBranch": "main",
+    "headSha": "d0871f0135ea1301bc1e35a812a6bf924186796d",
+    "jobs": [
+      {
+        "name": "checks / checks",
+        "conclusion": "success",
+        "startedAt": "2026-10-21T12:15:47Z",
+        "completedAt": "2026-10-21T12:16:30Z"
+      },
+      {
+        "name": "deploy",
+        "conclusion": "success",
+        "startedAt": "2026-10-21T12:16:34Z",
+        "completedAt": "2026-10-21T12:16:55Z"
+      }
+    ],
+    "status": "completed",
+    "updatedAt": "2026-10-21T12:16:56Z",
+    "url": "https://github.com/m3rcury02/spark-rag/actions/runs/39598196803",
+    "workflowName": "Deploy"
+  },
+  "prod_job_after": {
+    "job_id": 1054940179033075,
+    "expect_version": [
+      "--expect-version=0.0.1.dev203+gd0871f013"
+    ]
+  },
+  "dev_job_after": {
+    "job_id": 541855458002088,
+    "expect_version": [
+      "--expect-version=0.0.1.dev203+gd0871f013"
+    ]
+  },
+  "note": "The prod deploy job started 4 s after checks finished and the run has no approvals: the 'prod' GitHub environment did not require a reviewer at the time of this run."
+}
+

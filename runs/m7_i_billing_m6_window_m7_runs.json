@@ -1,0 +1,96 @@
+{
+  "label": "m7_i_billing_m6_window_m7_runs",
+  "git_commit": "d0871f0135ea1301bc1e35a812a6bf924186796d",
+  "statements": [
+    {
+      "sql": "SELECT date_trunc('HOUR', usage_start_time) AS hour_utc, billing_origin_product, sku_name, round(sum(usage_quantity), 4) AS dbu FROM system.billing.usage WHERE usage_unit = 'DBU' AND usage_start_time >= '2026-10-21T00:00:00Z' GROUP BY ALL ORDER BY hour_utc, billing_origin_product",
+      "params": {},
+      "columns": [
+        "hour_utc",
+        "billing_origin_product",
+        "sku_name",
+        "dbu"
+      ],
+      "rows": [
+        [
+          "2026-10-21T02:00:00.000Z",
+          "SQL",
+          "PREMIUM_SERVERLESS_SQL_COMPUTE_US_EAST_OHIO",
+          "1.7407"
+        ],
+        [
+          "2026-10-21T03:00:00.000Z",
+          "JOBS",
+          "PREMIUM_JOBS_SERVERLESS_COMPUTE_US_EAST_OHIO",
+          "0.3446"
+        ],
+        [
+          "2026-10-21T03:00:00.000Z",
+          "SQL",
+          "PREMIUM_SERVERLESS_SQL_COMPUTE_US_EAST_OHIO",
+          "0.5443"
+        ],
+        [
+          "2026-10-21T03:00:00.000Z",
+          "VECTOR_SEARCH",
+          "PREMIUM_JOBS_SERVERLESS_COMPUTE_US_EAST_OHIO",
+          "0.4275"
+        ],
+        [
+          "2026-10-21T03:00:00.000Z",
+          "VECTOR_SEARCH",
+          "PREMIUM_SERVERLESS_REAL_TIME_INFERENCE_US_EAST_OHIO",
+          "0.5917"
+        ],
+        [
+          "2026-10-21T04:00:00.000Z",
+          "SQL",
+          "PREMIUM_SERVERLESS_SQL_COMPUTE_US_EAST_OHIO",
+          "0.8440"
+        ],
+        [
+          "2026-10-21T04:00:00.000Z",
+          "VECTOR_SEARCH",
+          "PREMIUM_SERVERLESS_REAL_TIME_INFERENCE_US_EAST_OHIO",
+          "0.3096"
+        ],
+        [
+          "2026-10-21T07:00:00.000Z",
+          "PREDICTIVE_OPTIMIZATION",
+          "PREMIUM_JOBS_SERVERLESS_COMPUTE_US_EAST_OHIO",
+          "0.1185"
+        ]
+      ]
+    },
+    {
+      "sql": "SELECT usage_metadata.job_id AS job_id, usage_metadata.job_run_id AS job_run_id, billing_origin_product, sku_name, round(sum(usage_quantity), 4) AS dbu, min(usage_start_time) AS first_start, max(usage_end_time) AS last_end, count(*) AS records FROM system.billing.usage WHERE usage_unit = 'DBU' AND usage_metadata.job_run_id IN ('1113808222076572', '953993142459221', '82568606977074', '491566779466448') GROUP BY ALL ORDER BY first_start",
+      "params": {},
+      "columns": [
+        "job_id",
+        "job_run_id",
+        "billing_origin_product",
+        "sku_name",
+        "dbu",
+        "first_start",
+        "last_end",
+        "records"
+      ],
+      "rows": []
+    },
+    {
+      "sql": "SELECT max(usage_end_time) AS latest_usage_end, current_timestamp() AS queried_at FROM system.billing.usage",
+      "params": {},
+      "columns": [
+        "latest_usage_end",
+        "queried_at"
+      ],
+      "rows": [
+        [
+          "2026-10-21T08:00:00.000Z",
+          "2026-10-21T12:17:05.869Z"
+        ]
+      ]
+    }
+  ],
+  "error": null
+}
