@@ -2,8 +2,8 @@
 
 An item labels its answer as a verbatim quote of the cleaned text (D-010), not as chunk ids, so one label
 serves every chunk config. A chunk is relevant to an item when its slice of the cleaned text covers at least
-MIN_QUOTE_SHARE of some occurrence of the quote, anywhere in the corpus (language tabs and shared pages repeat
-text). Where chunks overlap, a quote that straddles a boundary still has a chunk covering at least half of it;
+a share (EvalConfig.min_quote_share, one half) of some occurrence of the quote, anywhere in the corpus
+(language tabs and shared pages repeat text). Where chunks overlap, a quote that straddles a boundary still has a chunk covering at least half of it;
 where two meet at a paragraph break without overlap it may not, so the eval checks that every item has a
 relevant chunk under every config rather than assuming it.
 
@@ -17,9 +17,6 @@ import json
 import random
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-
-MIN_QUOTE_SHARE = 0.5
-QUOTE_CHARS = (30, 250)  # a quote's allowed length
 
 
 @dataclass(frozen=True)
@@ -89,7 +86,9 @@ class ChunkSpan:
     end: int
 
 
-def relevant_ids(found: Sequence[Occurrence], chunks: Sequence[ChunkSpan]) -> frozenset[str]:
+def relevant_ids(
+    found: Sequence[Occurrence], chunks: Sequence[ChunkSpan], min_share: float
+) -> frozenset[str]:
     by_path: dict[str, list[Occurrence]] = {}
     for o in found:
         by_path.setdefault(o.path, []).append(o)
@@ -97,20 +96,23 @@ def relevant_ids(found: Sequence[Occurrence], chunks: Sequence[ChunkSpan]) -> fr
     for c in chunks:
         for o in by_path.get(c.path, []):
             covered = min(c.end, o.end) - max(c.start, o.start)
-            if covered >= MIN_QUOTE_SHARE * (o.end - o.start):
+            if covered >= min_share * (o.end - o.start):
                 out.add(c.chunk_id)
                 break
     return frozenset(out)
 
 
 def item_violations(
-    item: EvalItem, clean_texts: Mapping[str, str], section_spans: Mapping[tuple[str, ...], tuple[int, int]]
+    item: EvalItem,
+    clean_texts: Mapping[str, str],
+    section_spans: Mapping[tuple[str, ...], tuple[int, int]],
+    quote_chars: tuple[int, int],
 ) -> list[str]:
     """What makes an item unusable: a quote that is not where the item says (in its doc, inside its section)
     or of the wrong length. `section_spans` maps the doc's section paths to their (start, end) offsets."""
     problems = []
-    if not QUOTE_CHARS[0] <= len(item.quote) <= QUOTE_CHARS[1]:
-        problems.append(f"quote of {len(item.quote)} characters, outside {QUOTE_CHARS}")
+    if not quote_chars[0] <= len(item.quote) <= quote_chars[1]:
+        problems.append(f"quote of {len(item.quote)} characters, outside {quote_chars}")
     span = section_spans.get(item.section_path)
     if span is None:
         problems.append(f"no section {item.section_path} in {item.path}")

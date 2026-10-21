@@ -69,10 +69,41 @@ class EmbeddingConfig:
         ("transformers", "5.19.0"),
     )
 
+    # Prepended to a query (never to a document) before it is embedded: what the model's card asks for
+    # short-query-to-passage retrieval. all-MiniLM-L6-v2 takes none.
+    query_prefix: str = ""
+
     @property
     def model_id(self) -> str:
         """What every gold row and run-log row records: the model and its exact revision."""
         return f"{self.model}@{self.revision}"
+
+
+BGE_SMALL = EmbeddingConfig(
+    model="BAAI/bge-small-en-v1.5",
+    revision="5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",  # the one M2's parity run checked (runs/m2_f)
+    # From the model card, for short queries against passages; its sentence-transformers config sets no
+    # prompt (runs/m2_f), so it is added here. M6 also measures it without (D-015).
+    query_prefix="Represent this sentence for searching relevant passages: ",
+)
+
+
+@dataclass(frozen=True)
+class EvalConfig:
+    """The retrieval eval (M6, D-015), fixed before the first run: the metrics' cutoffs, the bootstrap, and
+    what makes a quote label valid and a chunk relevant (docs_rag.evaluate)."""
+
+    recall_k: int = 5
+    mrr_k: int = 10
+    resamples: int = 10_000
+    seed: int = 15
+    min_quote_share: float = 0.5  # a chunk is relevant if it covers this share of an occurrence of the quote
+    quote_chars: tuple[int, int] = (30, 250)
+    models: tuple[EmbeddingConfig, ...] = (EmbeddingConfig(), BGE_SMALL)
+
+    def __post_init__(self) -> None:
+        if not (0 < self.min_quote_share <= 1 and 0 < self.recall_k <= self.mrr_k and self.resamples > 0):
+            raise ValueError(f"invalid eval config: {self}")
 
 
 @dataclass(frozen=True)
@@ -99,6 +130,7 @@ class Config:
     # [CLS] and [SEP] included: every chunk config must fit it, so no chunk is truncated by the model.
     embedding_max_seq_length: int = 256
     dq: DqConfig = DqConfig()
+    eval: EvalConfig = EvalConfig()
 
     def __post_init__(self) -> None:
         _check(_IDENTIFIER, self.catalog, "catalog")

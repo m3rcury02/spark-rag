@@ -22,6 +22,8 @@ from docs_rag.evaluate import (
 )
 from docs_rag.sections import split_sections
 
+QC = (30, 250)
+
 PAGE = (
     "---\ntitle: Tuning\n---\n# Memory\n\n"
     + " ".join(f"Sentence number {i} talks about memory settings in some detail." for i in range(30))
@@ -62,7 +64,7 @@ def test_a_chunk_is_relevant_when_it_covers_half_the_quote() -> None:
         ChunkSpan("less", "a.md", 151, 400),  # covers 49
         ChunkSpan("other_doc", "b.md", 0, 1000),
     ]
-    assert relevant_ids(occ, chunks) == frozenset({"half"})
+    assert relevant_ids(occ, chunks, 0.5) == frozenset({"half"})
 
 
 def test_quotes_across_overlapping_chunk_boundaries_still_have_a_relevant_chunk() -> None:
@@ -74,17 +76,17 @@ def test_quotes_across_overlapping_chunk_boundaries_still_have_a_relevant_chunk(
     assert len(spans) > 3
     for at in range(start, end - 80, 37):  # quotes everywhere in it, many straddling chunk boundaries
         quote = text[at : at + 80]
-        assert relevant_ids(occurrences(quote, texts), spans), quote
+        assert relevant_ids(occurrences(quote, texts), spans, 0.5), quote
 
 
 def test_item_checks() -> None:
     texts, spans = texts_and_spans()
-    assert item_violations(item(), texts, spans) == []
+    assert item_violations(item(), texts, spans, QC) == []
     assert "the quote does not occur in its section" in item_violations(
-        item(section_path=("Tuning", "Memory")), texts, spans
+        item(section_path=("Tuning", "Memory")), texts, spans, QC
     )
-    assert any("outside" in p for p in item_violations(item(quote="too short"), texts, spans))
-    assert any("no section" in p for p in item_violations(item(section_path=("x",)), texts, spans))
+    assert any("outside" in p for p in item_violations(item(quote="too short"), texts, spans, QC))
+    assert any("no section" in p for p in item_violations(item(section_path=("x",)), texts, spans, QC))
 
 
 def test_longest_shared_run_measures_copying() -> None:
