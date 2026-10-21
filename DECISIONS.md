@@ -1428,6 +1428,11 @@ serverless environment 4 pinned (D-005), the index synced only from a committed 
   nothing, and run d inserted those rows. Options: partition or cluster silver by config_id so the reads are
   disjoint, or serialize the tasks. Chosen: serialize. It costs about 90 s a run, and nothing else needs
   parallel writes.
+- *Cost per job run* (`m7_l`, `system.billing.usage` by `job_run_id`, read with usage through 11:10 UTC):
+  b 0.82 DBU, d 0.57, e 0.36, g 1.23 (k was not billed yet). The incremental run d cost 47% of the full load
+  g, but d's bronze and silver were written by b, and b + d (1.39) cost more than g: at about 6,000 chunks the
+  per-run work that does not shrink with the change outweighs the embedding saved (d encoded for 31 of its
+  308 s). One run each, no repeats.
 - *CI/CD:* both paths of `deploy.yml` ran green (runs h and j), and the job Actions deployed to prod ran (k),
   so a wheel built on a GitHub runner works on serverless as one built here does.
 - *Finding: the prod deploy was not gated.* The `prod` GitHub environment existed but required no reviewer at
