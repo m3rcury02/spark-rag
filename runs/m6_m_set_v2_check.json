@@ -1,0 +1,613 @@
+{
+  "label": "m6_m_set_v2_check",
+  "git_commit": "16dc318bc821e121ad6d58d44826fea71a88e6f5",
+  "eval_set": {
+    "file": "eval/eval_set_v2.json",
+    "version": "2",
+    "sha256": "ff6fb769cfb2fc42aa4f8aaa80a3f71c172705771c10160f82c6722737d7e8a6",
+    "items": 50
+  },
+  "eval_config": {
+    "recall_k": 5,
+    "mrr_k": 10,
+    "resamples": 10000,
+    "seed": 15,
+    "min_quote_share": 0.5,
+    "quote_chars": [
+      30,
+      250
+    ]
+  },
+  "started_utc": "2026-10-21T12:25:09+00:00",
+  "items": {
+    "q01": {
+      "path": "docs/mllib-statistics.md",
+      "kind": "behavior",
+      "quote_chars": 180,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q02": {
+      "path": "docs/streaming/structured-streaming-kafka-integration.md",
+      "kind": "config",
+      "quote_chars": 175,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q03": {
+      "path": "docs/mllib-isotonic-regression.md",
+      "kind": "behavior",
+      "quote_chars": 55,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q04": {
+      "path": "docs/sql-ref-syntax-qry-select-case.md",
+      "kind": "fact",
+      "quote_chars": 169,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [
+        "docs/sql-ref-ansi-compliance.md"
+      ],
+      "longest_shared_word_run": 2
+    },
+    "q05": {
+      "path": "docs/sql-ref-syntax-ddl-declare-variable.md",
+      "kind": "behavior",
+      "quote_chars": 158,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q06": {
+      "path": "docs/sql-ref-syntax-ddl-drop-table.md",
+      "kind": "behavior",
+      "quote_chars": 78,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q07": {
+      "path": "docs/streaming-programming-guide.md",
+      "kind": "fact",
+      "quote_chars": 82,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q08": {
+      "path": "docs/ml-frequent-pattern-mining.md",
+      "kind": "fact",
+      "quote_chars": 172,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q09": {
+      "path": "docs/sql-ref-syntax-aux-show-functions.md",
+      "kind": "how-to",
+      "quote_chars": 73,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q10": {
+      "path": "docs/sql-data-sources-json.md",
+      "kind": "how-to",
+      "quote_chars": 76,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q11": {
+      "path": "docs/sql-ref-functions-udf-scalar.md",
+      "kind": "how-to",
+      "quote_chars": 99,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 0
+    },
+    "q12": {
+      "path": "docs/sql-ref-syntax-ddl-create-table-like.md",
+      "kind": "syntax",
+      "quote_chars": 166,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [
+        "docs/sql-ref-syntax-ddl-create-table-like.md"
+      ],
+      "longest_shared_word_run": 1
+    },
+    "q13": {
+      "path": "docs/streaming/structured-streaming-state-data-source.md",
+      "kind": "fact",
+      "quote_chars": 155,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [
+        "docs/streaming/apis-on-dataframes-and-datasets.md"
+      ],
+      "longest_shared_word_run": 3
+    },
+    "q14": {
+      "path": "docs/sql-ref-syntax-qry-select-transform.md",
+      "kind": "config",
+      "quote_chars": 89,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q15": {
+      "path": "docs/sql-data-sources-text.md",
+      "kind": "behavior",
+      "quote_chars": 95,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q16": {
+      "path": "docs/tuning.md",
+      "kind": "how-to",
+      "quote_chars": 80,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q17": {
+      "path": "docs/rdd-programming-guide.md",
+      "kind": "behavior",
+      "quote_chars": 85,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 3
+    },
+    "q18": {
+      "path": "docs/sql-data-sources-load-save-functions.md",
+      "kind": "config",
+      "quote_chars": 149,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [
+        "docs/sql-ref-syntax-ddl-create-table-datasource.md"
+      ],
+      "longest_shared_word_run": 0
+    },
+    "q19": {
+      "path": "docs/sql-ref-syntax-aux-exec-imm.md",
+      "kind": "behavior",
+      "quote_chars": 50,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q20": {
+      "path": "docs/sql-ref-syntax-aux-conf-mgmt-reset.md",
+      "kind": "behavior",
+      "quote_chars": 75,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q21": {
+      "path": "docs/sql-data-sources-orc.md",
+      "kind": "config",
+      "quote_chars": 55,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q22": {
+      "path": "docs/sql-ref-syntax-qry-select-lateral-subquery.md",
+      "kind": "comparison",
+      "quote_chars": 188,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q23": {
+      "path": "docs/hadoop-provided.md",
+      "kind": "how-to",
+      "quote_chars": 96,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q24": {
+      "path": "docs/mllib-pmml-model-export.md",
+      "kind": "fact",
+      "quote_chars": 85,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q25": {
+      "path": "docs/mllib-decision-tree.md",
+      "kind": "fact",
+      "quote_chars": 101,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [
+        "docs/ml-classification-regression.md"
+      ],
+      "longest_shared_word_run": 1
+    },
+    "q26": {
+      "path": "docs/sql-ref-syntax-aux-show-tblproperties.md",
+      "kind": "behavior",
+      "quote_chars": 193,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q27": {
+      "path": "docs/sql-data-sources-avro.md",
+      "kind": "how-to",
+      "quote_chars": 193,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q28": {
+      "path": "docs/sql-ref-syntax-ddl-create-function.md",
+      "kind": "how-to",
+      "quote_chars": 173,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q29": {
+      "path": "docs/sql-ref-syntax-ddl-alter-view.md",
+      "kind": "fact",
+      "quote_chars": 54,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [
+        "docs/sql-ref-syntax-ddl-create-view.md"
+      ],
+      "longest_shared_word_run": 1
+    },
+    "q30": {
+      "path": "docs/sql-migration-guide.md",
+      "kind": "config",
+      "quote_chars": 232,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q31": {
+      "path": "docs/sql-ref-syntax-qry-select-having.md",
+      "kind": "syntax",
+      "quote_chars": 154,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q32": {
+      "path": "docs/streaming-kinesis-integration.md",
+      "kind": "config",
+      "quote_chars": 138,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q33": {
+      "path": "docs/graphx-programming-guide.md",
+      "kind": "fact",
+      "quote_chars": 74,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 0
+    },
+    "q34": {
+      "path": "docs/sql-ref-syntax-aux-show-columns.md",
+      "kind": "syntax",
+      "quote_chars": 108,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q35": {
+      "path": "docs/sql-ref-null-semantics.md",
+      "kind": "fact",
+      "quote_chars": 138,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q36": {
+      "path": "docs/sql-ref-syntax-aux-cache-refresh-function.md",
+      "kind": "behavior",
+      "quote_chars": 140,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q37": {
+      "path": "docs/sql-ref-syntax-dml-load.md",
+      "kind": "comparison",
+      "quote_chars": 118,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q38": {
+      "path": "docs/sql-pipe-syntax.md",
+      "kind": "syntax",
+      "quote_chars": 101,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q39": {
+      "path": "docs/sql-ref-syntax-aux-describe-database.md",
+      "kind": "comparison",
+      "quote_chars": 125,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [
+        "docs/sql-ref-syntax-ddl-create-database.md",
+        "docs/sql-ref-syntax-ddl-alter-database.md"
+      ],
+      "longest_shared_word_run": 1
+    },
+    "q40": {
+      "path": "docs/quick-start.md",
+      "kind": "how-to",
+      "quote_chars": 77,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q41": {
+      "path": "docs/sql-ref-functions-udf-aggregate.md",
+      "kind": "how-to",
+      "quote_chars": 115,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q42": {
+      "path": "docs/sql-ref-syntax-aux-resource-mgmt-add-jar.md",
+      "kind": "behavior",
+      "quote_chars": 67,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q43": {
+      "path": "docs/sql-ref-syntax-aux-conf-mgmt-set-timezone.md",
+      "kind": "config",
+      "quote_chars": 203,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q44": {
+      "path": "docs/sql-ref-syntax-ddl-create-database.md",
+      "kind": "behavior",
+      "quote_chars": 115,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q45": {
+      "path": "docs/ml-guide.md",
+      "kind": "fact",
+      "quote_chars": 92,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q46": {
+      "path": "docs/mllib-dimensionality-reduction.md",
+      "kind": "fact",
+      "quote_chars": 182,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 2
+    },
+    "q47": {
+      "path": "docs/mllib-collaborative-filtering.md",
+      "kind": "fact",
+      "quote_chars": 166,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q48": {
+      "path": "docs/mllib-feature-extraction.md",
+      "kind": "fact",
+      "quote_chars": 188,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "q49": {
+      "path": "docs/cluster-overview.md",
+      "kind": "fact",
+      "quote_chars": 223,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [
+        "docs/index.md",
+        "docs/submitting-applications.md"
+      ],
+      "longest_shared_word_run": 2
+    },
+    "q50": {
+      "path": "docs/streaming/getting-started.md",
+      "kind": "behavior",
+      "quote_chars": 80,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    }
+  },
+  "configs": {
+    "e70bf55c7cf1b856": {
+      "max_tokens": 254,
+      "overlap_tokens": 32,
+      "chunks": 6051,
+      "silver_rows": 6051,
+      "fingerprint_equals_silver": true,
+      "relevant_chunks_per_item": {
+        "q01": 1,
+        "q02": 1,
+        "q03": 1,
+        "q04": 1,
+        "q05": 1,
+        "q06": 1,
+        "q07": 1,
+        "q08": 2,
+        "q09": 1,
+        "q10": 1,
+        "q11": 1,
+        "q12": 1,
+        "q13": 1,
+        "q14": 1,
+        "q15": 1,
+        "q16": 1,
+        "q17": 1,
+        "q18": 1,
+        "q19": 1,
+        "q20": 1,
+        "q21": 1,
+        "q22": 1,
+        "q23": 1,
+        "q24": 1,
+        "q25": 1,
+        "q26": 1,
+        "q27": 1,
+        "q28": 1,
+        "q29": 1,
+        "q30": 1,
+        "q31": 1,
+        "q32": 1,
+        "q33": 1,
+        "q34": 1,
+        "q35": 1,
+        "q36": 1,
+        "q37": 1,
+        "q38": 1,
+        "q39": 1,
+        "q40": 1,
+        "q41": 1,
+        "q42": 1,
+        "q43": 1,
+        "q44": 1,
+        "q45": 1,
+        "q46": 1,
+        "q47": 1,
+        "q48": 1,
+        "q49": 1,
+        "q50": 1
+      }
+    },
+    "ece77f296d18fbd5": {
+      "max_tokens": 128,
+      "overlap_tokens": 16,
+      "chunks": 9852,
+      "silver_rows": 9852,
+      "fingerprint_equals_silver": true,
+      "relevant_chunks_per_item": {
+        "q01": 1,
+        "q02": 1,
+        "q03": 1,
+        "q04": 1,
+        "q05": 1,
+        "q06": 1,
+        "q07": 1,
+        "q08": 1,
+        "q09": 1,
+        "q10": 1,
+        "q11": 1,
+        "q12": 1,
+        "q13": 1,
+        "q14": 1,
+        "q15": 1,
+        "q16": 1,
+        "q17": 1,
+        "q18": 1,
+        "q19": 1,
+        "q20": 1,
+        "q21": 1,
+        "q22": 1,
+        "q23": 1,
+        "q24": 1,
+        "q25": 1,
+        "q26": 1,
+        "q27": 1,
+        "q28": 1,
+        "q29": 1,
+        "q30": 1,
+        "q31": 1,
+        "q32": 1,
+        "q33": 1,
+        "q34": 2,
+        "q35": 1,
+        "q36": 1,
+        "q37": 1,
+        "q38": 1,
+        "q39": 1,
+        "q40": 1,
+        "q41": 1,
+        "q42": 1,
+        "q43": 1,
+        "q44": 1,
+        "q45": 1,
+        "q46": 2,
+        "q47": 1,
+        "q48": 1,
+        "q49": 1,
+        "q50": 1
+      }
+    }
+  },
+  "check_only": true
+}
