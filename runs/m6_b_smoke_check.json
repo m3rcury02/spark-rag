@@ -1,0 +1,78 @@
+{
+  "label": "m6_b_smoke_check",
+  "git_commit": "fb21bca7d4e3bbcae3d32330c665c8080bc81bf4",
+  "eval_set": {
+    "file": "eval/eval_set_smoke.json",
+    "version": "smoke",
+    "sha256": "666510c7ec1285657e8f4d7af51a24615478a099223e559e635cd5f1ad0493c0",
+    "items": 3
+  },
+  "eval_config": {
+    "recall_k": 5,
+    "mrr_k": 10,
+    "resamples": 10000,
+    "seed": 15,
+    "min_quote_share": 0.5,
+    "quote_chars": [
+      30,
+      250
+    ]
+  },
+  "started_utc": "2026-10-21T02:24:29+00:00",
+  "items": {
+    "smoke1": {
+      "path": "docs/sql-ref-syntax-ddl-drop-table.md",
+      "kind": "behavior",
+      "quote_chars": 110,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 3
+    },
+    "smoke2": {
+      "path": "docs/streaming-kinesis-integration.md",
+      "kind": "config",
+      "quote_chars": 138,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 1
+    },
+    "smoke3": {
+      "path": "docs/cluster-overview.md",
+      "kind": "fact",
+      "quote_chars": 50,
+      "occurrences": 1,
+      "docs_with_the_quote": 1,
+      "also_in": [],
+      "longest_shared_word_run": 0
+    }
+  },
+  "configs": {
+    "e70bf55c7cf1b856": {
+      "max_tokens": 254,
+      "overlap_tokens": 32,
+      "chunks": 5436,
+      "silver_rows": 5436,
+      "fingerprint_equals_silver": true,
+      "relevant_chunks_per_item": {
+        "smoke1": 1,
+        "smoke2": 1,
+        "smoke3": 1
+      }
+    },
+    "ece77f296d18fbd5": {
+      "max_tokens": 128,
+      "overlap_tokens": 16,
+      "chunks": 8767,
+      "silver_rows": 8767,
+      "fingerprint_equals_silver": true,
+      "relevant_chunks_per_item": {
+        "smoke1": 1,
+        "smoke2": 1,
+        "smoke3": 1
+      }
+    }
+  },
+  "check_only": true
+}
