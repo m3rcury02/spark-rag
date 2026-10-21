@@ -1,0 +1,47 @@
+{
+  "label": "m6_j_delete_index",
+  "git_commit": "8bf0ee1601e3fe94d8a480b328d76c938ce2ad2c",
+  "action": "delete-index",
+  "endpoint_name": "docs_rag_endpoint",
+  "index_name": "workspace.docs_rag_dev.gold_chunk_index",
+  "started_utc": "2026-10-21T04:01:12Z",
+  "before": {
+    "detailed_state": "ONLINE_NO_PENDING_UPDATE",
+    "ready": true,
+    "indexed_row_count": 5436,
+    "message": "Index creation succeeded. Check latest status: https://<workspace-host>/explore/data/workspace/docs_rag_dev/gold_chunk_index",
+    "pipeline_id": "85b10638-a0c9-4f56-b0a7-b77f6498dd5d",
+    "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+    "pipeline_type": "TRIGGERED"
+  },
+  "requested_utc": "2026-10-21T04:01:14Z",
+  "polls": [
+    {
+      "after_s": 0.1,
+      "seen": {
+        "detailed_state": "ONLINE_NO_PENDING_UPDATE",
+        "ready": true,
+        "indexed_row_count": 5436,
+        "message": "Index creation succeeded. Check latest status: https://<workspace-host>/explore/data/workspace/docs_rag_dev/gold_chunk_index",
+        "pipeline_id": "85b10638-a0c9-4f56-b0a7-b77f6498dd5d",
+        "source_table": "workspace.docs_rag_dev.gold_chunk_embeddings",
+        "pipeline_type": "TRIGGERED"
+      }
+    },
+    {
+      "after_s": 15.2,
+      "seen": null
+    }
+  ],
+  "seconds_to_gone": 15.2,
+  "endpoint_after": {
+    "name": "docs_rag_endpoint",
+    "endpoint_type": "STANDARD",
+    "state": "ONLINE",
+    "message": null,
+    "num_indexes": 0,
+    "creation_timestamp": 1792553593905
+  },
+  "status": "succeeded",
+  "finished_utc": "2026-10-21T04:01:30Z"
+}
