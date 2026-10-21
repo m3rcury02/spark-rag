@@ -5,8 +5,8 @@ source of a vector index, in step with a changing document corpus. A harness mea
 retrieves.
 
 The corpus is the Apache Spark documentation: the Markdown under `docs/` in
-[apache/spark](https://github.com/apache/spark), one release tag at a time. That is 212–244 files and
-5,400–6,100 chunks per release. Dev was taken through v3.5.0 → v4.0.0 → v4.0.1 → v4.2.0, and prod loaded
+[apache/spark](https://github.com/apache/spark), one release tag at a time. For the releases loaded here
+(v3.5.0 to v4.2.0) that is 212–244 files and 5,400–6,100 chunks per release. Dev was taken through v3.5.0 → v4.0.0 → v4.0.1 → v4.2.0, and prod loaded
 v4.2.0 from empty. The corpus is small on purpose: the point is handling change correctly, not throughput.
 
 The stack is Databricks Free Edition: serverless jobs, Unity Catalog and Delta tables in a bronze/silver/gold
@@ -20,26 +20,28 @@ options considered (D-001 to D-016).
 ## Results at a glance
 
 - **Only changed chunks are embedded.** Across the three upgrades of dev, 2,689 of the 16,910 chunks in the
-  target releases were embedded (15.9%); the patch release v4.0.1 needed 21 of 5,436. At this corpus size
-  that cuts embedding time (31 s instead of 221 s for v4.2.0) but not the cost of a run. Most of a run is
-  work that does not shrink with the change (see [the comparison](#the-same-release-incremental-and-full)).
+  target releases were embedded (15.9%); the patch release v4.0.1 needed 21 of 5,436. At this corpus size the
+  gain is modest. The incremental v4.2.0 run billed 0.57 DBU against 1.23 for a full load, mostly saved in
+  encoding (31 s against 221 s). Counting the drift-stopped run before it, dev's path to v4.2.0 billed 1.39
+  (single runs; see [the comparison](#the-same-release-incremental-and-full)).
 - **The incremental path ends where a full load ends.** Dev's gold table after three upgrades and prod's after
   one full load of v4.2.0 hold the same 6,051 chunk IDs. Dev's stored vectors give the same recall@5 and MRR@10
   as a fresh embedding on every eval question.
 - **Re-runs change nothing.** A re-run on the same input logs 0 added, changed and deleted documents, embeds
-  nothing and writes no table version, at every layer and for the whole job in dev and prod. The first bronze
-  re-run still wrote an empty Delta version, which is why every write is now skipped when its input is
-  identical.
+  nothing and writes no new version of bronze, silver or gold, in dev and prod. It only appends its committed
+  row to `ops_run_log` and its 9 check rows to `ops_dq_results`. The first bronze re-run still wrote an empty
+  Delta version, which is why each write is now skipped when its input is identical.
 - **A data-quality gate holds unusual loads for review before anything is embedded.** It runs 9 chunk checks
   and 5 vector checks, with thresholds set from 42 historical releases. It stopped both feature-release
   upgrades on drift. Both were real releases, accepted by re-running with the failed run's ID. It has not
   caught a bad load: deliberately corrupted silver rows were caught by a separate re-check.
-- **Retrieval on 50 reviewed questions.** The production config scores lowest of the four on every point
-  estimate: recall@5 0.68 [0.54, 0.80], against up to 0.74 for bge-small. With n = 50, no recall@5 difference
+- **Retrieval on 50 reviewed questions.** The production config scores lowest of the four on recall@5 and
+  MRR@10 at both releases: recall@5 0.68 [0.54, 0.80] at v4.0.1, against up to 0.74 for bge-small. With n = 50, no recall@5 difference
   is significant. It stays because switching means re-embedding gold at about half the speed. The live ANN
   index returned 99.8% of exact search's top 10.
-- **Cost.** Free Edition charges no money but enforces an undisclosed daily quota, metered in DBUs (Databricks
-  Units) and inferred at about 63–90 DBU a day. A full run billed 1.23 DBU and a no-op run 0.36. An idle
+- **Cost.** Free Edition charges no money but enforces an undisclosed daily quota. Usage is billed in DBUs
+  (Databricks Units), and one refusal fits a limit of roughly 63–90 DBU a day (an inference, D-001). A full
+  run billed 1.23 DBU and a no-op run 0.36. An idle
   vector endpoint billed 96 DBU a day, so the endpoint and index are created only for demos.
 
 ## Architecture
@@ -82,8 +84,8 @@ flowchart TB
     gold -.-> ev
 ```
 
-"254/32" means chunks of at most 254 WordPiece tokens (the model's 256-token limit minus two special tokens)
-with 32 tokens of overlap. Only 254/32 is published; 128/16 exists for the eval.
+"254/32" means chunks of at most 254 WordPiece tokens of embed text (heading breadcrumb plus body; the model's
+256-token limit minus two special tokens), with up to 32 tokens of overlap within a section. Only 254/32 is published; 128/16 exists for the eval.
 
 | Table | One row per | Key | Written by |
 |---|---|---|---|
@@ -137,7 +139,8 @@ and crossing a version is an explicit re-baseline (D-013).
 
 **Change detection (D-011).** A run diffs the target tag against the chain head. Docs are compared by content
 hash; chunks by ID. Added IDs are embedded, removed IDs are deleted from gold and kept IDs are left alone.
-Every attempt appends a row to `ops_run_log`. A committed row carries the doc and chunk counts. A failed row
+Every attempt that gets past its argument and environment checks appends a row to `ops_run_log` (a retry of
+an already committed run writes nothing). A committed row carries the doc and chunk counts. A failed row
 carries its error, and the totals it was gated on are in `ops_dq_results`.
 
 **DQ gate (D-012).** Nine checks run on all of the target's chunks before anything is embedded:
@@ -146,7 +149,7 @@ carries its error, and the totals it was gated on are in `ops_dq_results`.
 |---|---|
 | `empty_chunks` | any chunk has no tokens |
 | `tiny_chunks` | more than 2% of chunks have bodies under 5 tokens |
-| `oversized_chunks` | any chunk is over its config's limit or the model's 254-token window |
+| `oversized_chunks` | any chunk's embed text is over its config's limit or 254 tokens (the model's 256 less two special tokens) |
 | `duplicate_chunk_ids` | any chunk ID repeats |
 | `duplicate_embed_text` | more than 1% of chunks repeat another chunk's text |
 | `missing_metadata` | a bad path, a blank section name, the wrong tag or a malformed commit |
@@ -182,8 +185,9 @@ changes only run records, the eval set, `docs/` or Markdown. Prod deploys on dem
 **Operating it.** Runs are started by hand (`scripts/bundle.py run`). A weekly schedule (Mondays 06:15 UTC)
 exists but is paused, because each run uses quota. A gate failure fails the job, which emails the deploying
 user. It also appends a `failed` row to `ops_run_log` and one row per check to `ops_dq_results`. Query
-`ops_dq_results` for that run to see which check failed and by how much. To accept it, re-run with
-`accept_drift_of=<job run id>-detect`.
+`ops_dq_results` for that run to see which check failed and by how much. If only drift checks failed, accept
+it by re-running with `accept_drift="<reason>" accept_drift_of=<job run id>-detect`; any other failed check has
+to be fixed.
 
 ## Results
 
@@ -217,8 +221,9 @@ in the table are their accepted re-runs.
 
 These are single runs. `m7_d` is not the whole incremental path. Bronze and silver 254/32 for dev's v4.2.0
 were written by `m7_b` (0.82 DBU): the gate stopped its `change_detect`, and its silver 128/16 task failed on
-a concurrent MERGE into silver. `m7_d` then wrote silver 128/16 (9,852 rows). Counting both runs, dev's path
-to v4.2.0 billed 1.39 DBU, more than prod's full load.
+a concurrent MERGE into silver. `m7_d` then wrote silver 128/16 (9,852 rows). On its own `m7_d` billed 47%
+of the full load; counting both runs, dev's path to v4.2.0 billed 1.39 DBU, more than prod's full load. A
+skipped write still costs its read: `m7_d` re-read bronze and re-chunked silver to find them identical.
 
 Embedding is about half of a full run here (221 of 455 s) and a tenth of the incremental one (31 of 308 s).
 The rest does not shrink with the change: task start-up and package installs (about 65 s of `change_detect`
@@ -234,7 +239,7 @@ it was not measured.
 | Calibration: every final release from v3.0.0 to v4.2.0, chunked from git ([`m4_a`](runs/m4_a_calibration.json)) | No count check fired on any of 42 releases. Drift at 10% fired on 3 of 41 transitions, all feature releases. No patch release moved more than 2.2%. Hence 5% for a patch release and 10% for a minor or major one |
 | Orchestrated stop and acceptance ([`m7_b`](runs/m7_b_dev_latest.json), [`m7_d`](runs/m7_d_dev_v4.2.0_accepted.json)) | `tag=latest` resolved to v4.2.0, and the gate failed the job before gold. The re-run with `accept_drift_of=<failed run>` committed and embedded 802 chunks |
 | Corrupted silver ([`m2_d8b`](runs/m2_d8b_silver_v4.0.1_254_after_tamper.json), [`m4x_o`](runs/m4x_o_detect_v4.0.1_tampered_old_baseline.json)) | A hand-edited silver row failed its re-check (chunk_id does not match its content) and the run stopped. This is the input re-check, not the gate |
-| Recomputed outside Databricks from the git tags | Every DQ row of every run checks out: dev 599/599 checks ([`m7_v1`](runs/m7_v1_gate_vs_git.json)), prod 152/152 ([`m7_v7`](runs/m7_v7_prod_gate_vs_git.json)). Change counts and gold's chunks match as well (dev [`m7_v2`](runs/m7_v2_changes_vs_git.json), [`m7_v3`](runs/m7_v3_dev_gold_vs_git.json); prod [`m7_v8`](runs/m7_v8_prod_changes_vs_git.json), [`m7_v9`](runs/m7_v9_prod_gold_vs_git.json)), and 200 re-embedded gold rows reproduce their vectors |
+| Recomputed outside Databricks from the git tags | Every DQ row of every run checks out: dev 599/599 checks ([`m7_v1`](runs/m7_v1_gate_vs_git.json)), prod 152/152 ([`m7_v7`](runs/m7_v7_prod_gate_vs_git.json)). Change counts and gold's chunks match as well (dev [`m7_v2`](runs/m7_v2_changes_vs_git.json), [`m7_v3`](runs/m7_v3_dev_gold_vs_git.json); prod [`m7_v8`](runs/m7_v8_prod_changes_vs_git.json), [`m7_v9`](runs/m7_v9_prod_gold_vs_git.json)), and a sample of 200 rows per gold table, re-embedded, reproduces its vectors (lowest cosine 0.99998) |
 
 The verifiers reuse the pipeline's chunker and token counting, so they are independent of Databricks, not of
 the core logic. Vector-check rows are checked for presence and a pass; the vectors themselves are checked by
@@ -251,7 +256,8 @@ the re-embedding sample.
 | production config through the live AI Search index | 0.68 [0.54, 0.80] | 0.489 [0.381, 0.600] | not run | not run |
 
 Sources: [`m6_i`](runs/m6_i_eval_v1.json) (v4.0.1) and [`m6_n`](runs/m6_n_eval_v2.json) (v4.2.0: the same 50
-questions, with one quote updated where the release reworded it). The rows are saved in `eval_results`.
+questions; one quote updated where the release reformatted it, q19's NULL in backticks). The rows are saved
+in `eval_results`.
 
 - **The decision rule, fixed in advance:** a difference counts only if its paired 95% interval for recall@5
   excludes zero. None of the comparisons named in the plan clears that bar at either release. So production
@@ -259,12 +265,13 @@ questions, with one quote updated where the release reworded it). The rows are s
   machine's CPU at 254/32).
 - On MRR@10, bge-small with its instruction led production by +0.095 [+0.009, +0.186] at v4.0.1. At v4.2.0,
   eight releases later, the same lead was +0.080 [−0.001, +0.164] and no longer cleared zero.
-- The serving path loses nothing measurable. Gold's vectors give the same hits as a local embedding at every
-  rank up to 10 (lowest cosine 0.99997). The ANN index returned 99.8% of exact search's top 10, with identical
+- The serving path loses nothing measurable. Gold's vectors put each question's first relevant chunk at the
+  same rank as a local embedding whenever it is in the top 10, so recall@5 and MRR@10 are identical (lowest
+  cosine 0.99997). The ANN index returned 99.8% of exact search's top 10, with identical
   lists for 48 of the 50 questions.
-- Retrieval is weakest on the SQL reference pages: recall@5 0.61–0.70 for these configurations, against
-  0.70–0.85 elsewhere. Those pages are many short docs built from one template, so near-identical chunks
-  compete.
+- Retrieval is weakest on the SQL reference pages: at v4.0.1, recall@5 0.61–0.70 for these configurations
+  against 0.70–0.85 elsewhere (0.61–0.65 on SQL reference at v4.2.0). A likely cause, not tested: those pages
+  are many short docs built from one template, so near-identical chunks compete.
 
 ## Run it
 
@@ -292,11 +299,12 @@ uv run --with databricks-sdk==0.152.0 python scripts/bundle.py run --target dev 
 uv run --with databricks-sdk==0.152.0 python scripts/bundle.py run --target dev --label upgrade_accepted -- \
     tag=latest accept_drift="<why this drift is expected>" accept_drift_of=<failed job run id>-detect
 
-# Recompute the gold chain's DQ rows and change counts from git (add --schema docs_rag_prod for prod)
+# Recompute the gold chain's DQ rows and change counts from git (add --schema docs_rag_prod for prod).
+# --job-runs takes every change_detect record of the chain, failed runs included.
 uv run --with databricks-sdk==0.152.0 python scripts/m4_verify_gate.py --label gate_check \
-    --sink gold_chunk_embeddings --job-runs runs/<label>_detect.json
+    --sink gold_chunk_embeddings --job-runs runs/first_load_detect.json runs/upgrade*_detect.json
 uv run --with databricks-sdk==0.152.0 python scripts/m3_verify_changes.py --label change_check \
-    --sink gold_chunk_embeddings --job-runs runs/<label>_detect.json
+    --sink gold_chunk_embeddings --job-runs runs/first_load_detect.json runs/upgrade*_detect.json
 
 # The retrieval eval: local CPU, about 10 minutes; reads silver and gold, writes eval_results
 uv run --with databricks-sdk==0.152.0 --with sentence-transformers==6.1.0 --with transformers==5.19.0 \
@@ -312,7 +320,8 @@ quota while the endpoint exists: create it only for a demo and delete it afterwa
 
 1. **The eval set is small.** With 50 questions the paired recall@5 intervals are about ±5 to ±12 points.
    Halving them needs about four times the items, roughly 200 (an inference: intervals shrink with 1/√n).
-   The MRR lead above did not survive a change of release.
+   MRR findings are not stable at this size either: of the leads that cleared zero at v4.0.1, the one at
+   254/32 did not at v4.2.0 (D-015).
 2. **The eval's labels are narrow.** It covers one section per sampled doc, and its questions were
    LLM-drafted. For 8 items the answer also appears, in other words, in another doc; retrieving that doc
    counts as a miss (D-015 reports the set both ways). These cross-doc matches were not re-reviewed for docs

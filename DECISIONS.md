@@ -1262,7 +1262,7 @@ the questions only a found in the top 5 against those only b found.
 | 2 | bge vs MiniLM at 128/16 | +0.02 [−0.08, +0.12] | 4 vs 3 | **+0.108 [+0.034, +0.185]** |
 | 3 | bge with vs without the instruction, 254/32 | 0.00 [−0.06, +0.06] | 1 vs 1 | **+0.049 [+0.013, +0.094]** |
 | 3 | the same, 128/16 | +0.04 [0.00, +0.10] | 2 vs 0 | **+0.043 [+0.001, +0.089]** |
-| 4 | gold's vectors vs local, production config | 0 (the same hits at every rank up to 10) | 0 vs 0 | 0 |
+| 4 | gold's vectors vs local, production config | 0 (the same first-relevant rank whenever it is in the top 10) | 0 vs 0 | 0 |
 | 5 | live index vs exact search, gold's vectors | 0.00 [0.00, 0.00] | 0 vs 0 | +0.003 [0.000, +0.010] |
 
 - **Decision, by the rule fixed in advance:** no recall@5 interval excludes zero. The instruction at 128/16
@@ -1341,7 +1341,7 @@ to v4.2.0 (D-016), so comparison 4 (gold's vectors against local) refuses set v1
 | 2 | bge vs MiniLM at 128/16 | +0.02 [−0.10, +0.14] | 5 vs 4 | **+0.099 [+0.027, +0.174]** |
 | 3 | bge with vs without the instruction, 254/32 | 0.00 [−0.06, +0.06] | 1 vs 1 | **+0.041 [+0.009, +0.082]** |
 | 3 | the same, 128/16 | +0.04 [0.00, +0.10] | 2 vs 0 | **+0.045 [+0.003, +0.092]** |
-| 4 | gold's vectors vs local, production config | 0 (the same hits at every rank up to 10) | 0 vs 0 | 0 |
+| 4 | gold's vectors vs local, production config | 0 (the same first-relevant rank whenever it is in the top 10) | 0 vs 0 | 0 |
 
 - **By v1's rule, the same decision:** no recall@5 interval excludes zero, so production stays MiniLM at
   254/32.
