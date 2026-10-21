@@ -9,11 +9,13 @@ silently at a truncation and return a partial snapshot.
 
 import gzip
 import io
+import re
 import tarfile
 import urllib.parse
 import urllib.request
 from pathlib import PurePosixPath
 
+from docs_rag.changes import release_number
 from docs_rag.config import Config, validate_tag
 from docs_rag.hashing import sha256_hex
 from docs_rag.models import Snapshot, SourceDoc
@@ -24,6 +26,28 @@ _BLOCK = 512
 def archive_url(repo: str, tag: str) -> str:
     """codeload URL of the tag's source archive (one request for the whole snapshot)."""
     return f"https://codeload.github.com/{repo}/tar.gz/refs/tags/{urllib.parse.quote(validate_tag(tag))}"
+
+
+def refs_url(repo: str) -> str:
+    """git's smart-HTTP ref advertisement for the repo: every branch and tag, no API rate limit."""
+    return f"https://github.com/{repo}.git/info/refs?service=git-upload-pack"
+
+
+_RELEASE_REF = re.compile(r"refs/tags/(v\d+\.\d+\.\d+)(?=\^\{\}|\x00|\n|$)")
+
+
+def release_tags(advertisement: str) -> list[str]:
+    """The plain release tags (vX.Y.Z; no previews or release candidates) in a ref advertisement, oldest
+    first by release number."""
+    tags = set(_RELEASE_REF.findall(advertisement))
+    return sorted(tags, key=lambda t: release_number(t) or (0, 0, 0))
+
+
+def latest_release(tags: list[str]) -> str:
+    """The newest plain release tag."""
+    if not tags:
+        raise ValueError("no release tags found")
+    return validate_tag(max(tags, key=lambda t: release_number(t) or (0, 0, 0)))
 
 
 def download(url: str, timeout_seconds: float = 300.0) -> bytes:  # pragma: no cover - network

@@ -103,7 +103,14 @@ from docs_rag.gold import (
     merge_source_rows,
     merge_version,
 )
-from docs_rag.jobenv import base_parser, check_environment, check_packages, run_with_summary
+from docs_rag.jobenv import (
+    add_flag,
+    base_parser,
+    check_environment,
+    check_packages,
+    optional_text,
+    run_with_summary,
+)
 from docs_rag.lake import chunk_bronze, compare_with_stored, latest_version, read_bronze, stored_baseline
 from docs_rag.silver import SilverRecord, StoredChunk, conflict_reason, fingerprint
 
@@ -699,23 +706,23 @@ def detect(args: argparse.Namespace, summary: dict[str, Any]) -> None:
 def main() -> None:
     parser = base_parser()
     parser.add_argument("--tag", required=True)
-    parser.add_argument("--initial", action="store_true", help="start the chain (only when there is none)")
-    parser.add_argument(
-        "--allow-backwards", action="store_true", help="allow a target older than the baseline"
-    )
-    parser.add_argument(
+    add_flag(parser, "--initial", "start the chain (only when there is none)")
+    add_flag(parser, "--allow-backwards", "allow a target older than the baseline")
+    add_flag(
+        parser,
         "--allow-config-change",
-        action="store_true",
-        help="allow a target chunked under another config than the baseline (e.g. a cleaner version bump)",
+        "allow a target chunked under another config than the baseline (e.g. a cleaner version bump)",
     )
     parser.add_argument(
         "--accept-drift",
         metavar="REASON",
+        type=optional_text,
         help="why the drift of the run named by --accept-drift-of is accepted, for this run only",
     )
     parser.add_argument(
         "--accept-drift-of",
         metavar="RUN_ID",
+        type=optional_text,
         help="a run that failed the gate on drift alone, for the same tag, baseline and config; this run "
         "passes only if its drift is exactly that run's (never a loss beyond the ceiling)",
     )

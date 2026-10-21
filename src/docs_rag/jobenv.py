@@ -23,6 +23,26 @@ def utc_now() -> str:
     return dt.datetime.now(dt.UTC).isoformat(timespec="seconds").replace("+00:00", "Z")
 
 
+def flag(value: str) -> bool:
+    """An argparse type for a switch that a job parameter sets as text: `--initial` alone, `--initial=true` or
+    `--initial=false` (Databricks passes job parameters as strings; an empty one is false)."""
+    v = value.strip().lower()
+    if v in ("true", "1", "yes"):
+        return True
+    if v in ("false", "0", "no", ""):
+        return False
+    raise argparse.ArgumentTypeError(f"expected true or false, got {value!r}")
+
+
+def add_flag(parser: argparse.ArgumentParser, name: str, help: str) -> None:
+    parser.add_argument(name, nargs="?", const=True, default=False, type=flag, help=help)
+
+
+def optional_text(value: str) -> str | None:
+    """An argparse type for an optional text parameter: an empty job parameter means not given."""
+    return value.strip() or None
+
+
 def base_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(allow_abbrev=False)  # no prefix matching: options are spelled out in full
     ap.add_argument("--catalog", default=Config.catalog)

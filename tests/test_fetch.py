@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 
 from docs_rag.config import Config
-from docs_rag.fetch import archive_url, read_snapshot
+from docs_rag.fetch import archive_url, latest_release, read_snapshot, release_tags
 from docs_rag.hashing import sha256_hex
 
 COMMIT = "29434ea766b0fc3c3bf6eaadb43a8f931133649e"
@@ -202,3 +202,24 @@ def test_archive_url_points_at_the_tag() -> None:
 def test_archive_url_rejects_bad_tags(tag: str) -> None:
     with pytest.raises(ValueError, match="invalid tag"):
         archive_url("apache/spark", tag)
+
+
+ADVERTISEMENT = (
+    "001e# service=git-upload-pack\n0000"
+    "0155" + "a" * 40 + " HEAD\x00multi_ack thin-pack side-band\n"
+    "003f" + "b" * 40 + " refs/heads/master\n"
+    "004b" + "c" * 40 + " refs/tags/v4.0.0-preview1\n"
+    "0041" + "d" * 40 + " refs/tags/v4.0.1\n"
+    "0044" + "e" * 40 + " refs/tags/v4.0.1^{}\n"
+    "0042" + "f" * 40 + " refs/tags/v4.10.0\n"
+    "0041" + "1" * 40 + " refs/tags/v4.2.0\n"
+    "0045" + "2" * 40 + " refs/tags/v4.2.0-rc1\n"
+    "0000"
+)
+
+
+def test_release_tags_reads_plain_releases_from_the_ref_advertisement() -> None:
+    assert release_tags(ADVERTISEMENT) == ["v4.0.1", "v4.2.0", "v4.10.0"]  # by release number, not text
+    assert latest_release(release_tags(ADVERTISEMENT)) == "v4.10.0"
+    with pytest.raises(ValueError, match="no release tags"):
+        latest_release([])

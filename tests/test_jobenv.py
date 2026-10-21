@@ -95,3 +95,23 @@ def test_the_wheel_pins_tokenizers_exactly() -> None:
 def test_a_missing_distribution_pins_nothing() -> None:
     assert pinned_version("tokenizers", of="no-such-distribution") is None
     assert pinned_version("no-such-package") is None
+
+
+def test_switches_and_optional_texts_take_job_parameter_strings() -> None:
+    import argparse
+
+    from docs_rag.jobenv import add_flag, flag, optional_text
+
+    ap = argparse.ArgumentParser()
+    add_flag(ap, "--initial", "h")
+    ap.add_argument("--accept-drift", type=optional_text)
+    assert ap.parse_args([]).initial is False
+    assert ap.parse_args(["--initial"]).initial is True
+    assert ap.parse_args(["--initial=true"]).initial is True
+    assert ap.parse_args(["--initial=false"]).initial is False
+    assert ap.parse_args(["--initial="]).initial is False  # an empty job parameter
+    assert ap.parse_args(["--accept-drift="]).accept_drift is None
+    assert ap.parse_args(["--accept-drift=a reason"]).accept_drift == "a reason"
+    assert ap.parse_args([]).accept_drift is None
+    with pytest.raises(argparse.ArgumentTypeError):
+        flag("maybe")
