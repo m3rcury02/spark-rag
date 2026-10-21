@@ -1,0 +1,915 @@
+{
+ "tag": "v4.0.1",
+ "commit_sha": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+ "cleaner_version": "2",
+ "sections": [
+  {
+   "section_id": "s001",
+   "path": "docs/mllib-statistics.md",
+   "section_path": [
+    "Basic Statistics - RDD-based API",
+    "Kernel density estimation"
+   ],
+   "start": 10981,
+   "end": 12289,
+   "body": "Kernel density estimation is a technique\nuseful for visualizing empirical probability distributions without requiring assumptions about the\nparticular distribution that the observed samples are drawn from. It computes an estimate of the\nprobability density function of a random variables, evaluated at a given set of points. It achieves\nthis estimate by expressing the PDF of the empirical distribution at a particular point as the\nmean of PDFs of normal distributions centered around each of the samples.\n\npython:\n\n`KernelDensity` provides methods\nto compute kernel density estimates from an RDD of samples. The following example demonstrates how\nto do so.\n\nRefer to the `KernelDensity` Python docs for more details on the API.\n\n[example: kernel_density_estimation_example.py]\n\nscala:\n\n`KernelDensity` provides methods\nto compute kernel density estimates from an RDD of samples. The following example demonstrates how\nto do so.\n\nRefer to the `KernelDensity` Scala docs for details on the API.\n\n[example: KernelDensityEstimationExample.scala]\n\njava:\n\n`KernelDensity` provides methods\nto compute kernel density estimates from an RDD of samples. The following example demonstrates how\nto do so.\n\nRefer to the `KernelDensity` Java docs for details on the API.\n\n[example: JavaKernelDensityEstimationExample.java]",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/mllib-statistics.md"
+  },
+  {
+   "section_id": "s002",
+   "path": "docs/streaming/structured-streaming-kafka-integration.md",
+   "section_path": [
+    "Structured Streaming + Kafka Integration Guide (Kafka broker version 0.10.0 or higher)",
+    "Reading Data from Kafka",
+    "Consumer Caching"
+   ],
+   "start": 19573,
+   "end": 22634,
+   "body": "It's time-consuming to initialize Kafka consumers, especially in streaming scenarios where processing time is a key factor.\nBecause of this, Spark pools Kafka consumers on executors, by leveraging Apache Commons Pool.\n\nThe caching key is built up from the following information:\n\n* Topic name\n* Topic partition\n* Group ID\n\nThe following properties are available to configure the consumer pool:\n\nProperty Name | Default | Meaning | Since Version\n--- | --- | --- | ---\nspark.kafka.consumer.cache.capacity | 64 | The maximum number of consumers cached. Please note that it's a soft limit. | 3.0.0\nspark.kafka.consumer.cache.timeout | 5m (5 minutes) | The minimum amount of time a consumer may sit idle in the pool before it is eligible for eviction by the evictor. | 3.0.0\nspark.kafka.consumer.cache.evictorThreadRunInterval | 1m (1 minute) | The interval of time between runs of the idle evictor thread for consumer pool. When non-positive, no idle evictor thread will be run. | 3.0.0\nspark.kafka.consumer.cache.jmx.enable | false | Enable or disable JMX for pools created with this configuration instance. Statistics of the pool are available via JMX instance. The prefix of JMX name is set to \"kafka010-cached-simple-kafka-consumer-pool\". | 3.0.0\n\nThe size of the pool is limited by `spark.kafka.consumer.cache.capacity`,\nbut it works as \"soft-limit\" to not block Spark tasks.\n\nIdle eviction thread periodically removes consumers which are not used longer than given timeout.\nIf this threshold is reached when borrowing, it tries to remove the least-used entry that is currently not in use.\n\nIf it cannot be removed, then the pool will keep growing. In the worst case, the pool will grow to\nthe max number of concurrent tasks that can run in the executor (that is, number of task slots).\n\nIf a task fails for any reason, the new task is executed with a newly created Kafka consumer for safety reasons.\nAt the same time, we invalidate all consumers in pool which have same caching key, to remove consumer which was used\nin failed execution. Consumers which any other tasks are using will not be closed, but will be invalidated as well\nwhen they are returned into pool.\n\nAlong with consumers, Spark pools the records fetched from Kafka separately, to let Kafka consumers stateless in point\nof Spark's view, and maximize the efficiency of pooling. It leverages same cache key with Kafka consumers pool.\nNote that it doesn't leverage Apache Commons Pool due to the difference of characteristics.\n\nThe following properties are available to configure the fetched data pool:\n\nProperty Name | Default | Meaning | Since Version\n--- | --- | --- | ---\nspark.kafka.consumer.fetchedData.cache.timeout | 5m (5 minutes) | The minimum amount of time a fetched data may sit idle in the pool before it is eligible for eviction by the evictor. | 3.0.0\nspark.kafka.consumer.fetchedData.cache.evictorThreadRunInterval | 1m (1 minute) | The interval of time between runs of the idle evictor thread for fetched data pool. When non-positive, no idle evictor thread will be run. | 3.0.0",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/streaming/structured-streaming-kafka-integration.md"
+  },
+  {
+   "section_id": "s003",
+   "path": "docs/mllib-isotonic-regression.md",
+   "section_path": [
+    "Regression - RDD-based API",
+    "Isotonic regression"
+   ],
+   "start": 23,
+   "end": 2206,
+   "body": "Isotonic regression\nbelongs to the family of regression algorithms. Formally isotonic regression is a problem where\ngiven a finite set of real numbers `$Y = {y_1, y_2, ..., y_n}$` representing observed responses\nand `$X = {x_1, x_2, ..., x_n}$` the unknown response values to be fitted\nfinding a function that minimizes\n\n`\\begin{equation}\n  f(x) = \\sum_{i=1}^n w_i (y_i - x_i)^2\n\\end{equation}`\n\nwith respect to complete order subject to\n`$x_1\\le x_2\\le ...\\le x_n$` where `$w_i$` are positive weights.\nThe resulting function is called isotonic regression and it is unique.\nIt can be viewed as least squares problem under order restriction.\nEssentially isotonic regression is a\nmonotonic function\nbest fitting the original data points.\n\n`spark.mllib` supports a\npool adjacent violators algorithm\nwhich uses an approach to\nparallelizing isotonic regression.\nThe training input is an RDD of tuples of three double values that represent\nlabel, feature and weight in this order. In case there are multiple tuples with\nthe same feature then these tuples are aggregated into a single tuple as follows:\n\n* Aggregated label is the weighted average of all labels.\n* Aggregated feature is the unique feature value.\n* Aggregated weight is the sum of all weights.\n\nAdditionally, IsotonicRegression algorithm has one\noptional parameter called $isotonic$ defaulting to true.\nThis argument specifies if the isotonic regression is\nisotonic (monotonically increasing) or antitonic (monotonically decreasing).\n\nTraining returns an IsotonicRegressionModel that can be used to predict\nlabels for both known and unknown features. The result of isotonic regression\nis treated as piecewise linear function. The rules for prediction therefore are:\n\n* If the prediction input exactly matches a training feature\n  then associated prediction is returned.\n* If the prediction input is lower or higher than all training features\n  then prediction with lowest or highest feature is returned respectively.\n* If the prediction input falls between two training features then prediction is treated\n  as piecewise linear function and interpolated value is calculated from the\n  predictions of the two closest features.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/mllib-isotonic-regression.md"
+  },
+  {
+   "section_id": "s004",
+   "path": "docs/sql-ref-syntax-qry-select-case.md",
+   "section_path": [
+    "CASE Clause",
+    "Parameters"
+   ],
+   "start": 318,
+   "end": 872,
+   "body": "* **boolean_expression**\n\n    Specifies any expression that evaluates to a result type `boolean`. Two or\n    more expressions may be combined together using the logical\n    operators ( `AND`, `OR` ).\n\n* **then_expression**\n\n    Specifies the then expression based on the `boolean_expression` condition; `then_expression` and `else_expression` should all be same type or coercible to a common type.\n\n* **else_expression**\n\n    Specifies the default expression; `then_expression` and `else_expression` should all be same type or coercible to a common type.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-qry-select-case.md"
+  },
+  {
+   "section_id": "s005",
+   "path": "docs/sql-ref-syntax-ddl-declare-variable.md",
+   "section_path": [
+    "DECLARE VARIABLE",
+    "Description"
+   ],
+   "start": 17,
+   "end": 545,
+   "body": "The `DECLARE VARIABLE` statement is used to create a temporary variable in Spark.\nTemporary variables are scoped at a session level.\n\nYou can reference variables by their name everywhere constant expressions are allowed.\nUnless you qualify a variable with `session` or `system.session`, a variable is only resolved after\nSpark fails to resolve a name to a column or column alias.\n\nTemporary variables cannot be referenced in persisted objects such as persisted view,\ncolumn default expressions, and generated column expressions.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-ddl-declare-variable.md"
+  },
+  {
+   "section_id": "s006",
+   "path": "docs/sql-ref-syntax-ddl-drop-table.md",
+   "section_path": [
+    "DROP TABLE",
+    "Description"
+   ],
+   "start": 17,
+   "end": 402,
+   "body": "`DROP TABLE` deletes the table and removes the directory associated with the table from the file system\nif the table is not `EXTERNAL` table. If the table is not present it throws an exception.\n\nIn case of an external table, only the associated metadata information is removed from the metastore database.\n\nIf the table is cached, the command uncaches the table and all its dependents.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-ddl-drop-table.md"
+  },
+  {
+   "section_id": "s007",
+   "path": "docs/streaming-programming-guide.md",
+   "section_path": [
+    "Spark Streaming Programming Guide",
+    "Overview"
+   ],
+   "start": 389,
+   "end": 1988,
+   "body": "Spark Streaming is an extension of the core Spark API that enables scalable, high-throughput,\nfault-tolerant stream processing of live data streams. Data can be ingested from many sources\nlike Kafka, Kinesis, or TCP sockets, and can be processed using complex\nalgorithms expressed with high-level functions like `map`, `reduce`, `join` and `window`.\nFinally, processed data can be pushed out to filesystems, databases,\nand live dashboards. In fact, you can apply Spark's\nmachine learning and\ngraph processing algorithms on data streams.\n\nInternally, it works as follows. Spark Streaming receives live input data streams and divides\nthe data into batches, which are then processed by the Spark engine to generate the final\nstream of results in batches.\n\nSpark Streaming provides a high-level abstraction called *discretized stream* or *DStream*,\nwhich represents a continuous stream of data. DStreams can be created either from input data\nstreams from sources such as Kafka, and Kinesis, or by applying high-level\noperations on other DStreams. Internally, a DStream is represented as a sequence of\nRDDs.\n\nThis guide shows you how to start writing Spark Streaming programs with DStreams. You can\nwrite Spark Streaming programs in Scala, Java or Python (introduced in Spark 1.2),\nall of which are presented in this guide.\nYou will find tabs throughout this guide that let you choose between code snippets of\ndifferent languages.\n\n**Note:** There are a few APIs that are either different or not available in Python. Throughout this guide, you will find the tag Python API highlighting these differences.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/streaming-programming-guide.md"
+  },
+  {
+   "section_id": "s008",
+   "path": "docs/ml-frequent-pattern-mining.md",
+   "section_path": [
+    "Frequent Pattern Mining",
+    "FP-Growth"
+   ],
+   "start": 319,
+   "end": 4196,
+   "body": "The FP-growth algorithm is described in the paper\nHan et al., Mining frequent patterns without candidate generation,\nwhere \"FP\" stands for frequent pattern.\nGiven a dataset of transactions, the first step of FP-growth is to calculate item frequencies and identify frequent items.\nDifferent from Apriori-like algorithms designed for the same purpose,\nthe second step of FP-growth uses a suffix tree (FP-tree) structure to encode transactions without generating candidate sets\nexplicitly, which are usually expensive to generate.\nAfter the second step, the frequent itemsets can be extracted from the FP-tree.\nIn `spark.mllib`, we implemented a parallel version of FP-growth called PFP,\nas described in Li et al., PFP: Parallel FP-growth for query recommendation.\nPFP distributes the work of growing FP-trees based on the suffixes of transactions,\nand hence is more scalable than a single-machine implementation.\nWe refer users to the papers for more details.\n\nFP-growth operates on _itemsets_. An itemset is an unordered collection of unique items. Spark does not have a _set_ type, so itemsets are represented as arrays.\n\n`spark.ml`'s FP-growth implementation takes the following (hyper-)parameters:\n\n* `minSupport`: the minimum support for an itemset to be identified as frequent.\n  For example, if an item appears 3 out of 5 transactions, it has a support of 3/5=0.6.\n* `minConfidence`: minimum confidence for generating Association Rule. Confidence is an indication of how often an\n  association rule has been found to be true. For example, if in the transactions itemset `X` appears 4 times, `X`\n  and `Y` co-occur only 2 times, the confidence for the rule `X => Y` is then 2/4 = 0.5. The parameter will not\n  affect the mining for frequent itemsets, but specify the minimum confidence for generating association rules\n  from frequent itemsets.\n* `numPartitions`: the number of partitions used to distribute the work. By default the param is not set, and\n  number of partitions of the input dataset is used.\n\nThe `FPGrowthModel` provides:\n\n* `freqItemsets`: frequent itemsets in the format of a DataFrame with the following columns:\n  - `items: array`: A given itemset.\n  - `freq: long`: A count of how many times this itemset was seen, given the configured model parameters.\n* `associationRules`: association rules generated with confidence above `minConfidence`, in the format of a DataFrame with the following columns:\n  - `antecedent: array`: The itemset that is the hypothesis of the association rule.\n  - `consequent: array`: An itemset that always contains a single element representing the conclusion of the association rule.\n  - `confidence: double`: Refer to `minConfidence` above for a definition of `confidence`.\n  - `lift: double`: A measure of how well the antecedent predicts the consequent, calculated as `support(antecedent U consequent) / (support(antecedent) x support(consequent))`\n  - `support: double`: Refer to `minSupport` above for a definition of `support`.\n* `transform`: For each transaction in `itemsCol`, the `transform` method will compare its items against the antecedents\n  of each association rule. If the record contains all the antecedents of a specific association rule, the rule\n  will be considered as applicable and its consequents will be added to the prediction result. The transform\n  method will summarize the consequents from all the applicable rules as prediction. The prediction column has\n  the same data type as `itemsCol` and does not contain existing items in the `itemsCol`.\n\n**Examples**\n\npython:\n\nRefer to the Python API docs for more details.\n\n[example: fpgrowth_example.py]\n\nscala:\n\nRefer to the Scala API docs for more details.\n\n[example: FPGrowthExample.scala]\n\njava:\n\nRefer to the Java API docs for more details.\n\n[example: JavaFPGrowthExample.java]\n\nr:\n\nRefer to the R API docs for more details.\n\n[example: fpm.R]",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/ml-frequent-pattern-mining.md"
+  },
+  {
+   "section_id": "s009",
+   "path": "docs/sql-ref-syntax-aux-show-databases.md",
+   "section_path": [
+    "SHOW DATABASES",
+    "Parameters"
+   ],
+   "start": 375,
+   "end": 853,
+   "body": "* **regex_pattern**\n\n    Specifies a regular expression pattern that is used to filter the results of the\n    statement.\n    * Except for `*` and `|` character, the pattern works like a regular expression.\n    * `*` alone matches 0 or more characters and `|` is used to separate multiple different regular expressions,\n       any of which can match.\n    * The leading and trailing blanks are trimmed in the input pattern before processing. The pattern match is case-insensitive.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-aux-show-databases.md"
+  },
+  {
+   "section_id": "s010",
+   "path": "docs/sql-ref-syntax-qry-select.md",
+   "section_path": [
+    "SELECT",
+    "Related Statements"
+   ],
+   "start": 5938,
+   "end": 6371,
+   "body": "* WHERE Clause\n* GROUP BY Clause\n* HAVING Clause\n* ORDER BY Clause\n* SORT BY Clause\n* CLUSTER BY Clause\n* DISTRIBUTE BY Clause\n* LIMIT Clause\n* OFFSET Clause\n* Common Table Expression\n* Hints\n* Inline Table\n* File\n* JOIN\n* LIKE Predicate\n* Set Operators\n* TABLESAMPLE\n* Table-valued Function\n* Window Function\n* CASE Clause\n* PIVOT Clause\n* UNPIVOT Clause\n* LATERAL VIEW Clause\n* TRANSFORM Clause\n* LATERAL Subquery\n* star (*) Clause",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-qry-select.md"
+  },
+  {
+   "section_id": "s011",
+   "path": "docs/sql-ref-syntax-aux-show-functions.md",
+   "section_path": [
+    "SHOW FUNCTIONS",
+    "Parameters"
+   ],
+   "start": 486,
+   "end": 1427,
+   "body": "* **function_kind**\n\n    Specifies the name space of the function to be searched upon. The valid name spaces are :\n\n    * **USER** - Looks up the function(s) among the user defined functions.\n    * **SYSTEM** - Looks up the function(s) among the system defined functions.\n    * **ALL** -  Looks up the function(s) among both user and system defined functions.\n\n* **{ FROM `|` IN } database_name**\n\n  Specifies the database name from which functions are listed.\n\n* **regex_pattern**\n\n    Specifies a regular expression pattern that is used to filter the results of the\n    statement.\n\n    * Except for `*` and `|` character, the pattern works like a regular expression.\n    * `*` alone matches 0 or more characters and `|` is used to separate multiple different regular expressions,\n       any of which can match.\n    * The leading and trailing blanks are trimmed in the input pattern before processing. The pattern match is case-insensitive.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-aux-show-functions.md"
+  },
+  {
+   "section_id": "s012",
+   "path": "docs/sql-data-sources-json.md",
+   "section_path": [
+    "JSON Files"
+   ],
+   "start": 0,
+   "end": 2466,
+   "body": "python:\n\nSpark SQL can automatically infer the schema of a JSON dataset and load it as a DataFrame.\nThis conversion can be done using `SparkSession.read.json` on a JSON file.\n\nNote that the file that is offered as _a json file_ is not a typical JSON file. Each\nline must contain a separate, self-contained valid JSON object. For more information, please see\nJSON Lines text format, also called newline-delimited JSON.\n\nFor a regular multi-line JSON file, set the `multiLine` parameter to `True`.\n\n[example: datasource.py, json_dataset]\n\nscala:\n\nSpark SQL can automatically infer the schema of a JSON dataset and load it as a `Dataset[Row]`.\nThis conversion can be done using `SparkSession.read.json()` on either a `Dataset[String]`,\nor a JSON file.\n\nNote that the file that is offered as _a json file_ is not a typical JSON file. Each\nline must contain a separate, self-contained valid JSON object. For more information, please see\nJSON Lines text format, also called newline-delimited JSON.\n\nFor a regular multi-line JSON file, set the `multiLine` option to `true`.\n\n[example: SQLDataSourceExample.scala, json_dataset]\n\njava:\n\nSpark SQL can automatically infer the schema of a JSON dataset and load it as a `Dataset<Row>`.\nThis conversion can be done using `SparkSession.read().json()` on either a `Dataset<String>`,\nor a JSON file.\n\nNote that the file that is offered as _a json file_ is not a typical JSON file. Each\nline must contain a separate, self-contained valid JSON object. For more information, please see\nJSON Lines text format, also called newline-delimited JSON.\n\nFor a regular multi-line JSON file, set the `multiLine` option to `true`.\n\n[example: JavaSQLDataSourceExample.java, json_dataset]\n\nr:\n\nSpark SQL can automatically infer the schema of a JSON dataset and load it as a DataFrame. using\nthe `read.json()` function, which loads data from a directory of JSON files where each line of the\nfiles is a JSON object.\n\nNote that the file that is offered as _a json file_ is not a typical JSON file. Each\nline must contain a separate, self-contained valid JSON object. For more information, please see\nJSON Lines text format, also called newline-delimited JSON.\n\nFor a regular multi-line JSON file, set a named parameter `multiLine` to `TRUE`.\n\n[example: RSparkSQLExample.R, json_dataset]\n\n```sql\n\nCREATE TEMPORARY VIEW jsonTable\nUSING org.apache.spark.sql.json\nOPTIONS (\n  path \"examples/src/main/resources/people.json\"\n)\n\nSELECT * FROM jsonTable\n\n```",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-data-sources-json.md"
+  },
+  {
+   "section_id": "s013",
+   "path": "docs/sql-ref-functions-udf-scalar.md",
+   "section_path": [
+    "Scalar User Defined Functions (UDFs)",
+    "UserDefinedFunction"
+   ],
+   "start": 320,
+   "end": 732,
+   "body": "To define the properties of a user-defined function, the user can use some of the methods defined in this class.\n\n* **asNonNullable(): UserDefinedFunction**\n\n    Updates UserDefinedFunction to non-nullable.\n\n* **asNondeterministic(): UserDefinedFunction**\n\n    Updates UserDefinedFunction to nondeterministic.\n\n* **withName(name: String): UserDefinedFunction**\n\n    Updates UserDefinedFunction with a given name.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-functions-udf-scalar.md"
+  },
+  {
+   "section_id": "s014",
+   "path": "docs/sql-ref-syntax-ddl-create-table-like.md",
+   "section_path": [
+    "CREATE TABLE LIKE",
+    "Parameters"
+   ],
+   "start": 398,
+   "end": 1197,
+   "body": "* **table_identifier**\n\n    Specifies a table name, which may be optionally qualified with a database name.\n\n    **Syntax:** `[ database_name. ] table_name`\n\n* **USING data_source**\n\n    Data Source is the input format used to create the table. Data source can be CSV, TXT, ORC, JDBC, PARQUET, etc.\n\n* **ROW FORMAT**\n\n    SERDE is used to specify a custom SerDe or the DELIMITED clause in order to use the native SerDe.\n\n* **STORED AS**\n\n    File format for table storage, could be TEXTFILE, ORC, PARQUET, etc.\n\n* **TBLPROPERTIES**\n\n    Table properties that have to be set are specified, such as `created.by.user`, `owner`, etc.\n\n* **LOCATION**\n\n    Path to the directory where table data is stored, which could be a path on distributed storage like HDFS, etc. Location to create an external table.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-ddl-create-table-like.md"
+  },
+  {
+   "section_id": "s015",
+   "path": "docs/index.md",
+   "section_path": [
+    "Apache Spark Overview",
+    "Running the Examples and Shell",
+    "Running Spark Client Applications Anywhere with Spark Connect"
+   ],
+   "start": 2665,
+   "end": 3164,
+   "body": "Spark Connect is a new client-server architecture introduced in Spark 3.4 that decouples Spark\nclient applications and allows remote connectivity to Spark clusters. The separation between\nclient and server allows Spark and its open ecosystem to be leveraged from anywhere, embedded\nin any application. In Spark 3.4, Spark Connect provides DataFrame API coverage for PySpark and\nDataFrame/Dataset API support in Scala.\n\nTo learn more about Spark Connect and how to use it, see Spark Connect Overview.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/index.md"
+  },
+  {
+   "section_id": "s016",
+   "path": "docs/streaming/structured-streaming-state-data-source.md",
+   "section_path": [
+    "State Data Source Integration Guide",
+    "Overview"
+   ],
+   "start": 77,
+   "end": 450,
+   "body": "State data source provides functionality to manipulate the state from the checkpoint.\n\nAs of Spark 4.0, state data source provides the read functionality with a batch query. Additional functionalities including write is on the future roadmap.\n\nNOTE: this data source is currently marked as experimental - source options and the behavior (output) might be subject to change.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/streaming/structured-streaming-state-data-source.md"
+  },
+  {
+   "section_id": "s017",
+   "path": "docs/sql-ref-syntax-qry-select-transform.md",
+   "section_path": [
+    "TRANSFORM",
+    "Hive SerDe behavior"
+   ],
+   "start": 4660,
+   "end": 6035,
+   "body": "When Hive support is enabled and Hive SerDe mode is used:\n - Spark uses the Hive SerDe `org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe` by default, so columns are cast\n to `STRING` and combined by tabs before feeding to the user script.\n - All literal `NULL` values are converted to a string `\\N` in order to differentiate literal `NULL` values from the literal string `NULL`.\n - The standard output of the user script is treated as tab-separated `STRING` columns, any cell containing only a string `\\N` is re-interpreted\n as a `NULL` value, and then the resulting STRING column will be cast to the data type specified in `col_type`.\n - If the actual number of output columns is less than the number of specified output columns,\n  additional output columns will be filled with `NULL`.\n - If the actual number of output columns is more than the number of specified output columns,\n the output columns only select the corresponding columns, and the remaining part will be discarded.\n - If there is no `AS` clause after `USING my_script`, the output schema is `key: STRING, value: STRING`.\n The `key` column contains all the characters before the first tab and the `value` column contains the remaining characters after the first tab.\n If there is no tab, Spark returns the `NULL` value.\n - These defaults can be overridden with `ROW FORMAT SERDE` or `ROW FORMAT DELIMITED`.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-qry-select-transform.md"
+  },
+  {
+   "section_id": "s018",
+   "path": "docs/mllib-guide.md",
+   "section_path": [
+    "MLlib: RDD-based API"
+   ],
+   "start": 0,
+   "end": 1211,
+   "body": "This page documents sections of the MLlib guide for the RDD-based API (the `spark.mllib` package).\nPlease see the MLlib Main Guide for the DataFrame-based API (the `spark.ml` package),\nwhich is now the primary API for MLlib.\n\n* Data types\n* Basic statistics\n  * summary statistics\n  * correlations\n  * stratified sampling\n  * hypothesis testing\n  * streaming significance testing\n  * random data generation\n* Classification and regression\n  * linear models (SVMs, logistic regression, linear regression)\n  * naive Bayes\n  * decision trees\n  * ensembles of trees (Random Forests and Gradient-Boosted Trees)\n  * isotonic regression\n* Collaborative filtering\n  * alternating least squares (ALS)\n* Clustering\n  * k-means\n  * Gaussian mixture\n  * power iteration clustering (PIC)\n  * latent Dirichlet allocation (LDA)\n  * bisecting k-means\n  * streaming k-means\n* Dimensionality reduction\n  * singular value decomposition (SVD)\n  * principal component analysis (PCA)\n* Feature extraction and transformation\n* Frequent pattern mining\n  * FP-growth\n  * association rules\n  * PrefixSpan\n* Evaluation metrics\n* PMML model export\n* Optimization (developer)\n  * stochastic gradient descent\n  * limited-memory BFGS (L-BFGS)",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/mllib-guide.md"
+  },
+  {
+   "section_id": "s019",
+   "path": "docs/sql-data-sources-text.md",
+   "section_path": [
+    "Text Files"
+   ],
+   "start": 0,
+   "end": 674,
+   "body": "Spark SQL provides `spark.read().text(\"file_name\")` to read a file or directory of text files into a Spark DataFrame, and `dataframe.write().text(\"path\")` to write to a text file. When reading a text file, each line becomes each row that has string \"value\" column by default. The line separator can be changed as shown in the example below. The `option()` function can be used to customize the behavior of reading or writing, such as controlling behavior of the line separator, compression, and so on.\n\npython:\n\n[example: datasource.py, text_dataset]\n\nscala:\n\n[example: SQLDataSourceExample.scala, text_dataset]\n\njava:\n\n[example: JavaSQLDataSourceExample.java, text_dataset]",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-data-sources-text.md"
+  },
+  {
+   "section_id": "s020",
+   "path": "docs/tuning.md",
+   "section_path": [
+    "Tuning Spark",
+    "Memory Tuning",
+    "Garbage Collection Tuning"
+   ],
+   "start": 9280,
+   "end": 14479,
+   "body": "JVM garbage collection can be a problem when you have large \"churn\" in terms of the RDDs\nstored by your program. (It is usually not a problem in programs that just read an RDD once\nand then run many operations on it.) When Java needs to evict old objects to make room for new ones, it will\nneed to trace through all your Java objects and find the unused ones. The main point to remember here is\nthat *the cost of garbage collection is proportional to the number of Java objects*, so using data\nstructures with fewer objects (e.g. an array of `Int`s instead of a `LinkedList`) greatly lowers\nthis cost. An even better method is to persist objects in serialized form, as described above: now\nthere will be only *one* object (a byte array) per RDD partition. Before trying other\ntechniques, the first thing to try if GC is a problem is to use serialized caching.\n\nGC can also be a problem due to interference between your tasks' working memory (the\namount of space needed to run the task) and the RDDs cached on your nodes. We will discuss how to control\nthe space allocated to the RDD cache to mitigate this.\n\n**Measuring the Impact of GC**\n\nThe first step in GC tuning is to collect statistics on how frequently garbage collection occurs and the amount of\ntime spent GC. This can be done by adding `-verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps` to the Java options.  (See the configuration guide for info on passing Java options to Spark jobs.)  Next time your Spark job is run, you will see messages printed in the worker's logs\neach time a garbage collection occurs. Note these logs will be on your cluster's worker nodes (in the `stdout` files in\ntheir work directories), *not* on your driver program.\n\n**Advanced GC Tuning**\n\nTo further tune garbage collection, we first need to understand some basic information about memory management in the JVM:\n\n* Java Heap space is divided into two regions Young and Old. The Young generation is meant to hold short-lived objects\n  while the Old generation is intended for objects with longer lifetimes.\n\n* The Young generation is further divided into three regions \\[Eden, Survivor1, Survivor2\\].\n\n* A simplified description of the garbage collection procedure: When Eden is full, a minor GC is run on Eden and objects\n  that are alive from Eden and Survivor1 are copied to Survivor2. The Survivor regions are swapped. If an object is old\n  enough or Survivor2 is full, it is moved to Old. Finally, when Old is close to full, a full GC is invoked.\n\nThe goal of GC tuning in Spark is to ensure that only long-lived RDDs are stored in the Old generation and that\nthe Young generation is sufficiently sized to store short-lived objects. This will help avoid full GCs to collect\ntemporary objects created during task execution. Some steps which may be useful are:\n\n* Check if there are too many garbage collections by collecting GC stats. If a full GC is invoked multiple times\n  before a task completes, it means that there isn't enough memory available for executing tasks.\n\n* If there are too many minor collections but not many major GCs, allocating more memory for Eden would help. You\n  can set the size of the Eden to be an over-estimate of how much memory each task will need. If the size of Eden\n  is determined to be `E`, then you can set the size of the Young generation using the option `-Xmn=4/3*E`. (The scaling\n  up by 4/3 is to account for space used by survivor regions as well.)\n\n* In the GC stats that are printed, if the OldGen is close to being full, reduce the amount of\n  memory used for caching by lowering `spark.memory.fraction`; it is better to cache fewer\n  objects than to slow down task execution. Alternatively, consider decreasing the size of\n  the Young generation. This means lowering `-Xmn` if you've set it as above. If not, try changing the\n  value of the JVM's `NewRatio` parameter. Many JVMs default this to 2, meaning that the Old generation\n  occupies 2/3 of the heap. It should be large enough such that this fraction exceeds `spark.memory.fraction`.\n\n* Since 4.0.0, Spark uses JDK 17 by default, which also makes the G1GC garbage collector the default. Note that with\n  large executor heap sizes, it may be important to increase the G1 region size with `-XX:G1HeapRegionSize`.\n\n* As an example, if your task is reading data from HDFS, the amount of memory used by the task can be estimated using\n  the size of the data block read from HDFS. Note that the size of a decompressed block is often 2 or 3 times the\n  size of the block. So if we wish to have 3 or 4 tasks' worth of working space, and the HDFS block size is 128 MiB,\n  we can estimate the size of Eden to be `4*3*128MiB`.\n\n* Monitor how the frequency and time taken by garbage collection changes with the new settings.\n\nOur experience suggests that the effect of GC tuning depends on your application and the amount of memory available.\nThere are many more tuning options described online,\nbut at a high level, managing how frequently full GC takes place can help in reducing the overhead.\n\nGC tuning flags for executors can be specified by setting `spark.executor.defaultJavaOptions` or `spark.executor.extraJavaOptions` in\na job's configuration.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/tuning.md"
+  },
+  {
+   "section_id": "s021",
+   "path": "docs/rdd-programming-guide.md",
+   "section_path": [
+    "RDD Programming Guide",
+    "Resilient Distributed Datasets (RDDs)",
+    "RDD Operations"
+   ],
+   "start": 25140,
+   "end": 26644,
+   "body": "RDDs support two types of operations: *transformations*, which create a new dataset from an existing one, and *actions*, which return a value to the driver program after running a computation on the dataset. For example, `map` is a transformation that passes each dataset element through a function and returns a new RDD representing the results. On the other hand, `reduce` is an action that aggregates all the elements of the RDD using some function and returns the final result to the driver program (although there is also a parallel `reduceByKey` that returns a distributed dataset).\n\nAll transformations in Spark are lazy, in that they do not compute their results right away. Instead, they just remember the transformations applied to some base dataset (e.g. a file). The transformations are only computed when an action requires a result to be returned to the driver program. This design enables Spark to run more efficiently. For example, we can realize that a dataset created through `map` will be used in a `reduce` and return only the result of the `reduce` to the driver, rather than the larger mapped dataset.\n\nBy default, each transformed RDD may be recomputed each time you run an action on it. However, you may also *persist* an RDD in memory using the `persist` (or `cache`) method, in which case Spark will keep the elements around on the cluster for much faster access the next time you query it. There is also support for persisting RDDs on disk, or replicated across multiple nodes.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/rdd-programming-guide.md"
+  },
+  {
+   "section_id": "s022",
+   "path": "docs/sql-data-sources-load-save-functions.md",
+   "section_path": [
+    "Generic Load/Save Functions"
+   ],
+   "start": 0,
+   "end": 431,
+   "body": "In the simplest form, the default data source (`parquet` unless otherwise configured by\n`spark.sql.sources.default`) will be used for all operations.\n\npython:\n\n[example: datasource.py, generic_load_save_functions]\n\nscala:\n\n[example: SQLDataSourceExample.scala, generic_load_save_functions]\n\njava:\n\n[example: JavaSQLDataSourceExample.java, generic_load_save_functions]\n\nr:\n\n[example: RSparkSQLExample.R, generic_load_save_functions]",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-data-sources-load-save-functions.md"
+  },
+  {
+   "section_id": "s023",
+   "path": "docs/sql-ref-syntax-aux-exec-imm.md",
+   "section_path": [
+    "EXECUTE IMMEDIATE",
+    "Parameters"
+   ],
+   "start": 350,
+   "end": 1151,
+   "body": "* **sql_string**\n\n  A STRING expression producing a well-formed SQL statement.\n\n* **INTO var_name [, …]**\n\n    Optionally returns the results of a single row query into SQL variables.\n    If the query returns no rows the result is NULL.\n    - `var_name`\n    A SQL variable. A variable may not be referenced more than once.\n\n* **USING arg_expr [, …]**\n\n  Optionally, if sql_string contains parameter markers, binds in values to the parameters.\n  - `arg_expr`\n  An expression that binds to a parameter marker.\n  If the parameter markers are unnamed the binding is by position.\n  For unnamed parameter markers, binding is by name.\n  - `alias`\n    Overrides the name used to bind `arg_expr` to a named parameter marker\n\n  Each named parameter marker must be matched once. Not all arg_expr must be matched.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-aux-exec-imm.md"
+  },
+  {
+   "section_id": "s024",
+   "path": "docs/sql-ref-syntax-aux-conf-mgmt-reset.md",
+   "section_path": [
+    "RESET",
+    "Parameters"
+   ],
+   "start": 231,
+   "end": 546,
+   "body": "* **(none)**\n\n    Reset any runtime configurations specific to the current session which were set via the SET command to their default values.\n\n* **configuration_key**\n\n    Restore the value of the `configuration_key` to the default value. If the default value is undefined, the `configuration_key` will be removed.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-aux-conf-mgmt-reset.md"
+  },
+  {
+   "section_id": "s025",
+   "path": "docs/sql-ref-syntax-ddl-alter-table.md",
+   "section_path": [
+    "ALTER TABLE",
+    "RENAME",
+    "Parameters"
+   ],
+   "start": 973,
+   "end": 1350,
+   "body": "* **table_identifier**\n\n    Specifies a table name, which may be optionally qualified with a database name.\n\n    **Syntax:** `[ database_name. ] table_name`\n\n* **partition_spec**\n\n    Partition to be renamed. Note that one can use a typed literal (e.g., date'2019-01-02') in the partition spec.\n\n    **Syntax:** `PARTITION ( partition_col_name  = partition_col_val [ , ... ] )`",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-ddl-alter-table.md"
+  },
+  {
+   "section_id": "s026",
+   "path": "docs/sql-data-sources-orc.md",
+   "section_path": [
+    "ORC Files",
+    "Data Source Option"
+   ],
+   "start": 5872,
+   "end": 6762,
+   "body": "Data source options of ORC can be set via:\n* the `.option`/`.options` methods of\n  * `DataFrameReader`\n  * `DataFrameWriter`\n  * `DataStreamReader`\n  * `DataStreamWriter`\n* `OPTIONS` clause at CREATE TABLE USING DATA_SOURCE\n\nProperty Name | Default | Meaning | Scope\n--- | --- | --- | ---\n`mergeSchema` | `false` | sets whether we should merge schemas collected from all ORC part-files. This will override `spark.sql.orc.mergeSchema`. The default value is specified in `spark.sql.orc.mergeSchema`. | read\n`compression` | `zstd` | compression codec to use when saving to file. This can be one of the known case-insensitive shorten names (none, snappy, zlib, lzo, zstd, lz4 and brotli). This will override `orc.compress` and `spark.sql.orc.compression.codec`. Note that `brotli` requires `brotli4j` to be installed. | write\n\nOther generic options can be found in  Generic File Source Options.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-data-sources-orc.md"
+  },
+  {
+   "section_id": "s027",
+   "path": "docs/sql-ref-syntax-qry-select-lateral-subquery.md",
+   "section_path": [
+    "LATERAL SUBQUERY",
+    "Description"
+   ],
+   "start": 17,
+   "end": 358,
+   "body": "`LATERAL SUBQUERY` is a subquery that is preceded by the keyword `LATERAL`. It provides a way to reference columns in the preceding `FROM` clause.\nWithout the `LATERAL` keyword, subqueries can only refer to columns in the outer query, but not in the `FROM` clause. `LATERAL SUBQUERY` makes the complicated\nqueries simpler and more efficient.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-qry-select-lateral-subquery.md"
+  },
+  {
+   "section_id": "s028",
+   "path": "docs/ml-classification-regression.md",
+   "section_path": [
+    "Classification and regression",
+    "Regression",
+    "Factorization machines regressor"
+   ],
+   "start": 28941,
+   "end": 29759,
+   "body": "For more background and more details about the implementation of factorization machines,\nrefer to the Factorization Machines section.\n\n**Examples**\n\nThe following examples load a dataset in LibSVM format, split it into training and test sets,\ntrain on the first dataset, and then evaluate on the held-out test set.\nWe scale features to be between 0 and 1 to prevent the exploding gradient problem.\n\npython:\n\nRefer to the Python API docs for more details.\n\n[example: fm_regressor_example.py]\n\nscala:\n\nRefer to the Scala API docs for more details.\n\n[example: FMRegressorExample.scala]\n\njava:\n\nRefer to the Java API docs for more details.\n\n[example: JavaFMRegressorExample.java]\n\nr:\n\nRefer to the R API documentation for more details.\n\nNote: At the moment SparkR doesn't support feature scaling.\n\n[example: fmRegressor.R]",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/ml-classification-regression.md"
+  },
+  {
+   "section_id": "s029",
+   "path": "docs/hadoop-provided.md",
+   "section_path": [
+    "Using Spark's \"Hadoop Free\" Build"
+   ],
+   "start": 0,
+   "end": 475,
+   "body": "Spark uses Hadoop client libraries for HDFS and YARN. Starting in version Spark 1.4, the project packages \"Hadoop free\" builds that lets you more easily connect a single Spark binary to any Hadoop version. To use these builds, you need to modify `SPARK_DIST_CLASSPATH` to include Hadoop's package jars. The most convenient place to do this is by adding an entry in `conf/spark-env.sh`.\n\nThis page describes how to connect Spark to Hadoop for different types of distributions.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/hadoop-provided.md"
+  },
+  {
+   "section_id": "s030",
+   "path": "docs/mllib-pmml-model-export.md",
+   "section_path": [
+    "PMML model export - RDD-based API",
+    "spark.mllib supported models"
+   ],
+   "start": 33,
+   "end": 684,
+   "body": "`spark.mllib` supports model export to Predictive Model Markup Language (PMML).\n\nThe table below outlines the `spark.mllib` models that can be exported to PMML and their equivalent PMML model.\n\nspark.mllib model | PMML model\n--- | ---\nKMeansModel | ClusteringModel\nLinearRegressionModel | RegressionModel (functionName=\"regression\")\nRidgeRegressionModel | RegressionModel (functionName=\"regression\")\nLassoModel | RegressionModel (functionName=\"regression\")\nSVMModel | RegressionModel (functionName=\"classification\" normalizationMethod=\"none\")\nBinary LogisticRegressionModel | RegressionModel (functionName=\"classification\" normalizationMethod=\"logit\")",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/mllib-pmml-model-export.md"
+  },
+  {
+   "section_id": "s031",
+   "path": "docs/mllib-decision-tree.md",
+   "section_path": [
+    "Decision Trees - RDD-based API"
+   ],
+   "start": 0,
+   "end": 843,
+   "body": "Decision trees\nand their ensembles are popular methods for the machine learning tasks of\nclassification and regression. Decision trees are widely used since they are easy to interpret,\nhandle categorical features, extend to the multiclass classification setting, do not require\nfeature scaling, and are able to capture non-linearities and feature interactions. Tree ensemble\nalgorithms such as random forests and boosting are among the top performers for classification and\nregression tasks.\n\n`spark.mllib` supports decision trees for binary and multiclass classification and for regression,\nusing both continuous and categorical features. The implementation partitions data by rows,\nallowing distributed training with millions of instances.\n\nEnsembles of trees (Random Forests and Gradient-Boosted Trees) are described in the Ensembles guide.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/mllib-decision-tree.md"
+  },
+  {
+   "section_id": "s032",
+   "path": "docs/sql-ref-syntax-aux-show-tblproperties.md",
+   "section_path": [
+    "SHOW TBLPROPERTIES",
+    "Parameters"
+   ],
+   "start": 318,
+   "end": 1199,
+   "body": "* **table_identifier**\n\n    Specifies the table name of an existing table. The table may be optionally qualified\n    with a database name.\n\n    **Syntax:** `[ database_name. ] table_name`\n\n* **unquoted_property_key**\n\n    Specifies the property key in unquoted form. The key may consists of multiple\n    parts separated by dot.\n\n    **Syntax:** `[ key_part1 ] [ .key_part2 ] [ ... ]`\n\n* **property_key_as_string_literal**\n\n    Specifies a property key value as a string literal.\n\n**Note**\n- Property value returned by this statement excludes some properties\n  that are internal to spark and hive. The excluded properties are :\n  - All the properties that start with prefix `spark.sql`\n  - Property keys such as:  `EXTERNAL`, `comment`\n  - All the properties generated internally by hive to store statistics. Some of these\n    properties are: `numFiles`, `numPartitions`, `numRows`.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-aux-show-tblproperties.md"
+  },
+  {
+   "section_id": "s033",
+   "path": "docs/sql-data-sources-avro.md",
+   "section_path": [
+    "Apache Avro Data Source Guide",
+    "to_avro() and from_avro()"
+   ],
+   "start": 2000,
+   "end": 6755,
+   "body": "The Avro package provides function `to_avro` to encode a column as binary in Avro\nformat, and `from_avro()` to decode Avro binary data into a column. Both functions transform one column to\nanother column, and the input/output SQL data type can be a complex type or a primitive type.\n\nUsing Avro record as columns is useful when reading from or writing to a streaming source like Kafka. Each\nKafka key-value record will be augmented with some metadata, such as the ingestion timestamp into Kafka, the offset in Kafka, etc.\n* If the \"value\" field that contains your data is in Avro, you could use `from_avro()` to extract your data, enrich it, clean it, and then push it downstream to Kafka again or write it out to a file.\n* `to_avro()` can be used to turn structs into Avro records. This method is particularly useful when you would like to re-encode multiple columns into a single one when writing data out to Kafka.\n\n```python\nfrom pyspark.sql.avro.functions import from_avro, to_avro\n\n# `from_avro` requires Avro schema in JSON string format.\njsonFormatSchema = open(\"examples/src/main/resources/user.avsc\", \"r\").read()\n\ndf = spark\\\n  .readStream\\\n  .format(\"kafka\")\\\n  .option(\"kafka.bootstrap.servers\", \"host1:port1,host2:port2\")\\\n  .option(\"subscribe\", \"topic1\")\\\n  .load()\n\n# 1. Decode the Avro data into a struct;\n# 2. Filter by column `favorite_color`;\n# 3. Encode the column `name` in Avro format.\noutput = df\\\n  .select(from_avro(\"value\", jsonFormatSchema).alias(\"user\"))\\\n  .where('user.favorite_color == \"red\"')\\\n  .select(to_avro(\"user.name\").alias(\"value\"))\n\nquery = output\\\n  .writeStream\\\n  .format(\"kafka\")\\\n  .option(\"kafka.bootstrap.servers\", \"host1:port1,host2:port2\")\\\n  .option(\"topic\", \"topic2\")\\\n  .start()\n\n```\n\n```scala\nimport org.apache.spark.sql.avro.functions._\n\n// `from_avro` requires Avro schema in JSON string format.\nval jsonFormatSchema = new String(Files.readAllBytes(Paths.get(\"./examples/src/main/resources/user.avsc\")))\n\nval df = spark\n  .readStream\n  .format(\"kafka\")\n  .option(\"kafka.bootstrap.servers\", \"host1:port1,host2:port2\")\n  .option(\"subscribe\", \"topic1\")\n  .load()\n\n// 1. Decode the Avro data into a struct;\n// 2. Filter by column `favorite_color`;\n// 3. Encode the column `name` in Avro format.\nval output = df\n  .select(from_avro($\"value\", jsonFormatSchema) as $\"user\")\n  .where(\"user.favorite_color == \\\"red\\\"\")\n  .select(to_avro($\"user.name\") as $\"value\")\n\nval query = output\n  .writeStream\n  .format(\"kafka\")\n  .option(\"kafka.bootstrap.servers\", \"host1:port1,host2:port2\")\n  .option(\"topic\", \"topic2\")\n  .start()\n\n```\n\n```java\nimport static org.apache.spark.sql.functions.col;\nimport static org.apache.spark.sql.avro.functions.*;\n\n// `from_avro` requires Avro schema in JSON string format.\nString jsonFormatSchema = new String(Files.readAllBytes(Paths.get(\"./examples/src/main/resources/user.avsc\")));\n\nDataset<Row> df = spark\n  .readStream()\n  .format(\"kafka\")\n  .option(\"kafka.bootstrap.servers\", \"host1:port1,host2:port2\")\n  .option(\"subscribe\", \"topic1\")\n  .load();\n\n// 1. Decode the Avro data into a struct;\n// 2. Filter by column `favorite_color`;\n// 3. Encode the column `name` in Avro format.\nDataset<Row> output = df\n  .select(from_avro(col(\"value\"), jsonFormatSchema).as(\"user\"))\n  .where(\"user.favorite_color == \\\"red\\\"\")\n  .select(to_avro(col(\"user.name\")).as(\"value\"));\n\nStreamingQuery query = output\n  .writeStream()\n  .format(\"kafka\")\n  .option(\"kafka.bootstrap.servers\", \"host1:port1,host2:port2\")\n  .option(\"topic\", \"topic2\")\n  .start();\n\n```\n\n```r\n\n# `from_avro` requires Avro schema in JSON string format.\njsonFormatSchema <- paste0(readLines(\"examples/src/main/resources/user.avsc\"), collapse=\" \")\n\ndf <- read.stream(\n  \"kafka\",\n  kafka.bootstrap.servers = \"host1:port1,host2:port2\",\n  subscribe = \"topic1\"\n)\n\n# 1. Decode the Avro data into a struct;\n# 2. Filter by column `favorite_color`;\n# 3. Encode the column `name` in Avro format.\n\noutput <- select(\n  filter(\n    select(df, alias(from_avro(\"value\", jsonFormatSchema), \"user\")),\n    column(\"user.favorite_color\") == \"red\"\n  ),\n  alias(to_avro(\"user.name\"), \"value\")\n)\n\nwrite.stream(\n  output,\n  \"kafka\",\n  kafka.bootstrap.servers = \"host1:port1,host2:port2\",\n  topic = \"topic2\"\n)\n```\n\n```sql\nCREATE TABLE t AS\n  SELECT NAMED_STRUCT('u', NAMED_STRUCT('member0', member0, 'member1', member1)) AS s\n  FROM VALUES (1, NULL), (NULL,  'a') tab(member0, member1);\nDECLARE avro_schema STRING;\nSET VARIABLE avro_schema =\n  '{ \"type\": \"record\", \"name\": \"struct\", \"fields\": [{ \"name\": \"u\", \"type\": [\"int\",\"string\"] }] }';\n\nSELECT TO_AVRO(s, avro_schema) AS RESULT FROM t;\n\nSELECT FROM_AVRO(result, avro_schema, MAP()).u FROM (\n  SELECT TO_AVRO(s, avro_schema) AS RESULT FROM t);\n\nDROP TEMPORARY VARIABLE avro_schema;\nDROP TABLE t;\n```",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-data-sources-avro.md"
+  },
+  {
+   "section_id": "s034",
+   "path": "docs/mllib-evaluation-metrics.md",
+   "section_path": [
+    "Evaluation Metrics - RDD-based API"
+   ],
+   "start": 0,
+   "end": 761,
+   "body": "`spark.mllib` comes with a number of machine learning algorithms that can be used to learn from and make predictions\non data. When these algorithms are applied to build machine learning models, there is a need to evaluate the performance\nof the model on some criteria, which depends on the application and its requirements. `spark.mllib` also provides a\nsuite of metrics for the purpose of evaluating the performance of machine learning models.\n\nSpecific machine learning algorithms fall under broader types of machine learning applications like classification,\nregression, clustering, etc. Each of these types have well-established metrics for performance evaluation and those\nmetrics that are currently available in `spark.mllib` are detailed in this section.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/mllib-evaluation-metrics.md"
+  },
+  {
+   "section_id": "s035",
+   "path": "docs/sql-ref-syntax-ddl-create-function.md",
+   "section_path": [
+    "CREATE FUNCTION (External)",
+    "Parameters"
+   ],
+   "start": 770,
+   "end": 2511,
+   "body": "* **OR REPLACE**\n\n    If specified, the resources for the function are reloaded. This is mainly useful\n    to pick up any changes made to the implementation of the function. This\n    parameter is mutually exclusive to `IF NOT EXISTS` and can not\n    be specified together.\n\n* **TEMPORARY**\n\n    Indicates the scope of function being created. When `TEMPORARY` is specified, the\n    created function is valid and visible in the current session. No persistent\n    entry is made in the catalog for these kind of functions.\n\n* **IF NOT EXISTS**\n\n    If specified, creates the function only when it does not exist. The creation\n    of function succeeds (no error is thrown) if the specified function already\n    exists in the system. This parameter is mutually exclusive to `OR REPLACE`\n    and can not be specified together.\n\n* **function_name**\n\n    Specifies a name of function to be created. The function name may be optionally qualified with a database name.\n\n    **Syntax:** `[ database_name. ] function_name`\n\n* **class_name**\n\n    Specifies the name of the class that provides the implementation for function to be created.\n    The implementing class should extend one of the base classes as follows:\n\n    * Should extend `UDF` or `UDAF` in `org.apache.hadoop.hive.ql.exec` package.\n    * Should extend `AbstractGenericUDAFResolver`, `GenericUDF`, or\n      `GenericUDTF` in `org.apache.hadoop.hive.ql.udf.generic` package.\n    * Should extend `UserDefinedAggregateFunction` in `org.apache.spark.sql.expressions` package.\n\n* **resource_locations**\n\n    Specifies the list of resources that contain the implementation of the function\n    along with its dependencies.\n\n    **Syntax:** `USING { { (JAR | FILE | ARCHIVE) resource_uri } , ... }`",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-ddl-create-function.md"
+  },
+  {
+   "section_id": "s036",
+   "path": "docs/sql-ref-syntax-ddl-alter-view.md",
+   "section_path": [
+    "ALTER VIEW",
+    "Description",
+    "ALTER View WITH SCHEMA"
+   ],
+   "start": 2957,
+   "end": 3290,
+   "body": "Changes the view's schema binding behavior.\n\nIf the view is cached, the command clears cached data of the view and all its dependents that refer to it. View's cache will be lazily filled when the next time the view is accessed. The command leaves view's dependents as uncached.\n\nThis statement is not supported for `TEMPORARY` views.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-ddl-alter-view.md"
+  },
+  {
+   "section_id": "s037",
+   "path": "docs/sql-migration-guide.md",
+   "section_path": [
+    "Migration Guide: SQL, Datasets and DataFrame",
+    "Upgrading from Spark SQL 3.1 to 3.2"
+   ],
+   "start": 22818,
+   "end": 33872,
+   "body": "- Since Spark 3.2, ADD FILE/JAR/ARCHIVE commands require each path to be enclosed by `\"` or `'` if the path contains whitespaces.\n\n  - Since Spark 3.2, all the supported JDBC dialects use StringType for ROWID. In Spark 3.1 or earlier, Oracle dialect uses StringType and the other dialects use LongType.\n\n  - Since Spark 3.2, Parquet files with nanosecond precision for timestamp type (`INT64 (TIMESTAMP(NANOS, true))`) are not readable. To restore the behavior before Spark 3.2, you can set `spark.sql.legacy.parquet.nanosAsLong` to `true`.\n\n  - In Spark 3.2, PostgreSQL JDBC dialect uses StringType for MONEY and MONEY[] is not supported due to the JDBC driver for PostgreSQL can't handle those types properly. In Spark 3.1 or earlier, DoubleType and ArrayType of DoubleType are used respectively.\n\n  - In Spark 3.2, `spark.sql.adaptive.enabled` is enabled by default. To restore the behavior before Spark 3.2, you can set `spark.sql.adaptive.enabled` to `false`.\n\n  - In Spark 3.2, the following meta-characters are escaped in the `show()` action. In Spark 3.1 or earlier, the following metacharacters are output as it is.\n    * `\\n` (new line)\n    * `\\r` (carriage ret)\n    * `\\t` (horizontal tab)\n    * `\\f` (form feed)\n    * `\\b` (backspace)\n    * `\\u000B` (vertical tab)\n    * `\\u0007` (bell)\n\n  - In Spark 3.2, `ALTER TABLE .. RENAME TO PARTITION` throws `PartitionAlreadyExistsException` instead of `AnalysisException` for tables from Hive external when the target partition already exists.\n\n  - In Spark 3.2, script transform default FIELD DELIMIT is `\\u0001` for no serde mode, serde property `field.delim` is `\\t` for Hive serde mode when user specifies serde. In Spark 3.1 or earlier, the default FIELD DELIMIT is `\\t`, serde property `field.delim` is `\\u0001` for Hive serde mode when user specifies serde.\n\n  - In Spark 3.2, the auto-generated `Cast` (such as those added by type coercion rules) will be stripped when generating column alias names. E.g., `sql(\"SELECT floor(1)\").columns` will be `FLOOR(1)` instead of `FLOOR(CAST(1 AS DOUBLE))`.\n\n  - In Spark 3.2, the output schema of `SHOW TABLES` becomes `namespace: string, tableName: string, isTemporary: boolean`. In Spark 3.1 or earlier, the `namespace` field was named `database` for the builtin catalog, and there is no `isTemporary` field for v2 catalogs. To restore the old schema with the builtin catalog, you can set `spark.sql.legacy.keepCommandOutputSchema` to `true`.\n\n  - In Spark 3.2, the output schema of `SHOW TABLE EXTENDED` becomes `namespace: string, tableName: string, isTemporary: boolean, information: string`. In Spark 3.1 or earlier, the `namespace` field was named `database` for the builtin catalog, and no change for the v2 catalogs. To restore the old schema with the builtin catalog, you can set `spark.sql.legacy.keepCommandOutputSchema` to `true`.\n\n  - In Spark 3.2, the output schema of `SHOW TBLPROPERTIES` becomes `key: string, value: string` whether you specify the table property key or not. In Spark 3.1 and earlier, the output schema of `SHOW TBLPROPERTIES` is `value: string` when you specify the table property key. To restore the old schema with the builtin catalog, you can set `spark.sql.legacy.keepCommandOutputSchema` to `true`.\n\n  - In Spark 3.2, the output schema of `DESCRIBE NAMESPACE` becomes `info_name: string, info_value: string`. In Spark 3.1 or earlier, the `info_name` field was named `database_description_item` and the `info_value` field was named `database_description_value` for the builtin catalog. To restore the old schema with the builtin catalog, you can set `spark.sql.legacy.keepCommandOutputSchema` to `true`.\n\n  - In Spark 3.2, table refreshing clears cached data of the table as well as of all its dependents such as views while keeping the dependents cached. The following commands perform table refreshing:\n    * `ALTER TABLE .. ADD PARTITION`\n    * `ALTER TABLE .. RENAME PARTITION`\n    * `ALTER TABLE .. DROP PARTITION`\n    * `ALTER TABLE .. RECOVER PARTITIONS`\n    * `MSCK REPAIR TABLE`\n    * `LOAD DATA`\n    * `REFRESH TABLE`\n    * `TRUNCATE TABLE`\n    * and the method `spark.catalog.refreshTable`\n  In Spark 3.1 and earlier, table refreshing leaves dependents uncached.\n\n  - In Spark 3.2, the usage of `count(tblName.*)` is blocked to avoid producing ambiguous results. Because `count(*)` and `count(tblName.*)` will output differently if there is any null values. To restore the behavior before Spark 3.2, you can set `spark.sql.legacy.allowStarWithSingleTableIdentifierInCount` to `true`.\n\n  - In Spark 3.2, we support typed literals in the partition spec of INSERT and ADD/DROP/RENAME PARTITION. For example, `ADD PARTITION(dt = date'2020-01-01')` adds a partition with date value `2020-01-01`. In Spark 3.1 and earlier, the partition value will be parsed as string value `date '2020-01-01'`, which is an illegal date value, and we add a partition with null value at the end.\n\n  - In Spark 3.2, `DataFrameNaFunctions.replace()` no longer uses exact string match for the input column names, to match the SQL syntax and support qualified column names. Input column name having a dot in the name (not nested) needs to be escaped with backtick \\`. Now, it throws `AnalysisException` if the column is not found in the data frame schema. It also throws `IllegalArgumentException` if the input column name is a nested column. In Spark 3.1 and earlier, it used to ignore invalid input column name and nested column name.\n\n  - In Spark 3.2, the dates subtraction expression such as `date1 - date2` returns values of `DayTimeIntervalType`. In Spark 3.1 and earlier, the returned type is `CalendarIntervalType`. To restore the behavior before Spark 3.2, you can set `spark.sql.legacy.interval.enabled` to `true`.\n\n  - In Spark 3.2, the timestamps subtraction expression such as `timestamp '2021-03-31 23:48:00' - timestamp '2021-01-01 00:00:00'` returns values of `DayTimeIntervalType`. In Spark 3.1 and earlier, the type of the same expression is `CalendarIntervalType`. To restore the behavior before Spark 3.2, you can set `spark.sql.legacy.interval.enabled` to `true`.\n\n  - In Spark 3.2, `CREATE TABLE .. LIKE ..` command can not use reserved properties. You need their specific clauses to specify them, for example, `CREATE TABLE test1 LIKE test LOCATION 'some path'`. You can set `spark.sql.legacy.notReserveProperties` to `true` to ignore the `ParseException`, in this case, these properties will be silently removed, for example: `TBLPROPERTIES('owner'='yao')` will have no effect. In Spark version 3.1 and below, the reserved properties can be used in `CREATE TABLE .. LIKE ..` command but have no side effects, for example, `TBLPROPERTIES('location'='/tmp')` does not change the location of the table but only create a headless property just like `'a'='b'`.\n\n  - In Spark 3.2, `TRANSFORM` operator can't support alias in inputs. In Spark 3.1 and earlier, we can write script transform like `SELECT TRANSFORM(a AS c1, b AS c2) USING 'cat' FROM TBL`.\n\n  - In Spark 3.2, `TRANSFORM` operator can support `ArrayType/MapType/StructType` without Hive SerDe, in this mode, we use `StructsToJson` to convert `ArrayType/MapType/StructType` column to `STRING` and use `JsonToStructs` to parse `STRING` to `ArrayType/MapType/StructType`. In Spark 3.1, Spark just support case `ArrayType/MapType/StructType` column as `STRING` but can't support parse `STRING` to `ArrayType/MapType/StructType` output columns.\n\n  - In Spark 3.2, the unit-to-unit interval literals like `INTERVAL '1-1' YEAR TO MONTH` and the unit list interval literals like `INTERVAL '3' DAYS '1' HOUR` are converted to ANSI interval types: `YearMonthIntervalType` or `DayTimeIntervalType`. In Spark 3.1 and earlier, such interval literals are converted to `CalendarIntervalType`. To restore the behavior before Spark 3.2, you can set `spark.sql.legacy.interval.enabled` to `true`.\n\n  - In Spark 3.2, the unit list interval literals can not mix year-month fields (YEAR and MONTH) and day-time fields (WEEK, DAY, ..., MICROSECOND). For example, `INTERVAL 1 month 1 hour` is invalid in Spark 3.2. In Spark 3.1 and earlier, there is no such limitation and the literal returns value of `CalendarIntervalType`. To restore the behavior before Spark 3.2, you can set `spark.sql.legacy.interval.enabled` to `true`.\n\n  - In Spark 3.2, Spark supports `DayTimeIntervalType` and `YearMonthIntervalType` as inputs and outputs of `TRANSFORM` clause in Hive `SERDE` mode, the behavior is different between Hive `SERDE` mode and `ROW FORMAT DELIMITED` mode when these two types are used as inputs. In Hive `SERDE` mode, `DayTimeIntervalType` column is converted to `HiveIntervalDayTime`, its string format is `[-]?d h:m:s.n`, but in `ROW FORMAT DELIMITED` mode the format is `INTERVAL '[-]?d h:m:s.n' DAY TO TIME`. In Hive `SERDE` mode, `YearMonthIntervalType` column is converted to `HiveIntervalYearMonth`, its string format is `[-]?y-m`, but in `ROW FORMAT DELIMITED` mode the format is `INTERVAL '[-]?y-m' YEAR TO MONTH`.\n\n  - In Spark 3.2, `hash(0) == hash(-0)` for floating point types. Previously, different values were generated.\n\n  - In Spark 3.2, `CREATE TABLE AS SELECT` with non-empty `LOCATION` will throw `AnalysisException`. To restore the behavior before Spark 3.2, you can set `spark.sql.legacy.allowNonEmptyLocationInCTAS` to `true`.\n\n  - In Spark 3.2, special datetime values such as `epoch`, `today`, `yesterday`, `tomorrow`, and `now` are supported in typed literals or in cast of foldable strings only, for instance, `select timestamp'now'` or `select cast('today' as date)`. In Spark 3.1 and 3.0, such special values are supported in any casts of strings to dates/timestamps. To keep these special values as dates/timestamps in Spark 3.1 and 3.0, you should replace them manually, e.g. `if (c in ('now', 'today'), current_date(), cast(c as date))`.\n\n  - In Spark 3.2, `FloatType` is mapped to `FLOAT` in MySQL. Prior to this, it used to be mapped to `REAL`, which is by default a synonym to `DOUBLE PRECISION` in MySQL.\n\n  - In Spark 3.2, the query executions triggered by `DataFrameWriter` are always named `command` when being sent to `QueryExecutionListener`. In Spark 3.1 and earlier, the name is one of `save`, `insertInto`, `saveAsTable`.\n\n  - In Spark 3.2, `Dataset.unionByName` with `allowMissingColumns` set to true will add missing nested fields to the end of structs. In Spark 3.1, nested struct fields are sorted alphabetically.\n\n  - In Spark 3.2, create/alter view will fail if the input query output columns contain auto-generated alias. This is necessary to make sure the query output column names are stable across different spark versions. To restore the behavior before Spark 3.2, set `spark.sql.legacy.allowAutoGeneratedAliasForView` to `true`.\n\n  - In Spark 3.2, date +/- interval with only day-time fields such as `date '2011-11-11' + interval 12 hours` returns timestamp. In Spark 3.1 and earlier, the same expression returns date. To restore the behavior before Spark 3.2, you can use `cast` to convert timestamp as date.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-migration-guide.md"
+  },
+  {
+   "section_id": "s038",
+   "path": "docs/sql-ref-syntax-qry-select-having.md",
+   "section_path": [
+    "HAVING Clause",
+    "Parameters"
+   ],
+   "start": 247,
+   "end": 620,
+   "body": "* **boolean_expression**\n\n    Specifies any expression that evaluates to a result type `boolean`. Two or\n    more expressions may be combined together using the logical\n    operators ( `AND`, `OR` ).\n\n    **Note**\n\n    The expressions specified in the `HAVING` clause can only refer to:\n    1. Constants\n    2. Expressions that appear in GROUP BY\n    3. Aggregate functions",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-qry-select-having.md"
+  },
+  {
+   "section_id": "s039",
+   "path": "docs/streaming-kinesis-integration.md",
+   "section_path": [
+    "Spark Streaming + Kinesis Integration",
+    "Kinesis retry configuration"
+   ],
+   "start": 14274,
+   "end": 15007,
+   "body": "- `spark.streaming.kinesis.retry.waitTime` : Wait time between Kinesis retries as a duration string. When reading from Amazon Kinesis, users may hit `ProvisionedThroughputExceededException`'s, when consuming faster than 5 transactions/second or, exceeding the maximum read rate of 2 MiB/second. This configuration can be tweaked to increase the sleep between fetches when a fetch fails to reduce these exceptions. Default is \"100ms\".\n - `spark.streaming.kinesis.retry.maxAttempts` : Max number of retries for Kinesis fetches. This config can also be used to tackle the Kinesis `ProvisionedThroughputExceededException`'s in scenarios mentioned above. It can be increased to have more number of retries for Kinesis reads. Default is 3.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/streaming-kinesis-integration.md"
+  },
+  {
+   "section_id": "s040",
+   "path": "docs/graphx-programming-guide.md",
+   "section_path": [
+    "GraphX Programming Guide",
+    "Graph Operators",
+    "Summary List of Operators"
+   ],
+   "start": 8734,
+   "end": 12460,
+   "body": "The following is a quick summary of the functionality defined in both `Graph` and\n`GraphOps` but presented as members of Graph for simplicity. Note that some function\nsignatures have been simplified (e.g., default arguments and type constraints removed) and some more\nadvanced functionality has been removed so please consult the API docs for the official list of\noperations.\n\n```scala\n/** Summary of the functionality in the property graph */\nclass Graph[VD, ED] {\n  // Information about the Graph ===================================================================\n  val numEdges: Long\n  val numVertices: Long\n  val inDegrees: VertexRDD[Int]\n  val outDegrees: VertexRDD[Int]\n  val degrees: VertexRDD[Int]\n  // Views of the graph as collections =============================================================\n  val vertices: VertexRDD[VD]\n  val edges: EdgeRDD[ED]\n  val triplets: RDD[EdgeTriplet[VD, ED]]\n  // Functions for caching graphs ==================================================================\n  def persist(newLevel: StorageLevel = StorageLevel.MEMORY_ONLY): Graph[VD, ED]\n  def cache(): Graph[VD, ED]\n  def unpersistVertices(blocking: Boolean = false): Graph[VD, ED]\n  // Change the partitioning heuristic  ============================================================\n  def partitionBy(partitionStrategy: PartitionStrategy): Graph[VD, ED]\n  // Transform vertex and edge attributes ==========================================================\n  def mapVertices[VD2](map: (VertexId, VD) => VD2): Graph[VD2, ED]\n  def mapEdges[ED2](map: Edge[ED] => ED2): Graph[VD, ED2]\n  def mapEdges[ED2](map: (PartitionID, Iterator[Edge[ED]]) => Iterator[ED2]): Graph[VD, ED2]\n  def mapTriplets[ED2](map: EdgeTriplet[VD, ED] => ED2): Graph[VD, ED2]\n  def mapTriplets[ED2](map: (PartitionID, Iterator[EdgeTriplet[VD, ED]]) => Iterator[ED2])\n    : Graph[VD, ED2]\n  // Modify the graph structure ====================================================================\n  def reverse: Graph[VD, ED]\n  def subgraph(\n      epred: EdgeTriplet[VD,ED] => Boolean = (x => true),\n      vpred: (VertexId, VD) => Boolean = ((v, d) => true))\n    : Graph[VD, ED]\n  def mask[VD2, ED2](other: Graph[VD2, ED2]): Graph[VD, ED]\n  def groupEdges(merge: (ED, ED) => ED): Graph[VD, ED]\n  // Join RDDs with the graph ======================================================================\n  def joinVertices[U](table: RDD[(VertexId, U)])(mapFunc: (VertexId, VD, U) => VD): Graph[VD, ED]\n  def outerJoinVertices[U, VD2](other: RDD[(VertexId, U)])\n      (mapFunc: (VertexId, VD, Option[U]) => VD2)\n    : Graph[VD2, ED]\n  // Aggregate information about adjacent triplets =================================================\n  def collectNeighborIds(edgeDirection: EdgeDirection): VertexRDD[Array[VertexId]]\n  def collectNeighbors(edgeDirection: EdgeDirection): VertexRDD[Array[(VertexId, VD)]]\n  def aggregateMessages[Msg: ClassTag](\n      sendMsg: EdgeContext[VD, ED, Msg] => Unit,\n      mergeMsg: (Msg, Msg) => Msg,\n      tripletFields: TripletFields = TripletFields.All)\n    : VertexRDD[A]\n  // Iterative graph-parallel computation ==========================================================\n  def pregel[A](initialMsg: A, maxIterations: Int, activeDirection: EdgeDirection)(\n      vprog: (VertexId, VD, A) => VD,\n      sendMsg: EdgeTriplet[VD, ED] => Iterator[(VertexId, A)],\n      mergeMsg: (A, A) => A)\n    : Graph[VD, ED]\n  // Basic graph algorithms ========================================================================\n  def pageRank(tol: Double, resetProb: Double = 0.15): Graph[Double, Double]\n  def connectedComponents(): Graph[VertexId, ED]\n  def triangleCount(): Graph[Int, ED]\n  def stronglyConnectedComponents(numIter: Int): Graph[VertexId, ED]\n}\n```",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/graphx-programming-guide.md"
+  },
+  {
+   "section_id": "s041",
+   "path": "docs/sql-ref-syntax-aux-show-columns.md",
+   "section_path": [
+    "SHOW COLUMNS",
+    "Parameters"
+   ],
+   "start": 194,
+   "end": 799,
+   "body": "* **table_identifier**\n\n    Specifies the table name of an existing table. The table may be optionally qualified\n    with a database name.\n\n    **Syntax:** `{ IN | FROM } [ database_name . ] table_name`\n\n    **Note:** Keywords `IN` and `FROM` are interchangeable.\n\n* **database**\n\n    Specifies an optional database name. The table is resolved from this database when it\n    is specified. When this parameter is specified then table\n    name should not be qualified with a different database name.\n\n    **Syntax:** `{ IN | FROM } database_name`\n\n    **Note:** Keywords `IN` and `FROM` are interchangeable.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-aux-show-columns.md"
+  },
+  {
+   "section_id": "s042",
+   "path": "docs/sql-ref-null-semantics.md",
+   "section_path": [
+    "NULL Semantics",
+    "Expressions"
+   ],
+   "start": 3450,
+   "end": 3879,
+   "body": "The comparison operators and logical operators are treated as expressions in\nSpark. Other than these two kinds of expressions, Spark supports other form of\nexpressions such as function expressions, cast expressions, etc. The expressions\nin Spark can be broadly classified as :\n- Null intolerant expressions\n- Expressions that can process `NULL` value operands\n  - The result of these expressions depends on the expression itself.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-null-semantics.md"
+  },
+  {
+   "section_id": "s043",
+   "path": "docs/sql-ref-syntax-aux-cache-refresh-function.md",
+   "section_path": [
+    "REFRESH FUNCTION",
+    "Description"
+   ],
+   "start": 17,
+   "end": 345,
+   "body": "`REFRESH FUNCTION` statement invalidates the cached function entry, which includes a class name\nand resource location of the given function. The invalidated cache is populated right away.\nNote that `REFRESH FUNCTION` only works for permanent functions. Refreshing native functions or temporary functions will cause an exception.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-aux-cache-refresh-function.md"
+  },
+  {
+   "section_id": "s044",
+   "path": "docs/sql-ref-syntax-aux-show-views.md",
+   "section_path": [
+    "SHOW VIEWS",
+    "Parameters"
+   ],
+   "start": 569,
+   "end": 1140,
+   "body": "* **{ FROM `|` IN } database_name**\n\n     Specifies the database name from which views are listed.\n\n* **regex_pattern**\n\n     Specifies the regular expression pattern that is used to filter out unwanted views.\n\n     * Except for `*` and `|` character, the pattern works like a regular expression.\n     * `*` alone matches 0 or more characters and `|` is used to separate multiple different regular expressions,\n       any of which can match.\n     * The leading and trailing blanks are trimmed in the input pattern before processing. The pattern match is case-insensitive.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-aux-show-views.md"
+  },
+  {
+   "section_id": "s045",
+   "path": "docs/sql-ref-syntax-dml-load.md",
+   "section_path": [
+    "LOAD DATA",
+    "Parameters"
+   ],
+   "start": 859,
+   "end": 1638,
+   "body": "* **path**\n\n    Path of the file system. It can be either an absolute or a relative path.\n\n* **table_identifier**\n\n    Specifies a table name, which may be optionally qualified with a database name.\n\n    **Syntax:** `[ database_name. ] table_name`\n\n* **partition_spec**\n\n    An optional parameter that specifies a comma separated list of key and value pairs\n    for partitions.\n\n    **Syntax:** `PARTITION ( partition_col_name = partition_col_val [ , ... ] )`\n\n* **LOCAL**\n\n    If specified, it causes the `INPATH` to be resolved against the local file system, instead of the default file system, which is typically a distributed storage.\n\n* **OVERWRITE**\n\n    By default, new data is appended to the table. If `OVERWRITE` is used, the table is instead overwritten with new data.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-dml-load.md"
+  },
+  {
+   "section_id": "s046",
+   "path": "docs/sql-pipe-syntax.md",
+   "section_path": [
+    "SQL Pipe Syntax",
+    "Syntax",
+    "Overview"
+   ],
+   "start": 27,
+   "end": 930,
+   "body": "Apache Spark supports SQL pipe syntax which allows composing queries from combinations of operators.\n\n* Any query can have zero or more pipe operators as a suffix, delineated by the pipe character `|>`.\n* Each pipe operator starts with one or more SQL keywords followed by its own grammar as described\n  in the table below.\n* Most of these operators reuse existing grammar for standard SQL clauses.\n* Operators can apply in any order, any number of times.\n\n`FROM <tableName>` is now a supported standalone query which behaves the same as\n`TABLE <tableName>`. This provides a convenient starting place to begin a chained pipe SQL query,\nalthough it is possible to add one or more pipe operators to the end of any valid Spark SQL query\nwith the same consistent behavior as written here.\n\nPlease refer to the table at the end of this document for a full list of all supported operators\nand their semantics.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-pipe-syntax.md"
+  },
+  {
+   "section_id": "s047",
+   "path": "docs/sql-ref-syntax-aux-describe-database.md",
+   "section_path": [
+    "DESCRIBE DATABASE",
+    "Description"
+   ],
+   "start": 16,
+   "end": 376,
+   "body": "​\n`DESCRIBE DATABASE` statement returns the metadata of an existing database. The metadata information includes database\nname, database comment, and database location on the filesystem. If the optional `EXTENDED` option is specified, it\nreturns the basic metadata information along with the database properties. The `DATABASE` and `SCHEMA` are\ninterchangeable.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-aux-describe-database.md"
+  },
+  {
+   "section_id": "s048",
+   "path": "docs/quick-start.md",
+   "section_path": [
+    "Quick Start",
+    "Interactive Analysis with the Spark Shell",
+    "Basics"
+   ],
+   "start": 977,
+   "end": 3992,
+   "body": "Spark's shell provides a simple way to learn the API, as well as a powerful tool to analyze data interactively.\nIt is available in either Scala (which runs on the Java VM and is thus a good way to use existing Java libraries)\nor Python. Start it by running the following in the Spark directory:\n\npython:\n\n    ./bin/pyspark\n\nOr if PySpark is installed with pip in your current environment:\n\n    pyspark\n\nSpark's primary abstraction is a distributed collection of items called a Dataset. Datasets can be created from Hadoop InputFormats (such as HDFS files) or by transforming other Datasets. Due to Python's dynamic nature, we don't need the Dataset to be strongly-typed in Python. As a result, all Datasets in Python are Dataset[Row], and we call it `DataFrame` to be consistent with the data frame concept in Pandas and R. Let's make a new DataFrame from the text of the README file in the Spark source directory:\n\n```python\n>>> textFile = spark.read.text(\"README.md\")\n```\n\nYou can get values from DataFrame directly, by calling some actions, or transform the DataFrame to get a new one. For more details, please read the _API doc_.\n\n```python\n>>> textFile.count()  # Number of rows in this DataFrame\n126\n\n>>> textFile.first()  # First row in this DataFrame\nRow(value=u'# Apache Spark')\n```\n\nNow let's transform this DataFrame to a new one. We call `filter` to return a new DataFrame with a subset of the lines in the file.\n\n```python\n>>> linesWithSpark = textFile.filter(textFile.value.contains(\"Spark\"))\n```\n\nWe can chain together transformations and actions:\n\n```python\n>>> textFile.filter(textFile.value.contains(\"Spark\")).count()  # How many lines contain \"Spark\"?\n15\n```\n\nscala:\n\n    ./bin/spark-shell\n\nSpark's primary abstraction is a distributed collection of items called a Dataset. Datasets can be created from Hadoop InputFormats (such as HDFS files) or by transforming other Datasets. Let's make a new Dataset from the text of the README file in the Spark source directory:\n\n```scala\nscala> val textFile = spark.read.textFile(\"README.md\")\ntextFile: org.apache.spark.sql.Dataset[String] = [value: string]\n```\n\nYou can get values from Dataset directly, by calling some actions, or transform the Dataset to get a new one. For more details, please read the _API doc_.\n\n```scala\nscala> textFile.count() // Number of items in this Dataset\nres0: Long = 126 // May be different from yours as README.md will change over time, similar to other outputs\n\nscala> textFile.first() // First item in this Dataset\nres1: String = # Apache Spark\n```\n\nNow let's transform this Dataset into a new one. We call `filter` to return a new Dataset with a subset of the items in the file.\n\n```scala\nscala> val linesWithSpark = textFile.filter(line => line.contains(\"Spark\"))\nlinesWithSpark: org.apache.spark.sql.Dataset[String] = [value: string]\n```\n\nWe can chain together transformations and actions:\n\n```scala\nscala> textFile.filter(line => line.contains(\"Spark\")).count() // How many lines contain \"Spark\"?\nres3: Long = 15\n```",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/quick-start.md"
+  },
+  {
+   "section_id": "s049",
+   "path": "docs/sql-ref-functions-udf-aggregate.md",
+   "section_path": [
+    "User Defined Aggregate Functions (UDAFs)",
+    "Examples",
+    "Untyped User-Defined Aggregate Functions"
+   ],
+   "start": 1810,
+   "end": 2807,
+   "body": "Typed aggregations, as described above, may also be registered as untyped aggregating UDFs for use with DataFrames.\nFor example, a user-defined average for untyped DataFrames can look like:\n\nscala:\n\n  [example: UserDefinedUntypedAggregation.scala, untyped_custom_aggregation]\n\njava:\n\n  [example: JavaUserDefinedUntypedAggregation.java, untyped_custom_aggregation]\n\n```sql\n-- Compile and place UDAF MyAverage in a JAR file called `MyAverage.jar` in /tmp.\nCREATE FUNCTION myAverage AS 'MyAverage' USING JAR '/tmp/MyAverage.jar';\n\nSHOW USER FUNCTIONS;\n+---+\n|          function|\n+---+\n| default.myAverage|\n+---+\n\nCREATE TEMPORARY VIEW employees\nUSING org.apache.spark.sql.json\nOPTIONS (\n    path \"examples/src/main/resources/employees.json\"\n);\n\nSELECT * FROM employees;\n+---+---+\n|   name|salary|\n+---+---+\n|Michael|  3000|\n|   Andy|  4500|\n| Justin|  3500|\n|  Berta|  4000|\n+---+---+\n\nSELECT myAverage(salary) as average_salary FROM employees;\n+---+\n|average_salary|\n+---+\n|        3750.0|\n+---+\n```",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-functions-udf-aggregate.md"
+  },
+  {
+   "section_id": "s050",
+   "path": "docs/sql-ref-syntax-aux-resource-mgmt-add-jar.md",
+   "section_path": [
+    "ADD JAR",
+    "Parameters"
+   ],
+   "start": 196,
+   "end": 1009,
+   "body": "* **file_name**\n\n    The name of the JAR file to be added. It could be either on a local file system or a distributed file system or an Ivy URI.\n    Apache Ivy is a popular dependency manager focusing on flexibility and simplicity. Now we support two parameter in URI query string:\n\n     * transitive: whether to download dependent jars related to your ivy URL. The parameter name is case-sensitive, and the parameter value is case-insensitive. If multiple transitive parameters are specified, the last one wins.\n     * exclude: exclusion list during downloading Ivy URI jar and dependent jars.\n\n    User can write Ivy URI such as:\n\n      ivy://group:module:version\n      ivy://group:module:version?transitive=[true|false]\n      ivy://group:module:version?transitive=[true|false]&exclude=group:module,group:module",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-aux-resource-mgmt-add-jar.md"
+  },
+  {
+   "section_id": "s051",
+   "path": "docs/streaming/additional-information.md",
+   "section_path": [
+    "Structured Streaming Programming Guide",
+    "Related Resources",
+    "Further Reading"
+   ],
+   "start": 1011,
+   "end": 1621,
+   "body": "- See and run the\n  Python/Scala/Java/R\n  examples.\n    - Instructions on how to run Spark examples\n- Read about integrating with Kafka in the Structured Streaming Kafka Integration Guide\n- Read more details about using DataFrames/Datasets in the Spark SQL Programming Guide\n- Third-party Blog Posts\n    - Real-time Streaming ETL with Structured Streaming in Apache Spark 2.1 (Databricks Blog)\n    - Real-Time End-to-End Integration with Apache Kafka in Apache Spark’s Structured Streaming (Databricks Blog)\n    - Event-time Aggregation and Watermarking in Apache Spark’s Structured Streaming (Databricks Blog)",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/streaming/additional-information.md"
+  },
+  {
+   "section_id": "s052",
+   "path": "docs/sql-ref-syntax-aux-conf-mgmt-set-timezone.md",
+   "section_path": [
+    "SET TIME ZONE",
+    "Parameters"
+   ],
+   "start": 218,
+   "end": 1158,
+   "body": "* **LOCAL**\n\n    Set the time zone to the one specified in the java `user.timezone` property, or to the environment variable `TZ` if `user.timezone` is undefined, or to the system time zone if both of them are undefined.\n\n* **timezone_value**\n\n    The ID of session local timezone in the format of either region-based zone IDs or zone offsets. Region IDs must have the form 'area/city', such as 'America/Los_Angeles'. Zone offsets must be in the format '`(+|-)HH`', '`(+|-)HH:mm`' or '`(+|-)HH:mm:ss`', e.g '-08', '+01:00' or '-13:33:33'. Also, 'UTC' and 'Z' are supported as aliases of '+00:00'. Other short names are not recommended to use because they can be ambiguous.\n\n* **interval_literal**\n\n    The interval literal represents the difference between the session time zone to the 'UTC'. It must be in the range of [-18, 18] hours and max to second precision, e.g. `INTERVAL 2 HOURS 30 MINUTES` or `INTERVAL '15:40:32' HOUR TO SECOND`.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-aux-conf-mgmt-set-timezone.md"
+  },
+  {
+   "section_id": "s053",
+   "path": "docs/sql-ref-syntax-ddl-create-database.md",
+   "section_path": [
+    "CREATE DATABASE",
+    "Parameters"
+   ],
+   "start": 379,
+   "end": 1216,
+   "body": "* **database_name**\n\n    Specifies the name of the database to be created.\n\n* **IF NOT EXISTS**\n\n    Creates a database with the given name if it does not exist. If a database with the same name already exists, nothing will happen.\n\n* **database_directory**\n\n    Path of the file system in which the specified database is to be created. If the specified path does not exist in the underlying file system, this command creates a directory with the path. If the location is not specified, the database will be created in the default warehouse directory, whose path is configured by the static configuration spark.sql.warehouse.dir.\n\n* **database_comment**\n\n    Specifies the description for the database.\n\n* **WITH DBPROPERTIES ( property_name=property_value [ , ... ] )**\n\n    Specifies the properties for the database in key-value pairs.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-ddl-create-database.md"
+  },
+  {
+   "section_id": "s054",
+   "path": "docs/ml-guide.md",
+   "section_path": [
+    "Machine Learning Library (MLlib) Guide",
+    "Highlights in 3.0"
+   ],
+   "start": 3134,
+   "end": 4716,
+   "body": "The list below highlights some of the new features and enhancements added to MLlib in the `3.0`\nrelease of Spark:\n\n* Multiple columns support was added to `Binarizer` (SPARK-23578), `StringIndexer` (SPARK-11215), `StopWordsRemover` (SPARK-29808) and PySpark `QuantileDiscretizer` (SPARK-22796).\n* Tree-Based Feature Transformation was added\n(SPARK-13677).\n* Two new evaluators `MultilabelClassificationEvaluator` (SPARK-16692) and `RankingEvaluator` (SPARK-28045) were added.\n* Sample weights support was added in `DecisionTreeClassifier/Regressor` (SPARK-19591), `RandomForestClassifier/Regressor` (SPARK-9478), `GBTClassifier/Regressor` (SPARK-9612),  `MulticlassClassificationEvaluator` (SPARK-24101), `RegressionEvaluator` (SPARK-24102), `BinaryClassificationEvaluator` (SPARK-24103), `BisectingKMeans` (SPARK-30351), `KMeans` (SPARK-29967) and `GaussianMixture` (SPARK-30102).\n* R API for `PowerIterationClustering` was added\n(SPARK-19827).\n* Added Spark ML listener for tracking ML pipeline status\n(SPARK-23674).\n* Fit with validation set was added to Gradient Boosted Trees in Python\n(SPARK-24333).\n* `RobustScaler` transformer was added\n(SPARK-28399).\n* `Factorization Machines` classifier and regressor were added\n(SPARK-29224).\n* Gaussian Naive Bayes Classifier (SPARK-16872) and Complement Naive Bayes Classifier (SPARK-29942) were added.\n* ML function parity between Scala and Python\n(SPARK-28958).\n* `predictRaw` is made public in all the Classification models. `predictProbability` is made public in all the Classification models except `LinearSVCModel`\n(SPARK-30358).",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/ml-guide.md"
+  },
+  {
+   "section_id": "s055",
+   "path": "docs/mllib-dimensionality-reduction.md",
+   "section_path": [
+    "Dimensionality Reduction - RDD-based API",
+    "Singular value decomposition (SVD)"
+   ],
+   "start": 341,
+   "end": 1179,
+   "body": "Singular value decomposition (SVD)\nfactorizes a matrix into three matrices: $U$, $\\Sigma$, and $V$ such that\n\n`\\[\nA = U \\Sigma V^T,\n\\]`\n\nwhere\n\n* $U$ is an orthonormal matrix, whose columns are called left singular vectors,\n* $\\Sigma$ is a diagonal matrix with non-negative diagonals in descending order,\n  whose diagonals are called singular values,\n* $V$ is an orthonormal matrix, whose columns are called right singular vectors.\n\nFor large matrices, usually we don't need the complete factorization but only the top singular\nvalues and its associated singular vectors.  This can save storage, de-noise\nand recover the low-rank structure of the matrix.\n\nIf we keep the top $k$ singular values, then the dimensions of the resulting low-rank matrix will be:\n\n* `$U$`: `$m \\times k$`,\n* `$\\Sigma$`: `$k \\times k$`,\n* `$V$`: `$n \\times k$`.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/mllib-dimensionality-reduction.md"
+  },
+  {
+   "section_id": "s056",
+   "path": "docs/mllib-collaborative-filtering.md",
+   "section_path": [
+    "Collaborative Filtering - RDD-based API",
+    "Collaborative filtering",
+    "Scaling of the regularization parameter"
+   ],
+   "start": 2281,
+   "end": 2830,
+   "body": "Since v1.1, we scale the regularization parameter `lambda` in solving each least squares problem by\nthe number of ratings the user generated in updating user factors,\nor the number of ratings the product received in updating product factors.\nThis approach is named \"ALS-WR\" and discussed in the paper\n\"Large-Scale Parallel Collaborative Filtering for the Netflix Prize\".\nIt makes `lambda` less dependent on the scale of the dataset, so we can apply the\nbest parameter learned from a sampled subset to the full dataset and expect similar performance.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/mllib-collaborative-filtering.md"
+  },
+  {
+   "section_id": "s057",
+   "path": "docs/mllib-feature-extraction.md",
+   "section_path": [
+    "Feature Extraction and Transformation - RDD-based API",
+    "StandardScaler",
+    "Model Fitting"
+   ],
+   "start": 5707,
+   "end": 6587,
+   "body": "`StandardScaler` has the\nfollowing parameters in the constructor:\n\n* `withMean` False by default. Centers the data with mean before scaling. It will build a dense\noutput, so take care when applying to sparse input.\n* `withStd` True by default. Scales the data to unit standard deviation.\n\nWe provide a `fit` method in\n`StandardScaler` which can take an input of `RDD[Vector]`, learn the summary statistics, and then\nreturn a model which can transform the input dataset into unit standard deviation and/or zero mean features\ndepending how we configure the `StandardScaler`.\n\nThis model implements `VectorTransformer`\nwhich can apply the standardization on a `Vector` to produce a transformed `Vector` or on\nan `RDD[Vector]` to produce a transformed `RDD[Vector]`.\n\nNote that if the variance of a feature is zero, it will return default `0.0` value in the `Vector`\nfor that feature.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/mllib-feature-extraction.md"
+  },
+  {
+   "section_id": "s058",
+   "path": "docs/cluster-overview.md",
+   "section_path": [
+    "Cluster Mode Overview",
+    "Cluster Manager Types"
+   ],
+   "start": 2433,
+   "end": 2765,
+   "body": "The system currently supports several cluster managers:\n\n* Standalone -- a simple cluster manager included with Spark that makes it\n  easy to set up a cluster.\n* Hadoop YARN -- the resource manager in Hadoop 3.\n* Kubernetes -- an open-source system for automating deployment, scaling,\n  and management of containerized applications.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/cluster-overview.md"
+  },
+  {
+   "section_id": "s059",
+   "path": "docs/streaming/getting-started.md",
+   "section_path": [
+    "Structured Streaming Programming Guide",
+    "Programming Model",
+    "Basic Concepts"
+   ],
+   "start": 10891,
+   "end": 13869,
+   "body": "Consider the input data stream as the \"Input Table\". Every data item that is\narriving on the stream is like a new row being appended to the Input Table.\n\nA query on the input will generate the \"Result Table\". Every trigger interval (say, every 1 second), new rows get appended to the Input Table, which eventually updates the Result Table. Whenever the result table gets updated, we would want to write the changed result rows to an external sink.\n\nThe \"Output\" is defined as what gets written out to the external storage. The output can be defined in a different mode:\n\n  - *Complete Mode* - The entire updated Result Table will be written to the external storage. It is up to the storage connector to decide how to handle writing of the entire table.\n\n  - *Append Mode* - Only the new rows appended in the Result Table since the last trigger will be written to the external storage. This is applicable only on the queries where existing rows in the Result Table are not expected to change.\n\n  - *Update Mode* - Only the rows that were updated in the Result Table since the last trigger will be written to the external storage (available since Spark 2.1.1). Note that this is different from the Complete Mode in that this mode only outputs the rows that have changed since the last trigger. If the query doesn't contain aggregations, it will be equivalent to Append mode.\n\nNote that each mode is applicable on certain types of queries. This is discussed in detail later.\n\nTo illustrate the use of this model, let’s understand the model in context of\nthe Quick Example above. The first `lines` DataFrame is the input table, and\nthe final `wordCounts` DataFrame is the result table. Note that the query on\nstreaming `lines` DataFrame to generate `wordCounts` is *exactly the same* as\nit would be a static DataFrame. However, when this query is started, Spark\nwill continuously check for new data from the socket connection. If there is\nnew data, Spark will run an \"incremental\" query that combines the previous\nrunning counts with the new data to compute updated counts, as shown below.\n\n**Note that Structured Streaming does not materialize the entire table**. It reads the latest\navailable data from the streaming data source, processes it incrementally to update the result,\nand then discards the source data. It only keeps around the minimal intermediate *state* data as\nrequired to update the result (e.g. intermediate counts in the earlier example).\n\nThis model is significantly different from many other stream processing\nengines. Many streaming systems require the user to maintain running\naggregations themselves, thus having to reason about fault-tolerance, and\ndata consistency (at-least-once, or at-most-once, or exactly-once). In this\nmodel, Spark is responsible for updating the Result Table when there is new\ndata, thus relieving the users from reasoning about it. As an example, let’s\nsee how this model handles event-time based processing and late arriving data.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/streaming/getting-started.md"
+  },
+  {
+   "section_id": "s060",
+   "path": "docs/sql-ref-syntax-aux-cache-cache-table.md",
+   "section_path": [
+    "CACHE TABLE",
+    "Parameters"
+   ],
+   "start": 396,
+   "end": 1571,
+   "body": "* **LAZY**\n\n    Only cache the table when it is first used, instead of immediately.\n\n* **table_identifier**\n\n    Specifies the table or view name to be cached. The table or view name may be optionally qualified with a database name.\n\n    **Syntax:** `[ database_name. ] table_name`\n\n* **OPTIONS ( 'storageLevel' [ = ] value )**\n\n    `OPTIONS` clause with `storageLevel` key and value pair. A Warning is issued when a key other than `storageLevel` is used. The valid options for `storageLevel` are:\n     * `NONE`\n     * `DISK_ONLY`\n     * `DISK_ONLY_2`\n     * `DISK_ONLY_3`\n     * `MEMORY_ONLY`\n     * `MEMORY_ONLY_2`\n     * `MEMORY_ONLY_SER`\n     * `MEMORY_ONLY_SER_2`\n     * `MEMORY_AND_DISK`\n     * `MEMORY_AND_DISK_2`\n     * `MEMORY_AND_DISK_SER`\n     * `MEMORY_AND_DISK_SER_2`\n     * `OFF_HEAP`\n\n    An Exception is thrown when an invalid value is set for `storageLevel`. If `storageLevel` is not explicitly set using `OPTIONS` clause, the default `storageLevel` is set to `MEMORY_AND_DISK`.\n\n* **query**\n\n    A query that produces the rows to be cached. It can be in one of following formats:\n    * a `SELECT` statement\n    * a `TABLE` statement\n    * a `FROM` statement",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-aux-cache-cache-table.md"
+  },
+  {
+   "section_id": "s061",
+   "path": "docs/sql-data-sources-binaryFile.md",
+   "section_path": [
+    "Binary File Data Source"
+   ],
+   "start": 0,
+   "end": 1193,
+   "body": "Since Spark 3.0, Spark supports binary file data source,\nwhich reads binary files and converts each file into a single record that contains the raw content\nand metadata of the file.\nIt produces a DataFrame with the following columns and possibly partition columns:\n* `path`: StringType\n* `modificationTime`: TimestampType\n* `length`: LongType\n* `content`: BinaryType\n\nTo read whole binary files, you need to specify the data source `format` as `binaryFile`.\nTo load files with paths matching a given glob pattern while keeping the behavior of partition discovery,\nyou can use the general data source option `pathGlobFilter`.\nFor example, the following code reads all PNG files from the input directory:\n\n```python\n\nspark.read.format(\"binaryFile\").option(\"pathGlobFilter\", \"*.png\").load(\"/path/to/data\")\n\n```\n\n```scala\n\nspark.read.format(\"binaryFile\").option(\"pathGlobFilter\", \"*.png\").load(\"/path/to/data\")\n\n```\n\n```java\n\nspark.read().format(\"binaryFile\").option(\"pathGlobFilter\", \"*.png\").load(\"/path/to/data\");\n\n```\n\n```r\n\nread.df(\"/path/to/data\", source = \"binaryFile\", pathGlobFilter = \"*.png\")\n\n```\n\nBinary file data source does not support writing a DataFrame back to the original files.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-data-sources-binaryFile.md"
+  },
+  {
+   "section_id": "s062",
+   "path": "docs/sql-distributed-sql-engine.md",
+   "section_path": [
+    "Distributed SQL Engine",
+    "Running the Thrift JDBC/ODBC server"
+   ],
+   "start": 274,
+   "end": 2615,
+   "body": "The Thrift JDBC/ODBC server implemented here corresponds to the `HiveServer2`\nin built-in Hive. You can test the JDBC server with the beeline script that comes with either Spark or compatible Hive.\n\nTo start the JDBC/ODBC server, run the following in the Spark directory:\n\n    ./sbin/start-thriftserver.sh\n\nThis script accepts all `bin/spark-submit` command line options, plus a `--hiveconf` option to\nspecify Hive properties. You may run `./sbin/start-thriftserver.sh --help` for a complete list of\nall available options. By default, the server listens on localhost:10000. You may override this\nbehaviour via either environment variables, i.e.:\n\n```bash\nexport HIVE_SERVER2_THRIFT_PORT=<listening-port>\nexport HIVE_SERVER2_THRIFT_BIND_HOST=<listening-host>\n./sbin/start-thriftserver.sh \\\n  --master <master-uri> \\\n  ...\n```\n\nor system properties:\n\n```bash\n./sbin/start-thriftserver.sh \\\n  --hiveconf hive.server2.thrift.port=<listening-port> \\\n  --hiveconf hive.server2.thrift.bind.host=<listening-host> \\\n  --master <master-uri>\n  ...\n```\n\nNow you can use beeline to test the Thrift JDBC/ODBC server:\n\n    ./bin/beeline\n\nConnect to the JDBC/ODBC server in beeline with:\n\n    beeline> !connect jdbc:hive2://localhost:10000\n\nBeeline will ask you for a username and password. In non-secure mode, simply enter the username on\nyour machine and a blank password. For secure mode, please follow the instructions given in the\nbeeline documentation.\n\nConfiguration of Hive is done by placing your `hive-site.xml`, `core-site.xml` and `hdfs-site.xml` files in `conf/`.\n\nYou may also use the beeline script that comes with Hive.\n\nThrift JDBC server also supports sending thrift RPC messages over HTTP transport.\nUse the following setting to enable HTTP mode as system property or in `hive-site.xml` file in `conf/`:\n\n    hive.server2.transport.mode - Set this to value: http\n    hive.server2.thrift.http.port - HTTP port number to listen on; default is 10001\n    hive.server2.http.endpoint - HTTP endpoint; default is cliservice\n\nTo test, use beeline to connect to the JDBC/ODBC server in http mode with:\n\n    beeline> !connect jdbc:hive2://<host>:<port>/<database>;transportMode=http;httpPath=<http_endpoint>\n\nIf you closed a session and do CTAS, you must set `fs.%s.impl.disable.cache` to true in `hive-site.xml`.\nSee more details in [SPARK-21067].",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-distributed-sql-engine.md"
+  },
+  {
+   "section_id": "s063",
+   "path": "docs/sql-ref-syntax-aux-describe-function.md",
+   "section_path": [
+    "DESCRIBE FUNCTION",
+    "Parameters"
+   ],
+   "start": 438,
+   "end": 814,
+   "body": "* **function_name**\n\n    Specifies a name of an existing function in the system. The function name may be\n    optionally qualified with a database name. If `function_name` is qualified with\n    a database then the function is resolved from the user specified database, otherwise\n    it is resolved from the current database.\n\n    **Syntax:** `[ database_name. ] function_name`",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-aux-describe-function.md"
+  },
+  {
+   "section_id": "s064",
+   "path": "docs/sql-data-sources-jdbc.md",
+   "section_path": [
+    "JDBC To Other Databases",
+    "Data Type Mapping",
+    "Mapping Spark SQL Data Types from PostgreSQL"
+   ],
+   "start": 19251,
+   "end": 22043,
+   "body": "The below table describes the data type conversions from PostgreSQL data types to Spark SQL Data Types,\nwhen reading data from a Postgres table using the built-in jdbc data source with the PostgreSQL JDBC Driver\nas the activated JDBC Driver. Note that, different JDBC drivers, or different versions might result slightly different.\n\nPostgreSQL Data Type | Spark SQL Data Type | Remarks\n--- | --- | ---\nboolean | BooleanType\nsmallint, smallserial | ShortType\ninteger, serial | IntegerType\nbigint, bigserial | LongType\nfloat, float(p), real | FloatType | 1 ≤ p ≤ 24\nfloat(p) | DoubleType | 25 ≤ p ≤ 53\ndouble precision | DoubleType\nnumeric, decimal | DecimalType | Since PostgreSQL 15, 's' can be negative. If 's<0' it'll be adjusted to DecimalType(min(p-s, 38), 0); Otherwise, DecimalType(p, s); If 'p>38', the fraction part will be truncated if exceeded. And if any value of this column have an actual precision greater 38 will fail with NUMERIC_VALUE_OUT_OF_RANGE.WITHOUT_SUGGESTION error.; Special numeric values, 'NaN', 'infinity' and '-infinity' is not supported\ncharacter varying(n), varchar(n) | VarcharType(n)\ncharacter(n), char(n), bpchar(n) | CharType(n)\nbpchar | StringType\ntext | StringType\nbytea | BinaryType\ndate | DateType\ntimestamp [ (p) ] [ without time zone ] | TimestampType | (Default)preferTimestampNTZ=false or spark.sql.timestampType=TIMESTAMP_LTZ\ntimestamp [ (p) ] [ without time zone ] | TimestampNTZType | preferTimestampNTZ=true or spark.sql.timestampType=TIMESTAMP_NTZ\ntimestamp [ (p) ] with time zone | TimestampType\ntime [ (p) ] [ without time zone ] | TimestampType | (Default)preferTimestampNTZ=false or spark.sql.timestampType=TIMESTAMP_LTZ\ntime [ (p) ] [ without time zone ] | TimestampNTZType | preferTimestampNTZ=true or spark.sql.timestampType=TIMESTAMP_NTZ\ntime [ (p) ] with time zone | TimestampType\ninterval [ fields ] [ (p) ] | StringType\nENUM | StringType\nmoney | StringType | Monetary Types\ninet, cidr, macaddr, macaddr8 | StringType | Network Address Types\npoint, line, lseg, box, path, polygon, circle | StringType | Geometric Types\npg_lsn | StringType | Log Sequence Number\nbit, bit(1) | BooleanType\nbit( >1 ) | BinaryType\nbit varying( any ) | BinaryType\ntsvector, tsquery | StringType | Text Search Types\nuuid | StringType | Universally Unique Identifier Type\nxml | StringType | XML Type\njson, jsonb | StringType | JSON Types\narray | ArrayType\nComposite Types | StringType | Types created by CREATE TYPE syntax.\nint4range, int8range, numrange, tsrange, tstzrange, daterange, etc | StringType | Range Types\nDomain Types | (Decided by the underlying type)\noid | DecimalType(20, 0) | Object Identifier Types\nregxxx | StringType | Object Identifier Types\nvoid | NullType | void is a Postgres pseudo type, other pseudo types have not yet been verified",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-data-sources-jdbc.md"
+  },
+  {
+   "section_id": "s065",
+   "path": "docs/sql-ref-syntax-qry-select-sortby.md",
+   "section_path": [
+    "SORT BY Clause",
+    "Parameters"
+   ],
+   "start": 420,
+   "end": 1467,
+   "body": "* **SORT BY**\n\n    Specifies a comma-separated list of expressions along with optional parameters `sort_direction`\n    and `nulls_sort_order` which are used to sort the rows within each partition.\n\n* **sort_direction**\n\n    Optionally specifies whether to sort the rows in ascending or descending\n    order. The valid values for the sort direction are `ASC` for ascending\n    and `DESC` for descending. If sort direction is not explicitly specified, then by default\n    rows are sorted ascending.\n\n    **Syntax:** `[ ASC | DESC ]`\n\n* **nulls_sort_order**\n\n    Optionally specifies whether NULL values are returned before/after non-NULL values. If\n    `null_sort_order` is not specified, then NULLs sort first if sort order is\n    `ASC` and NULLS sort last if sort order is `DESC`.\n\n    1. If `NULLS FIRST` is specified, then NULL values are returned first\n       regardless of the sort order.\n    2. If `NULLS LAST` is specified, then NULL values are returned last regardless of\n       the sort order.\n\n    **Syntax:** `[ NULLS { FIRST | LAST } ]`",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-qry-select-sortby.md"
+  },
+  {
+   "section_id": "s066",
+   "path": "docs/sql-ref-syntax-ddl-create-table-hiveformat.md",
+   "section_path": [
+    "CREATE HIVEFORMAT TABLE",
+    "Parameters"
+   ],
+   "start": 912,
+   "end": 2507,
+   "body": "* **table_identifier**\n\n    Specifies a table name, which may be optionally qualified with a database name.\n\n    **Syntax:** `[ database_name. ] table_name`\n\n* **EXTERNAL**\n\n    Table is defined using the path provided as `LOCATION`, does not use default location for this table.\n\n* **PARTITIONED BY**\n\n    Partitions are created on the table, based on the columns specified.\n\n* **CLUSTERED BY**\n\n    Partitions created on the table will be bucketed into fixed buckets based on the column specified for bucketing.\n\n    **NOTE:** Bucketing is an optimization technique that uses buckets (and bucketing columns) to determine data partitioning and avoid data shuffle.\n\n* **SORTED BY**\n\n    Specifies an ordering of bucket columns. Optionally, one can use ASC for an ascending order or DESC for a descending order after any column names in the SORTED BY clause.\n    If not specified, ASC is assumed by default.\n\n* **INTO num_buckets BUCKETS**\n\n    Specifies buckets numbers, which is used in `CLUSTERED BY` clause.\n\n* **row_format**\n\n    Specifies the row format for input and output. See HIVE FORMAT for more syntax details.\n\n* **STORED AS**\n\n    File format for table storage, could be TEXTFILE, ORC, PARQUET, etc.\n\n* **LOCATION**\n\n    Path to the directory where table data is stored, which could be a path on distributed storage like HDFS, etc.\n\n* **COMMENT**\n\n    A string literal to describe the table.\n\n* **TBLPROPERTIES**\n\n    A list of key-value pairs that is used to tag the table definition.\n\n* **AS select_statement**\n\n    The table is populated using the data from the select statement.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-ddl-create-table-hiveformat.md"
+  },
+  {
+   "section_id": "s067",
+   "path": "docs/sql-data-sources-hive-tables.md",
+   "section_path": [
+    "Hive Tables",
+    "Specifying storage format for Hive tables"
+   ],
+   "start": 1945,
+   "end": 3819,
+   "body": "When you create a Hive table, you need to define how this table should read/write data from/to file system,\ni.e. the \"input format\" and \"output format\". You also need to define how this table should deserialize the data\nto rows, or serialize rows to data, i.e. the \"serde\". The following options can be used to specify the storage\nformat(\"serde\", \"input format\", \"output format\"), e.g. `CREATE TABLE src(id int) USING hive OPTIONS(fileFormat 'parquet')`.\nBy default, we will read the table files as plain text. Note that, Hive storage handler is not supported yet when\ncreating table, you can create a table using storage handler at Hive side, and use Spark SQL to read it.\n\nProperty Name | Meaning\n--- | ---\n`fileFormat` | A fileFormat is kind of a package of storage format specifications, including \"serde\", \"input format\" and \"output format\". Currently we support 6 fileFormats: 'sequencefile', 'rcfile', 'orc', 'parquet', 'textfile' and 'avro'.\n`inputFormat, outputFormat` | These 2 options specify the name of a corresponding `InputFormat` and `OutputFormat` class as a string literal, e.g. `org.apache.hadoop.hive.ql.io.orc.OrcInputFormat`. These 2 options must be appeared in a pair, and you can not specify them if you already specified the `fileFormat` option.\n`serde` | This option specifies the name of a serde class. When the `fileFormat` option is specified, do not specify this option if the given `fileFormat` already include the information of serde. Currently \"sequencefile\", \"textfile\" and \"rcfile\" don't include the serde information and you can use this option with these 3 fileFormats.\n`fieldDelim, escapeDelim, collectionDelim, mapkeyDelim, lineDelim` | These options can only be used with \"textfile\" fileFormat. They define how to read delimited files into rows.\n\nAll other properties defined with `OPTIONS` will be regarded as Hive serde properties.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-data-sources-hive-tables.md"
+  },
+  {
+   "section_id": "s068",
+   "path": "docs/ml-advanced.md",
+   "section_path": [
+    "Advanced topics",
+    "Optimization of linear methods (developer)",
+    "Normal equation solver for weighted least squares"
+   ],
+   "start": 1126,
+   "end": 3695,
+   "body": "MLlib implements normal equation solver for weighted least squares by WeightedLeastSquares.\n\nGiven $n$ weighted observations $(w_i, a_i, b_i)$:\n\n* $w_i$ the weight of i-th observation\n* $a_i$ the features vector of i-th observation\n* $b_i$ the label of i-th observation\n\nThe number of features for each observation is $m$. We use the following weighted least squares formulation:\n`\\[\n\\min_{\\mathbf{x}}\\frac{1}{2} \\sum_{i=1}^n \\frac{w_i(\\mathbf{a}_i^T \\mathbf{x} -b_i)^2}{\\sum_{k=1}^n w_k} + \\frac{\\lambda}{\\delta}\\left[\\frac{1}{2}(1 - \\alpha)\\sum_{j=1}^m(\\sigma_j x_j)^2 + \\alpha\\sum_{j=1}^m |\\sigma_j x_j|\\right]\n\\]`\nwhere $\\lambda$ is the regularization parameter, $\\alpha$ is the elastic-net mixing parameter, $\\delta$ is the population standard deviation of the label\nand $\\sigma_j$ is the population standard deviation of the j-th feature column.\n\nThis objective function requires only one pass over the data to collect the statistics necessary to solve it. For an\n$n \\times m$ data matrix, these statistics require only $O(m^2)$ storage and so can be stored on a single machine when $m$ (the number of features) is\nrelatively small. We can then solve the normal equations on a single machine using local methods like direct Cholesky factorization or iterative optimization programs.\n\nSpark MLlib currently supports two types of solvers for the normal equations: Cholesky factorization and Quasi-Newton methods (L-BFGS/OWL-QN). Cholesky factorization\ndepends on a positive definite covariance matrix (i.e. columns of the data matrix must be linearly independent) and will fail if this condition is violated. Quasi-Newton methods\nare still capable of providing a reasonable solution even when the covariance matrix is not positive definite, so the normal equation solver can also fall back to\nQuasi-Newton methods in this case. This fallback is currently always enabled for the `LinearRegression` and `GeneralizedLinearRegression` estimators.\n\n`WeightedLeastSquares` supports L1, L2, and elastic-net regularization and provides options to enable or disable regularization and standardization. In the case where no\nL1 regularization is applied (i.e. $\\alpha = 0$), there exists an analytical solution and either Cholesky or Quasi-Newton solver may be used. When $\\alpha > 0$ no analytical\nsolution exists and we instead use the Quasi-Newton solver to find the coefficients iteratively.\n\nIn order to make the normal equation approach efficient, `WeightedLeastSquares` requires that the number of features is no more than 4096. For larger problems, use L-BFGS instead.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/ml-advanced.md"
+  },
+  {
+   "section_id": "s069",
+   "path": "docs/sql-ref-syntax-qry-select-hints.md",
+   "section_path": [
+    "Hints",
+    "Partitioning Hints"
+   ],
+   "start": 195,
+   "end": 757,
+   "body": "Partitioning hints allow users to suggest a partitioning strategy that Spark should follow. `COALESCE`, `REPARTITION`,\nand `REPARTITION_BY_RANGE` hints are supported and are equivalent to `coalesce`, `repartition`, and\n`repartitionByRange` Dataset APIs, respectively. The `REBALANCE` can only\nbe used as a hint .These hints give users a way to tune performance and control the number of output files in Spark SQL.\nWhen multiple partitioning hints are specified, multiple nodes are inserted into the logical plan, but the leftmost hint\nis picked by the optimizer.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-qry-select-hints.md"
+  },
+  {
+   "section_id": "s070",
+   "path": "docs/sql-data-sources-csv.md",
+   "section_path": [
+    "CSV Files"
+   ],
+   "start": 0,
+   "end": 525,
+   "body": "Spark SQL provides `spark.read().csv(\"file_name\")` to read a file or directory of files in CSV format into Spark DataFrame, and `dataframe.write().csv(\"path\")` to write to a CSV file. Function `option()` can be used to customize the behavior of reading or writing, such as controlling behavior of the header, delimiter character, character set, and so on.\n\npython:\n\n[example: datasource.py, csv_dataset]\n\nscala:\n\n[example: SQLDataSourceExample.scala, csv_dataset]\n\njava:\n\n[example: JavaSQLDataSourceExample.java, csv_dataset]",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-data-sources-csv.md"
+  },
+  {
+   "section_id": "s071",
+   "path": "docs/sql-ref-syntax-qry-select-pivot.md",
+   "section_path": [
+    "PIVOT Clause",
+    "Parameters"
+   ],
+   "start": 431,
+   "end": 975,
+   "body": "* **aggregate_expression**\n\n    Specifies an aggregate expression (SUM(a), COUNT(DISTINCT b), etc.).\n\n* **aggregate_expression_alias**\n\n    Specifies an alias for the aggregate expression.\n\n* **column_list**\n\n    Contains columns in the `FROM` clause, which specifies the columns we want to replace with new columns. We can use brackets to surround the columns, such as `(c1, c2)`.\n\n* **expression_list**\n\n    Specifies new columns, which are used to match values in `column_list` as the aggregating condition. We can also add aliases for them.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-ref-syntax-qry-select-pivot.md"
+  },
+  {
+   "section_id": "s072",
+   "path": "docs/core-migration-guide.md",
+   "section_path": [
+    "Migration Guide: Spark Core",
+    "Upgrading from Core 3.0 to 3.1"
+   ],
+   "start": 6891,
+   "end": 7748,
+   "body": "- In Spark 3.0 and below, `SparkContext` can be created in executors. Since Spark 3.1, an exception will be thrown when creating `SparkContext` in executors. You can allow it by setting the configuration `spark.executor.allowSparkContext` when creating `SparkContext` in executors.\n\n- In Spark 3.0 and below, Spark propagated the Hadoop classpath from `yarn.application.classpath` and `mapreduce.application.classpath` into the Spark application submitted to YARN when Spark distribution is with the built-in Hadoop. Since Spark 3.1, it does not propagate anymore when the Spark distribution is with the built-in Hadoop in order to prevent the failure from the different transitive dependencies picked up from the Hadoop cluster such as Guava and Jackson. To restore the behavior before Spark 3.1, you can set `spark.yarn.populateHadoopClasspath` to `true`.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/core-migration-guide.md"
+  },
+  {
+   "section_id": "s073",
+   "path": "docs/sql-data-sources-protobuf.md",
+   "section_path": [
+    "Protobuf Data Source Guide",
+    "Data Source Option"
+   ],
+   "start": 11974,
+   "end": 14579,
+   "body": "Data source options of Protobuf can be set via:\n* the built-in functions below\n  * `from_protobuf`\n  * `to_protobuf`\n\nProperty Name | Default | Meaning | Scope\n--- | --- | --- | ---\n`mode` | `FAILFAST` | Allows a mode for dealing with corrupt records during parsing. `PERMISSIVE`: when it meets a corrupted record, sets all fields to `null`.; `DROPMALFORMED`: ignores the whole corrupted records. This mode is unsupported in the Protobuf built-in functions.; `FAILFAST`: throws an exception when it meets corrupted records. | read\n`recursive.fields.max.depth` | `-1` | Specifies the maximum number of recursion levels to allow when parsing the schema. For more details refers to the section Handling circular references protobuf fields. | read\n`convert.any.fields.to.json` | `false` | Enables converting Protobuf `Any` fields to JSON. This option should be enabled carefully. JSON conversion and processing are inefficient. In addition, schema safety is also reduced making downstream processing error-prone. | read\n`emit.default.values` | `false` | Whether to render fields with zero values when deserializing Protobuf to a Spark struct. When a field is empty in the serialized Protobuf, this library will deserialize them as `null` by default, this option can control whether to render the type-specific zero values. | read\n`enums.as.ints` | `false` | Whether to render enum fields as their integer values. When this option set to `false`, an enum field will be mapped to `StringType`, and the value is the name of enum; when set to `true`, an enum field will be mapped to `IntegerType`, the value is its integer value. | read\n`upcast.unsigned.ints` | `false` | Whether to upcast unsigned integers into a larger type. Setting this option to `true`, `LongType` is used for `uint32` and `Decimal(20, 0)` is used for `uint64`, so their representation can contain large unsigned values without overflow. | read\n`unwrap.primitive.wrapper.types` | `false` | Whether to unwrap the struct representation for well-known primitive wrapper types when deserializing. By default, the wrapper types for primitives (i.e. google.protobuf.Int32Value, google.protobuf.Int64Value, etc.) will get deserialized as structs. | read\n`retain.empty.message.types` | `false` | Whether to retain fields of the empty proto message type in Schema. Since Spark doesn't allow writing empty `StructType`, the empty proto message type will be dropped by default. Setting this option to `true` will insert a dummy column(`__dummy_field_in_empty_struct`) to the empty proto message so that the empty message fields will be retained. | read",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/sql-data-sources-protobuf.md"
+  },
+  {
+   "section_id": "s074",
+   "path": "docs/ml-datasource.md",
+   "section_path": [
+    "Data sources",
+    "Image data source"
+   ],
+   "start": 241,
+   "end": 3987,
+   "body": "This image data source is used to load image files from a directory, it can load compressed image (jpeg, png, etc.) into raw image representation via `ImageIO` in Java library.\nThe loaded DataFrame has one `StructType` column: \"image\", containing image data stored as image schema.\nThe schema of the `image` column is:\n - origin: `StringType` (represents the file path of the image)\n - height: `IntegerType` (height of the image)\n - width: `IntegerType` (width of the image)\n - nChannels: `IntegerType` (number of image channels)\n - mode: `IntegerType` (OpenCV-compatible type)\n - data: `BinaryType` (Image bytes in OpenCV-compatible order: row-wise BGR in most cases)\n\npython:\n\nIn PySpark we provide Spark SQL data source API for loading image data as a DataFrame.\n\n```python\n>>> df = spark.read.format(\"image\").option(\"dropInvalid\", True).load(\"data/mllib/images/origin/kittens\")\n>>> df.select(\"image.origin\", \"image.width\", \"image.height\").show(truncate=False)\n+---+---+---+\n|origin                                                                 |width|height|\n+---+---+---+\n|file:///spark/data/mllib/images/origin/kittens/54893.jpg               |300  |311   |\n|file:///spark/data/mllib/images/origin/kittens/DP802813.jpg            |199  |313   |\n|file:///spark/data/mllib/images/origin/kittens/29.5.a_b_EGDP022204.jpg |300  |200   |\n|file:///spark/data/mllib/images/origin/kittens/DP153539.jpg            |300  |296   |\n+---+---+---+\n```\n\nscala:\n\n`ImageDataSource`\nimplements a Spark SQL data source API for loading image data as a DataFrame.\n\n```scala\nscala> val df = spark.read.format(\"image\").option(\"dropInvalid\", true).load(\"data/mllib/images/origin/kittens\")\ndf: org.apache.spark.sql.DataFrame = [image: struct<origin: string, height: int ... 4 more fields>]\n\nscala> df.select(\"image.origin\", \"image.width\", \"image.height\").show(truncate=false)\n+---+---+---+\n|origin                                                                 |width|height|\n+---+---+---+\n|file:///spark/data/mllib/images/origin/kittens/54893.jpg               |300  |311   |\n|file:///spark/data/mllib/images/origin/kittens/DP802813.jpg            |199  |313   |\n|file:///spark/data/mllib/images/origin/kittens/29.5.a_b_EGDP022204.jpg |300  |200   |\n|file:///spark/data/mllib/images/origin/kittens/DP153539.jpg            |300  |296   |\n+---+---+---+\n```\n\njava:\n\n`ImageDataSource`\nimplements Spark SQL data source API for loading image data as a DataFrame.\n\n```java\nDataset<Row> imagesDF = spark.read().format(\"image\").option(\"dropInvalid\", true).load(\"data/mllib/images/origin/kittens\");\nimageDF.select(\"image.origin\", \"image.width\", \"image.height\").show(false);\n/*\nWill output:\n+---+---+---+\n|origin                                                                 |width|height|\n+---+---+---+\n|file:///spark/data/mllib/images/origin/kittens/54893.jpg               |300  |311   |\n|file:///spark/data/mllib/images/origin/kittens/DP802813.jpg            |199  |313   |\n|file:///spark/data/mllib/images/origin/kittens/29.5.a_b_EGDP022204.jpg |300  |200   |\n|file:///spark/data/mllib/images/origin/kittens/DP153539.jpg            |300  |296   |\n+---+---+---+\n*/\n```\n\nr:\n\nIn SparkR we provide Spark SQL data source API for loading image data as a DataFrame.\n\n```r\n> df = read.df(\"data/mllib/images/origin/kittens\", \"image\")\n> head(select(df, df$image.origin, df$image.width, df$image.height))\n\n1               file:///spark/data/mllib/images/origin/kittens/54893.jpg\n2            file:///spark/data/mllib/images/origin/kittens/DP802813.jpg\n3 file:///spark/data/mllib/images/origin/kittens/29.5.a_b_EGDP022204.jpg\n4            file:///spark/data/mllib/images/origin/kittens/DP153539.jpg\n  width height\n1   300    311\n2   199    313\n3   300    200\n4   300    296\n\n```",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/ml-datasource.md"
+  },
+  {
+   "section_id": "s075",
+   "path": "docs/streaming/ss-migration-guide.md",
+   "section_path": [
+    "Migration Guide: Structured Streaming",
+    "Upgrading from Structured Streaming 2.4 to 3.0"
+   ],
+   "start": 3654,
+   "end": 4810,
+   "body": "- In Spark 3.0, Structured Streaming forces the source schema into nullable when file-based datasources such as text, json, csv, parquet and orc are used via `spark.readStream(...)`. Previously, it respected the nullability in source schema; however, it caused issues tricky to debug with NPE. To restore the previous behavior, set `spark.sql.streaming.fileSource.schema.forceNullable` to `false`.\n\n- Spark 3.0 fixes the correctness issue on Stream-stream outer join, which changes the schema of state. (See SPARK-26154 for more details). If you start your query from checkpoint constructed from Spark 2.x which uses stream-stream outer join, Spark 3.0 fails the query. To recalculate outputs, discard the checkpoint and replay previous inputs.\n\n- In Spark 3.0, the deprecated class `org.apache.spark.sql.streaming.ProcessingTime` has been removed. Use `org.apache.spark.sql.streaming.Trigger.ProcessingTime` instead. Likewise, `org.apache.spark.sql.execution.streaming.continuous.ContinuousTrigger` has been removed in favor of `Trigger.Continuous`, and `org.apache.spark.sql.execution.streaming.OneTimeTrigger` has been hidden in favor of `Trigger.Once`.",
+   "url": "https://github.com/apache/spark/blob/29434ea766b0fc3c3bf6eaadb43a8f931133649e/docs/streaming/ss-migration-guide.md"
+  }
+ ]
+}

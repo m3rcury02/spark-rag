@@ -1,0 +1,779 @@
+{
+  "label": "m6_a_sections",
+  "git_commit": "cb5456decfc7021e18dc8cb223d996aea066e425",
+  "tag": "v4.0.1",
+  "commit_sha": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+  "cleaner_version": "2",
+  "seed": 6,
+  "n": 75,
+  "criteria": {
+    "min_prose_chars": 300,
+    "excluded": "zero-chunk docs, stub pages, code and table lines",
+    "draw": "one section per doc"
+  },
+  "docs": 213,
+  "sections_seen": 1921,
+  "docs_with_an_eligible_section": 167,
+  "eligible_sections": 1045,
+  "sample": [
+    {
+      "section_id": "s001",
+      "path": "docs/mllib-statistics.md",
+      "section_path": [
+        "Basic Statistics - RDD-based API",
+        "Kernel density estimation"
+      ],
+      "body_chars": 1308,
+      "body_sha256": "f40d74bb6076261e4fc7b9a2fa1c837e56c30fb4ef769c59dd79338a281170ab"
+    },
+    {
+      "section_id": "s002",
+      "path": "docs/streaming/structured-streaming-kafka-integration.md",
+      "section_path": [
+        "Structured Streaming + Kafka Integration Guide (Kafka broker version 0.10.0 or higher)",
+        "Reading Data from Kafka",
+        "Consumer Caching"
+      ],
+      "body_chars": 3061,
+      "body_sha256": "897d44eceae8affdbb359f01a76ec1956cafa6903bf5cc97ea33dc06fdef1bce"
+    },
+    {
+      "section_id": "s003",
+      "path": "docs/mllib-isotonic-regression.md",
+      "section_path": [
+        "Regression - RDD-based API",
+        "Isotonic regression"
+      ],
+      "body_chars": 2183,
+      "body_sha256": "79e5da74b56f7664aacf5eec30338fc358f8711357055de9d516ddef6b75a029"
+    },
+    {
+      "section_id": "s004",
+      "path": "docs/sql-ref-syntax-qry-select-case.md",
+      "section_path": [
+        "CASE Clause",
+        "Parameters"
+      ],
+      "body_chars": 554,
+      "body_sha256": "78dac4e91f899f23ae855cab1801f47296d653106f76d1b94fc14346e9c937e6"
+    },
+    {
+      "section_id": "s005",
+      "path": "docs/sql-ref-syntax-ddl-declare-variable.md",
+      "section_path": [
+        "DECLARE VARIABLE",
+        "Description"
+      ],
+      "body_chars": 528,
+      "body_sha256": "2dfc5f00ae7d94c2057719b422b04e5fb6b462cc0df498bd7bb939184bbd9cf4"
+    },
+    {
+      "section_id": "s006",
+      "path": "docs/sql-ref-syntax-ddl-drop-table.md",
+      "section_path": [
+        "DROP TABLE",
+        "Description"
+      ],
+      "body_chars": 385,
+      "body_sha256": "e3679f3a460c7fec65190cc669d288ce5d509d19c571483dfe41c3ee4c1e9b4b"
+    },
+    {
+      "section_id": "s007",
+      "path": "docs/streaming-programming-guide.md",
+      "section_path": [
+        "Spark Streaming Programming Guide",
+        "Overview"
+      ],
+      "body_chars": 1599,
+      "body_sha256": "4d8cc4d338f74ef02e126ce0bd99f434ebc8f55f34d34a8a09dd7247d45f2f0d"
+    },
+    {
+      "section_id": "s008",
+      "path": "docs/ml-frequent-pattern-mining.md",
+      "section_path": [
+        "Frequent Pattern Mining",
+        "FP-Growth"
+      ],
+      "body_chars": 3877,
+      "body_sha256": "266ca32b7de912cacedf5f20c2f33e93e268a699ad85e960dc25b2e51e009f53"
+    },
+    {
+      "section_id": "s009",
+      "path": "docs/sql-ref-syntax-aux-show-databases.md",
+      "section_path": [
+        "SHOW DATABASES",
+        "Parameters"
+      ],
+      "body_chars": 478,
+      "body_sha256": "17d0567efa160d9cb6269b5d9e2005476acceaf78c5243a67503b5d56c0839d4"
+    },
+    {
+      "section_id": "s010",
+      "path": "docs/sql-ref-syntax-qry-select.md",
+      "section_path": [
+        "SELECT",
+        "Related Statements"
+      ],
+      "body_chars": 433,
+      "body_sha256": "fa550a56b77d342d777cc6cf63d0a83b785e2b278def8a642f542bba3e30f535"
+    },
+    {
+      "section_id": "s011",
+      "path": "docs/sql-ref-syntax-aux-show-functions.md",
+      "section_path": [
+        "SHOW FUNCTIONS",
+        "Parameters"
+      ],
+      "body_chars": 941,
+      "body_sha256": "a8c16c392212aae519f1a5a4f60c1a89f83870e6a688ae09d9e741abf2dbaafa"
+    },
+    {
+      "section_id": "s012",
+      "path": "docs/sql-data-sources-json.md",
+      "section_path": [
+        "JSON Files"
+      ],
+      "body_chars": 2466,
+      "body_sha256": "e31508cddd62d4bcc11978e1d6af728d56250d375519efe081cc8883716afcfc"
+    },
+    {
+      "section_id": "s013",
+      "path": "docs/sql-ref-functions-udf-scalar.md",
+      "section_path": [
+        "Scalar User Defined Functions (UDFs)",
+        "UserDefinedFunction"
+      ],
+      "body_chars": 412,
+      "body_sha256": "de05eef599b0929118617a6f8337e0b95ba458e477fa612323521e0199d0f2ab"
+    },
+    {
+      "section_id": "s014",
+      "path": "docs/sql-ref-syntax-ddl-create-table-like.md",
+      "section_path": [
+        "CREATE TABLE LIKE",
+        "Parameters"
+      ],
+      "body_chars": 799,
+      "body_sha256": "db21442e414f526defcd717a3bca1e7e6d8957c731a9c480fa58e1b06a627dc5"
+    },
+    {
+      "section_id": "s015",
+      "path": "docs/index.md",
+      "section_path": [
+        "Apache Spark Overview",
+        "Running the Examples and Shell",
+        "Running Spark Client Applications Anywhere with Spark Connect"
+      ],
+      "body_chars": 499,
+      "body_sha256": "a7cd89ba30cd5219367131c2abeceb13e5a8de85eeac34761966e1a44eee56bf"
+    },
+    {
+      "section_id": "s016",
+      "path": "docs/streaming/structured-streaming-state-data-source.md",
+      "section_path": [
+        "State Data Source Integration Guide",
+        "Overview"
+      ],
+      "body_chars": 373,
+      "body_sha256": "44a9ec607bed3d0502225b1360957ab08f1382a8237793499fb820ee10db8048"
+    },
+    {
+      "section_id": "s017",
+      "path": "docs/sql-ref-syntax-qry-select-transform.md",
+      "section_path": [
+        "TRANSFORM",
+        "Hive SerDe behavior"
+      ],
+      "body_chars": 1375,
+      "body_sha256": "35fc8a62176d7420cd5ffa47da9241444962ae789eae18a513e335a8c05467c4"
+    },
+    {
+      "section_id": "s018",
+      "path": "docs/mllib-guide.md",
+      "section_path": [
+        "MLlib: RDD-based API"
+      ],
+      "body_chars": 1211,
+      "body_sha256": "ac8dd6a14ca9f79ffa28c067885f5e9eec41982049969d8d106ad26fd4904d22"
+    },
+    {
+      "section_id": "s019",
+      "path": "docs/sql-data-sources-text.md",
+      "section_path": [
+        "Text Files"
+      ],
+      "body_chars": 674,
+      "body_sha256": "1c036afccf342f21e1d25749c3bc25872a57b79fc172cefe95f1cb78e4a0c941"
+    },
+    {
+      "section_id": "s020",
+      "path": "docs/tuning.md",
+      "section_path": [
+        "Tuning Spark",
+        "Memory Tuning",
+        "Garbage Collection Tuning"
+      ],
+      "body_chars": 5199,
+      "body_sha256": "9b5a6087a57f6fdf933c756e545410edd410e0f287efdb6c527d01fd90938420"
+    },
+    {
+      "section_id": "s021",
+      "path": "docs/rdd-programming-guide.md",
+      "section_path": [
+        "RDD Programming Guide",
+        "Resilient Distributed Datasets (RDDs)",
+        "RDD Operations"
+      ],
+      "body_chars": 1504,
+      "body_sha256": "7442b3f13097898574e33924cfeccdc1c0173381dcd50cf4d34a532711e2e732"
+    },
+    {
+      "section_id": "s022",
+      "path": "docs/sql-data-sources-load-save-functions.md",
+      "section_path": [
+        "Generic Load/Save Functions"
+      ],
+      "body_chars": 431,
+      "body_sha256": "e3df49a678348da239f192b0d5b05a80b151496cc0c60034ce783f8b5408f09f"
+    },
+    {
+      "section_id": "s023",
+      "path": "docs/sql-ref-syntax-aux-exec-imm.md",
+      "section_path": [
+        "EXECUTE IMMEDIATE",
+        "Parameters"
+      ],
+      "body_chars": 801,
+      "body_sha256": "99c5ec9e699472c419658202dc7dffb39ae1156f857010e792e9842cb415281d"
+    },
+    {
+      "section_id": "s024",
+      "path": "docs/sql-ref-syntax-aux-conf-mgmt-reset.md",
+      "section_path": [
+        "RESET",
+        "Parameters"
+      ],
+      "body_chars": 315,
+      "body_sha256": "0e7fb4ede6d70e27f78f55e1af04c9835fb3dbe56efc7bf0988dd7aac1dedab2"
+    },
+    {
+      "section_id": "s025",
+      "path": "docs/sql-ref-syntax-ddl-alter-table.md",
+      "section_path": [
+        "ALTER TABLE",
+        "RENAME",
+        "Parameters"
+      ],
+      "body_chars": 377,
+      "body_sha256": "24b045d987b45c5bf1fdd98a26f13ed6a271c0c6a5618ce26d35c08261f2da01"
+    },
+    {
+      "section_id": "s026",
+      "path": "docs/sql-data-sources-orc.md",
+      "section_path": [
+        "ORC Files",
+        "Data Source Option"
+      ],
+      "body_chars": 890,
+      "body_sha256": "e0cba38d077c66db002b26b9939e0a9a50b36dc7ec2e3535ae46ab2a7202bede"
+    },
+    {
+      "section_id": "s027",
+      "path": "docs/sql-ref-syntax-qry-select-lateral-subquery.md",
+      "section_path": [
+        "LATERAL SUBQUERY",
+        "Description"
+      ],
+      "body_chars": 341,
+      "body_sha256": "1034c15c8b658261fc1e37d1e48b44d320e95ca20c732801478174ae0855fd7d"
+    },
+    {
+      "section_id": "s028",
+      "path": "docs/ml-classification-regression.md",
+      "section_path": [
+        "Classification and regression",
+        "Regression",
+        "Factorization machines regressor"
+      ],
+      "body_chars": 818,
+      "body_sha256": "5cf38ece78d16cdda8c388b097c335d5d9102fd57990230e9dc892b282067d56"
+    },
+    {
+      "section_id": "s029",
+      "path": "docs/hadoop-provided.md",
+      "section_path": [
+        "Using Spark's \"Hadoop Free\" Build"
+      ],
+      "body_chars": 475,
+      "body_sha256": "b8584f9513a7aa6a2db6a95e6d47a79bf08f08d59a21c8400194a8804c6afcbe"
+    },
+    {
+      "section_id": "s030",
+      "path": "docs/mllib-pmml-model-export.md",
+      "section_path": [
+        "PMML model export - RDD-based API",
+        "spark.mllib supported models"
+      ],
+      "body_chars": 651,
+      "body_sha256": "6a03c0da89f813da04672bb60e55111bd67ec0f8aa6134cad71f98a00cae800e"
+    },
+    {
+      "section_id": "s031",
+      "path": "docs/mllib-decision-tree.md",
+      "section_path": [
+        "Decision Trees - RDD-based API"
+      ],
+      "body_chars": 843,
+      "body_sha256": "3078c572a70f9f7f6b4a3f98678f9fa23d3f96bdb1b4b52a50e359e0507c2323"
+    },
+    {
+      "section_id": "s032",
+      "path": "docs/sql-ref-syntax-aux-show-tblproperties.md",
+      "section_path": [
+        "SHOW TBLPROPERTIES",
+        "Parameters"
+      ],
+      "body_chars": 881,
+      "body_sha256": "7a449bebbdfe88631917f0e1401230205cd046a1e6e778af945bdcaabe86fec6"
+    },
+    {
+      "section_id": "s033",
+      "path": "docs/sql-data-sources-avro.md",
+      "section_path": [
+        "Apache Avro Data Source Guide",
+        "to_avro() and from_avro()"
+      ],
+      "body_chars": 4755,
+      "body_sha256": "18315e921bfed5653df93885a157fecb8dc24007a13582089395da1ceec918c2"
+    },
+    {
+      "section_id": "s034",
+      "path": "docs/mllib-evaluation-metrics.md",
+      "section_path": [
+        "Evaluation Metrics - RDD-based API"
+      ],
+      "body_chars": 761,
+      "body_sha256": "0c16233864e38fcb8d9d142d2cd0cc8a7e042f5ff32ce961161af8a3f105e37a"
+    },
+    {
+      "section_id": "s035",
+      "path": "docs/sql-ref-syntax-ddl-create-function.md",
+      "section_path": [
+        "CREATE FUNCTION (External)",
+        "Parameters"
+      ],
+      "body_chars": 1741,
+      "body_sha256": "1c4abaeec51e2e86a798a410588968b3682a619e4245588b2660b3006505dbd2"
+    },
+    {
+      "section_id": "s036",
+      "path": "docs/sql-ref-syntax-ddl-alter-view.md",
+      "section_path": [
+        "ALTER VIEW",
+        "Description",
+        "ALTER View WITH SCHEMA"
+      ],
+      "body_chars": 333,
+      "body_sha256": "802136b43e34db2ad6f61d465ee9ecb307db81ddd9a153a1fd1b4e59b3cff87c"
+    },
+    {
+      "section_id": "s037",
+      "path": "docs/sql-migration-guide.md",
+      "section_path": [
+        "Migration Guide: SQL, Datasets and DataFrame",
+        "Upgrading from Spark SQL 3.1 to 3.2"
+      ],
+      "body_chars": 11054,
+      "body_sha256": "9bbd61386f429de49c1021de77266d489eb4f4810fdc75c73741155a43e551e1"
+    },
+    {
+      "section_id": "s038",
+      "path": "docs/sql-ref-syntax-qry-select-having.md",
+      "section_path": [
+        "HAVING Clause",
+        "Parameters"
+      ],
+      "body_chars": 373,
+      "body_sha256": "4d2f72030c11c5fc6d2ff5f9b1415826429d46fa38191b34a97aa95bfb171e36"
+    },
+    {
+      "section_id": "s039",
+      "path": "docs/streaming-kinesis-integration.md",
+      "section_path": [
+        "Spark Streaming + Kinesis Integration",
+        "Kinesis retry configuration"
+      ],
+      "body_chars": 733,
+      "body_sha256": "def669e6bea40a580484a9011baf0759679f9a3b3426965ab54e55e1a6b9d5f1"
+    },
+    {
+      "section_id": "s040",
+      "path": "docs/graphx-programming-guide.md",
+      "section_path": [
+        "GraphX Programming Guide",
+        "Graph Operators",
+        "Summary List of Operators"
+      ],
+      "body_chars": 3726,
+      "body_sha256": "629e5856636edfa55785c3200d82ab9b99f2f16b61578f6e7e16d43d271c05a9"
+    },
+    {
+      "section_id": "s041",
+      "path": "docs/sql-ref-syntax-aux-show-columns.md",
+      "section_path": [
+        "SHOW COLUMNS",
+        "Parameters"
+      ],
+      "body_chars": 605,
+      "body_sha256": "84b5f4f276180a7cab371339abc2bc46e863a8dee11e5441a7fbe4168eae755d"
+    },
+    {
+      "section_id": "s042",
+      "path": "docs/sql-ref-null-semantics.md",
+      "section_path": [
+        "NULL Semantics",
+        "Expressions"
+      ],
+      "body_chars": 429,
+      "body_sha256": "d30c71e645b596e607cf615bd9b86fe3e3f050af3dcdc1040b073cea186f6666"
+    },
+    {
+      "section_id": "s043",
+      "path": "docs/sql-ref-syntax-aux-cache-refresh-function.md",
+      "section_path": [
+        "REFRESH FUNCTION",
+        "Description"
+      ],
+      "body_chars": 328,
+      "body_sha256": "3fdeb4bff1153f2c332467b049f37f065e06aaaaa94e7b973f68cef59acbfbce"
+    },
+    {
+      "section_id": "s044",
+      "path": "docs/sql-ref-syntax-aux-show-views.md",
+      "section_path": [
+        "SHOW VIEWS",
+        "Parameters"
+      ],
+      "body_chars": 571,
+      "body_sha256": "48d8c8754b2690d6892f95722f87bf318d5c662955cb639bbd6b6aa4a86aefdd"
+    },
+    {
+      "section_id": "s045",
+      "path": "docs/sql-ref-syntax-dml-load.md",
+      "section_path": [
+        "LOAD DATA",
+        "Parameters"
+      ],
+      "body_chars": 779,
+      "body_sha256": "a18d30a61e294819a7cebbd53fc1fb01a6dfb5c06f103bf10236194fafd5a7b6"
+    },
+    {
+      "section_id": "s046",
+      "path": "docs/sql-pipe-syntax.md",
+      "section_path": [
+        "SQL Pipe Syntax",
+        "Syntax",
+        "Overview"
+      ],
+      "body_chars": 903,
+      "body_sha256": "d2408e7282fcb44a7cb9574c6bf4228783a3242973d20448bab4569ab8dfbc6d"
+    },
+    {
+      "section_id": "s047",
+      "path": "docs/sql-ref-syntax-aux-describe-database.md",
+      "section_path": [
+        "DESCRIBE DATABASE",
+        "Description"
+      ],
+      "body_chars": 360,
+      "body_sha256": "68c1dd75ef9d4bc31bd27aede1fb9f4322a08deb06af0b8317d71e7b8e41762c"
+    },
+    {
+      "section_id": "s048",
+      "path": "docs/quick-start.md",
+      "section_path": [
+        "Quick Start",
+        "Interactive Analysis with the Spark Shell",
+        "Basics"
+      ],
+      "body_chars": 3015,
+      "body_sha256": "d11ef3506005c8514f699e0bac2994a8c0c9d4e924929a2025b94a78514fe86f"
+    },
+    {
+      "section_id": "s049",
+      "path": "docs/sql-ref-functions-udf-aggregate.md",
+      "section_path": [
+        "User Defined Aggregate Functions (UDAFs)",
+        "Examples",
+        "Untyped User-Defined Aggregate Functions"
+      ],
+      "body_chars": 997,
+      "body_sha256": "580911e013ac76c44287846949c48a0198e2d9cbc06abaf829990f7a276f02a5"
+    },
+    {
+      "section_id": "s050",
+      "path": "docs/sql-ref-syntax-aux-resource-mgmt-add-jar.md",
+      "section_path": [
+        "ADD JAR",
+        "Parameters"
+      ],
+      "body_chars": 813,
+      "body_sha256": "09a5ed93a7637b14682e226cd82d110c427b11ea0eeeb2623fe30a3ec063f9d2"
+    },
+    {
+      "section_id": "s051",
+      "path": "docs/streaming/additional-information.md",
+      "section_path": [
+        "Structured Streaming Programming Guide",
+        "Related Resources",
+        "Further Reading"
+      ],
+      "body_chars": 610,
+      "body_sha256": "d185bb194d78cc557812ef12fe5d51668f166f559f21564cd51b2f4d0dda9591"
+    },
+    {
+      "section_id": "s052",
+      "path": "docs/sql-ref-syntax-aux-conf-mgmt-set-timezone.md",
+      "section_path": [
+        "SET TIME ZONE",
+        "Parameters"
+      ],
+      "body_chars": 940,
+      "body_sha256": "ca2ff312337344459f5eec5625fd2d8b88483488e61ec8ff2fdae4cb00651231"
+    },
+    {
+      "section_id": "s053",
+      "path": "docs/sql-ref-syntax-ddl-create-database.md",
+      "section_path": [
+        "CREATE DATABASE",
+        "Parameters"
+      ],
+      "body_chars": 837,
+      "body_sha256": "c7badcc777aed9f0f85e0d0057dc2e2f29a9923aac87e2975b5ecf28981ad14d"
+    },
+    {
+      "section_id": "s054",
+      "path": "docs/ml-guide.md",
+      "section_path": [
+        "Machine Learning Library (MLlib) Guide",
+        "Highlights in 3.0"
+      ],
+      "body_chars": 1582,
+      "body_sha256": "05ac1f61dc5a8f2f6fcd147b806758ed79f308cf9f6617bed6c5f545e36e1756"
+    },
+    {
+      "section_id": "s055",
+      "path": "docs/mllib-dimensionality-reduction.md",
+      "section_path": [
+        "Dimensionality Reduction - RDD-based API",
+        "Singular value decomposition (SVD)"
+      ],
+      "body_chars": 838,
+      "body_sha256": "96263250848c4ab43b0ddad802d90eb4c1c01670c17ff0851459a41aea0656f1"
+    },
+    {
+      "section_id": "s056",
+      "path": "docs/mllib-collaborative-filtering.md",
+      "section_path": [
+        "Collaborative Filtering - RDD-based API",
+        "Collaborative filtering",
+        "Scaling of the regularization parameter"
+      ],
+      "body_chars": 549,
+      "body_sha256": "05829bc601e3703a2cba8165c8f593e68053c70e1112309891837f2ffae04cbf"
+    },
+    {
+      "section_id": "s057",
+      "path": "docs/mllib-feature-extraction.md",
+      "section_path": [
+        "Feature Extraction and Transformation - RDD-based API",
+        "StandardScaler",
+        "Model Fitting"
+      ],
+      "body_chars": 880,
+      "body_sha256": "203d75014aeb5a1ed5617f4af3effb49925933ae00c112478effd83afd6a649e"
+    },
+    {
+      "section_id": "s058",
+      "path": "docs/cluster-overview.md",
+      "section_path": [
+        "Cluster Mode Overview",
+        "Cluster Manager Types"
+      ],
+      "body_chars": 332,
+      "body_sha256": "a0ca59b9874e30aaba1c9ca62f315ffbea1685312ad6d878f0716933372795a5"
+    },
+    {
+      "section_id": "s059",
+      "path": "docs/streaming/getting-started.md",
+      "section_path": [
+        "Structured Streaming Programming Guide",
+        "Programming Model",
+        "Basic Concepts"
+      ],
+      "body_chars": 2978,
+      "body_sha256": "79eaa405bbfb5222e8c78a4a5d99e64e26f3c158a3e8d719edd23e15735e6483"
+    },
+    {
+      "section_id": "s060",
+      "path": "docs/sql-ref-syntax-aux-cache-cache-table.md",
+      "section_path": [
+        "CACHE TABLE",
+        "Parameters"
+      ],
+      "body_chars": 1175,
+      "body_sha256": "de0c462b7d6e695801e764e6d6e4d841bbf58acc26e4ce9aabace9e3fea98b8b"
+    },
+    {
+      "section_id": "s061",
+      "path": "docs/sql-data-sources-binaryFile.md",
+      "section_path": [
+        "Binary File Data Source"
+      ],
+      "body_chars": 1193,
+      "body_sha256": "17801bfd25e9ab4d8198b80540ea30e9dbb3783e035dbc1a6e1cc9003151f06f"
+    },
+    {
+      "section_id": "s062",
+      "path": "docs/sql-distributed-sql-engine.md",
+      "section_path": [
+        "Distributed SQL Engine",
+        "Running the Thrift JDBC/ODBC server"
+      ],
+      "body_chars": 2341,
+      "body_sha256": "721fe22cede0052c6a748002839f2f922b912474bb7ba78a4fc328c3557d08fd"
+    },
+    {
+      "section_id": "s063",
+      "path": "docs/sql-ref-syntax-aux-describe-function.md",
+      "section_path": [
+        "DESCRIBE FUNCTION",
+        "Parameters"
+      ],
+      "body_chars": 376,
+      "body_sha256": "24e23409445bc3bc9710aa8ae079beb207c278f38fcdedde019a832386bcf4a3"
+    },
+    {
+      "section_id": "s064",
+      "path": "docs/sql-data-sources-jdbc.md",
+      "section_path": [
+        "JDBC To Other Databases",
+        "Data Type Mapping",
+        "Mapping Spark SQL Data Types from PostgreSQL"
+      ],
+      "body_chars": 2792,
+      "body_sha256": "2955622f7b58d05cef3fcee401802c423834ba7ab43660038dcafc68fb38f41c"
+    },
+    {
+      "section_id": "s065",
+      "path": "docs/sql-ref-syntax-qry-select-sortby.md",
+      "section_path": [
+        "SORT BY Clause",
+        "Parameters"
+      ],
+      "body_chars": 1047,
+      "body_sha256": "3d0705c85cd0e42af1cbe0c01910dd5634809eb0b639be4175b268384a32d37c"
+    },
+    {
+      "section_id": "s066",
+      "path": "docs/sql-ref-syntax-ddl-create-table-hiveformat.md",
+      "section_path": [
+        "CREATE HIVEFORMAT TABLE",
+        "Parameters"
+      ],
+      "body_chars": 1595,
+      "body_sha256": "b4802b2ad13074b825ac7253f6f83fadd0d1038486c42572b8a1dab85c1fa59e"
+    },
+    {
+      "section_id": "s067",
+      "path": "docs/sql-data-sources-hive-tables.md",
+      "section_path": [
+        "Hive Tables",
+        "Specifying storage format for Hive tables"
+      ],
+      "body_chars": 1874,
+      "body_sha256": "41768a888f36f639586a963093d06cebebc392611d03d900c65e63f63197fe80"
+    },
+    {
+      "section_id": "s068",
+      "path": "docs/ml-advanced.md",
+      "section_path": [
+        "Advanced topics",
+        "Optimization of linear methods (developer)",
+        "Normal equation solver for weighted least squares"
+      ],
+      "body_chars": 2569,
+      "body_sha256": "994e0442680d2a0154c91ce7dfff14fd38041d0c5d79d4cd660bd36e8ec581ea"
+    },
+    {
+      "section_id": "s069",
+      "path": "docs/sql-ref-syntax-qry-select-hints.md",
+      "section_path": [
+        "Hints",
+        "Partitioning Hints"
+      ],
+      "body_chars": 562,
+      "body_sha256": "30757ada53dfe77d54cb5cd6d8059d20319d9d2ff741e5c1c7015e88ec76fce6"
+    },
+    {
+      "section_id": "s070",
+      "path": "docs/sql-data-sources-csv.md",
+      "section_path": [
+        "CSV Files"
+      ],
+      "body_chars": 525,
+      "body_sha256": "f029d45276227231f2d54ae86889109f55b194af7f6d93f1795cb6861bc2c966"
+    },
+    {
+      "section_id": "s071",
+      "path": "docs/sql-ref-syntax-qry-select-pivot.md",
+      "section_path": [
+        "PIVOT Clause",
+        "Parameters"
+      ],
+      "body_chars": 544,
+      "body_sha256": "6ff914502286337da630a0f470f51a896eccab6aea7bb9f101174f3d52d45786"
+    },
+    {
+      "section_id": "s072",
+      "path": "docs/core-migration-guide.md",
+      "section_path": [
+        "Migration Guide: Spark Core",
+        "Upgrading from Core 3.0 to 3.1"
+      ],
+      "body_chars": 857,
+      "body_sha256": "0f13e70671d28ae9a2e454bf16f4764ae9e41cdfd48a3306d0c92c14757b19be"
+    },
+    {
+      "section_id": "s073",
+      "path": "docs/sql-data-sources-protobuf.md",
+      "section_path": [
+        "Protobuf Data Source Guide",
+        "Data Source Option"
+      ],
+      "body_chars": 2605,
+      "body_sha256": "da3f1ffefe4d0a07714d9fcc86653767129868a94276b74b5d32f927b8a8b2b5"
+    },
+    {
+      "section_id": "s074",
+      "path": "docs/ml-datasource.md",
+      "section_path": [
+        "Data sources",
+        "Image data source"
+      ],
+      "body_chars": 3746,
+      "body_sha256": "e194a172c4d8e04f87f9b983172032e0cf0e5d560cd43e53d90b1910be6b102e"
+    },
+    {
+      "section_id": "s075",
+      "path": "docs/streaming/ss-migration-guide.md",
+      "section_path": [
+        "Migration Guide: Structured Streaming",
+        "Upgrading from Structured Streaming 2.4 to 3.0"
+      ],
+      "body_chars": 1156,
+      "body_sha256": "2a8925a114f09f2f8d433d14d72470420b7067834cbc38a43e6e81aa0cae4666"
+    }
+  ],
+  "sections_file": "eval/sections_v4.0.1.json"
+}
