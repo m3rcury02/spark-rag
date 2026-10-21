@@ -1,0 +1,25 @@
+{
+  "label": "m6_d_drop_smoke_table",
+  "git_commit": "cf4ad7652693617ffbea022c7bcfb5e5df495e09",
+  "statements": [
+    {
+      "sql": "SELECT count(*) FROM workspace.docs_rag_dev.eval_results_smoke",
+      "params": {},
+      "columns": [
+        "count(1)"
+      ],
+      "rows": [
+        [
+          "21"
+        ]
+      ]
+    },
+    {
+      "sql": "DROP TABLE workspace.docs_rag_dev.eval_results_smoke",
+      "params": {},
+      "columns": [],
+      "rows": []
+    }
+  ],
+  "error": null
+}
