@@ -1370,8 +1370,11 @@ serverless environment 4 pinned (D-005), the index synced only from a committed 
   nothing, and run d inserted those rows. Options: partition or cluster silver by config_id so the reads are
   disjoint, or serialize the tasks. Chosen: serialize. It costs about 90 s a run, and nothing else needs
   parallel writes.
-- *Not run yet:* `deploy.yml` in GitHub Actions. It needs the workspace secrets, which the owner sets, and
-  the workflow on the default branch.
+- *CI/CD:* the merge of M7 into main started `deploy.yml`'s first run,
+  [39594001897](https://github.com/m3rcury02/spark-rag/actions/runs/39594001897): checks 47 s, deploy 24 s,
+  both green. Afterwards the dev job pins `0.0.1.dev200+gcbf16517e` (main's commit) and prod still pins
+  `0.0.1.dev193+g548db3d5c` (prod deploys only by hand) (`m7_h`). Not checked: whether the `prod` GitHub
+  environment requires a reviewer (this session cannot read environment settings), and a prod deploy from Actions.
 
 **Consequences.**
 - One command per environment: `scripts/bundle.py deploy|run --target dev|prod`. A schedule, a person and CI
@@ -1383,8 +1386,9 @@ serverless environment 4 pinned (D-005), the index synced only from a committed 
   results and no index; creating an index for it follows D-014 (after the backfill; delete it when idle).
 - Still open: a scheduled run that the gate stops fails every week until someone accepts the drift (D-012).
   The failure email is the signal; failing fast on a repeat of the same failed target is not built.
-- The first Actions deploy waits for the owner's secrets. A token stored in GitHub is a long-lived credential:
-  use one made for CI, with an expiry, and prefer OAuth or OIDC federation where the workspace allows it.
+- Every push to main redeploys dev, so dev's job always runs main's code; prod changes only when someone
+  dispatches it. A token stored in GitHub is a long-lived credential: use one made for CI, with an expiry, and
+  prefer OAuth or OIDC federation where the workspace allows it.
 
 ## Open questions (decide in the milestone noted)
 

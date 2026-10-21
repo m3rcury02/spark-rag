@@ -39,7 +39,7 @@ Read both before starting any milestone.
   CPU torch pinned by sha256, checked against a shipped canary before gold is touched (D-014).
 - Deployment: Databricks Asset Bundles (`databricks.yml`, `resources/`; CLI ≥ 1.21.0), targets dev
   (`docs_rag_dev`) and prod (`docs_rag_prod`), one pipeline job (D-016). CI: GitHub Actions (`ci.yml`;
-  `deploy.yml` deploys dev on push to main and dev/prod by hand, once the owner sets the workspace secrets).
+  `deploy.yml` deploys dev on push to main and dev/prod by hand; first run green, runs/m7_h).
 
 ## Code conventions
 
@@ -162,8 +162,7 @@ uv run --with databricks-sdk==0.152.0 --with sentence-transformers==6.1.0 --with
 
 ## Next session: pick up here
 
-M7 is complete (D-016; report given to the owner on 2026-10-21) on branch `m7-bundles` (not yet merged into
-`main`; the owner decides). M6 (D-015) is merged. The bundle deploys one job per target: resolve_tag (a tag or
+M7 is complete (D-016; report given to the owner on 2026-10-21) and merged into `main`, as are M5 and M6. The bundle deploys one job per target: resolve_tag (a tag or
 `latest`, from git's ref advertisement) → bronze → silver 254/32 → silver 128/16 (in sequence: parallel MERGEs
 into silver conflicted, runs/m7_b) → change_detect → index_requested (condition on `with_index`) → sync_index.
 Dev's gold chain now ends at v4.2.0 (runs m7_b failed on drift, m7_d accepted it: 802 embedded, m7_e a no-op);
@@ -172,9 +171,10 @@ changes 126/126, gold 53/53; prod 82/82, 22/22, 18/18 (`m7_v1`..`m7_v6`). Both j
 paused. No endpoint or index exists. Do not re-run the `m3_*` .. `m7_*` labels.
 
 **Do not start M8 until the owner says so.** Open items:
-- The owner sets the GitHub secrets DATABRICKS_HOST and DATABRICKS_TOKEN (a CI-only token with an expiry) and a
-  `prod` environment with a required reviewer; then the first `deploy.yml` run (on the merge to main) is the
-  evidence that is still missing. The CLI here is a downloaded 1.21.0 binary (checksum-verified, scratchpad).
+- `deploy.yml` ran green on the merge (run 39594001897, `m7_h`): every push to main redeploys dev. A prod deploy
+  from Actions (`gh workflow run deploy.yml -f target=prod`) has not run; whether the `prod` environment requires
+  a reviewer is unchecked (this session cannot read GitHub environment settings). The CLI here is a downloaded
+  1.21.0 binary (checksum-verified, scratchpad).
 - The M6 eval set is labelled at v4.0.1 and dev's gold is at v4.2.0: the eval's gold-vector check refuses until a
   new set version is labelled at the head's tag (D-016).
 - Read the M6 endpoint window's DBU (03:33–04:01 UTC on 2026-10-21) from `system.billing.usage`.
@@ -196,6 +196,6 @@ paused. No endpoint or index exists. Do not re-run the `m3_*` .. `m7_*` labels.
 - [x] M4 — DQ checks as a gate between silver and gold (2026-10-20; D-012; follow-ups D-012 v2, D-013)
 - [x] M5 — Embeddings + AI Search index sync (only changed chunks embedded) (2026-10-20; D-014)
 - [x] M6 — Eval set (50 Q/A, owner reviews) + recall@5/MRR, 2 chunk sizes × 2 models (2026-10-21; D-015)
-- [x] M7 — Asset Bundles (dev/prod), Jobs, GitHub Actions (2026-10-21; D-016; Actions deploy awaits secrets)
+- [x] M7 — Asset Bundles (dev/prod), Jobs, GitHub Actions (2026-10-21; D-016)
 - [ ] M8 — README: Mermaid diagram, how to run, results table, limitations
 - [ ] M9 — (optional) FastAPI QA endpoint with citations
