@@ -1,0 +1,743 @@
+{
+  "meta": {
+    "label": "m7_e_dev_latest_again",
+    "git_commit": "97e2c102475a8628157134fc5c7e9dd904b61008",
+    "local_head": "548db3d5c05b8592d819f01fe7ffe4663a6a7398",
+    "target": "dev",
+    "job": {
+      "id": 541855458002088,
+      "name": "[dev <owner-name>] docs_rag_pipeline",
+      "url": "https://<workspace-host>/jobs/541855458002088?w=<workspace-id>"
+    },
+    "job_run_id": 82568606977074,
+    "job_parameters": {
+      "tag": "latest",
+      "initial": "false",
+      "allow_backwards": "false",
+      "allow_config_change": "false",
+      "accept_drift": "",
+      "accept_drift_of": "",
+      "with_index": "false"
+    },
+    "wheel_version": "0.0.1.dev190+g97e2c1024",
+    "result_state": "SUCCESS",
+    "state_message": "",
+    "run_start_utc": "2026-10-21T09:35:14Z",
+    "run_end_utc": "2026-10-21T09:38:53Z",
+    "run_duration_seconds": 219.3,
+    "sink": "gold_chunk_embeddings"
+  },
+  "tasks": {
+    "resolve_tag": {
+      "task_run_id": 739287913600203,
+      "state": "SUCCESS",
+      "life_cycle": "TERMINATED",
+      "message": "",
+      "start_utc": "2026-10-21T09:35:14Z",
+      "end_utc": "2026-10-21T09:35:47Z",
+      "seconds": 29.0,
+      "summary": {
+        "run_id": "82568606977074-resolve",
+        "started_utc": "2026-10-21T09:35:35Z",
+        "environment": {
+          "python": "3.12.3",
+          "databricks_runtime_version": "client.4.10",
+          "databricks_connect": "17.3.14",
+          "docs_rag": "0.0.1.dev190+g97e2c1024",
+          "tokenizers": "0.23.3",
+          "machine": "aarch64"
+        },
+        "releases_seen": 97,
+        "requested": "latest",
+        "tag": "v4.2.0",
+        "status": "succeeded",
+        "finished_utc": "2026-10-21T09:35:37Z"
+      }
+    },
+    "silver_254": {
+      "task_run_id": 726311072052047,
+      "state": "SUCCESS",
+      "life_cycle": "TERMINATED",
+      "message": "",
+      "start_utc": "2026-10-21T09:36:15Z",
+      "end_utc": "2026-10-21T09:37:27Z",
+      "seconds": 71.0,
+      "summary": {
+        "run_id": "82568606977074-silver254",
+        "started_utc": "2026-10-21T09:36:30Z",
+        "tag": "v4.2.0",
+        "chunk_config": {
+          "config_id": "e70bf55c7cf1b856",
+          "cleaner_version": "2",
+          "chunker_version": "1",
+          "max_tokens": 254,
+          "overlap_tokens": 32
+        },
+        "environment": {
+          "python": "3.12.3",
+          "databricks_runtime_version": "client.4.10",
+          "databricks_connect": "17.3.14",
+          "docs_rag": "0.0.1.dev190+g97e2c1024",
+          "tokenizers": "0.23.3",
+          "machine": "aarch64",
+          "spark": "4.2.0"
+        },
+        "bronze": {
+          "docs": 238,
+          "commit_sha": "32f7299601108917fb01920a54e084595b7b3bf8"
+        },
+        "chunking": {
+          "seconds": 8.9,
+          "fingerprint": "671b1434536234be9ff44ade4f732ba5c80d3d9fae969f70476e96080927b023",
+          "chunks": 6051,
+          "n_tokens_min": 6,
+          "n_tokens_median": 111,
+          "n_tokens_max": 254,
+          "n_tokens_histogram": {
+            "1-16": 75,
+            "17-32": 244,
+            "33-64": 1496,
+            "65-128": 1543,
+            "129-192": 987,
+            "193-224": 571,
+            "225-254": 1135
+          },
+          "body_tokens_under": {
+            "5": 25,
+            "10": 67,
+            "20": 309
+          },
+          "docs": 238,
+          "docs_with_no_chunks": [],
+          "sections": 2276,
+          "empty_sections": 242,
+          "single_small_chunk_docs": [
+            "docs/404.md",
+            "docs/ml-ann.md",
+            "docs/ml-decision-tree.md",
+            "docs/ml-ensembles.md",
+            "docs/ml-linear-methods.md",
+            "docs/ml-survival-regression.md",
+            "docs/programming-guide.md",
+            "docs/pyspark-migration-guide.md",
+            "docs/sql-error-conditions.md",
+            "docs/sql-pyspark-pandas-with-arrow.md",
+            "docs/sql-ref-syntax-aux-cache.md",
+            "docs/sql-ref-syntax-aux-conf-mgmt.md",
+            "docs/sql-ref-syntax-aux-describe.md",
+            "docs/sql-ref-syntax-aux-resource-mgmt.md",
+            "docs/sql-ref-syntax-aux-show.md",
+            "docs/sql-ref-syntax-qry-select-subqueries.md",
+            "docs/ss-migration-guide.md",
+            "docs/structured-streaming-kafka-integration.md",
+            "docs/structured-streaming-programming-guide.md"
+          ],
+          "violations": []
+        },
+        "check": {
+          "status": "identical",
+          "stored_chunks": 6051,
+          "computed_chunks": 6051,
+          "only_stored": 0,
+          "only_computed": 0
+        },
+        "other_tags_reproduced": {
+          "v3.5.0": {
+            "status": "identical",
+            "stored_chunks": 5567,
+            "computed_chunks": 5567,
+            "only_stored": 0,
+            "only_computed": 0
+          },
+          "v4.0.0": {
+            "status": "identical",
+            "stored_chunks": 5423,
+            "computed_chunks": 5423,
+            "only_stored": 0,
+            "only_computed": 0
+          },
+          "v4.0.1": {
+            "status": "identical",
+            "stored_chunks": 5436,
+            "computed_chunks": 5436,
+            "only_stored": 0,
+            "only_computed": 0
+          }
+        },
+        "merge": "skipped: chunking identical to silver",
+        "table": {
+          "name": "workspace.docs_rag_dev.silver_chunks",
+          "version_before_merge": 22,
+          "version_after_merge": 22,
+          "merge_made_a_commit": false,
+          "commits": []
+        },
+        "tags_after": {
+          "v3.5.0": {
+            "chunks": 5567,
+            "distinct_chunk_ids": 5567,
+            "docs": 243,
+            "commits": 1,
+            "max_n_tokens": 254,
+            "chunks_over_max": 0
+          },
+          "v4.0.0": {
+            "chunks": 5423,
+            "distinct_chunk_ids": 5423,
+            "docs": 211,
+            "commits": 1,
+            "max_n_tokens": 254,
+            "chunks_over_max": 0
+          },
+          "v4.0.1": {
+            "chunks": 5436,
+            "distinct_chunk_ids": 5436,
+            "docs": 212,
+            "commits": 1,
+            "max_n_tokens": 254,
+            "chunks_over_max": 0
+          },
+          "v4.2.0": {
+            "chunks": 6051,
+            "distinct_chunk_ids": 6051,
+            "docs": 238,
+            "commits": 1,
+            "max_n_tokens": 254,
+            "chunks_over_max": 0
+          }
+        },
+        "invariant_violations": [],
+        "status": "succeeded",
+        "finished_utc": "2026-10-21T09:37:24Z"
+      }
+    },
+    "bronze": {
+      "task_run_id": 333834229409427,
+      "state": "SUCCESS",
+      "life_cycle": "TERMINATED",
+      "message": "",
+      "start_utc": "2026-10-21T09:35:47Z",
+      "end_utc": "2026-10-21T09:36:14Z",
+      "seconds": 26.0,
+      "summary": {
+        "run_id": "82568606977074-bronze",
+        "started_utc": "2026-10-21T09:36:03Z",
+        "tag": "v4.2.0",
+        "environment": {
+          "python": "3.12.3",
+          "databricks_runtime_version": "client.4.10",
+          "databricks_connect": "17.3.14",
+          "docs_rag": "0.0.1.dev190+g97e2c1024",
+          "tokenizers": "0.23.3",
+          "machine": "aarch64",
+          "spark": "4.2.0"
+        },
+        "download": {
+          "url": "https://codeload.github.com/apache/spark/tar.gz/refs/tags/v4.2.0",
+          "bytes": 50236691,
+          "seconds": 0.6
+        },
+        "snapshot": {
+          "commit_sha": "32f7299601108917fb01920a54e084595b7b3bf8",
+          "docs": 238,
+          "nested_docs": 21,
+          "bytes": 3075227,
+          "largest_bytes": 168333,
+          "docs_with_crlf": 0,
+          "docs_with_bom": 0
+        },
+        "check": {
+          "status": "identical",
+          "stored": 238,
+          "source": 238
+        },
+        "merge": "skipped: snapshot identical to bronze",
+        "table": {
+          "name": "workspace.docs_rag_dev.bronze_docs",
+          "version_before_merge": 11,
+          "version_after_merge": 11,
+          "merge_made_a_commit": false,
+          "commits": []
+        },
+        "tags_after": {
+          "v3.5.0": {
+            "docs": 244,
+            "distinct_paths": 244,
+            "bytes": 2749091,
+            "commits": 1,
+            "commit_sha": "ce5ddad990373636e94071e7cef2f31021add07b",
+            "hash_mismatches": 0,
+            "size_mismatches": 0
+          },
+          "v4.0.0": {
+            "docs": 212,
+            "distinct_paths": 212,
+            "bytes": 2767372,
+            "commits": 1,
+            "commit_sha": "fa33ea000a0bda9e5a3fa1af98e8e85b8cc5e4d4",
+            "hash_mismatches": 0,
+            "size_mismatches": 0
+          },
+          "v4.0.1": {
+            "docs": 213,
+            "distinct_paths": 213,
+            "bytes": 2777551,
+            "commits": 1,
+            "commit_sha": "29434ea766b0fc3c3bf6eaadb43a8f931133649e",
+            "hash_mismatches": 0,
+            "size_mismatches": 0
+          },
+          "v4.2.0": {
+            "docs": 238,
+            "distinct_paths": 238,
+            "bytes": 3075227,
+            "commits": 1,
+            "commit_sha": "32f7299601108917fb01920a54e084595b7b3bf8",
+            "hash_mismatches": 0,
+            "size_mismatches": 0
+          }
+        },
+        "invariant_violations": [],
+        "status": "succeeded",
+        "finished_utc": "2026-10-21T09:36:11Z"
+      }
+    },
+    "sync_index": {
+      "task_run_id": 531911623962144,
+      "state": "EXCLUDED",
+      "life_cycle": "SKIPPED",
+      "message": "Excluded because its conditional dependency on index_requested was not met.",
+      "start_utc": "2026-10-21T09:38:36Z",
+      "end_utc": "2026-10-21T09:38:36Z",
+      "seconds": null
+    },
+    "silver_128": {
+      "task_run_id": 51567339946255,
+      "state": "SUCCESS",
+      "life_cycle": "TERMINATED",
+      "message": "",
+      "start_utc": "2026-10-21T09:37:28Z",
+      "end_utc": "2026-10-21T09:38:53Z",
+      "seconds": 83.0,
+      "summary": {
+        "run_id": "82568606977074-silver128",
+        "started_utc": "2026-10-21T09:37:43Z",
+        "tag": "v4.2.0",
+        "chunk_config": {
+          "config_id": "ece77f296d18fbd5",
+          "cleaner_version": "2",
+          "chunker_version": "1",
+          "max_tokens": 128,
+          "overlap_tokens": 16
+        },
+        "environment": {
+          "python": "3.12.3",
+          "databricks_runtime_version": "client.4.10",
+          "databricks_connect": "17.3.14",
+          "docs_rag": "0.0.1.dev190+g97e2c1024",
+          "tokenizers": "0.23.3",
+          "machine": "aarch64",
+          "spark": "4.2.0"
+        },
+        "bronze": {
+          "docs": 238,
+          "commit_sha": "32f7299601108917fb01920a54e084595b7b3bf8"
+        },
+        "chunking": {
+          "seconds": 11.6,
+          "fingerprint": "624a43926f9d4b105535cd839e3f33f79ca09d10966fa8405f61575ce785e1a8",
+          "chunks": 9852,
+          "n_tokens_min": 6,
+          "n_tokens_median": 96,
+          "n_tokens_max": 128,
+          "n_tokens_histogram": {
+            "1-16": 80,
+            "17-32": 304,
+            "33-64": 2179,
+            "65-128": 7289,
+            "129-192": 0,
+            "193-224": 0,
+            "225-254": 0
+          },
+          "body_tokens_under": {
+            "5": 38,
+            "10": 96,
+            "20": 446
+          },
+          "docs": 238,
+          "docs_with_no_chunks": [],
+          "sections": 2276,
+          "empty_sections": 242,
+          "single_small_chunk_docs": [
+            "docs/404.md",
+            "docs/ml-ann.md",
+            "docs/ml-decision-tree.md",
+            "docs/ml-ensembles.md",
+            "docs/ml-linear-methods.md",
+            "docs/ml-survival-regression.md",
+            "docs/programming-guide.md",
+            "docs/pyspark-migration-guide.md",
+            "docs/sql-error-conditions.md",
+            "docs/sql-pyspark-pandas-with-arrow.md",
+            "docs/sql-ref-syntax-aux-cache.md",
+            "docs/sql-ref-syntax-aux-conf-mgmt.md",
+            "docs/sql-ref-syntax-aux-describe.md",
+            "docs/sql-ref-syntax-aux-resource-mgmt.md",
+            "docs/sql-ref-syntax-aux-show.md",
+            "docs/sql-ref-syntax-qry-select-subqueries.md",
+            "docs/ss-migration-guide.md",
+            "docs/structured-streaming-kafka-integration.md",
+            "docs/structured-streaming-programming-guide.md"
+          ],
+          "violations": []
+        },
+        "check": {
+          "status": "identical",
+          "stored_chunks": 9852,
+          "computed_chunks": 9852,
+          "only_stored": 0,
+          "only_computed": 0
+        },
+        "other_tags_reproduced": {
+          "v3.5.0": {
+            "status": "identical",
+            "stored_chunks": 8629,
+            "computed_chunks": 8629,
+            "only_stored": 0,
+            "only_computed": 0
+          },
+          "v4.0.0": {
+            "status": "identical",
+            "stored_chunks": 8744,
+            "computed_chunks": 8744,
+            "only_stored": 0,
+            "only_computed": 0
+          },
+          "v4.0.1": {
+            "status": "identical",
+            "stored_chunks": 8767,
+            "computed_chunks": 8767,
+            "only_stored": 0,
+            "only_computed": 0
+          }
+        },
+        "merge": "skipped: chunking identical to silver",
+        "table": {
+          "name": "workspace.docs_rag_dev.silver_chunks",
+          "version_before_merge": 22,
+          "version_after_merge": 22,
+          "merge_made_a_commit": false,
+          "commits": []
+        },
+        "tags_after": {
+          "v3.5.0": {
+            "chunks": 8629,
+            "distinct_chunk_ids": 8629,
+            "docs": 243,
+            "commits": 1,
+            "max_n_tokens": 128,
+            "chunks_over_max": 0
+          },
+          "v4.0.0": {
+            "chunks": 8744,
+            "distinct_chunk_ids": 8744,
+            "docs": 211,
+            "commits": 1,
+            "max_n_tokens": 128,
+            "chunks_over_max": 0
+          },
+          "v4.0.1": {
+            "chunks": 8767,
+            "distinct_chunk_ids": 8767,
+            "docs": 212,
+            "commits": 1,
+            "max_n_tokens": 128,
+            "chunks_over_max": 0
+          },
+          "v4.2.0": {
+            "chunks": 9852,
+            "distinct_chunk_ids": 9852,
+            "docs": 238,
+            "commits": 1,
+            "max_n_tokens": 128,
+            "chunks_over_max": 0
+          }
+        },
+        "invariant_violations": [],
+        "status": "succeeded",
+        "finished_utc": "2026-10-21T09:38:49Z"
+      }
+    },
+    "index_requested": {
+      "task_run_id": 393386666819164,
+      "state": "SUCCESS",
+      "life_cycle": "TERMINATED",
+      "message": "",
+      "start_utc": "2026-10-21T09:38:34Z",
+      "end_utc": "2026-10-21T09:38:35Z",
+      "seconds": null,
+      "condition": {
+        "left": "{{job.parameters.with_index}}",
+        "right": "true"
+      }
+    },
+    "change_detect": {
+      "task_run_id": 511727264079401,
+      "state": "SUCCESS",
+      "life_cycle": "TERMINATED",
+      "message": "",
+      "start_utc": "2026-10-21T09:37:28Z",
+      "end_utc": "2026-10-21T09:38:34Z",
+      "seconds": 65.0,
+      "summary": {
+        "run_id": "82568606977074-detect",
+        "started_utc": "2026-10-21T09:37:55Z",
+        "tag": "v4.2.0",
+        "sink": "gold_chunk_embeddings",
+        "config_id": "e70bf55c7cf1b856",
+        "accept_drift": null,
+        "accept_drift_of": null,
+        "attempt_id": "4f923c3debe84433a0042cf122242e22",
+        "environment": {
+          "python": "3.12.3",
+          "databricks_runtime_version": "client.4.10",
+          "databricks_connect": "17.3.14",
+          "docs_rag": "0.0.1.dev190+g97e2c1024",
+          "tokenizers": "0.23.3",
+          "machine": "aarch64",
+          "embedding_packages": {
+            "torch": "2.14.1+cpu",
+            "sentence-transformers": "6.1.0",
+            "transformers": "5.19.0"
+          },
+          "spark": "4.2.0"
+        },
+        "earlier_attempts": [],
+        "baseline": {
+          "run_id": "953993142459221-detect",
+          "baseline_run_id": "94970be9-6094-4ff0-85db-85b69f1aafbc",
+          "status": "committed",
+          "to_version_tag": "v4.2.0",
+          "to_commit_sha": "32f7299601108917fb01920a54e084595b7b3bf8",
+          "to_config_id": "e70bf55c7cf1b856",
+          "to_docs_fingerprint": "39bac630c57782241f901d10f42b72782ccd46a101c0bbe69b0d4423f7607b5f",
+          "to_chunks_fingerprint": "671b1434536234be9ff44ade4f732ba5c80d3d9fae969f70476e96080927b023"
+        },
+        "baseline_check": "rechunked",
+        "dq": [
+          {
+            "check": "empty_chunks",
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 6051,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "body with no token (blank, or only characters the tokenizer drops), or blank embed text; fails if any",
+            "examples": [],
+            "override_reason": null,
+            "override_of": null
+          },
+          {
+            "check": "tiny_chunks",
+            "status": "pass",
+            "numerator": 25,
+            "denominator": 6051,
+            "observed": 0.0041315485043794415,
+            "threshold": 0.02,
+            "rule": "body under 5 tokens; fails above 2% of chunks",
+            "examples": [
+              "docs/sql-ref-datatypes.md #91: 2 tokens 'r:'",
+              "docs/sql-ref-functions.md #4: 3 tokens '* Generator Functions'",
+              "docs/sql-ref-parameter-markers.md #8: 2 tokens '- Java'",
+              "docs/sql-ref-parameter-markers.md #19: 2 tokens '- Java'",
+              "docs/sql-ref-sketch-aggregates.md #12: 3 tokens '---'",
+              "docs/sql-ref-syntax-aux-conf-mgmt-reset.md #4: 2 tokens '* SET'",
+              "docs/sql-ref-syntax-aux-conf-mgmt-set-timezone.md #5: 2 tokens '* SET'",
+              "docs/sql-ref-syntax-aux-set-var.md #5: 2 tokens '* SET'",
+              "docs/sql-ref-syntax-aux-show-collations.md #17: 3 tokens '* STRING TYPE'",
+              "docs/sql-ref-syntax-aux-show-functions.md #5: 3 tokens '* DESCRIBE FUNCTION'"
+            ],
+            "override_reason": null,
+            "override_of": null
+          },
+          {
+            "check": "oversized_chunks",
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 6051,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "embed text over 254 tokens (max_tokens 254; the embedding models' 256 less [CLS] and [SEP]); fails if any",
+            "examples": [],
+            "override_reason": null,
+            "override_of": null
+          },
+          {
+            "check": "duplicate_chunk_ids",
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 6051,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "rows beyond the first of a repeated chunk_id; fails if any",
+            "examples": [],
+            "override_reason": null,
+            "override_of": null
+          },
+          {
+            "check": "duplicate_embed_text",
+            "status": "pass",
+            "numerator": 5,
+            "denominator": 6051,
+            "observed": 0.0008263097008758883,
+            "threshold": 0.01,
+            "rule": "copies beyond the first of a repeated embed text; fails above 1% of chunks",
+            "examples": [
+              "3x in ['docs/streaming-programming-guide.md']: 'Spark Streaming Programming Guide > Basic Concepts > Accumulators, Broadcast Var'",
+              "2x in ['docs/sql-ref-syntax-ddl-alter-view.md']: 'ALTER VIEW > Description > Parameters\\n\\n* **view_identifier**\\n\\n    Specifies a vi'",
+              "2x in ['docs/sql-migration-guide.md']: 'Migration Guide: SQL, Datasets and DataFrame > Upgrading from Spark SQL 2.4 to 3'",
+              "2x in ['docs/rdd-programming-guide.md']: 'RDD Programming Guide > Shared Variables > Accumulators\\n\\nWhile this code used th'"
+            ],
+            "override_reason": null,
+            "override_of": null
+          },
+          {
+            "check": "missing_metadata",
+            "status": "pass",
+            "numerator": 0,
+            "denominator": 6051,
+            "observed": 0.0,
+            "threshold": 0.0,
+            "rule": "a docs/*.md path, non-blank section names (the title first), version_tag v4.2.0, a 40-hex commit_sha; fails if any row misses one",
+            "examples": [],
+            "override_reason": null,
+            "override_of": null
+          },
+          {
+            "check": "drift_docs",
+            "status": "pass",
+            "numerator": 238,
+            "denominator": 238,
+            "observed": 0.0,
+            "threshold": 0.05,
+            "rule": "patch release: |to/from - 1| over 5% fails unless this run accepts the drift of a failed run with exactly these numbers; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": [],
+            "override_reason": null,
+            "override_of": null
+          },
+          {
+            "check": "drift_chunks",
+            "status": "pass",
+            "numerator": 6051,
+            "denominator": 6051,
+            "observed": 0.0,
+            "threshold": 0.05,
+            "rule": "patch release: |to/from - 1| over 5% fails unless this run accepts the drift of a failed run with exactly these numbers; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": [],
+            "override_reason": null,
+            "override_of": null
+          },
+          {
+            "check": "drift_tokens",
+            "status": "pass",
+            "numerator": 775772,
+            "denominator": 775772,
+            "observed": 0.0,
+            "threshold": 0.05,
+            "rule": "patch release: |to/from - 1| over 5% fails unless this run accepts the drift of a failed run with exactly these numbers; a loss over 50% fails anyway; not applicable without a baseline",
+            "examples": [],
+            "override_reason": null,
+            "override_of": null
+          }
+        ],
+        "gate": {
+          "overridden": [],
+          "override_reason": null,
+          "override_of": null
+        },
+        "gold_before": {
+          "fingerprint": "671b1434536234be9ff44ade4f732ba5c80d3d9fae969f70476e96080927b023",
+          "rows": 6051,
+          "models": [
+            "sentence-transformers/all-MiniLM-L6-v2@1110a243fdf4706b3f48f1d95db1a4f5529b4d41"
+          ]
+        },
+        "gold_merge": "skipped: nothing added or removed",
+        "gold_after": {
+          "fingerprint": "671b1434536234be9ff44ade4f732ba5c80d3d9fae969f70476e96080927b023",
+          "rows": 6051,
+          "models": [
+            "sentence-transformers/all-MiniLM-L6-v2@1110a243fdf4706b3f48f1d95db1a4f5529b4d41"
+          ],
+          "rows_of_this_run": 0
+        },
+        "row": {
+          "run_id": "82568606977074-detect",
+          "baseline_run_id": "953993142459221-detect",
+          "job": "change_detect",
+          "source_repo": "apache/spark",
+          "sink": "gold_chunk_embeddings",
+          "status": "committed",
+          "error": null,
+          "direction": "same",
+          "from_version_tag": "v4.2.0",
+          "from_commit_sha": "32f7299601108917fb01920a54e084595b7b3bf8",
+          "from_config_id": "e70bf55c7cf1b856",
+          "to_version_tag": "v4.2.0",
+          "to_commit_sha": "32f7299601108917fb01920a54e084595b7b3bf8",
+          "to_config_id": "e70bf55c7cf1b856",
+          "max_tokens": 254,
+          "overlap_tokens": 32,
+          "from_docs": 238,
+          "to_docs": 238,
+          "docs_added": 0,
+          "docs_changed": 0,
+          "docs_deleted": 0,
+          "docs_unchanged": 238,
+          "docs_moved": 0,
+          "docs_changed_same_chunks": 0,
+          "from_chunks": 6051,
+          "to_chunks": 6051,
+          "chunks_added_new_docs": 0,
+          "chunks_added_changed_docs": 0,
+          "chunks_added_unchanged_docs": 0,
+          "chunks_removed_changed_docs": 0,
+          "chunks_removed_unchanged_docs": 0,
+          "chunks_removed_deleted_docs": 0,
+          "chunks_kept": 6051,
+          "chunks_kept_relocated": 0,
+          "tokens_to_embed": 0,
+          "to_tokens": 775772,
+          "to_docs_fingerprint": "39bac630c57782241f901d10f42b72782ccd46a101c0bbe69b0d4423f7607b5f",
+          "to_chunks_fingerprint": "671b1434536234be9ff44ade4f732ba5c80d3d9fae969f70476e96080927b023",
+          "started_at": "2026-10-21 09:37:55.666191+00:00",
+          "finished_at": "2026-10-21 09:38:25.690164+00:00",
+          "code_version": "0.0.1.dev190+g97e2c1024",
+          "dq_override": null,
+          "dq_override_of": null,
+          "baseline_check": "rechunked",
+          "embedding_model": "sentence-transformers/all-MiniLM-L6-v2@1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+          "chunks_embedded": 0,
+          "embedded_ids_fingerprint": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gold_rows_inserted": 0,
+          "gold_rows_deleted": 0,
+          "gold_version": null
+        },
+        "paths": {
+          "added": [],
+          "changed": [],
+          "deleted": []
+        },
+        "logged": "committed",
+        "read_back": {
+          "rows_with_this_run_id": 1,
+          "status": "committed",
+          "chain_head": "82568606977074-detect",
+          "committed_runs_in_chain": 6
+        },
+        "status": "succeeded",
+        "finished_utc": "2026-10-21T09:38:29Z"
+      }
+    }
+  }
+}
