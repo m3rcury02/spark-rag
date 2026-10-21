@@ -61,12 +61,15 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--label", required=True)
     ap.add_argument("--index", action="store_true", help="also compare the AI Search index with gold")
+    ap.add_argument(
+        "--schema", default=Config.schema, help="the target's schema (docs_rag_prod for prod, M7)"
+    )
     args = ap.parse_args()
     out_path = REPO / "runs" / f"{args.label}.json"
     if out_path.exists():
         raise SystemExit(f"runs/{args.label}.json exists: choose a new label")
     head = committed_head()
-    config = Config()
+    config = Config(schema=args.schema)
     gold = config.gold_table
     if gold is None:
         raise SystemExit("Config.sink is 'none': no gold table")

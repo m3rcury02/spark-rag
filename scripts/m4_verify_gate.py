@@ -138,12 +138,15 @@ def main() -> None:
     ap.add_argument("--job-runs", nargs="+", required=True, help="runs/ files of DQ-gated change_detect jobs")
     ap.add_argument("--pre-gate-runs", nargs="*", default=[], help="runs/ files of runs before the gate")
     ap.add_argument("--sink", required=True, help="the chain to check: 'none' (M3/M4) or the gold table (M5)")
+    ap.add_argument(
+        "--schema", default=Config.schema, help="the target's schema (docs_rag_prod for prod, M7)"
+    )
     args = ap.parse_args()
     out_path = REPO / "runs" / f"{args.label}.json"
     if out_path.exists():
         raise SystemExit(f"runs/{args.label}.json exists: choose a new label")
     head = committed_head()
-    config = Config(sink=args.sink)
+    config = Config(sink=args.sink, schema=args.schema)
     gold = config.gold_table is not None
     canary_texts = len(load_canary().texts)
     grid = {c.config_id: c for c in config.chunk_grid}

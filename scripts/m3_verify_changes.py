@@ -98,12 +98,15 @@ def main() -> None:
     ap.add_argument("--label", required=True)
     ap.add_argument("--job-runs", nargs="*", default=[], help="runs/ files of the change_detect jobs")
     ap.add_argument("--sink", required=True, help="the chain to check: 'none' (M3/M4) or the gold table (M5)")
+    ap.add_argument(
+        "--schema", default=Config.schema, help="the target's schema (docs_rag_prod for prod, M7)"
+    )
     args = ap.parse_args()
     out_path = REPO / "runs" / f"{args.label}.json"
     if out_path.exists():
         raise SystemExit(f"runs/{args.label}.json exists: choose a new label")
     head = committed_head()
-    config = Config(sink=args.sink)
+    config = Config(sink=args.sink, schema=args.schema)
     w = WorkspaceClient()
     warehouse = next(iter(w.warehouses.list())).id or ""
     result = run_statement(
