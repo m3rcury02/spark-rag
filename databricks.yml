@@ -19,6 +19,8 @@ variables:
     description: Unity Catalog schema in catalog `workspace` the pipeline reads and writes.
   wheel_version:
     description: The docs_rag wheel version this deployment uploads; each task checks it imports exactly it.
+    # scripts/bundle.py sets it; a deployment without it fails closed (no wheel has this version).
+    default: set-by-scripts-bundle-py
 
 artifacts:
   docs_rag:
