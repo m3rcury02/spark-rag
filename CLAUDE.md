@@ -175,7 +175,8 @@ on `with_index`) → sync_index.
 - Both deploy paths ran from GitHub Actions: dev on a push to main (m7_h), prod by dispatch (m7_j). `deploy.yml`
   skips pushes that change only runs/, eval/, docs/ or Markdown (proven over 10 commits, m7_n). The `prod`
   environment requires no reviewer: the owner's own prod dispatch after being asked to add one also ran with no
-  approval (m7_o). A dispatch of a prod deploy from this session is refused by its permission check.
+  approval (m7_o). On 2026-10-22 the owner said "Done" after being asked to add one; no run has checked it
+  yet. A dispatch of a prod deploy from this session is refused by its permission check.
 - Eval set v2 (v1's items at v4.2.0, one quote reworded by the release) ran against dev gold (m6_n, D-015).
 - Billing: the M6 endpoint window (m7_i), DBU per M7 job run (m7_l) and m7_k's (m7_m: 0.70 against m7_e's
   0.36 for the same no-op).

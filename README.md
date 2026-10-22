@@ -344,8 +344,8 @@ quota while the endpoint exists: create it only for a demo and delete it afterwa
    this one corpus. They say nothing about whether a chunk is good text, and an override's reason is checked
    only for length (D-012, D-013).
 8. **Deployment security is basic.** CI uses a personal access token, not OAuth or OIDC federation, and prod
-   runs as the owner, not a service principal. The `prod` GitHub environment requires no reviewer: two prod
-   deploys from Actions ran with no approval ([`m7_j`](runs/m7_j_actions_deploy_prod.json),
+   runs as the owner, not a service principal. On 2026-10-21 the `prod` GitHub environment required no
+   reviewer: two prod deploys from Actions ran with no approval ([`m7_j`](runs/m7_j_actions_deploy_prod.json),
    [`m7_o`](runs/m7_o_actions_prod_reviewer_recheck.json)).
 9. **Cost and timing figures are mostly single runs** on shared serverless compute. The one repeated case, a
    no-op run, billed 0.36 DBU in dev and 0.70 in prod ([`m7_m`](runs/m7_m_billing_m7_k.json)), so a single
